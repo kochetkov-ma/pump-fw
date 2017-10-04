@@ -1,7 +1,8 @@
 package ru.mk.pump.commons.reporter;
 
-import io.qameta.allure.model.Attachment;
+import lombok.NonNull;
 
+@SuppressWarnings("unused")
 public interface Reporter {
 
     /**
@@ -29,6 +30,15 @@ public interface Reporter {
      * @param attachment {@link AttachmentsFactory}
      */
     void attach(Attachment attachment);
+
+    void fail(String title, String description, @NonNull Attachment attachment, @NonNull AssertionError assertionError);
+
+    /**
+     * @param attachment screen to report {@link AttachmentsFactory}. can be null
+     */
+    void pass(String title, String description, Attachment attachment);
+
+    void pass(String title, String description);
 
     AttachmentsFactory attachments();
 

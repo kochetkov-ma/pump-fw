@@ -1,16 +1,17 @@
 package ru.mk.pump.commons.exception;
 
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMETER;
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
 import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 import com.google.common.collect.Maps;
-import com.sun.istack.internal.NotNull;
 import java.util.Map;
+import lombok.NonNull;
+import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.interfaces.PrettyPrinting;
 import ru.mk.pump.commons.utils.StringUtils;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class ExceptionMessage implements PrettyPrinting {
+public class ThrowableMessage implements PrettyPrinting {
 
     /**
      * Required
@@ -20,24 +21,24 @@ public class ExceptionMessage implements PrettyPrinting {
     /**
      * Optional
      */
-    private final String description;
+    private String description;
 
     /**
      * Optional
      */
-    private final Map<String, String> envInformation;
+    private Map<String, String> envInformation;
 
     /**
      * Optional
      */
-    private final Map<String, String> extraInformation;
+    private Map<String, String> extraInformation;
 
     /**
      * default is null for does not add by StringJoiner
      */
     private String preTitleMessage = null;
 
-    public ExceptionMessage(@NotNull String title, String description, Map<String, String> envInformation, Map<String, String> extraInformation) {
+    public ThrowableMessage(String title, String description, Map<String, String> envInformation, Map<String, String> extraInformation) {
         this.title = title;
         if (description != null) {
             this.description = description;
@@ -56,42 +57,57 @@ public class ExceptionMessage implements PrettyPrinting {
         }
     }
 
-    public ExceptionMessage(@NotNull String title, String description, Map<String, String> envInformation) {
+    public ThrowableMessage(@NonNull String title, String description, Map<String, String> envInformation) {
         this(title, description, envInformation, null);
     }
 
-    public ExceptionMessage(@NotNull String title, String description) {
+    public ThrowableMessage(@NonNull String title, String description) {
         this(title, description, null, null);
     }
 
-    public ExceptionMessage(@NotNull String title) {
+    public ThrowableMessage(@NonNull String title) {
         this(title, null, null, null);
     }
 
     @Override
     public String toPrettyString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("Title").append(KEY_VALUE_PRETTY_DELIMETER).append(StringUtils.oneLineConcat(preTitleMessage, title)).append(LINE);
+        sb.append(StringUtils.concat(StringConstants.DOT_SPACE, preTitleMessage, title)).append(LINE);
         if (!description.isEmpty()) {
-            sb.append("Description").append(KEY_VALUE_PRETTY_DELIMETER).append(description).append(LINE);
+            sb.append("Description").append(KEY_VALUE_PRETTY_DELIMITER).append(description).append(LINE);
         }
         if (!envInformation.isEmpty()) {
-            sb.append("Environment information").append(KEY_VALUE_PRETTY_DELIMETER).append(StringUtils.mapToPrettyString(envInformation)).append(LINE);
+            sb.append("Environment information").append(KEY_VALUE_PRETTY_DELIMITER).append(StringUtils.mapToPrettyString(envInformation)).append(LINE);
         }
         if (!extraInformation.isEmpty()) {
-            sb.append("Additional information").append(KEY_VALUE_PRETTY_DELIMETER).append(StringUtils.mapToPrettyString(extraInformation));
+            sb.append("Additional information").append(KEY_VALUE_PRETTY_DELIMITER).append(StringUtils.mapToPrettyString(extraInformation));
         }
         return sb.toString();
     }
 
-    public ExceptionMessage withPre(String preTitleMessage) {
+    public ThrowableMessage withDesc(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public ThrowableMessage addEnvInfo(String envInformationKey, String envInformationValue) {
+        this.envInformation.put(envInformationKey, envInformationValue);
+        return this;
+    }
+
+    public ThrowableMessage addExtraInfo(String extraInformationKey, String extraInformationValue) {
+        this.extraInformation.put(extraInformationKey, extraInformationValue);
+        return this;
+    }
+
+    public ThrowableMessage withPre(String preTitleMessage) {
         this.preTitleMessage = preTitleMessage;
         return this;
     }
 
     @Override
     public String toString() {
-        return "ExceptionMessage{" +
+        return "ThrowableMessage{" +
             "title='" + title + '\'' +
             ", description='" + description + '\'' +
             ", envInformation=" + envInformation +

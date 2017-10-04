@@ -16,7 +16,7 @@ import ru.mk.pump.commons.exception.UtilException;
 /**
  * @author kochetkovma
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 @UtilityClass
 @Slf4j
 public class FileUtils {
@@ -98,7 +98,7 @@ public class FileUtils {
      * @param onlyFile Фильтровать только файлы - true
      * @return Список файлов в каталоге.
      */
-    public static final List<Path> getFileList(Path dirPath, boolean onlyFile) throws IOException {
+    public static List<Path> getFileList(Path dirPath, boolean onlyFile) throws IOException {
         List<Path> result = new ArrayList<>();
         try (Stream<Path> paths = java.nio.file.Files.walk(dirPath)) {
             paths.forEach(filePath -> {
@@ -117,7 +117,7 @@ public class FileUtils {
      * @param dirPath Путь к каталогу для проверки.
      * @return Список файлов, которые появились в каталоге.
      */
-    public static final List<Path> getFileListOfNewFiles(List<Path> oldFiles, Path dirPath) throws IOException {
+    public static List<Path> getFileListOfNewFiles(List<Path> oldFiles, Path dirPath) throws IOException {
         List<Path> newList = getFileList(dirPath, true);
         newList.removeAll(oldFiles);
         return newList;
@@ -128,7 +128,7 @@ public class FileUtils {
      *
      * @param dirPath Путь к каталогу.
      */
-    public static final void clearDir(Path dirPath) throws IOException {
+    public static void clearDir(Path dirPath) throws IOException {
         org.apache.commons.io.FileUtils.cleanDirectory(dirPath.toFile());
 
     }
@@ -138,7 +138,7 @@ public class FileUtils {
      *
      * @return Размер директории в МБ
      */
-    public static final float getDirSize(Path dirPath) throws IOException {
+    public static float getDirSize(Path dirPath) throws IOException {
         return org.apache.commons.io.FileUtils.sizeOfDirectory(dirPath.toFile()) / 1024 / 1024;
     }
 }

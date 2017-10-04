@@ -5,18 +5,18 @@ public class UtilException extends PumpException {
     private static final String PRE = "Pump utility exception";
 
     public UtilException(String message) {
-        super(new ExceptionMessage(message).withPre(PRE));
+        super(message, PRE);
     }
 
-    public UtilException(ExceptionMessage exceptionMessage) {
+    public UtilException(ThrowableMessage exceptionMessage) {
         super(exceptionMessage.withPre(PRE));
     }
 
-    public UtilException(ExceptionMessage exceptionMessage, Throwable cause) {
+    public UtilException(ThrowableMessage exceptionMessage, Throwable cause) {
         super(exceptionMessage.withPre(PRE), cause);
     }
 
     public UtilException(String message, Throwable cause) {
-        super(new ExceptionMessage(message).withPre(PRE), cause);
+        super(message, PRE, cause);
     }
 }

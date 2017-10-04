@@ -1,34 +1,45 @@
 package ru.mk.pump.commons.reporter;
 
-import io.qameta.allure.model.Attachment;
+import static ru.mk.pump.commons.constants.MainConstants.SCREEN_FORMAT;
+
 import java.nio.file.Path;
+import java.util.function.Supplier;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.constants.MainConstants;
 import ru.mk.pump.commons.utils.FileUtils;
 
+@SuppressWarnings("unused")
 @Slf4j
 public class AttachmentsFactory {
 
+    public static final String IMAGE = "image/" + SCREEN_FORMAT;
+
     private Screenshoter screenshoter;
 
-    public AttachmentsFactory(Screenshoter screenshoter) {
+    public AttachmentsFactory(@NonNull Screenshoter screenshoter) {
 
         this.screenshoter = screenshoter;
     }
 
-    public Attachment file(String attachmentName, Path path) {
-        return new Attachment().withName(attachmentName).withSource(FileUtils.toString(path, MainConstants.FILE_ENCODING));
+    public Attachment file(@NonNull String attachmentName, @NonNull Path path) {
+        return new Attachment().withName(attachmentName).withSource(FileUtils.toString(path, MainConstants.FILE_ENCODING))
+            .withExtension(FileUtils.getExtension(path));
     }
 
-    public Attachment file(String attachmentName, byte[] bytes) {
-        return new Attachment().withName(attachmentName).withSource(new String(bytes, MainConstants.FILE_ENCODING));
+    public Attachment file(@NonNull String attachmentName, @NonNull Supplier<byte[]> bytes) {
+        return new Attachment().withName(attachmentName).withSourceByte(bytes).withExtension("txt");
     }
 
-    public Attachment screen(String attachmentName, byte[] bytes) {
-        return new Attachment().withName(attachmentName).withSource(new String(bytes, MainConstants.FILE_ENCODING));
+
+    public Attachment screen(@NonNull String attachmentName, @NonNull Supplier<byte[]> bytes) {
+        return new Attachment().withName(attachmentName).withSourceByte(bytes).withType(IMAGE)
+            .withExtension(SCREEN_FORMAT);
     }
 
-    public Attachment screen(String attachmentName) {
-        return new Attachment().withName(attachmentName).withSource(new String(screenshoter.getScreen().orElse(new byte[0]), MainConstants.FILE_ENCODING));
+    public Attachment screen(@NonNull String attachmentName) {
+        return new Attachment().withName(attachmentName).withSourceByte(() -> screenshoter.getScreen().orElse(new byte[0]))
+            .withExtension("png")
+            .withType(IMAGE);
     }
 }
