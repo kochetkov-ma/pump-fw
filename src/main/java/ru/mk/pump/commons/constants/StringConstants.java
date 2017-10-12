@@ -5,11 +5,13 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class StringConstants {
 
-    public static final CharSequence SPACE = " ";
+    public static final String SPACE = " ";
 
-    public static final CharSequence DOT_SPACE = ". ";
+    public static final String DOT_SPACE = ". ";
 
-    public static final CharSequence LINE = System.lineSeparator();
+    public static final String LINE = System.lineSeparator();
 
-    public static final CharSequence KEY_VALUE_PRETTY_DELIMITER = " : ";
+    public static final String KEY_VALUE_PRETTY_DELIMITER = " : ";
+
+    public static final String AP = "'";
 }

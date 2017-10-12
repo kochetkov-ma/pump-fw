@@ -7,11 +7,11 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import lombok.NonNull;
 import ru.mk.pump.commons.constants.StringConstants;
-import ru.mk.pump.commons.interfaces.PrettyPrinting;
-import ru.mk.pump.commons.utils.StringUtils;
+import ru.mk.pump.commons.interfaces.PrettyPrinter;
+import ru.mk.pump.commons.utils.Strings;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class ThrowableMessage implements PrettyPrinting {
+public class ThrowableMessage implements PrettyPrinter {
 
     /**
      * Required
@@ -72,17 +72,17 @@ public class ThrowableMessage implements PrettyPrinting {
     @Override
     public String toPrettyString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(StringUtils.concat(StringConstants.DOT_SPACE, preTitleMessage, title)).append(LINE);
+        sb.append(Strings.concat(StringConstants.DOT_SPACE, preTitleMessage, title)).append(LINE);
         if (!description.isEmpty()) {
             sb.append("Description").append(KEY_VALUE_PRETTY_DELIMITER).append(description).append(LINE);
         }
         if (!envInformation.isEmpty()) {
-            sb.append("Environment information").append(KEY_VALUE_PRETTY_DELIMITER).append(StringUtils.mapToPrettyString(envInformation)).append(LINE);
+            sb.append("Environment information").append(KEY_VALUE_PRETTY_DELIMITER).append(Strings.mapToPrettyString(envInformation)).append(LINE);
         }
         if (!extraInformation.isEmpty()) {
-            sb.append("Additional information").append(KEY_VALUE_PRETTY_DELIMITER).append(StringUtils.mapToPrettyString(extraInformation));
+            sb.append("Additional information").append(KEY_VALUE_PRETTY_DELIMITER).append(Strings.mapToPrettyString(extraInformation));
         }
-        return sb.toString();
+        return Strings.trim(sb.toString());
     }
 
     public ThrowableMessage withDesc(String description) {

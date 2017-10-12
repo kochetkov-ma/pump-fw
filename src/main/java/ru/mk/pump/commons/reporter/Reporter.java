@@ -6,7 +6,7 @@ import lombok.NonNull;
 public interface Reporter {
 
     /**
-     * @param attachment {@link AttachmentsFactory}
+     * @param attachment {@link #attachments()}
      */
     void info(String title, String description, Attachment attachment);
 
@@ -15,22 +15,25 @@ public interface Reporter {
     void error(String title, String description);
 
     /**
-     * @param attachment {@link AttachmentsFactory}
+     * @param attachment {@link #attachments()}
      */
     void error(String title, String description, Attachment attachment);
 
     /**
-     * @param attachment {@link AttachmentsFactory}
+     * @param attachment {@link #attachments()}
      */
     void error(String title, String description, Attachment attachment, Throwable throwable);
 
     void error(String title, String description, Throwable throwable);
 
     /**
-     * @param attachment {@link AttachmentsFactory}
+     * @param attachment {@link #attachments()}
      */
     void attach(Attachment attachment);
 
+    /**
+     * @param attachment {@link #attachments()}
+     */
     void fail(String title, String description, @NonNull Attachment attachment, @NonNull AssertionError assertionError);
 
     /**

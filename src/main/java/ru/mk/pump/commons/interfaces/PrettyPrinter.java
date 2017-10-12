@@ -1,6 +1,6 @@
 package ru.mk.pump.commons.interfaces;
 
-public interface PrettyPrinting {
+public interface PrettyPrinter {
 
     String toPrettyString();
 }

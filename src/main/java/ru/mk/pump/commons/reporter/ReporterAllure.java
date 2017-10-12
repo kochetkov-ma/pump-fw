@@ -5,14 +5,17 @@ import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import java.io.ByteArrayInputStream;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.exception.ThrowableMessage;
-import ru.mk.pump.commons.utils.StringUtils;
+import ru.mk.pump.commons.utils.Strings;
 
 @SuppressWarnings("unused")
 @Slf4j
 public class ReporterAllure implements Reporter {
+
+    private static final String LOG_PREFIX = "[REPORTER] STEP";
 
     @AllArgsConstructor
     private class Info {
@@ -33,19 +36,24 @@ public class ReporterAllure implements Reporter {
 
         @Override
         public String toString() {
-            return StringUtils
-                .oneLineConcat(I, attachment != null ? "Attachment exists" : null, throwable != null ? "Throwable: " + throwable.getMessage() : null);
+            return Strings
+                .oneLineConcat(I, attachment != null ? "Attachment exists" : null,
+                    throwable != null ? "Throwable class " + throwable.getClass().getSimpleName() : null);
 
         }
     }
 
     public enum Type {
-        INFO(""), WARNING("[WARN] "), ERROR("[ERROR] "), ATTACHMENT("[ATTACHMENT] "), PASS("[PASS] "), FAIL("[FAIL] ");
+        ALL("", 0), INFO("", 2), WARNING("[WARN] ", 3), ERROR("[ERROR] ", 4), ATTACHMENT("[ATTACHMENT] ", 0), PASS("[PASS] ", 1), FAIL("[FAIL] ", 4);
 
         private final String value;
 
-        Type(String value) {
+        @Getter
+        private final int priority;
+
+        Type(String value, int priority) {
             this.value = value;
+            this.priority = priority;
         }
 
         @Override
@@ -54,10 +62,26 @@ public class ReporterAllure implements Reporter {
         }
     }
 
-    private final AttachmentsFactory attachmentsFactory;
+    @Getter
+    private AttachmentsFactory attachmentsFactory;
+
+    private final Type minimumLevelForDuplicateInSlf4;
 
     public ReporterAllure(Screenshoter screenshoter) {
+
         this.attachmentsFactory = new AttachmentsFactory(screenshoter);
+        this.minimumLevelForDuplicateInSlf4 = Type.INFO;
+    }
+
+    public ReporterAllure(Screenshoter screenshoter, Type minimumLevelForDuplicateInSlf4) {
+
+        this.attachmentsFactory = new AttachmentsFactory(screenshoter);
+        this.minimumLevelForDuplicateInSlf4 = minimumLevelForDuplicateInSlf4;
+    }
+
+    public ReporterAllure withAttachmentsFactory(AttachmentsFactory attachmentsFactory) {
+        this.attachmentsFactory = attachmentsFactory;
+        return this;
     }
 
     /**
@@ -67,6 +91,9 @@ public class ReporterAllure implements Reporter {
      */
     @Step("{level.value}{title}")
     private void step(Type level, String title, String description, Info info) {
+        if (level.getPriority() >= minimumLevelForDuplicateInSlf4.getPriority()) {
+            log.info(Strings.concat(System.lineSeparator(), Strings.oneLineConcat(LOG_PREFIX, level.toString(), title), description, info.toString()));
+        }
         if (info.attachment() != null) {
             attach(info.attachment());
         }
@@ -77,7 +104,7 @@ public class ReporterAllure implements Reporter {
                 final ThrowableMessage exceptionMessage = new ThrowableMessage(title, description)
                     .addExtraInfo("Level", level.name())
                     .addExtraInfo("Attachment",
-                        info.attachment() != null ? StringUtils.oneLineConcat(info.attachment().getName(), info.attachment().getType()) : null);
+                        info.attachment() != null ? Strings.oneLineConcat(info.attachment().getName(), info.attachment().getType()) : null);
                 throw new ExecutionException(exceptionMessage, info.throwable());
             }
         }

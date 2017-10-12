@@ -13,11 +13,11 @@ import ru.mk.pump.commons.utils.FileUtils;
 @Slf4j
 public class AttachmentsFactory {
 
-    public static final String IMAGE = "image/" + SCREEN_FORMAT;
+    private static final String IMAGE = "image/" + SCREEN_FORMAT;
 
     private Screenshoter screenshoter;
 
-    public AttachmentsFactory(@NonNull Screenshoter screenshoter) {
+    protected AttachmentsFactory(@NonNull Screenshoter screenshoter) {
 
         this.screenshoter = screenshoter;
     }
@@ -30,7 +30,6 @@ public class AttachmentsFactory {
     public Attachment file(@NonNull String attachmentName, @NonNull Supplier<byte[]> bytes) {
         return new Attachment().withName(attachmentName).withSourceByte(bytes).withExtension("txt");
     }
-
 
     public Attachment screen(@NonNull String attachmentName, @NonNull Supplier<byte[]> bytes) {
         return new Attachment().withName(attachmentName).withSourceByte(bytes).withType(IMAGE)
