@@ -1,4 +1,4 @@
-package ru.mk.pump.commons.tests;
+package ru.mk.pump.commons.utils;
 
 import com.google.common.collect.Lists;
 import java.util.Comparator;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import ru.mk.pump.commons.reporter.AllureRunner;
 import ru.mk.pump.commons.reporter.ReporterAllure;
 import ru.mk.pump.commons.reporter.ReporterAllure.Type;
 import ru.mk.pump.commons.utils.Collators;

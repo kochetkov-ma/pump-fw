@@ -25,7 +25,7 @@ public class DesktopScreenshoter implements Screenshoter {
         if (originalImage == null) {
             return Optional.of(new byte[0]);
         }
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             ImageIO.write(originalImage, SCREEN_FORMAT, outputStream);
             outputStream.flush();
             log.info("Getting desktop screen - success");

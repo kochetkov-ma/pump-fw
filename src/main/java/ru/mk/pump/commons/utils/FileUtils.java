@@ -8,9 +8,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.exception.UtilException;
 
 /**
@@ -140,5 +142,31 @@ public class FileUtils {
      */
     public static float getDirSize(Path dirPath) throws IOException {
         return org.apache.commons.io.FileUtils.sizeOfDirectory(dirPath.toFile()) / 1024 / 1024;
+    }
+
+    public List<Path> findFiles(Path sourceDir, String fileName, int depth) {
+        if (depth < 1) {
+            depth = 1;
+        }
+        if (java.nio.file.Files.notExists(sourceDir) || !java.nio.file.Files.isDirectory(sourceDir)) {
+            throw new UtilException(format("Cannot find dir '%s'", sourceDir));
+        }
+        try {
+            return java.nio.file.Files.find(sourceDir, depth, (path, attr) -> attr.isRegularFile() && path.getFileName().toString().startsWith(fileName))
+                .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new UtilException(format("Cannot find resource files '%s' in dir '%s'", fileName, sourceDir), e);
+        }
+    }
+
+    public Path resolveDir(@NotNull Path sourceDir, String targetDir) {
+        if (targetDir == null || targetDir.isEmpty()) {
+            return sourceDir;
+        }
+        final Path result = sourceDir.resolve(targetDir);
+        if (java.nio.file.Files.notExists(sourceDir) || !java.nio.file.Files.isDirectory(sourceDir)) {
+            throw new UtilException(format("Resolved name '%s' from dir '%s' is not a directory", targetDir, sourceDir));
+        }
+        return result;
     }
 }

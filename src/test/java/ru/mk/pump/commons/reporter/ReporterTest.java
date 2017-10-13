@@ -1,12 +1,10 @@
-package ru.mk.pump.commons.tests;
+package ru.mk.pump.commons.reporter;
 
 import io.qameta.allure.Step;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import ru.mk.pump.commons.exception.PumpException;
-import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.reporter.ReporterAllure;
 import ru.mk.pump.commons.reporter.ReporterAllure.Type;
 import ru.mk.pump.commons.utils.DesktopScreenshoter;
 

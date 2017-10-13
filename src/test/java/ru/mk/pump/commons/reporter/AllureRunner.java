@@ -1,4 +1,4 @@
-package ru.mk.pump.commons.tests;
+package ru.mk.pump.commons.reporter;
 
 import io.qameta.allure.junit4.AllureJunit4;
 import org.junit.runner.notification.RunNotifier;
