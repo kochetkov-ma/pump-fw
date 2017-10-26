@@ -3,6 +3,7 @@ package ru.mk.pump.web.common;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -28,6 +29,8 @@ public abstract class AbstractActivityManager implements ActivityManager {
 
     private Activity cache = null;
 
+    private Class<? extends Activity>[] activityClass;
+
     protected AbstractActivityManager() {
         this(Lists.newArrayList());
     }
@@ -39,19 +42,39 @@ public abstract class AbstractActivityManager implements ActivityManager {
         }
     }
 
+    public void setFilterActivityClass(Class<? extends Activity>... activityClass) {
+        this.activityClass = activityClass;
+    }
+
     @Override
     public ActivityManager add(Activity activity) {
         if (activity instanceof Observable) {
             ((Observable) activity).addObserver(this);
         }
-        cache = activityMap.put(activity.getUUID(), activity);
+        if (isTargetActivity(activity)) {
+            cache = activityMap.put(activity.getUUID(), activity);
+        }
+        return this;
+    }
+
+    @Override
+    public ActivityManager addIfNotContains(Activity activity) {
+        if (isTargetActivity(activity)) {
+            if (!activityMap.containsKey(activity.getUUID())) {
+                add(activity);
+            }
+        }
         return this;
     }
 
     @Override
     public Activity addAndActivate(Activity activity) {
-        add(activity);
-        return activity.activate();
+        if (isTargetActivity(activity)) {
+            add(activity);
+            return activity.activate();
+        } else {
+            return activity;
+        }
     }
 
     @Override
@@ -123,27 +146,52 @@ public abstract class AbstractActivityManager implements ActivityManager {
     }
 
     @Override
+    public void onClose(NamedEvent namedEvent, Activity activity) {
+        if (isTargetActivity(activity)) {
+            clearAllCache(activity.getUUID());
+            activityMap.remove(activity.getUUID());
+        }
+    }
+
+    @Override
+    public void onActivate(NamedEvent namedEvent, Activity activity) {
+        if (isTargetActivity(activity)) {
+            if (!inActiveCache(activity.getUUID()) && activeCache != null) {
+                prevCache = activeCache;
+                prevCache.disable();
+            }
+            activeCache = activity;
+        }
+    }
+
+    @Override
+    public void onDisable(NamedEvent namedEvent, Activity activity) {
+        if (isTargetActivity(activity)) {
+            if (inActiveCache(activity.getUUID())) {
+                prevCache = activity;
+                activeCache = null;
+            }
+        }
+    }
+
+    @Override
     public void update(Observable o, Object arg) {
         if (arg instanceof NamedEvent && o instanceof Activity) {
             final NamedEvent namedEvent = (NamedEvent) arg;
             final Activity activity = (Activity) o;
 
             if (CLOSE_EVENT_NAME.equals(namedEvent.getName())) {
-                clearAllCache(activity.getUUID());
-                activityMap.remove(activity.getUUID());
+                onClose(namedEvent, activity);
             } else if (ACTIVATE_EVENT_NAME.equals(namedEvent.getName())) {
-                if (!inActiveCache(activity.getUUID()) && activeCache != null) {
-                    prevCache = activeCache;
-                    prevCache.disable();
-                }
-                activeCache = activity;
+                onActivate(namedEvent, activity);
             } else if (DISABLE_EVENT_NAME.equals(namedEvent.getName())) {
-                if (inActiveCache(activity.getUUID())) {
-                    prevCache = activity;
-                    activeCache = null;
-                }
+                onDisable(namedEvent, activity);
             }
         }
+    }
+
+    private boolean isTargetActivity(Activity activity) {
+        return Arrays.stream(activityClass).anyMatch(item -> activity.getClass().isAssignableFrom(item));
     }
 
     //region PRIVATE M

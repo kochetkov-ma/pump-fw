@@ -27,8 +27,6 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
 
     private final DownloadManager downloads;
 
-    private final TabManager tabs;
-
     private final BrowserActions actions;
 
     private final LogManager logs;
@@ -42,11 +40,10 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
         this.builder = builder;
         this.config = browserConfig;
         this.id = browserConfig.getType().name() + "_" + uuid;
-        this.windows = new WindowManager();
-        this.tabs = new TabManager();
         this.downloads = new DownloadManager();
-        this.actions = new BrowserActions();
+        this.actions = new BrowserActions(this::getDriver);
         this.logs = new LogManager();
+        this.windows = new WindowManager(this);
 
     }
     //endregion
@@ -104,11 +101,6 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
     @Override
     public WindowManager windows() {
         return windows;
-    }
-
-    @Override
-    public TabManager tabs() {
-        return tabs;
     }
 
     @Override

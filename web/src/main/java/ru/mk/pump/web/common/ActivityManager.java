@@ -14,6 +14,8 @@ public interface ActivityManager extends Observer{
      */
     ActivityManager add(Activity activity);
 
+    ActivityManager addIfNotContains(Activity activity);
+
     Activity addAndActivate(Activity activity);
 
     ActivityManager releaseAll();
@@ -31,5 +33,11 @@ public interface ActivityManager extends Observer{
     List<Activity> getAll();
 
     Optional<Activity> get(UUID uuid);
+
+    void onClose(NamedEvent namedEvent, Activity activity);
+
+    void onActivate(NamedEvent namedEvent, Activity activity);
+
+    void onDisable(NamedEvent namedEvent, Activity activity);
 
 }

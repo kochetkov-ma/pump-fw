@@ -1,6 +1,7 @@
 package ru.mk.pump.web.browsers;
 
 import java.io.Closeable;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 
@@ -10,6 +11,7 @@ public interface Browser extends Closeable {
 
     Browser start();
 
+    @NotNull
     WebDriver getDriver();
 
     BrowserConfig getConfig();
@@ -27,8 +29,6 @@ public interface Browser extends Closeable {
     Browser refresh();
 
     WindowManager windows();
-
-    TabManager tabs();
 
     DownloadManager downloads();
 

@@ -4,12 +4,14 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
+import lombok.Setter;
 import lombok.ToString;
 
 @ToString(exclude = "prevActivity")
 public abstract class AbstractActivity extends Observable implements Activity {
 
-    private final UUID uuid;
+    @Setter
+    private UUID uuid;
 
     private boolean closed = false;
 
