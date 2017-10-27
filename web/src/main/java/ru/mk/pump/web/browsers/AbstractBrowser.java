@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import ru.mk.pump.commons.exception.ThrowableMessage;
+import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.common.AbstractActivity;
 import ru.mk.pump.web.common.Activity;
 import ru.mk.pump.web.exceptions.BrowserException;
@@ -35,11 +36,11 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
     private WebDriver driver = null;
 
     //region INIT
-    AbstractBrowser(@NotNull DriverBuilder builder, @NotNull BrowserConfig browserConfig, @NotNull UUID uuid) {
+    AbstractBrowser(@NotNull DriverBuilder builder, @NotNull UUID uuid) {
         super(uuid);
         this.builder = builder;
-        this.config = browserConfig;
-        this.id = browserConfig.getType().name() + "_" + uuid;
+        this.config = builder.getConfig();
+        this.id = this.config.getType().name() + "_" + uuid;
         this.downloads = new DownloadManager();
         this.actions = new BrowserActions(this::getDriver);
         this.logs = new LogManager();
@@ -55,7 +56,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
 
     @Override
     public Browser start() {
-        this.driver = builder.setConfig(config).createAndStartDriver();
+        this.driver = builder.createAndStartDriver();
         if (driver == null) {
             throw new BrowserException(new ThrowableMessage("Cannot start browser. Incorrect driver builder", toString()));
         }

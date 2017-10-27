@@ -36,6 +36,8 @@ public final class Parameter<T> {
         return stringValue;
     }
 
+
+    @SuppressWarnings("unchecked")
     public <V> V getValue(Class<V> candidateClass) {
         if (isClass(candidateClass)) {
             return (V) getValue();
@@ -48,6 +50,7 @@ public final class Parameter<T> {
         return value;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean isClass(Class pClass) {
         return pClass.isAssignableFrom(tClass);
     }

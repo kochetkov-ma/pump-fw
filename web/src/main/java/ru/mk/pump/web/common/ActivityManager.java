@@ -5,7 +5,8 @@ import java.util.Observer;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface ActivityManager extends Observer{
+@SuppressWarnings("UnusedReturnValue")
+public interface ActivityManager extends Observer {
 
     /**
      * add and activate
@@ -33,11 +34,4 @@ public interface ActivityManager extends Observer{
     List<Activity> getAll();
 
     Optional<Activity> get(UUID uuid);
-
-    void onClose(NamedEvent namedEvent, Activity activity);
-
-    void onActivate(NamedEvent namedEvent, Activity activity);
-
-    void onDisable(NamedEvent namedEvent, Activity activity);
-
 }

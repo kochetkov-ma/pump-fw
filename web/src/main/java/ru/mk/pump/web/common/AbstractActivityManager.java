@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -13,13 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 @Slf4j
-public abstract class AbstractActivityManager implements ActivityManager {
+public abstract class AbstractActivityManager implements ActivityManager, ActivityListener {
 
-    public static String CLOSE_EVENT_NAME = "close";
+    public static final String CLOSE_EVENT_NAME = "close";
 
-    public static String ACTIVATE_EVENT_NAME = "activate";
+    public static final String ACTIVATE_EVENT_NAME = "activate";
 
-    public static String DISABLE_EVENT_NAME = "disable";
+    public static final String DISABLE_EVENT_NAME = "disable";
 
     private final Map<UUID, Activity> activityMap;
 
@@ -42,7 +43,7 @@ public abstract class AbstractActivityManager implements ActivityManager {
         }
     }
 
-    public void setFilterActivityClass(Class<? extends Activity>... activityClass) {
+    protected void setFilterActivityClass(Class<? extends Activity>... activityClass) {
         this.activityClass = activityClass;
     }
 

@@ -1,11 +1,11 @@
 package ru.mk.pump.web.browsers;
 
-import java.util.Set;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
+@SuppressWarnings("UnusedReturnValue")
 public class BrowserActions {
 
     private final Supplier<WebDriver> driver;

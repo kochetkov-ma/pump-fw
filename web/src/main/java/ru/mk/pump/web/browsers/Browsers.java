@@ -3,6 +3,7 @@ package ru.mk.pump.web.browsers;
 import java.util.UUID;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 
 public class Browsers {
 

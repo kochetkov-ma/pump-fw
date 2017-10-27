@@ -4,6 +4,7 @@ import java.io.Closeable;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
+import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 
 public interface Browser extends Closeable {
 
