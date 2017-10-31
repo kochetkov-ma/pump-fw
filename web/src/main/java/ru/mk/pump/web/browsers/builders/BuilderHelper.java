@@ -2,6 +2,7 @@ package ru.mk.pump.web.browsers.builders;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
@@ -15,14 +16,13 @@ public class BuilderHelper {
     private final BrowserConfig browserConfig;
 
     public BuilderHelper(BrowserConfig browserConfig) {
-
         this.browserConfig = browserConfig;
     }
 
     public void prepareLocalDriverPath() {
-        if (Strings.isEmpty(browserConfig.getWebDriverPath())) {
-            if (Files.exists(Paths.get(browserConfig.getWebDriverPath()))) {
-                System.setProperty("webdriver." + browserConfig.getType().getName() + ".driver", browserConfig.getWebDriverPath());
+        if (!Strings.isEmpty(browserConfig.getWebDriverPath())) {
+            if (Objects.nonNull(browserConfig.getWebDriverPath()) && Files.exists(Paths.get(browserConfig.getWebDriverPath()))) {
+                System.setProperty("webdriver." + browserConfig.getType().getDriverName() + ".driver", browserConfig.getWebDriverPath());
             }
         }
     }
@@ -34,31 +34,19 @@ public class BuilderHelper {
     public Capabilities getCommonCapabilities() {
         final DesiredCapabilities capabilities = new DesiredCapabilities();
         if (browserConfig.isDebug()) {
-            /*Удаленный Рабочий Стол для Selenoid*/
-            capabilities.setCapability("enableVNC", true);
+            capabilities.setCapability("enableVNC", true); /*selenoid*/
         }
         capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         capabilities.setCapability(CapabilityType.TAKES_SCREENSHOT, true);
         capabilities.setCapability(CapabilityType.ForSeleniumServer.ENSURING_CLEAN_SESSION, true);
         capabilities.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
 
-        /*добавлено для обхода некорректной загрузки гугл аналитикс*/
         capabilities.setCapability(CapabilityType.PAGE_LOAD_STRATEGY, "none");
         capabilities.setCapability(CapabilityType.HAS_NATIVE_EVENTS, false);
 
-        capabilities.setVersion(browserConfig.getVersion());
-
-
-         /*
-            options.addArguments("window-size=" + browserSize, "--no-sandbox");
-        } else {
-            if (Config.USING_SELENIUM_HUB) {
-                options.addArguments("--window-size=1920,1080");
-            } else {
-                options.addArguments("--start-maximized");
-            }
+        if (!Strings.isEmpty(browserConfig.getVersion())) {
+            capabilities.setVersion(browserConfig.getVersion());
         }
-        */
         return capabilities;
     }
 

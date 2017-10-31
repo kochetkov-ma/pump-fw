@@ -30,7 +30,7 @@ abstract class AbstractDriverBuilder<T extends MutableCapabilities> implements D
     @SuppressWarnings("unchecked")
     public WebDriver createAndStartDriver() {
         if (config.isRemoteDriver()) {
-            return new RemoteWebDriver(gridUrl(), getSpecialCapabilities());
+            return new RemoteWebDriver(gridUrl(), getSpecialCapabilities().merge(builderHelper.getCommonCapabilities()));
         } else {
             builderHelper.prepareLocalDriverPath();
             return createLocalDriver((T) getSpecialCapabilities().merge(builderHelper.getCommonCapabilities()));

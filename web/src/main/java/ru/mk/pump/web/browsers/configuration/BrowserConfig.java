@@ -14,7 +14,7 @@ public class BrowserConfig {
 
     private String remoteDriverUrl;
 
-    private final String downloadDirPath;
+    private String downloadDirPath;
 
     private final Size sizeOrDevice;
 

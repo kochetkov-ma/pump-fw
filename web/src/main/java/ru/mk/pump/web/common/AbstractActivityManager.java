@@ -191,7 +191,7 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
         }
     }
 
-    private boolean isTargetActivity(Activity activity) {
+    protected boolean isTargetActivity(Activity activity) {
         return Arrays.stream(activityClass).anyMatch(item -> activity.getClass().isAssignableFrom(item));
     }
 

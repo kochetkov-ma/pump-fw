@@ -127,10 +127,12 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
 
     @Override
     public void close() {
-        if (driver != null) {
+        if (driver != null || !isClosed()) {
             driver.quit();
             driver = null;
         }
         super.close();
     }
+
+
 }

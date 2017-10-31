@@ -37,10 +37,8 @@ public class WindowManager extends AbstractActivityManager {
 
     @Override
     public void onClose(NamedEvent namedEvent, Activity activity) {
-        if (activity instanceof AbstractBrowser) {
-            releaseAll();
-        } else {
-            super.onClose(namedEvent, activity);
+        super.onClose(namedEvent, activity);
+        if (isTargetActivity(activity)) {
             if (getActive().isPresent()) {
                 getActive().get().activate();
             } else if (getPrev().isPresent()) {

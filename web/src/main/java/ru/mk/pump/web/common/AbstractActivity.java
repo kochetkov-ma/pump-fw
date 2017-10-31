@@ -13,9 +13,9 @@ public abstract class AbstractActivity extends Observable implements Activity {
     @Setter
     private UUID uuid;
 
-    private boolean closed = false;
+    private volatile boolean closed = false;
 
-    private boolean activated = false;
+    private volatile boolean activated = false;
 
     private Map<String, Parameter> param;
 
@@ -87,9 +87,12 @@ public abstract class AbstractActivity extends Observable implements Activity {
 
     @Override
     public void close() {
-        setChanged();
-        notifyObservers(NamedEvent.of("close"));
-        activated = false;
-        closed = true;
+        if (!isClosed()) {
+            setChanged();
+            notifyObservers(NamedEvent.of("close"));
+            activated = false;
+            closed = true;
+            clearChanged();
+        }
     }
 }

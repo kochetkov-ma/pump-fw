@@ -4,9 +4,10 @@ import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
+import ru.mk.pump.commons.utils.Resources;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
+import ru.mk.pump.web.browsers.configuration.Size;
 
 public class AbstractBrowserTest {
 
@@ -14,7 +15,10 @@ public class AbstractBrowserTest {
 
     @Before
     public void setUp() {
-        browser = new Browsers().newBrowser(new BrowserConfig(BrowserType.CHROME));
+        final BrowserConfig browserConfig = new BrowserConfig(false, Size.of(true), BrowserType.CHROME);
+        browserConfig.setWebDriverPath(Resources.findResource("chromedriver.exe").toString());
+
+        browser = new Browsers().newBrowser(browserConfig);
     }
 
     @After
@@ -28,14 +32,12 @@ public class AbstractBrowserTest {
         browser.open("https://ipotekaonline-tst.open.ru/");
         browser.windows().newTab();
         browser.open("https://app-digitalmortgage003.open.ru/");
-        browser.windows().getPrev().get().activate();
-        browser.getDriver().findElement(By.id("login")).click();
-        browser.windows().getPrev().get().close();
-        browser.windows().getActive().get().close();
         browser.close();
     }
 
     @Test
     public void windows() {
+
     }
+
 }
