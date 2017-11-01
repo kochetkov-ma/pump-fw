@@ -1,6 +1,5 @@
 package ru.mk.pump.commons.config;
 
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,13 +8,7 @@ import java.lang.annotation.Target;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Property {
-
-    String value();
-
-    String defaultValue() default "";
-
-    boolean required() default true;
-
+@Target({ElementType.FIELD, ElementType.TYPE})
+public @interface Config {
+    String value() default "";
 }

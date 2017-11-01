@@ -1,39 +1,34 @@
 package ru.mk.pump.commons.config;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 import lombok.ToString;
 
-@NoArgsConstructor
-@ToString
+@ToString(callSuper = true)
+@Data
 public class Stand {
 
-    @Getter
+    @Config("two")
+    private Two two;
+
     @Property("url")
     private String url;
 
-    @Getter
     @Property("count")
     private int count;
 
-    @Getter
     @Property(value = "no.reporting", required = false)
     private Object testNull;
 
-    @Getter
     @Property(value = "no.prop", defaultValue = "default")
     private String testDefault;
 
-    @Getter
     @Property("reporting")
     private boolean reporting;
 
-    @Getter
     @Property("common")
     private String common;
 
-    @Getter
     @Property(value = "common.extra")
     private String extra;
 }
