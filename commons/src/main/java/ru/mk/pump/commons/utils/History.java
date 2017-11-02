@@ -1,7 +1,6 @@
 package ru.mk.pump.commons.utils;
 
 import com.google.common.collect.EvictingQueue;
-import com.google.common.collect.ForwardingQueue;
 import com.google.common.collect.ImmutableList;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,39 +8,62 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-import ru.mk.pump.commons.utils.History.Info;
 
+@SuppressWarnings("UnusedReturnValue")
 @ToString
-public class History<T> extends ForwardingQueue<Info<T>> {
-
+public class History<T> {
 
     private final Queue<Info<T>> history;
 
     @Getter
     private final int maxSize;
 
-    private History(EvictingQueue<Info<T>> history) {
-        this.maxSize = history.remainingCapacity();
+    private History(EvictingQueue<Info<T>> history, int maxSize) {
+        this.maxSize = maxSize;
         this.history = history;
     }
 
     public History(int maxSize) {
-        this(EvictingQueue.create(maxSize));
+        this(EvictingQueue.create(maxSize), maxSize);
     }
 
-    @Override
-    protected Queue<Info<T>> delegate() {
+    public Queue<Info<T>> getAll() {
         return history;
+    }
+
+    public History<T> add(Info<T> item) {
+        history.add(item);
+        return this;
+    }
+
+    public void clear() {
+        history.clear();
+    }
+
+    public List<Info<T>> findAfter(@NotNull LocalDateTime dateTime) {
+        return history.stream().filter(item -> item.getCreateDate().isAfter(dateTime)).collect(Collectors.toList());
+    }
+
+    public List<Info<T>> findBefore(@NotNull LocalDateTime dateTime) {
+        return history.stream().filter(item -> item.getCreateDate().isBefore(dateTime)).collect(Collectors.toList());
+    }
+
+    public List<Info<T>> findById(@NotNull String id) {
+        return history.stream().filter(item -> id.equals(item.getId())).collect(Collectors.toList());
     }
 
     public Optional<Info<T>> findLastById(@NotNull String id) {
         return history.stream().filter(item -> id.equals(item.getId())).reduce((first, second) -> second);
     }
 
+    /**
+     * @return ImmutableList
+     */
     public List<Info<T>> asList() {
         return ImmutableList.copyOf(history);
     }
@@ -93,10 +115,8 @@ public class History<T> extends ForwardingQueue<Info<T>> {
 
             Info<?> info = (Info<?>) o;
 
-            if (id != null ? !id.equals(info.id) : info.id != null) {
-                return false;
-            }
-            return !considerCreateDate || (createDate != null ? createDate.equals(info.createDate) : info.createDate == null);
+            return (id != null ? id.equals(info.id) : info.id == null) && (!considerCreateDate || (createDate != null ? createDate.equals(info.createDate)
+                : info.createDate == null));
         }
 
         @Override
@@ -110,11 +130,12 @@ public class History<T> extends ForwardingQueue<Info<T>> {
         //endregion
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public History<T> clone() {
         final EvictingQueue<Info<T>> result = EvictingQueue.create(maxSize);
         result.addAll(history);
-        return new History<>(result);
+        return new History<>(result, maxSize);
     }
 
 

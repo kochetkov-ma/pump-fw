@@ -1,26 +1,34 @@
 package ru.mk.pump.commons.utils;
 
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Slf4j
+import org.junit.Test;
+import ru.mk.pump.commons.exception.UtilException;
+
 public class RandomUtilTest {
 
     @Test
     public void testNewRussianMobilePhone() {
-        log.info(RandomUtil.newRussianMobilePhone("+7903"));
-        log.info(RandomUtil.newRussianMobilePhone("7"));
-        log.info(RandomUtil.newRussianMobilePhone("+"));
-        log.info(RandomUtil.newRussianMobilePhone(""));
-        log.info(RandomUtil.newRussianMobilePhone(null));
-        log.info(RandomUtil.newRussianMobilePhone("+89307200000"));
-        log.info(RandomUtil.newRussianMobilePhone("+8930720000"));
+        assertThat(RandomUtil.newRussianMobilePhone("+7903")).startsWith("+7903").hasSize(12);
+        assertThat(RandomUtil.newRussianMobilePhone("7")).startsWith("+").hasSize(12);
+        assertThat(RandomUtil.newRussianMobilePhone("+")).startsWith("+").hasSize(12);
+        assertThat(RandomUtil.newRussianMobilePhone("")).startsWith("+7").hasSize(12);
+        assertThat(RandomUtil.newRussianMobilePhone(null)).startsWith("+7").hasSize(12);
+        assertThat(RandomUtil.newRussianMobilePhone("+89307200000")).startsWith("+89307200000").hasSize(12);
+        assertThat(RandomUtil.newRussianMobilePhone("+8930720000")).startsWith("+8930720000").hasSize(12);
+
+        assertThatThrownBy(()->RandomUtil.newRussianMobilePhone("+893072000001"))
+            .hasNoCause()
+            .isInstanceOf(UtilException.class)
+            .hasMessage("Pump utility exception. Cannot generate new phone for prefix size more 12 chars. Actual prefix +893072000001");
+
     }
 
     @Test
     public void testGetString() {
-        log.info(RandomUtil.newRussianString(25));
-        log.info(RandomUtil.newEnglishString(25));
-        log.info(RandomUtil.newNumber(25));
+        assertThat(RandomUtil.newRussianString(25)).hasSize(25).matches("[а-яА-Я]{25}");
+        assertThat(RandomUtil.newEnglishString(25)).hasSize(25).matches("[A-z]{25}");
+        assertThat(RandomUtil.newNumber(25)).hasSize(25).matches("\\d{25}");
     }
 }

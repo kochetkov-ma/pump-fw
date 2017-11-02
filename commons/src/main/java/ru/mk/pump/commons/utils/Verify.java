@@ -145,6 +145,9 @@ public class Verify {
         check(!Objects.isNull(isNotNull), description, message);
     }
 
+    /**
+     * @param comporatorToCompareItems {@link ru.mk.pump.commons.utils.Collators}
+     */
     public <T> void listEquals(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems,
         @Nullable Comparator<T> tComparatorToSortActual) {
         actual = sortIfNeed(actual, tComparatorToSortActual);
@@ -161,14 +164,34 @@ public class Verify {
     public <T> void listStrictContains(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems,
         @Nullable Comparator<T> tComparatorToSortActual) {
         actual = sortIfNeed(actual, tComparatorToSortActual);
+
         checkSize(description, expected, actual, true);
+
+        int actualStartIndex = -1;
+        for (int index = 0; index < actual.size(); index++) {
+            if (comporatorToCompareItems.collate(expected.get(0), actual.get(index))) {
+                actualStartIndex = index;
+            }
+        }
         final String message = format("Ожидаемый список '%s' строго (с учетом позиции элементов) содержится в списке '%s'", expected, actual);
+
+        check(actualStartIndex != -1, description, message,
+            Strings.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(actualStartIndex)));
+
+        final List<T> actualListToCompare = actual.subList(actualStartIndex, actual.size());
+
+        checkSize(Strings
+                .space(description,
+                    ". Сравнение части актуального списка начиная с позиции совпадения " + actualStartIndex + " с первым элементов ожидаемого списка"),
+            expected, actualListToCompare, true);
+
         for (int index = 0; index < expected.size(); index++) {
-            final T actualItem = actual.get(index);
+            final T actualItem = actualListToCompare.get(index);
             final T expectedItem = expected.get(index);
             check(comporatorToCompareItems.collate(expectedItem, actualItem), description, message,
                 Strings.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(index)));
         }
+
     }
 
     public <T> void listContains(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems) {

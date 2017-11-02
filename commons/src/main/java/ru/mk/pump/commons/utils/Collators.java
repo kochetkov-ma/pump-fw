@@ -8,15 +8,15 @@ import ru.mk.pump.commons.interfaces.Collator;
 @UtilityClass
 public class Collators {
 
-    public Collator<Object> equals() {
-        return new Collator<Object>() {
+    public <T> Collator<T> equals() {
+        return new Collator<T>() {
 
-            private Object expected;
+            private T expected;
 
-            private Object actual;
+            private T actual;
 
             @Override
-            public boolean collate(Object expected, Object actual) {
+            public boolean collate(T expected, T actual) {
                 this.expected = expected;
                 this.actual = actual;
                 return Objects.equals(expected, actual);
