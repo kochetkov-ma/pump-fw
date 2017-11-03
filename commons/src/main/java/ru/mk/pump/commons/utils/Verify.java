@@ -2,6 +2,8 @@ package ru.mk.pump.commons.utils;
 
 import static java.lang.String.format;
 
+import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -151,7 +153,7 @@ public class Verify {
     public <T> void listEquals(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems,
         @Nullable Comparator<T> tComparatorToSortActual) {
         actual = sortIfNeed(actual, tComparatorToSortActual);
-        checkSize(description, expected, actual, false);
+        checkSize(description, null, expected, actual, false);
         final String message = format("Ожидаемый список '%s' равен актуальному списку '%s'", expected, actual);
         for (int index = 0; index < expected.size(); index++) {
             final T actualItem = actual.get(index);
@@ -165,7 +167,7 @@ public class Verify {
         @Nullable Comparator<T> tComparatorToSortActual) {
         actual = sortIfNeed(actual, tComparatorToSortActual);
 
-        checkSize(description, expected, actual, true);
+        checkSize(description, null, expected, actual, true);
 
         int actualStartIndex = -1;
         for (int index = 0; index < actual.size(); index++) {
@@ -176,13 +178,12 @@ public class Verify {
         final String message = format("Ожидаемый список '%s' строго (с учетом позиции элементов) содержится в списке '%s'", expected, actual);
 
         check(actualStartIndex != -1, description, message,
-            Strings.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(actualStartIndex)));
+            "Найдено вхождение первого элемента ожидаемого списка в актуальном списке");
 
         final List<T> actualListToCompare = actual.subList(actualStartIndex, actual.size());
 
-        checkSize(Strings
-                .space(description,
-                    ". Сравнение части актуального списка начиная с позиции совпадения " + actualStartIndex + " с первым элементов ожидаемого списка"),
+        checkSize(Strings.space(description,
+            ". Сравнение части актуального списка начиная с позиции совпадения " + actualStartIndex + " с первым элементов ожидаемого списка"), message,
             expected, actualListToCompare, true);
 
         for (int index = 0; index < expected.size(); index++) {
@@ -195,7 +196,7 @@ public class Verify {
     }
 
     public <T> void listContains(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems) {
-        checkSize(description, expected, actual, true);
+        checkSize(description, null,expected, actual, true);
         final String message = format("Ожидаемый список '%s' не строго (без учета позиции элементов) содержится в списке '%s'", expected, actual);
         for (int index = 0; index < expected.size(); index++) {
             final T expectedItem = expected.get(index);
@@ -208,19 +209,20 @@ public class Verify {
     }
 
     private <T> List<T> sortIfNeed(@NotNull List<T> listToSort, @Nullable Comparator<T> tComparator) {
+        listToSort = new ArrayList<>(listToSort);
         if (tComparator != null) {
             Collections.sort(listToSort, tComparator);
         }
         return listToSort;
     }
 
-    private <T> void checkSize(String description, @NotNull List<T> expected, @NotNull List<T> actual, boolean isActualMoreExpected) {
+    private <T> void checkSize(String description, @Nullable String additionalMessage, @NotNull List<T> expected, @NotNull List<T> actual, boolean isActualMoreExpected) {
         if (isActualMoreExpected) {
             final String message = format("Размер ожидаемого списка '%s' равен или меньше размера актуального списка '%s'", expected, actual);
-            check(actual.size() >= expected.size(), description, message);
+            check(actual.size() >= expected.size(), description, additionalMessage, message);
         } else {
             final String message = format("Размер ожидаемого списка '%s' равен размеру актуального списка '%s'", expected, actual);
-            check(actual.size() == expected.size(), description, message);
+            check(actual.size() == expected.size(), description, additionalMessage, message);
         }
     }
 

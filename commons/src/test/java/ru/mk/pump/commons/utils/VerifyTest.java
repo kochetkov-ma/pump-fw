@@ -8,13 +8,10 @@ import java.util.Comparator;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import ru.mk.pump.commons.exception.VerifyError;
-import ru.mk.pump.commons.reporter.AllureRunner;
 import ru.mk.pump.commons.reporter.ReporterAllure;
 import ru.mk.pump.commons.reporter.ReporterAllure.Type;
 
-@RunWith(AllureRunner.class)
 public class VerifyTest {
 
     private Verify verify;
@@ -79,7 +76,12 @@ public class VerifyTest {
 
     @Test
     public void equalsList() {
-        Object object = new Object();
+        Object object = new Object() {
+            @Override
+            public String toString() {
+                return "OBJECT";
+            }
+        };
         Comparator<Object> comparator = Comparator.nullsLast((o1, o2) -> {
             if (o2 instanceof String) {
                 return -2;
@@ -110,34 +112,46 @@ public class VerifyTest {
         List<String> stringList3 = Lists.newArrayList("строка - 1", "строка - 2");
         List<String> stringList4 = Lists.newArrayList("строка - 2", "строка - 3");
         List<String> stringList5 = Lists.newArrayList("строка - 2", "строка - 4");
-        List<String> stringList6 = Lists.newArrayList("строка - 2", "   строка   -   1  ");
+        List<String> stringList6 = Lists.newArrayList("строка - 2", "ка - 1");
         List<String> stringList7 = Lists.newArrayList("строка - 2", "стрrrока - 7");
+        List<String> stringList8 = Lists.newArrayList("    строка - 3    ");
+        List<String> stringList9 = Lists.newArrayList("строка - 4");
+        List<String> stringList10 = Lists.newArrayList("строка - 3", "строка - 4");
 
-        verify.listStrictContains("Описание", stringList3, stringList1, Collators.equals(), null);
+        assertThatCode(() -> verify.listEquals("Описание", list1, list2, Collators.equals(), null)).doesNotThrowAnyException();
+        assertThatCode(() -> verify.listEquals("Описание", list1, list3, Collators.equals(), comparator)).doesNotThrowAnyException();
 
-        /*
-        verify.listEquals("Описание", expect1, actual1, Collators.equals(), null);
-        assertThatThrownBy(() -> verify.listEquals("Описание", expect10, actual1, Collators.equals(), null))
+        assertThatThrownBy(() -> verify.listEquals("Описание", list3, list1, Collators.equals(), null))
             .hasNoCause()
             .isInstanceOf(VerifyError.class)
             .hasMessageContaining("Pump verify fail. Описание")
             .hasMessageContaining(
-                "Description : Ожидаемый список '[1, java.lang.Object@78aab498, строка]' равен актуальному списку '[java.lang.Object@78aab498, строка, 1]'")
-            .hasMessageContaining("Актуальное значение 'java.lang.Object@78aab498' типа 'Object' равно ожидаемому значению '1' типа 'Long' index 0");
+                "Description : Ожидаемый список '[1, OBJECT, строка]' равен актуальному списку '[OBJECT, строка, 1]'")
+            .hasMessageContaining("Актуальное значение 'OBJECT' типа '' равно ожидаемому значению '1' типа 'Long' index 0");
 
-        assertThatThrownBy(() -> verify.listEquals("Описание", expect11, expect10, Collators.equals(), null))
+        assertThatThrownBy(() -> verify.listEquals("Описание", list4, list3, Collators.equals(), null))
             .hasNoCause()
             .isInstanceOf(VerifyError.class)
             .hasMessageContaining("Pump verify fail. Описание")
             .hasMessageContaining(
-                "Description : Размер ожидаемого списка '[1, java.lang.Object@78aab498]' равен размеру актуального списка '[1, java.lang.Object@78aab498, строка]'");
+                "Description : Размер ожидаемого списка '[1, OBJECT]' равен размеру актуального списка '[1, OBJECT, строка]'");
 
-        verify.listEquals("Описание", expect10, actual1, Collators.equals(), comparator);
+        assertThatCode(() -> verify.listStrictContains("Описание", stringList3, stringList1, Collators.equals(), null)).doesNotThrowAnyException();
+        assertThatCode(() -> verify.listStrictContains("Описание", stringList4, stringList1, Collators.equals(), null)).doesNotThrowAnyException();
 
+        assertThatThrownBy(() -> verify.listStrictContains("Описание", stringList1, stringList10, Collators.equals(), null));
+        assertThatThrownBy(() -> verify.listStrictContains("Описание", stringList5, stringList1, Collators.equals(), null));
+        assertThatThrownBy(() -> verify.listStrictContains("Описание", stringList9, stringList1, Collators.equals(), null));
+        assertThatThrownBy(() -> verify.listStrictContains("Описание", stringList10, stringList1, Collators.equals(), null));
 
-        verify.listContains("Описание", expect6, actual2, Collators.normalizeContains());
-        */
+        assertThatCode(() -> verify.listContains("Описание", stringList2, stringList1, Collators.equals())).doesNotThrowAnyException();
+        assertThatCode(() -> verify.listContains("Описание", stringList3, stringList1, Collators.equals())).doesNotThrowAnyException();
+        assertThatCode(() -> verify.listContains("Описание", stringList4, stringList1, Collators.equals())).doesNotThrowAnyException();
 
+        assertThatCode(() -> verify.listContains("Описание", stringList6, stringList1, Collators.contains())).doesNotThrowAnyException();
+        assertThatCode(() -> verify.listContains("Описание", stringList8, stringList1, Collators.normalizeContains())).doesNotThrowAnyException();
+
+        assertThatThrownBy(() -> verify.listContains("Описание", stringList7, stringList1, Collators.normalizeContains())).isInstanceOf(VerifyError.class);
+        assertThatThrownBy(() -> verify.listContains("Описание", stringList1, stringList3, Collators.normalizeContains())).isInstanceOf(VerifyError.class);
     }
-
 }
