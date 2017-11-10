@@ -11,10 +11,10 @@ public class Stands {
     @Property("complex")
     private boolean complex;
 
-    @Config("stand")
+    @Property("stand")
     private Stand standOne;
 
-    @Config("standA")
+    @Property("standA")
     private Stand standTwo;
 
     @Property("name")

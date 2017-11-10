@@ -20,6 +20,8 @@ import ru.mk.pump.commons.utils.Strings;
 @Slf4j
 public class ReporterAllure implements Reporter, AutoCloseable {
 
+    public static final String DEFAULT_RESULT_DIR = "";
+
     private static final String LOG_PREFIX = "[REPORTER] STEP";
 
     private final Type minimumLevelForDuplicateInSlf4;

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.mk.pump.commons.utils.History.Info;
-import ru.mk.pump.commons.utils.Resources;
+import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.commons.utils.Strings;
 
 @Slf4j
@@ -15,13 +15,13 @@ public class ConfigurationsLoaderTest {
 
     @Test
     public void testLoad() {
-        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(Resources.findResource("stand.properties"), true);
+        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
         configurationsLoader.load();
     }
 
     @Test
     public void testGetMap() {
-        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(Resources.findResource("stand.properties"), true);
+        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
         assertThat(configurationsLoader.getMap()).isEmpty();
         configurationsLoader.load();
         log.debug(Strings.mapToPrettyString(configurationsLoader.getMap()));
@@ -34,7 +34,7 @@ public class ConfigurationsLoaderTest {
     public void testMapToObject() {
         /*to test load from ENV or SYSTEM VARS*/
         System.setProperty("common.extra", "from_env");
-        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(Resources.findResource("stand.properties"), true);
+        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
         configurationsLoader.load();
         /*create empty object*/
         final Stand stand = new Stand();
@@ -73,7 +73,7 @@ public class ConfigurationsLoaderTest {
 
         /*to test load from ENV or SYSTEM VARS*/
         System.setProperty("common.extra", "from_env");
-        ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(Resources.findResource("stands.properties"), true);
+        ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stands.properties"), true);
         configurationsLoader.load();
         /*create new object from class*/
         final Stands stand = configurationsLoader.toObject(Stands.class);
@@ -87,7 +87,7 @@ public class ConfigurationsLoaderTest {
     @Test
     public void testHistory() {
         System.setProperty("common.extra", "from_env");
-        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(Resources.findResource("stands.properties"), true);
+        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stands.properties"), true);
         configurationsLoader.load();
         log.debug(Strings.listToPrettyString(configurationsLoader.getHistory().asList()));
         final Stands stand = configurationsLoader.toObject(Stands.class);

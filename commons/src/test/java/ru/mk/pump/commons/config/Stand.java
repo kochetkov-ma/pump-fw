@@ -8,7 +8,7 @@ import lombok.ToString;
 @Data
 public class Stand {
 
-    @Config("two")
+    @Property("two")
     private Two two;
 
     @Property("url")

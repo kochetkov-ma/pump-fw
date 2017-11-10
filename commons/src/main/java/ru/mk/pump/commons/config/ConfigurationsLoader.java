@@ -7,10 +7,9 @@ import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,8 +52,12 @@ public class ConfigurationsLoader {
     }
     //endregion
 
+    public static String getHistoryId(@NotNull Class mappableClass, @Nullable String prefix) {
+        return Strings.concat("_", mappableClass.getSimpleName(), prefix);
+    }
+
     //region PUBLIC METHODS
-    public History<String> getHistory(){
+    public History<String> getHistory() {
         return history.clone();
     }
 
@@ -96,10 +99,6 @@ public class ConfigurationsLoader {
 
     }
 
-    public static String getHistoryId(@NotNull Class mappableClass, @Nullable String prefix) {
-        return Strings.concat("_", mappableClass.getSimpleName(), prefix);
-    }
-
     //endregion
 
     //region PRIVATE
@@ -126,8 +125,8 @@ public class ConfigurationsLoader {
 
     private String getPrefixOrNull(Field field, String... sourcePrefix) {
         final String prePrefix = Strings.concat(StringConstants.DOT, sourcePrefix);
-        if (field.isAnnotationPresent(Config.class)) {
-            return Strings.concat(StringConstants.DOT, prePrefix, field.getAnnotation(Config.class).value());
+        if (field.isAnnotationPresent(Property.class)) {
+            return Strings.concat(StringConstants.DOT, prePrefix, field.getAnnotation(Property.class).value());
         } else {
             return prePrefix;
         }
@@ -143,7 +142,7 @@ public class ConfigurationsLoader {
         Object result;
         String path;
         String finalPath = "";
-        if (field.isAnnotationPresent(Config.class)) {
+        if (!ClassUtils.isPrimitiveOrWrapper(field.getType()) && !field.getType().isAssignableFrom(String.class)) {
             try {
                 path = getPrefixOrNull(field, prefix);
                 result = mapToObject(field.getType(), path);

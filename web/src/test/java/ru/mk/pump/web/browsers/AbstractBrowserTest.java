@@ -3,8 +3,9 @@ package ru.mk.pump.web.browsers;
 import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import ru.mk.pump.commons.utils.Resources;
+import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
@@ -16,7 +17,7 @@ public class AbstractBrowserTest {
     @Before
     public void setUp() {
         final BrowserConfig browserConfig = new BrowserConfig(false, Size.of(true), BrowserType.CHROME);
-        browserConfig.setWebDriverPath(Resources.findResource("chromedriver.exe").toString());
+        browserConfig.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
 
         browser = new Browsers().newBrowser(browserConfig);
     }
@@ -36,6 +37,7 @@ public class AbstractBrowserTest {
     }
 
     @Test
+    @Ignore
     public void windows() {
 
     }

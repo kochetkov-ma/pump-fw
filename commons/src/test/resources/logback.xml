@@ -9,7 +9,7 @@
     </layout>
   </appender>
   <appender class="ch.qos.logback.core.FileAppender" name="FILE">
-    <file>target/framework.log</file>
+    <file>build/framework.log</file>
     <encoder>
       <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
     </encoder>

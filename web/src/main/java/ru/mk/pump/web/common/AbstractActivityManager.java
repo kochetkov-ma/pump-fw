@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -13,6 +12,7 @@ import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("WeakerAccess")
 @Slf4j
 public abstract class AbstractActivityManager implements ActivityManager, ActivityListener {
 
@@ -30,7 +30,7 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
 
     private Activity cache = null;
 
-    private Class<? extends Activity>[] activityClass;
+    private Class<? extends Activity>[] activityClass = new Class[]{Activity.class};
 
     protected AbstractActivityManager() {
         this(Lists.newArrayList());

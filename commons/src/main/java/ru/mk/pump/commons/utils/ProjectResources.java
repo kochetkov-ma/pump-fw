@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.exception.UtilException;
 
@@ -15,31 +16,50 @@ import ru.mk.pump.commons.exception.UtilException;
  * ONLY IN CALLER PROJECT DIRS
  */
 @UtilityClass
-public final class Resources {
+@Slf4j
+public final class ProjectResources {
 
     public Path getBuildDir(@NotNull Class relatedClass) {
         try {
-            return Paths.get(relatedClass.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
+            return moveToBuildRoot(Paths.get(relatedClass.getProtectionDomain().getCodeSource().getLocation().toURI()));
         } catch (URISyntaxException e) {
             throw new UtilException(format("Cannot get build folder for class '%s'", relatedClass), e);
         }
     }
 
+    private Path moveToBuildRoot(Path innerProjectPath) {
+        final String pDir = System.getProperty("user.dir");
+        if (pDir == null) {
+            log.error("RESOURCES ERROR : Cannot get system property 'user.dir'");
+            return innerProjectPath;
+        }
+        final Path buildDir = Paths.get(pDir);
+        Path result = innerProjectPath.getParent();
+        while (result != null && !buildDir.equals(result.getParent())) {
+            result = result.getParent();
+        }
+        if (result == null){
+            throw new UtilException("Cannot get build Path from " + innerProjectPath);
+        }
+        return result;
+
+    }
+
     @NotNull
     public Path getResourcesDir() {
-        final URL url = Resources.class.getClassLoader().getResource("");
+        final URL url = ProjectResources.class.getClassLoader().getResource("");
         if (url == null) {
-            throw new UtilException("Resources folder is null");
+            throw new UtilException("ProjectResources folder is null");
         }
         try {
-            return Paths.get(url.toURI());
+            return moveToBuildRoot(Paths.get(url.toURI()));
         } catch (URISyntaxException e) {
             throw new UtilException("Cannot get resources folder", e);
         }
     }
 
     public List<Path> findResourceFiles(@NotNull String dirName, @NotNull String fileName, int depth) {
-        return FileUtils.findFiles(FileUtils.resolveDir(getResourcesDir(), dirName), fileName, depth);
+        return FileUtils.findFiles(FileUtils.findDir(getResourcesDir(), dirName, depth), fileName, depth);
     }
 
     public Path findResource(@NotNull String fileName) {

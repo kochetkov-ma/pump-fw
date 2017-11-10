@@ -1,6 +1,5 @@
 package ru.mk.pump.commons.exception;
 
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
 import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 import com.google.common.collect.Maps;
@@ -38,7 +37,7 @@ public class ThrowableMessage implements PrettyPrinter {
      */
     private String preTitleMessage = null;
 
-    public ThrowableMessage(String title, String description, Map<String, String> envInformation, Map<String, String> extraInformation) {
+    public ThrowableMessage(String title, String description, Map<String, String> extraInformation, Map<String, String> envInformation) {
         this.title = title;
         if (description != null) {
             this.description = description;
@@ -57,8 +56,8 @@ public class ThrowableMessage implements PrettyPrinter {
         }
     }
 
-    public ThrowableMessage(@NonNull String title, String description, Map<String, String> envInformation) {
-        this(title, description, envInformation, null);
+    public ThrowableMessage(@NonNull String title, String description, Map<String, String> extraInformation) {
+        this(title, description, extraInformation, null);
     }
 
     public ThrowableMessage(@NonNull String title, String description) {
@@ -74,13 +73,13 @@ public class ThrowableMessage implements PrettyPrinter {
         final StringBuilder sb = new StringBuilder();
         sb.append(Strings.concat(StringConstants.DOT_SPACE, preTitleMessage, title)).append(LINE);
         if (!description.isEmpty()) {
-            sb.append("Description").append(KEY_VALUE_PRETTY_DELIMITER).append(description).append(LINE);
-        }
-        if (!envInformation.isEmpty()) {
-            sb.append("Environment information").append(KEY_VALUE_PRETTY_DELIMITER).append(Strings.mapToPrettyString(envInformation)).append(LINE);
+            sb.append("[Description]").append(StringConstants.KEY_VALUE_PRETTY_DELIMITER).append(description).append(LINE);
         }
         if (!extraInformation.isEmpty()) {
-            sb.append("Additional information").append(KEY_VALUE_PRETTY_DELIMITER).append(Strings.mapToPrettyString(extraInformation));
+            sb.append("[Additional information]").append(StringConstants.LINE).append(Strings.mapToPrettyString(extraInformation));
+        }
+        if (!envInformation.isEmpty()) {
+            sb.append("[Environment information]").append(StringConstants.LINE).append(Strings.mapToPrettyString(envInformation)).append(LINE);
         }
         return Strings.trim(sb.toString());
     }

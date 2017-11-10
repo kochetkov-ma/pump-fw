@@ -9,7 +9,9 @@ public class AllureRunner extends BlockJUnit4ClassRunner {
 
     public AllureRunner(Class<?> klass) throws InitializationError {
         super(klass);
-        System.setProperty("allure.results.directory", "target/allure-result");
+        if (System.getProperty("allure.results.directory") == null) {
+            System.setProperty("allure.results.directory", "out/allure-result");
+        }
     }
 
     @Override

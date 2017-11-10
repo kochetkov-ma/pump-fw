@@ -142,6 +142,21 @@ public class FileUtils {
         return org.apache.commons.io.FileUtils.sizeOfDirectory(dirPath.toFile()) / 1024 / 1024;
     }
 
+    public Path findDir(Path sourceDir, String dirName, int depth) {
+        if (depth < 1) {
+            depth = 1;
+        }
+        if (java.nio.file.Files.notExists(sourceDir) || !java.nio.file.Files.isDirectory(sourceDir)) {
+            throw new UtilException(format("Cannot find dir '%s'", sourceDir));
+        }
+        try {
+            return java.nio.file.Files.find(sourceDir, depth, (path, attr) -> attr.isDirectory() && path.getFileName().toString().startsWith(dirName))
+                .findFirst().orElseThrow(() -> new UtilException(format("Cannot find dir '%s' in dir '%s'", dirName, sourceDir)));
+        } catch (IOException e) {
+            throw new UtilException(format("Cannot find dir '%s' in dir '%s'", dirName, sourceDir), e);
+        }
+    }
+
     public List<Path> findFiles(Path sourceDir, String fileName, int depth) {
         if (depth < 1) {
             depth = 1;
@@ -153,7 +168,7 @@ public class FileUtils {
             return java.nio.file.Files.find(sourceDir, depth, (path, attr) -> attr.isRegularFile() && path.getFileName().toString().startsWith(fileName))
                 .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new UtilException(format("Cannot find resource files '%s' in dir '%s'", fileName, sourceDir), e);
+            throw new UtilException(format("Cannot find files '%s' in dir '%s'", fileName, sourceDir), e);
         }
     }
 
