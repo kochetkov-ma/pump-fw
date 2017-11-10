@@ -1,0 +1,21 @@
+apply plugin: 'java'
+
+ext {
+    awaitilityVersion = '3.0.0'
+}
+
+task info {
+    doLast {
+        println "Gradle — система автоматической сборки, построенная на принципах Apache Ant и Apache Maven, но предоставляющая DSL на языке Groovy вместо традиционной XML-образной формы представления конфигурации проекта."
+    }
+}
+
+test {
+    System.setProperty("allure.results.directory", "$buildDir/allure-result")
+}
+
+dependencies {
+    
+    compile "org.awaitility:awaitility:$awaitilityVersion"
+}
+

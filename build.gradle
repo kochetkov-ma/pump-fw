@@ -1,0 +1,85 @@
+
+group = "ru.mk.pump"
+version = "1.0"
+ext {
+    versions = [
+            aspectj     : "1.8.10",
+            annotations : "15.0",
+            lombok      : "latest.release",
+            apache      : "latest.release",
+            guava       : "latest.release",
+            reflections : "latest.release",
+            logger      : "latest.release",
+            junit       : "4.12",
+            jackson     : "2.9.0.pr4",
+            selenium    : "3.6.0",
+            allure      : "latest.release",
+            assertj     : "3.8.0",
+            allureJunit4: "latest.release"
+    ]
+}
+
+task info {
+    doLast {
+        println "Gradle — система автоматической сборки, построенная на принципах Apache Ant и Apache Maven, но предоставляющая DSL на языке Groovy вместо традиционной XML-образной формы представления конфигурации проекта."
+    }
+}
+
+task clean(group: "build") {
+    doLast {
+        println "start clean : $project.name"
+        delete buildDir
+        println "dir clean finish : $buildDir"
+
+        delete "${rootDir}/out"
+        println "dir clean finish : ${rootDir}/out"
+
+        delete "${rootDir}/target"
+        println "dir clean finish : ${rootDir}/target"
+    }
+}
+
+subprojects {
+    apply plugin: "java"
+    version = rootProject.version
+    compileJava.options.encoding = "UTF-8"
+
+    /*sub projects full clean*/
+    clean.doFirst {
+        println "start clean : $project.name"
+
+        delete "${project.projectDir}/out"
+        println "dir clean finish : ${project.projectDir}/out"
+
+        delete "${project.projectDir}/target"
+        println "dir clean finish : ${project.projectDir}/target"
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile(
+                "org.jetbrains:annotations:$versions.annotations",
+                "org.projectlombok:lombok:$versions.lombok",
+                "org.apache.httpcomponents:httpclient:$versions.apache",
+                "org.reflections:reflections:$versions.reflections",
+                "commons-collections:commons-collections:$versions.apache",
+                "com.google.guava:guava:$versions.guava",
+                "org.apache.commons:commons-lang3:$versions.apache",
+                "commons-io:commons-io:$versions.apache",
+                "org.apache.commons:commons-text:$versions.apache",
+                "ch.qos.logback:logback-classic:$versions.logger",
+                "ch.qos.logback:logback-core:$versions.logger",
+                "org.seleniumhq.selenium:selenium-java:$versions.selenium",
+                "io.qameta.allure:allure-java-commons:$versions.allure"
+        )
+
+        testCompile(
+                "junit:junit:$versions.junit",
+                "org.assertj:assertj-core:$versions.assertj",
+                "io.qameta.allure:allure-junit4:$versions.allureJunit4"
+        )
+    }
+}

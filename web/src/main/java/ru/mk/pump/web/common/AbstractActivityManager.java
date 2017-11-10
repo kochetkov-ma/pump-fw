@@ -2,12 +2,13 @@ package ru.mk.pump.web.common;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
 
     private Activity cache = null;
 
-    private Class<? extends Activity>[] activityClass = new Class[]{Activity.class};
+    private Set<Class<? extends Activity>> activityClass;
 
     protected AbstractActivityManager() {
         this(Lists.newArrayList());
@@ -38,13 +39,16 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
 
     protected AbstractActivityManager(List<Activity> activityList) {
         activityMap = Maps.newHashMap();
+        //noinspection unchecked
+        activityClass = Sets.newHashSet(Activity.class);
         if (activityList != null) {
             activityList.forEach(this::add);
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void setFilterActivityClass(Class<? extends Activity>... activityClass) {
-        this.activityClass = activityClass;
+        this.activityClass = Sets.newHashSet(activityClass);
     }
 
     @Override
@@ -192,7 +196,7 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
     }
 
     protected boolean isTargetActivity(Activity activity) {
-        return Arrays.stream(activityClass).anyMatch(item -> activity.getClass().isAssignableFrom(item));
+        return activityClass.stream().anyMatch(item -> item.isAssignableFrom(activity.getClass()));
     }
 
     //region PRIVATE M
