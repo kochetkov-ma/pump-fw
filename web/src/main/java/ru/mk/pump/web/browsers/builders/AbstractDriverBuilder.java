@@ -41,7 +41,7 @@ abstract class AbstractDriverBuilder<T extends MutableCapabilities> implements D
 
     /**
      *
-     * @return Only special. Common auto merge in future
+     * @return Only special. Common auto merge further
      */
     abstract protected T getSpecialCapabilities();
 

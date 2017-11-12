@@ -1,17 +1,18 @@
 package ru.mk.pump.commons.reporter;
 
 
-import static ru.mk.pump.commons.constants.MainConstants.SCREEN_FORMAT;
-
-import java.nio.file.Path;
-import java.util.function.Supplier;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.constants.MainConstants;
 import ru.mk.pump.commons.utils.FileUtils;
 
+import java.nio.file.Path;
+import java.util.function.Supplier;
 
-@SuppressWarnings("unused")
+import static ru.mk.pump.commons.constants.MainConstants.SCREEN_FORMAT;
+
+
+@SuppressWarnings({"unused", "WeakerAccess"})
 @Slf4j
 public class AttachmentsFactory {
 
@@ -26,7 +27,7 @@ public class AttachmentsFactory {
 
     public Attachment file(@NonNull String attachmentName, @NonNull Path path) {
         return new Attachment().withName(attachmentName).withSource(FileUtils.toString(path, MainConstants.FILE_ENCODING))
-            .withExtension(FileUtils.getExtension(path));
+                .withExtension(FileUtils.getExtension(path));
     }
 
     public Attachment file(@NonNull String attachmentName, @NonNull Supplier<byte[]> bytes) {
@@ -35,18 +36,18 @@ public class AttachmentsFactory {
 
     public Attachment text(@NonNull String attachmentName, @NonNull String text) {
         return new Attachment().withName(attachmentName).withSource(text)
-            .withExtension("txt")
-            .withType("text/plain");
+                .withExtension("txt")
+                .withType("text/plain");
     }
 
     public Attachment screen(@NonNull String attachmentName, @NonNull Supplier<byte[]> bytes) {
         return new Attachment().withName(attachmentName).withSourceByte(bytes).withType(IMAGE)
-            .withExtension(SCREEN_FORMAT);
+                .withExtension(SCREEN_FORMAT);
     }
 
     public Attachment screen(@NonNull String attachmentName) {
         return new Attachment().withName(attachmentName).withSourceByte(() -> screenshoter.getScreen().orElse(new byte[0]))
-            .withExtension("png")
-            .withType(IMAGE);
+                .withExtension("png")
+                .withType(IMAGE);
     }
 }

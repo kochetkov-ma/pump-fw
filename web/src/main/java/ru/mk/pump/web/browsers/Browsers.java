@@ -4,6 +4,7 @@ import java.util.UUID;
 import ru.mk.pump.web.browsers.builders.ChromeDriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 
+@SuppressWarnings("WeakerAccess")
 public class Browsers {
 
     private static DriverBuilder getBuilder(BrowserConfig browserConfig) {
@@ -20,7 +21,7 @@ public class Browsers {
     }
 
     public Browser newBrowser(BrowserConfig browserConfig) {
-        return new AbstractBrowser(Browsers.getBuilder(browserConfig), UUID.randomUUID()) {
+        return new AbstractBrowser(getBuilder(browserConfig), UUID.randomUUID()) {
         };
     }
 }

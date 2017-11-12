@@ -1,4 +1,3 @@
-
 rootProject.name = 'pump-fw'
 include 'web'
 include 'commons'

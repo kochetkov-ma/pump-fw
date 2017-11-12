@@ -1,8 +1,10 @@
 package ru.mk.pump.commons.reporter;
 
-import java.util.function.Supplier;
 import lombok.Getter;
 
+import java.util.function.Supplier;
+
+@SuppressWarnings("WeakerAccess")
 @Getter
 public class Attachment {
 
@@ -44,9 +46,9 @@ public class Attachment {
     @Override
     public String toString() {
         return "Attachment{" +
-            "name='" + name + '\'' +
-            ", type='" + type + '\'' +
-            ", extension='" + extension + '\'' +
-            '}';
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", extension='" + extension + '\'' +
+                '}';
     }
 }

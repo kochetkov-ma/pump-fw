@@ -30,9 +30,9 @@ public class AbstractBrowserTest {
     @Test
     public void start() throws IOException {
         browser.start();
-        browser.open("https://ipotekaonline-tst.open.ru/");
+        browser.open("https://ya.ru");
         browser.windows().newTab();
-        browser.open("https://app-digitalmortgage003.open.ru/");
+        browser.open("https://google.ru");
         browser.close();
     }
 

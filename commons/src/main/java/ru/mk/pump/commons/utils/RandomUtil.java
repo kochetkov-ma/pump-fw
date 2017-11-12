@@ -1,12 +1,14 @@
 package ru.mk.pump.commons.utils;
 
-import java.util.Objects;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 import ru.mk.pump.commons.exception.UtilException;
 
+import java.util.Objects;
+
+@SuppressWarnings("WeakerAccess")
 @UtilityClass
 @Slf4j
 public final class RandomUtil {
@@ -14,13 +16,13 @@ public final class RandomUtil {
     private static final String RUSSIAN_CODE = "+7";
 
     public static final RandomStringGenerator.Builder RUSSIAN = new RandomStringGenerator.Builder().withinRange('А', 'я')
-        .filteredBy(CharacterPredicates.LETTERS);
+            .filteredBy(CharacterPredicates.LETTERS);
 
     public static final RandomStringGenerator.Builder ENGLISH = new RandomStringGenerator.Builder().withinRange('A', 'z')
-        .filteredBy(CharacterPredicates.LETTERS);
+            .filteredBy(CharacterPredicates.LETTERS);
 
     public static final RandomStringGenerator.Builder NUMBER = new RandomStringGenerator.Builder().withinRange('0', '9')
-        .filteredBy(CharacterPredicates.DIGITS);
+            .filteredBy(CharacterPredicates.DIGITS);
 
     public static String newNumber(int len) {
         return NUMBER.build().generate(len);

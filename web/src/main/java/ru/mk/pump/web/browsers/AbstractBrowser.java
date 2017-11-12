@@ -7,8 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import ru.mk.pump.commons.exception.ThrowableMessage;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
-import ru.mk.pump.web.common.AbstractActivity;
-import ru.mk.pump.web.common.Activity;
+import ru.mk.pump.commons.activity.AbstractActivity;
+import ru.mk.pump.commons.activity.Activity;
 import ru.mk.pump.web.exceptions.BrowserException;
 
 /**
@@ -64,6 +64,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
         return this;
     }
 
+    @NotNull
     @Override
     public WebDriver getDriver() {
         if (driver == null) {

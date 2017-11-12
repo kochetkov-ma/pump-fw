@@ -1,8 +1,9 @@
-package ru.mk.pump.web.common;
+package ru.mk.pump.commons.activity;
 
 
 import java.util.function.Function;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parameter<T> {
 
     private final Function<String, T> stringTFunction;

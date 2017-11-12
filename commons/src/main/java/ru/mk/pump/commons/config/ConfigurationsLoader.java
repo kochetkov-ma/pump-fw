@@ -22,7 +22,7 @@ import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.PropertiesUtil;
 import ru.mk.pump.commons.utils.Strings;
 
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"UnusedReturnValue", "WeakerAccess", "unused"})
 @Slf4j
 public class ConfigurationsLoader {
 

@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
-import ru.mk.pump.web.common.AbstractActivity;
-import ru.mk.pump.web.common.Activity;
+import ru.mk.pump.commons.activity.AbstractActivity;
+import ru.mk.pump.commons.activity.Activity;
 import ru.mk.pump.web.exceptions.BrowserException;
 
 @Slf4j

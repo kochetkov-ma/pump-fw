@@ -2,14 +2,6 @@ package ru.mk.pump.commons.utils;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import lombok.Getter;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
@@ -21,7 +13,16 @@ import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.exception.ThrowableMessage;
 import ru.mk.pump.commons.exception.TimeoutException;
 
-@SuppressWarnings({"unchecked", "UnusedReturnValue"})
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+@SuppressWarnings({"unchecked", "UnusedReturnValue", "unused", "WeakerAccess"})
 public class Waiter {
 
     /**
@@ -104,11 +105,11 @@ public class Waiter {
         final AtomicLong elapsedTime = new AtomicLong(timeoutSec * 1000);
         try {
             result = Awaitility.await()
-                .conditionEvaluationListener(condition -> elapsedTime.set(condition.getElapsedTimeInMS()))
-                .ignoreExceptionsMatching(this::checkException)
-                .pollInterval(intervalMs, TimeUnit.MILLISECONDS)
-                .atMost(timeoutSec, TimeUnit.SECONDS)
-                .until(action, matcher);
+                    .conditionEvaluationListener(condition -> elapsedTime.set(condition.getElapsedTimeInMS()))
+                    .ignoreExceptionsMatching(this::checkException)
+                    .pollInterval(intervalMs, TimeUnit.MILLISECONDS)
+                    .atMost(timeoutSec, TimeUnit.SECONDS)
+                    .until(action, matcher);
         } catch (ConditionTimeoutException ex) {
             try {
                 result = action.call();
@@ -137,7 +138,7 @@ public class Waiter {
     }
 
     //region INNER STATIC CLASS
-    @SuppressWarnings("UnusedReturnValue")
+    @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
     public static class WaitResult<T> {
 
         @Getter

@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
-import ru.mk.pump.web.browsers.constants.WebConstants;
+import ru.mk.pump.web.constants.WebConstants;
 
 public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
 

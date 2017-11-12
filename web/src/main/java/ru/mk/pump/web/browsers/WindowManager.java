@@ -3,9 +3,9 @@ package ru.mk.pump.web.browsers;
 import java.util.Set;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
-import ru.mk.pump.web.common.AbstractActivityManager;
-import ru.mk.pump.web.common.Activity;
-import ru.mk.pump.web.common.NamedEvent;
+import ru.mk.pump.commons.activity.AbstractActivityManager;
+import ru.mk.pump.commons.activity.Activity;
+import ru.mk.pump.commons.activity.NamedEvent;
 import ru.mk.pump.web.exceptions.BrowserException;
 
 @SuppressWarnings("unchecked")

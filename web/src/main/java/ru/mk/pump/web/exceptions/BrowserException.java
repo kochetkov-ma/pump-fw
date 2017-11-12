@@ -3,6 +3,7 @@ package ru.mk.pump.web.exceptions;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.ThrowableMessage;
 
+@SuppressWarnings("unused")
 public class BrowserException extends PumpException {
 
     public BrowserException(String message) {

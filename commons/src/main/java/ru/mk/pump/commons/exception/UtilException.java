@@ -1,5 +1,6 @@
 package ru.mk.pump.commons.exception;
 
+@SuppressWarnings("unused")
 public class UtilException extends PumpException {
 
     private static final String PRE = "Pump utility exception";

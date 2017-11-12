@@ -1,5 +1,6 @@
 package ru.mk.pump.commons.exception;
 
+@SuppressWarnings("unused")
 public class TimeoutException extends PumpException {
 
     public TimeoutException(ThrowableMessage exceptionMessage) {

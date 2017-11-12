@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.mk.pump.web.common.Parameter;
+import ru.mk.pump.commons.activity.Parameter;
 
 @RequiredArgsConstructor
 @Data

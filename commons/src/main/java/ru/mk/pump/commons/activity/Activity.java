@@ -1,4 +1,4 @@
-package ru.mk.pump.web.common;
+package ru.mk.pump.commons.activity;
 
 import java.io.Closeable;
 import java.util.Map;

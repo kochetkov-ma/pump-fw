@@ -1,4 +1,4 @@
-package ru.mk.pump.web.browsers.constants;
+package ru.mk.pump.web.constants;
 
 public final class WebConstants {
 

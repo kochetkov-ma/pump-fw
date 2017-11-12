@@ -1,4 +1,4 @@
-package ru.mk.pump.web.common;
+package ru.mk.pump.commons.activity;
 
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -7,6 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import ru.mk.pump.commons.activity.AbstractActivity;
+import ru.mk.pump.commons.activity.AbstractActivityManager;
+import ru.mk.pump.commons.activity.Activity;
+import ru.mk.pump.commons.activity.ActivityManager;
 
 @Slf4j
 public class AbstractActivityManagerTest {

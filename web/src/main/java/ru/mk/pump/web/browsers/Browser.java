@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface Browser extends Closeable {
 
     String getId();
