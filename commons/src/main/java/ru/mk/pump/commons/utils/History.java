@@ -36,6 +36,10 @@ public class History<T> {
         return history;
     }
 
+    public int size() {
+        return history.size();
+    }
+
     public History<T> add(Info<T> item) {
         history.add(item);
         return this;
