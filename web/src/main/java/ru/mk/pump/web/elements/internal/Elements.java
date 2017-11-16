@@ -4,7 +4,7 @@ import java.util.Map;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.mk.pump.web.common.Parameter;
+import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.elements.api.Element;
 
 @UtilityClass

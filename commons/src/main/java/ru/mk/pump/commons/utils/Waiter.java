@@ -126,7 +126,7 @@ public class Waiter {
         }
     }
 
-    public <T> WaitResult waitIgnoreExceptions(int timeoutSec, int intervalMs, @NotNull Callable<T> action, @Nullable Matcher<T> matcher) {
+    public <T> WaitResult<T> waitIgnoreExceptions(int timeoutSec, int intervalMs, @NotNull Callable<T> action, @Nullable Matcher<T> matcher) {
         notIgnoringException = Sets.newHashSet(DEFAULT_NOT_IGNORED_THROWABLE);
         ignoringException.clear();
         withIgnoreExceptions(Throwable.class);
