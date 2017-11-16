@@ -18,5 +18,4 @@ public class StateResolver {
     WaitResult<Boolean> resolve(State state){
         internalElement.getWaiter().waitIgnoreExceptions()
     }
-
 }

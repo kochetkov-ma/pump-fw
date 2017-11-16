@@ -1,5 +1,7 @@
 package ru.mk.pump.web.elements.internal;
 
+import com.google.common.collect.ImmutableList;
+import java.util.List;
 import java.util.Optional;
 import lombok.Getter;
 import org.openqa.selenium.By;
@@ -9,6 +11,7 @@ import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.Action;
 import ru.mk.pump.web.elements.ActionExecutor;
 import ru.mk.pump.web.elements.State;
+import ru.mk.pump.web.elements.State.StateType;
 import ru.mk.pump.web.elements.StateResolver;
 import ru.mk.pump.web.page.Page;
 
@@ -46,7 +49,7 @@ public abstract class AbstractElement implements InternalElement {
         this(avatarBy, waiter, page, null);
     }
 
-    public AbstractElement(By avatarBy ,Page page, InternalElement parentElement) {
+    public AbstractElement(By avatarBy, Page page, InternalElement parentElement) {
         this.avatarBy = avatarBy;
         this.browser = page.getBrowser();
         this.page = page;
@@ -142,17 +145,17 @@ public abstract class AbstractElement implements InternalElement {
     }
 
     @Override
+    public int getIndex() {
+        return listIndex;
+    }
+
+    @Override
     public InternalElement setIndex(int index) {
         if (!isList()) {
             getFinder().setFindStrategy(new ListElementStrategy(this));
         }
         listIndex = index;
         return this;
-    }
-
-    @Override
-    public int getIndex() {
-        return listIndex;
     }
 
     @Override
@@ -174,16 +177,21 @@ public abstract class AbstractElement implements InternalElement {
 
     @Override
     public State exists() {
-        return new State(() -> getFinder().get().isSuccess(), "Exists");
+        return new State(() -> getFinder().get().isSuccess(), StateType.EXISTS);
     }
 
     @Override
-    public State displayed() {
-        return new State(() -> getFinder().get().getResult(), "Exists");
+    public List<State> displayed() {
+        return ImmutableList.of(exists(), new State(() -> getFinder().get().getResult().isDisplayed(), StateType.OTHER));
     }
 
     @Override
-    public State enabled() {
-        return null;
+    public List<State> enabled() {
+        return ImmutableList.of(exists(), new State(() -> getFinder().get().getResult().isEnabled(), StateType.OTHER));
+    }
+
+    @Override
+    public List<State> ready() {
+        return ImmutableList.<State>builder().addAll(displayed()).addAll(enabled()).build();
     }
 }

@@ -89,7 +89,7 @@ public class Waiter {
         return wait(timeoutSec, intervalMs, successCondition, Matchers.is(true));
     }
 
-    public WaitResult waitIgnoreExceptions(int timeoutSec, int intervalMs, @NotNull Callable<Boolean> successCondition) {
+    public WaitResult<Boolean> waitIgnoreExceptions(int timeoutSec, int intervalMs, @NotNull Callable<Boolean> successCondition) {
         notIgnoringException = Sets.newHashSet(DEFAULT_NOT_IGNORED_THROWABLE);
         ignoringException.clear();
         withIgnoreExceptions(Throwable.class);

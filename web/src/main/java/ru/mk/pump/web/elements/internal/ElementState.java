@@ -1,12 +1,15 @@
 package ru.mk.pump.web.elements.internal;
 
+import java.util.List;
 import ru.mk.pump.web.elements.State;
 
 public interface ElementState {
 
     State exists();
 
-    State displayed();
+    List<State> displayed();
 
-    State enabled();
+    List<State> enabled();
+
+    List<State> ready();
 }
