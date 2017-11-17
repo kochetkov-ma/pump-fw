@@ -1,5 +1,7 @@
 package ru.mk.pump.web.elements.api.concrete;
 
-public interface Button {
+import ru.mk.pump.web.elements.api.Element;
+
+public interface Button extends Element {
 
 }

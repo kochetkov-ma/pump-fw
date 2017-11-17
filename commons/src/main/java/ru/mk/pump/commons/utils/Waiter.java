@@ -157,6 +157,10 @@ public class Waiter {
 
         private int intervalMs = -1;
 
+        public static WaitResult<Boolean> trueResult(long elapsedTime, int timeoutS){
+            return new WaitResult(true, elapsedTime);
+        }
+
         protected WaitResult(boolean success, long elapsedTime) {
 
             this.success = success;

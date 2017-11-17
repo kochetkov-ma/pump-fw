@@ -19,6 +19,6 @@ public abstract class FindStrategy {
 
 
     protected boolean isRoot() {
-        return target.getParent().isPresent();
+        return !target.getParent().isPresent();
     }
 }

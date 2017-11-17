@@ -3,13 +3,13 @@ package ru.mk.pump.web.elements.internal;
 import java.util.Optional;
 import lombok.Getter;
 import org.hamcrest.Matchers;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
 import ru.mk.pump.web.exceptions.ElementFinderException;
-import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 
-@SuppressWarnings({"UnusedReturnValue", "unused"})
+@SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
 class Finder {
 
     @Getter
@@ -17,12 +17,14 @@ class Finder {
 
     private WebElement cache = null;
 
-    private FindStrategy DEFAULT_FIND_STRATEGY = new SingleElementStrategy(getMainElement());
+    private FindStrategy DEFAULT_FIND_STRATEGY;
 
-    private FindStrategy findStrategy = DEFAULT_FIND_STRATEGY;
+    private FindStrategy findStrategy;
 
     public Finder(InternalElement mainElement) {
+
         this.mainElement = mainElement;
+        this.findStrategy = new SingleElementStrategy(getMainElement());
     }
 
     Finder setFindStrategy(FindStrategy findStrategy) {
@@ -30,7 +32,7 @@ class Finder {
         return this;
     }
 
-    WebElement find() {
+    WebElement get() {
         if (!getCache().isPresent()) {
             return findStrategy.findSelf();
         } else {
@@ -38,11 +40,12 @@ class Finder {
         }
     }
 
-    WaitResult<WebElement> get() {
+    WaitResult<WebElement> find() {
         setCache(null);
         return new Waiter()
             .withNotIgnoreExceptions(ElementFinderException.class)
-            .waitIgnoreExceptions(5, 0, this::find, Matchers.notNullValue(WebElement.class));
+            .withNotIgnoreExceptions(NoSuchElementException.class)
+            .waitIgnoreExceptions(5, 0, this::get, Matchers.notNullValue(WebElement.class));
     }
 
     Optional<WebElement> getCache() {

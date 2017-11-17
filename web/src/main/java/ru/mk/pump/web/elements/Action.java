@@ -24,6 +24,6 @@ public interface Action<T> {
     int getTry();
 
     enum ActionStage {
-        NOT_RUN, BEFORE, MAIN, AFTER, FINALLY, COMPLETED;
+        NOT_RUN, BEFORE, MAIN, AFTER, FINALLY, COMPLETED
     }
 }

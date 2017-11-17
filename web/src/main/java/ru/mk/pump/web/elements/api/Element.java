@@ -4,4 +4,6 @@ public interface Element {
 
     String getText();
 
+    void click();
+
 }

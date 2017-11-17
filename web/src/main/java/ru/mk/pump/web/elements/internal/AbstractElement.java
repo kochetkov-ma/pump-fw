@@ -1,15 +1,15 @@
 package ru.mk.pump.web.elements.internal;
 
-import com.google.common.collect.ImmutableList;
-import java.util.List;
 import java.util.Optional;
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.openqa.selenium.By;
-import ru.mk.pump.commons.utils.Waiter;
-import ru.mk.pump.commons.utils.Waiter.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.Action;
 import ru.mk.pump.web.elements.ActionExecutor;
+import ru.mk.pump.web.elements.ActionFactory;
+import ru.mk.pump.web.elements.ElementWaiter;
+import ru.mk.pump.web.elements.MultiState;
 import ru.mk.pump.web.elements.State;
 import ru.mk.pump.web.elements.State.StateType;
 import ru.mk.pump.web.elements.StateResolver;
@@ -21,19 +21,22 @@ public abstract class AbstractElement implements InternalElement {
     private final By avatarBy;
 
     @Getter
-    private final Waiter waiter;
+    private final ElementWaiter waiter;
 
     @Getter
     private final Browser browser;
 
     private final InternalElement parentElement;
 
+    @Getter(AccessLevel.PROTECTED)
     private final ActionExecutor actionExecutor;
 
     private final StateResolver stateResolver;
 
     @Getter
     private final Finder finder;
+
+    private final ActionFactory actions;
 
     private String elementName;
 
@@ -45,26 +48,40 @@ public abstract class AbstractElement implements InternalElement {
     private int listIndex = -1;
 
     //region CONSTRUCTORS
-    public AbstractElement(By avatarBy, Page page) {
-        this(avatarBy, waiter, page, null);
+    public AbstractElement(By avatarBy, Page page, ElementWaiter waiter) {
+        this(avatarBy, null, page, waiter);
     }
 
-    public AbstractElement(By avatarBy, Page page, InternalElement parentElement) {
+    public AbstractElement(By avatarBy, InternalElement parentElement, Page page, ElementWaiter waiter) {
         this.avatarBy = avatarBy;
         this.browser = page.getBrowser();
         this.page = page;
+        this.waiter = waiter;
         this.parentElement = parentElement;
 
         this.finder = new Finder(this);
         this.stateResolver = newStateResolver();
         this.actionExecutor = newActionExecutor(stateResolver);
+        this.actions = new ActionFactory(this);
     }
 
-    public AbstractElement(By avatarBy, Browser browser, Waiter waiter) {
-        this(avatarBy, waiter, browser, null);
+    public AbstractElement(By avatarBy, Browser browser, ElementWaiter waiter) {
+        this(avatarBy, null, browser, waiter);
     }
 
-    public AbstractElement(By avatarBy, Waiter waiter, Browser browser, InternalElement parentElement) {
+    public AbstractElement(By avatarBy, InternalElement parentElement, ElementWaiter waiter ) {
+        this.avatarBy = avatarBy;
+        this.waiter = waiter;
+        this.browser = parentElement.getBrowser();
+        this.parentElement = parentElement;
+
+        this.finder = new Finder(this);
+        this.stateResolver = newStateResolver();
+        this.actionExecutor = newActionExecutor(stateResolver);
+        this.actions = new ActionFactory(this);
+    }
+
+    public AbstractElement(By avatarBy, InternalElement parentElement, Browser browser, ElementWaiter waiter ) {
         this.avatarBy = avatarBy;
         this.waiter = waiter;
         this.browser = browser;
@@ -73,6 +90,7 @@ public abstract class AbstractElement implements InternalElement {
         this.finder = new Finder(this);
         this.stateResolver = newStateResolver();
         this.actionExecutor = newActionExecutor(stateResolver);
+        this.actions = new ActionFactory(this);
     }
     //endregion
 
@@ -92,16 +110,6 @@ public abstract class AbstractElement implements InternalElement {
     public AbstractElement withDescription(String elementDescription) {
         this.elementDescription = elementDescription;
         return this;
-    }
-
-    @Override
-    public WaitResult<Boolean> wait(State elementState) {
-        return null;
-    }
-
-    @Override
-    public <T> WaitResult<T> wait(Action<T> elementState) {
-        return null;
     }
 
     @Override
@@ -125,21 +133,6 @@ public abstract class AbstractElement implements InternalElement {
     }
 
     @Override
-    public String text() {
-        return null;
-    }
-
-    @Override
-    public boolean isReady() {
-        return false;
-    }
-
-    @Override
-    public void checkIsReady() {
-
-    }
-
-    @Override
     public boolean isList() {
         return listIndex != -1;
     }
@@ -159,39 +152,32 @@ public abstract class AbstractElement implements InternalElement {
     }
 
     @Override
-    public String getText() {
-        return actionExecutor.execute(getTextAction());
-    }
-
-    @Override
-    public Action getClickAction() {
-
-        return null;
+    public Action<String> getClickAction() {
+        return actions.newAction(() -> getFinder().get().click(), "Click");
     }
 
     @Override
     public Action<String> getTextAction() {
-
-        return null;
+        return actions.newAction(() -> getBrowser().actions().getText(getFinder().get()), "Get text");
     }
 
     @Override
     public State exists() {
-        return new State(() -> getFinder().get().isSuccess(), StateType.EXISTS);
+        return State.of(() -> getFinder().find().isSuccess(), StateType.EXISTS).withName("Exists");
     }
 
     @Override
-    public List<State> displayed() {
-        return ImmutableList.of(exists(), new State(() -> getFinder().get().getResult().isDisplayed(), StateType.OTHER));
+    public MultiState displayed() {
+        return MultiState.of(StateType.OTHER, exists(), State.of(() -> getFinder().get().isDisplayed(), StateType.MULTI_FINAL)).withName("Displayed");
     }
 
     @Override
-    public List<State> enabled() {
-        return ImmutableList.of(exists(), new State(() -> getFinder().get().getResult().isEnabled(), StateType.OTHER));
+    public MultiState enabled() {
+        return MultiState.of(StateType.OTHER, exists(), State.of(() -> getFinder().get().isEnabled(), StateType.MULTI_FINAL)).withName("Enabled");
     }
 
     @Override
-    public List<State> ready() {
-        return ImmutableList.<State>builder().addAll(displayed()).addAll(enabled()).build();
+    public MultiState ready() {
+        return MultiState.of(StateType.READY, displayed().get(), enabled().get());
     }
 }

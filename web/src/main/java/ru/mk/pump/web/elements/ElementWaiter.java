@@ -1,12 +1,15 @@
 package ru.mk.pump.web.elements;
 
 import java.util.concurrent.Callable;
+import lombok.Getter;
 import org.hamcrest.Matcher;
+import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
 
 public class ElementWaiter {
 
+    @Getter
     private final int temeoutS;
 
     private final int delayMs;
@@ -24,15 +27,21 @@ public class ElementWaiter {
         this(30, 0);
     }
 
-    public <T> WaitResult<T> wait(Callable<T> supplier, Matcher<T> matcher) {
-        final WaitResult<T> result = waiter.waitIgnoreExceptions(temeoutS, delayMs, supplier, matcher);
+    public ElementWaiter clear() {
         waiter.clear();
-        return result;
+        return this;
+    }
+
+    public ElementWaiter withNotIgnoreExceptions(@NotNull Class<? extends Throwable> notIgnoringThrowable) {
+        waiter.withNotIgnoreExceptions(notIgnoringThrowable);
+        return this;
+    }
+
+    public <T> WaitResult<T> wait(Callable<T> supplier, Matcher<T> matcher) {
+        return waiter.waitIgnoreExceptions(temeoutS, delayMs, supplier, matcher);
     }
 
     public WaitResult<Boolean> wait(Callable<Boolean> supplier) {
-        final WaitResult<Boolean> result = waiter.waitIgnoreExceptions(temeoutS, delayMs, supplier);
-        waiter.clear();
-        return result;
+        return waiter.waitIgnoreExceptions(temeoutS, delayMs, supplier);
     }
 }

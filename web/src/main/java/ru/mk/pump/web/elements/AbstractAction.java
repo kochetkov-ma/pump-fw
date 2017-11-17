@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.elements.internal.InternalElement;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 abstract class AbstractAction<T> implements Action<T> {
 
     private static final int MAX_TRY = 5;
@@ -33,6 +33,7 @@ abstract class AbstractAction<T> implements Action<T> {
     public T get() {
         RuntimeException ex = null;
         Error error = null;
+        actionExecutionTry = 0;
         while (actionExecutionTry <= MAX_TRY) {
             try {
                 actionExecutionTry++;
@@ -46,10 +47,7 @@ abstract class AbstractAction<T> implements Action<T> {
         if (ex != null) {
             throw ex;
         }
-        if (error != null) {
-            throw error;
-        }
-        throw new UnknownError("Contact to the framework developer to fix this 'UnknownError'");
+        throw error;
     }
 
     @Override
@@ -81,5 +79,10 @@ abstract class AbstractAction<T> implements Action<T> {
     @Override
     public Map<String, Parameter> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public int getTry() {
+        return actionExecutionTry;
     }
 }

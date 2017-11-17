@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
+import ru.mk.pump.commons.utils.Waiter.WaitResult;
 import ru.mk.pump.web.elements.Action.ActionStage;
 import ru.mk.pump.web.exceptions.ActionExecutingException;
 
@@ -84,7 +85,7 @@ public class ActionExecutor extends AbstractNotifier {
             actionExecutionTry++;
             if (stateResolver != null) {
                 tAction.setStage(ActionStage.BEFORE);
-                stateResolver.resolve().throwDefaultExceptionOnFail();
+                stateResolver.resolve(tAction.getTarget().ready()).result().ifPresent(WaitResult::throwDefaultExceptionOnFail);
             }
 
             if (beforeActions.isEmpty()) {

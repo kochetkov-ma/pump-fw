@@ -1,15 +1,15 @@
 package ru.mk.pump.web.elements.internal;
 
-import java.util.List;
+import ru.mk.pump.web.elements.MultiState;
 import ru.mk.pump.web.elements.State;
 
 public interface ElementState {
 
     State exists();
 
-    List<State> displayed();
+    MultiState displayed();
 
-    List<State> enabled();
+    MultiState enabled();
 
-    List<State> ready();
+    MultiState ready();
 }

@@ -85,7 +85,11 @@ public class ThrowableMessage implements PrettyPrinter {
     }
 
     public ThrowableMessage withDesc(String description) {
-        this.description = description;
+        if (description != null) {
+            this.description = description;
+        } else {
+            this.description = "";
+        }
         return this;
     }
 

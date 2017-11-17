@@ -18,8 +18,8 @@ public class SingleElementStrategy extends FindStrategy {
             return getFromRoot();
         } else {
             final WebElement parent = getTarget().getParent()
-                .orElseThrow(() -> new ElementFinderException("Cannot get parent element", getTarget()))
-                .getFinder().find();
+                .orElseThrow(() -> new ElementFinderException("Cannot find parent element", getTarget()))
+                .getFinder().get();
             return getFromParent(parent);
         }
     }
