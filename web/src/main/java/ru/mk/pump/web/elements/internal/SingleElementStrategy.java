@@ -1,5 +1,7 @@
 package ru.mk.pump.web.elements.internal;
 
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.web.exceptions.ElementFinderException;
@@ -40,6 +42,11 @@ public class SingleElementStrategy extends FindStrategy {
             final WebElement res = parent.findElement(getTarget().getBy());
             getTarget().getFinder().setCache(res);
             return res;
+        } catch (StaleElementReferenceException ex){
+            getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
+            throw ex;
+        } catch (NoSuchElementException ex) {
+            throw ex;
         } catch (WebDriverException ex) {
             getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
             throw ex;

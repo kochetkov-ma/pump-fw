@@ -1,7 +1,5 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.commons.exception.PumpException;
-import ru.mk.pump.commons.exception.ThrowableMessage;
 import ru.mk.pump.web.elements.internal.InternalElement;
 
 @SuppressWarnings("unused")

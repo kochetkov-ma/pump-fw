@@ -10,8 +10,9 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.IsAnything;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.mk.pump.commons.exception.ThrowableMessage;
+import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.exception.TimeoutException;
+import ru.mk.pump.commons.interfaces.StrictInfo;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -139,7 +140,7 @@ public class Waiter {
 
     //region INNER STATIC CLASS
     @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
-    public static class WaitResult<T> {
+    public static class WaitResult<T> implements StrictInfo{
 
         @Getter
         private final boolean success;
@@ -157,8 +158,19 @@ public class Waiter {
 
         private int intervalMs = -1;
 
-        public static WaitResult<Boolean> trueResult(long elapsedTime, int timeoutS){
+        private Function<WaitResult<T>, ? extends RuntimeException> exceptionOnFail = (w) ->
+                new TimeoutException(new PumpMessage("Waiter timeout exception", null, w.getInfo()), w.getCause());
+
+        public static WaitResult<Boolean> trueResult(long elapsedTime, int timeoutS) {
             return new WaitResult(true, elapsedTime);
+        }
+
+        public static WaitResult<Boolean> falseResult(long elapsedTime, int timeoutS, Throwable cause) {
+            return new WaitResult(false, elapsedTime).withCause(cause);
+        }
+
+        public static WaitResult<Boolean> empty() {
+            return new WaitResult(false, 0);
         }
 
         protected WaitResult(boolean success, long elapsedTime) {
@@ -179,7 +191,7 @@ public class Waiter {
             return this;
         }
 
-        protected WaitResult<T> withCause(Throwable cause) {
+        public WaitResult<T> withCause(Throwable cause) {
 
             this.cause = cause;
             return this;
@@ -209,16 +221,26 @@ public class Waiter {
 
         public WaitResult<T> throwExceptionOnFail(@NotNull Function<WaitResult<T>, ? extends RuntimeException> newExceptionWithWaiterInfo) {
             if (!isSuccess()) {
-                throw newExceptionWithWaiterInfo.apply(this);
+                final RuntimeException ex = newExceptionWithWaiterInfo.apply(this);
+                if (ex.getCause() == null){
+                    ex.initCause(getCause());
+                }
+                throw ex;
             }
             return this;
         }
 
-        public WaitResult<T> throwDefaultExceptionOnFail() {
-            return throwExceptionOnFail((w) -> new TimeoutException(new ThrowableMessage("Waiter timeout exception", null, w.getExtraInfo()), w.getCause()));
+        public WaitResult<T> withExceptionOnFail(@NotNull Function<WaitResult<T>, ? extends RuntimeException> newExceptionWithWaiterInfo) {
+            this.exceptionOnFail = newExceptionWithWaiterInfo;
+            return this;
         }
 
-        protected Map<String, String> getExtraInfo() {
+        public WaitResult<T> throwExceptionOnFail() {
+            return throwExceptionOnFail(exceptionOnFail);
+        }
+
+        @Override
+        public Map<String, String> getInfo() {
             final Map<String, String> stringMap = Maps.newLinkedHashMap();
 
             if (timeoutS != -1) {
@@ -238,6 +260,28 @@ public class Waiter {
             ifHasCause(t -> stringMap.put("cause", t.getClass().getSimpleName()));
             return stringMap;
         }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("WaitResult(");
+            sb.append("success=").append(success);
+            sb.append(", elapsedTime=").append(elapsedTime);
+            if (cause != null) {
+                sb.append(", cause=").append(cause.getClass().getSimpleName());
+            }
+            if (result != null) {
+                sb.append(", result=").append(result);
+            }
+            if (timeoutS != -1) {
+                sb.append(", timeoutS=").append(timeoutS);
+            }
+            if (intervalMs != -1) {
+                sb.append(", intervalMs=").append(intervalMs);
+            }
+            sb.append(')');
+            return sb.toString();
+        }
+
     }
     //endregion
 

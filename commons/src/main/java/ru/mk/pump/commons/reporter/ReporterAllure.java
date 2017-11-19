@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.ExecutionException;
-import ru.mk.pump.commons.exception.ThrowableMessage;
+import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Strings;
 
 @SuppressWarnings("unused")
@@ -213,7 +213,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
                 Allure.getLifecycle().stopStep(stepUuid);
                 throw (AssertionError) info.throwable();
             } else {
-                final ThrowableMessage exceptionMessage = new ThrowableMessage(title, description)
+                final PumpMessage exceptionMessage = new PumpMessage(title, description)
                     .addExtraInfo("Status", level.name())
                     .addExtraInfo("Attachment",
                         info.attachment() != null ? Strings.space(info.attachment().getName(), info.attachment().getType()) : null);

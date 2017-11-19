@@ -1,4 +1,4 @@
-package ru.mk.pump.web.elements;
+package ru.mk.pump.web.elements.internal;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;

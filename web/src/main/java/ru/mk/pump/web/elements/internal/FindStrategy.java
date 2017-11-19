@@ -21,4 +21,12 @@ public abstract class FindStrategy {
     protected boolean isRoot() {
         return !target.getParent().isPresent();
     }
+
+    @Override
+    public String toString() {
+        return "FindStrategy(" +
+                "type=" + getClass().getSimpleName() +
+                ", target=" + target +
+                ')';
+    }
 }

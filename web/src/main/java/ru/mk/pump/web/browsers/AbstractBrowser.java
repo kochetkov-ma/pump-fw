@@ -5,7 +5,7 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
-import ru.mk.pump.commons.exception.ThrowableMessage;
+import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.commons.activity.AbstractActivity;
 import ru.mk.pump.commons.activity.Activity;
@@ -58,7 +58,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
     public Browser start() {
         this.driver = builder.createAndStartDriver();
         if (driver == null) {
-            throw new BrowserException(new ThrowableMessage("Cannot start browser. Incorrect driver builder", toString()));
+            throw new BrowserException(new PumpMessage("Cannot start browser. Incorrect driver builder", toString()));
         }
         activate();
         return this;
@@ -68,7 +68,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
     @Override
     public WebDriver getDriver() {
         if (driver == null) {
-            throw new BrowserException(new ThrowableMessage("Cannot get WebDriver - browser was not started or closed", toString()));
+            throw new BrowserException(new PumpMessage("Cannot get WebDriver - browser was not started or closed", toString()));
         }
         return this.driver;
     }

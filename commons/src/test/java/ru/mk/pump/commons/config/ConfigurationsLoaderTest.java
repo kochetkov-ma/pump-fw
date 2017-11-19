@@ -89,11 +89,11 @@ public class ConfigurationsLoaderTest {
         System.setProperty("common.extra", "from_env");
         final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stands.properties"), true);
         configurationsLoader.load();
-        log.debug(Strings.listToPrettyString(configurationsLoader.getHistory().asList()));
+        log.debug(Strings.toPrettyString(configurationsLoader.getHistory().asList()));
         final Stands stand = configurationsLoader.toObject(Stands.class);
         configurationsLoader.toObject(Stands.class);
         configurationsLoader.toObject(Stands.class);
-        log.debug(Strings.listToPrettyString(configurationsLoader.getHistory().asList()));
+        log.debug(Strings.toPrettyString(configurationsLoader.getHistory().asList()));
         final Optional<Info<String>> lst = configurationsLoader.getHistory().findLastById(ConfigurationsLoader.getHistoryId(Stands.class, "env"));
         log.debug(lst.get().getPayload().toString());
     }

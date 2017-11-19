@@ -7,11 +7,11 @@ public class ExecutionException extends PumpException {
         super(message);
     }
 
-    public ExecutionException(ThrowableMessage exceptionMessage) {
+    public ExecutionException(PumpMessage exceptionMessage) {
         super(exceptionMessage);
     }
 
-    public ExecutionException(ThrowableMessage exceptionMessage, Throwable cause) {
+    public ExecutionException(PumpMessage exceptionMessage, Throwable cause) {
         super(exceptionMessage, cause);
     }
 

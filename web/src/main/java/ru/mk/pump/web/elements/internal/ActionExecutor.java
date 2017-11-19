@@ -1,16 +1,17 @@
-package ru.mk.pump.web.elements;
+package ru.mk.pump.web.elements.internal;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
-import ru.mk.pump.web.elements.Action.ActionStage;
+import ru.mk.pump.web.elements.internal.Action.ActionStage;
 import ru.mk.pump.web.exceptions.ActionExecutingException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @NoArgsConstructor
@@ -56,6 +57,10 @@ public class ActionExecutor extends AbstractNotifier {
     public <T> T execute(Action<T> tAction) {
         tAction.setStage(ActionStage.NOT_RUN);
         try {
+            if (stateResolver != null) {
+                tAction.setStage(ActionStage.BEFORE);
+                stateResolver.resolve(tAction.getTarget().ready()).result().ifPresent(WaitResult::throwExceptionOnFail);
+            }
             return payloadExecute(tAction);
         } finally {
             if (afterActionError.isEmpty()) {
@@ -81,13 +86,8 @@ public class ActionExecutor extends AbstractNotifier {
     private <T> T payloadExecute(Action<T> tAction) {
         T result = null;
         ActionExecutor helperExecutor;
+        actionExecutionTry++;
         try {
-            actionExecutionTry++;
-            if (stateResolver != null) {
-                tAction.setStage(ActionStage.BEFORE);
-                stateResolver.resolve(tAction.getTarget().ready()).result().ifPresent(WaitResult::throwDefaultExceptionOnFail);
-            }
-
             if (beforeActions.isEmpty()) {
                 tAction.setStage(ActionStage.BEFORE);
                 helperExecutor = new ActionExecutor(getActionListeners());

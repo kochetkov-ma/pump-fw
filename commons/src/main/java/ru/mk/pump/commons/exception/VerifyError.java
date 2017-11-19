@@ -4,11 +4,11 @@ public class VerifyError extends AssertionError {
 
     private static final String PRE = "Pump verify fail";
 
-    public VerifyError(ThrowableMessage detailMessage) {
+    public VerifyError(PumpMessage detailMessage) {
         super(detailMessage.withPre(PRE).toPrettyString());
     }
 
-    public VerifyError(ThrowableMessage detailMessage, Throwable cause) {
+    public VerifyError(PumpMessage detailMessage, Throwable cause) {
         super(detailMessage.withPre(PRE).toPrettyString(), cause);
     }
 }

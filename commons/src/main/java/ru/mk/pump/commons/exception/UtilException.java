@@ -9,11 +9,11 @@ public class UtilException extends PumpException {
         super(message, PRE);
     }
 
-    public UtilException(ThrowableMessage exceptionMessage) {
+    public UtilException(PumpMessage exceptionMessage) {
         super(exceptionMessage.withPre(PRE));
     }
 
-    public UtilException(ThrowableMessage exceptionMessage, Throwable cause) {
+    public UtilException(PumpMessage exceptionMessage, Throwable cause) {
         super(exceptionMessage.withPre(PRE), cause);
     }
 

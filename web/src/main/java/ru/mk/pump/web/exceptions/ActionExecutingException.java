@@ -1,8 +1,8 @@
 package ru.mk.pump.web.exceptions;
 
 import ru.mk.pump.commons.exception.PumpException;
-import ru.mk.pump.commons.exception.ThrowableMessage;
-import ru.mk.pump.web.elements.Action;
+import ru.mk.pump.commons.exception.PumpMessage;
+import ru.mk.pump.web.elements.internal.Action;
 
 @SuppressWarnings("unused")
 public class ActionExecutingException extends PumpException {
@@ -26,8 +26,8 @@ public class ActionExecutingException extends PumpException {
         );
     }
 
-    private static ThrowableMessage message(String desc, Action action) {
-        return new ThrowableMessage(TITLE).withDesc(desc)
+    private static PumpMessage message(String desc, Action action) {
+        return new PumpMessage(TITLE).withDesc(desc)
             .addExtraInfo("action name", action.name())
             .addExtraInfo("action stage", action.getStage().name())
             .addExtraInfo("action parameters", action.getParameters().toString());

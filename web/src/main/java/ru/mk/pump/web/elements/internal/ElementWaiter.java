@@ -1,30 +1,33 @@
-package ru.mk.pump.web.elements;
+package ru.mk.pump.web.elements.internal;
 
-import java.util.concurrent.Callable;
 import lombok.Getter;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
 
+import java.util.concurrent.Callable;
+
 public class ElementWaiter {
 
+    public static final int DEFAULT_TIMEOUT_S = 10;
+
     @Getter
-    private final int temeoutS;
+    private final int timeoutS;
 
     private final int delayMs;
 
     private final Waiter waiter;
 
-    public ElementWaiter(int temeoutS, int delayMs) {
+    public ElementWaiter(int timeoutS, int delayMs) {
 
-        this.temeoutS = temeoutS;
+        this.timeoutS = timeoutS;
         this.delayMs = delayMs;
         this.waiter = new Waiter();
     }
 
     public ElementWaiter() {
-        this(30, 0);
+        this(DEFAULT_TIMEOUT_S, 0);
     }
 
     public ElementWaiter clear() {
@@ -38,10 +41,14 @@ public class ElementWaiter {
     }
 
     public <T> WaitResult<T> wait(Callable<T> supplier, Matcher<T> matcher) {
-        return waiter.waitIgnoreExceptions(temeoutS, delayMs, supplier, matcher);
+        return waiter.waitIgnoreExceptions(timeoutS, delayMs, supplier, matcher);
     }
 
     public WaitResult<Boolean> wait(Callable<Boolean> supplier) {
-        return waiter.waitIgnoreExceptions(temeoutS, delayMs, supplier);
+        return waiter.waitIgnoreExceptions(timeoutS, delayMs, supplier);
+    }
+
+    public ElementWaiter newInstance() {
+        return new ElementWaiter(this.timeoutS, this.delayMs);
     }
 }

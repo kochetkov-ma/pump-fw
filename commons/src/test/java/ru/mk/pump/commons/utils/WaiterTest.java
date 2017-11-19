@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.concurrent.Callable;
-import java.util.regex.Matcher;
+
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import ru.mk.pump.commons.exception.ExecutionException;
-import ru.mk.pump.commons.exception.ThrowableMessage;
+import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.exception.TimeoutException;
 import ru.mk.pump.commons.exception.VerifyError;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
@@ -52,7 +52,7 @@ public class WaiterTest {
 
         callableWithAssert = () -> {
             Waiter.sleep(100);
-            throw new VerifyError(new ThrowableMessage("Test"));
+            throw new VerifyError(new PumpMessage("Test"));
         };
     }
 
@@ -67,8 +67,8 @@ public class WaiterTest {
         assertThat(waitResult.getElapsedTime()).isBetween(100L, 150L);
         assertThatCode(() -> waitResult.ifHasResult((r)-> Assert.fail())).isInstanceOf(AssertionError.class);
         waitResult.ifHasCause((ex)-> Assert.fail());
-        assertThat(waitResult.getExtraInfo()).containsOnlyKeys("timeout (sec)", "interval (ms)", "elapsed time (ms)", "last result");
-        assertThatCode(waitResult::throwDefaultExceptionOnFail).doesNotThrowAnyException();
+        assertThat(waitResult.getInfo()).containsOnlyKeys("timeout (sec)", "interval (ms)", "elapsed time (ms)", "last result");
+        assertThatCode(waitResult::throwExceptionOnFail).doesNotThrowAnyException();
         assertThatCode(() -> waitResult.throwExceptionOnFail(r -> new RuntimeException(r.getCause()))).doesNotThrowAnyException();
     }
 
@@ -83,8 +83,8 @@ public class WaiterTest {
         assertThat(waitResult.getElapsedTime()).isBetween(1000L, 1050L);
         assertThatCode(() -> waitResult.ifHasResult((r)-> Assert.fail())).isInstanceOf(AssertionError.class);
         waitResult.ifHasCause((ex)-> Assert.fail());
-        assertThat(waitResult.getExtraInfo()).containsOnlyKeys("timeout (sec)", "interval (ms)", "elapsed time (ms)", "last result");
-        assertThatThrownBy(waitResult::throwDefaultExceptionOnFail).isInstanceOf(TimeoutException.class);
+        assertThat(waitResult.getInfo()).containsOnlyKeys("timeout (sec)", "interval (ms)", "elapsed time (ms)", "last result");
+        assertThatThrownBy(waitResult::throwExceptionOnFail).isInstanceOf(TimeoutException.class);
         assertThatThrownBy(() -> waitResult.throwExceptionOnFail(r -> new ExecutionException(r.getResult()))).isInstanceOf(ExecutionException.class);
     }
 
@@ -99,8 +99,8 @@ public class WaiterTest {
         assertThat(waitResult.getElapsedTime()).isBetween(1000L, 1050L);
         waitResult.ifHasResult((r)-> Assert.fail());
         assertThatCode(() -> waitResult.ifHasCause((ex)-> Assert.fail())).isInstanceOf(AssertionError.class);
-        assertThat(waitResult.getExtraInfo()).containsOnlyKeys("timeout (sec)", "interval (ms)", "elapsed time (ms)", "cause");
-        assertThatThrownBy(waitResult::throwDefaultExceptionOnFail).isInstanceOf(TimeoutException.class);
+        assertThat(waitResult.getInfo()).containsOnlyKeys("timeout (sec)", "interval (ms)", "elapsed time (ms)", "cause");
+        assertThatThrownBy(waitResult::throwExceptionOnFail).isInstanceOf(TimeoutException.class);
         assertThatThrownBy(() -> waitResult.throwExceptionOnFail(r -> new ExecutionException("test",r.getCause()))).isInstanceOf(ExecutionException.class);
     }
 

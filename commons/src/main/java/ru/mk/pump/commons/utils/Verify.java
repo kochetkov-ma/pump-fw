@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.constants.StringConstants;
-import ru.mk.pump.commons.exception.ThrowableMessage;
+import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.exception.VerifyError;
 import ru.mk.pump.commons.interfaces.Collator;
 import ru.mk.pump.commons.reporter.Reporter;
@@ -235,7 +235,7 @@ public class Verify {
             return;
         } else {
             try {
-                lastError = new VerifyError(new ThrowableMessage(checkDescription, extraMessage), throwable);
+                lastError = new VerifyError(new PumpMessage(checkDescription, extraMessage), throwable);
                 reporter.fail(checkDescription, extraMessage, reporter.attachments().screen("Screen on fail"), lastError);
             } catch (AssertionError assertionError) {
                 if (failOnError) {

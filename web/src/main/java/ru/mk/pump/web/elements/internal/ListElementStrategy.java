@@ -1,6 +1,9 @@
 package ru.mk.pump.web.elements.internal;
 
 import java.util.List;
+
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.web.exceptions.ElementFinderException;
@@ -17,16 +20,13 @@ public class ListElementStrategy extends FindStrategy {
     @Override
     public WebElement findSelf() {
         if (!getTarget().isList()) {
-            throw new ElementFinderException(String.format("Selected get strategy '%s' don't work with no list elements", getClass().getSimpleName()), getTarget());
+            throw new ElementFinderException(String.format("Selected find strategy '%s' don't work with no list elements", getClass().getSimpleName()), getTarget());
         }
         if (isRoot()) {
             return getFromRoot();
 
         } else {
-            final List<WebElement> webElements = getTarget().getParent()
-                .orElseThrow(() -> new ElementFinderException("Cannot find parent element", getTarget()))
-                .getFinder().get().findElements(getTarget().getBy());
-            return getFromList(webElements);
+            return getFromList(getList());
         }
     }
 
@@ -39,6 +39,22 @@ public class ListElementStrategy extends FindStrategy {
         } catch (WebDriverException ex) {
             getTarget().getFinder().setCache(null);
             throw new ElementFinderNotFoundException("Find root element error", getTarget());
+        }
+    }
+
+    protected List<WebElement> getList(){
+        try {
+            return getTarget().getParent()
+                    .orElseThrow(() -> new ElementFinderException("Cannot find parent element", getTarget()))
+                    .getFinder().get().findElements(getTarget().getBy());
+        } catch (StaleElementReferenceException ex){
+            getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
+            throw ex;
+        } catch (NoSuchElementException ex) {
+            throw ex;
+        } catch (WebDriverException ex) {
+            getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
+            throw ex;
         }
     }
 

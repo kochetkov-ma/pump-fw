@@ -1,17 +1,18 @@
-package ru.mk.pump.web.elements;
+package ru.mk.pump.web.elements.internal;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Function;
+
+import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.activity.Parameter;
-import ru.mk.pump.web.elements.internal.InternalElement;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 abstract class AbstractAction<T> implements Action<T> {
 
     private static final int MAX_TRY = 5;
 
-    private final Supplier<T> actionSupplier;
+    private final Function<WebElement,T> actionSupplier;
 
     private final InternalElement internalElement;
 
@@ -23,10 +24,14 @@ abstract class AbstractAction<T> implements Action<T> {
 
     private Map<String, Parameter> parameters = new HashMap<>();
 
-    public AbstractAction(Supplier<T> actionSupplier, InternalElement internalElement, String name) {
-        this.actionSupplier = actionSupplier;
+    public AbstractAction(Function<WebElement,T> actionFunction, InternalElement internalElement, String name) {
+        this.actionSupplier = actionFunction;
         this.internalElement = internalElement;
         this.name = name;
+    }
+
+    protected WebElement getInteractElement(){
+        return internalElement.getFinder().get();
     }
 
     @Override
@@ -37,7 +42,7 @@ abstract class AbstractAction<T> implements Action<T> {
         while (actionExecutionTry <= MAX_TRY) {
             try {
                 actionExecutionTry++;
-                return actionSupplier.get();
+                return actionSupplier.apply(getInteractElement());
             } catch (RuntimeException ignore) {
                 ex = ignore;
             } catch (Error ignore) {

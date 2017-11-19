@@ -1,8 +1,7 @@
-package ru.mk.pump.web.elements;
+package ru.mk.pump.web.elements.internal;
 
 import java.util.Map;
 import ru.mk.pump.commons.activity.Parameter;
-import ru.mk.pump.web.elements.internal.InternalElement;
 
 @SuppressWarnings("unused")
 public interface Action<T> {

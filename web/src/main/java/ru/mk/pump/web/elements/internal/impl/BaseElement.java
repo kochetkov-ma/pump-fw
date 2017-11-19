@@ -2,10 +2,9 @@ package ru.mk.pump.web.elements.internal.impl;
 
 import org.openqa.selenium.By;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.elements.ElementWaiter;
+import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.AbstractElement;
-import ru.mk.pump.web.elements.internal.InternalElement;
 
 public class BaseElement extends AbstractElement implements Element {
 

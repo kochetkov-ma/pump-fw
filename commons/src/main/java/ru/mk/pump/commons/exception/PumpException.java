@@ -4,26 +4,26 @@ package ru.mk.pump.commons.exception;
 public class PumpException extends AbstractPumpException {
 
     public PumpException(String message, String prefix) {
-        super(new ThrowableMessage(message).withPre(prefix));
+        super(new PumpMessage(message).withPre(prefix));
     }
 
     public PumpException(String message) {
-        super(new ThrowableMessage(message));
+        super(new PumpMessage(message));
     }
 
-    public PumpException(ThrowableMessage exceptionMessage) {
+    public PumpException(PumpMessage exceptionMessage) {
         super(exceptionMessage);
     }
 
-    public PumpException(ThrowableMessage exceptionMessage, Throwable cause) {
+    public PumpException(PumpMessage exceptionMessage, Throwable cause) {
         super(exceptionMessage, cause);
     }
 
     public PumpException(String message, String prefix, Throwable cause) {
-        super(new ThrowableMessage(message).withPre(prefix), cause);
+        super(new PumpMessage(message).withPre(prefix), cause);
     }
 
     public PumpException(String message, Throwable cause) {
-        super(new ThrowableMessage(message), cause);
+        super(new PumpMessage(message), cause);
     }
 }

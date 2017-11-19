@@ -5,6 +5,7 @@ import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELI
 import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,9 +37,9 @@ public class Strings {
         return trim(stringBuilder.toString());
     }
 
-    public String listToPrettyString(List<?> list) {
+    public String toPrettyString(Collection<?> collection) {
         final StringBuilder sb = new StringBuilder();
-        list.forEach((value) -> sb.append(value.toString()).append(LINE));
+        collection.forEach((value) -> sb.append(value.toString()).append(LINE));
         return trim(sb.toString());
     }
 

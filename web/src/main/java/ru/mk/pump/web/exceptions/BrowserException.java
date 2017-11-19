@@ -1,7 +1,7 @@
 package ru.mk.pump.web.exceptions;
 
 import ru.mk.pump.commons.exception.PumpException;
-import ru.mk.pump.commons.exception.ThrowableMessage;
+import ru.mk.pump.commons.exception.PumpMessage;
 
 @SuppressWarnings("unused")
 public class BrowserException extends PumpException {
@@ -10,11 +10,11 @@ public class BrowserException extends PumpException {
         super(message);
     }
 
-    public BrowserException(ThrowableMessage exceptionMessage) {
+    public BrowserException(PumpMessage exceptionMessage) {
         super(exceptionMessage);
     }
 
-    public BrowserException(ThrowableMessage exceptionMessage, Throwable cause) {
+    public BrowserException(PumpMessage exceptionMessage, Throwable cause) {
         super(exceptionMessage, cause);
     }
 

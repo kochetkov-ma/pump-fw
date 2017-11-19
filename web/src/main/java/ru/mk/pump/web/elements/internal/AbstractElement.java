@@ -1,26 +1,22 @@
 package ru.mk.pump.web.elements.internal;
 
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.elements.Action;
-import ru.mk.pump.web.elements.ActionExecutor;
-import ru.mk.pump.web.elements.ActionFactory;
-import ru.mk.pump.web.elements.ElementWaiter;
-import ru.mk.pump.web.elements.MultiState;
-import ru.mk.pump.web.elements.State;
-import ru.mk.pump.web.elements.State.StateType;
-import ru.mk.pump.web.elements.StateResolver;
+import ru.mk.pump.web.elements.internal.State.StateType;
 import ru.mk.pump.web.page.Page;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class AbstractElement implements InternalElement {
 
     private final By avatarBy;
 
-    @Getter
+
     private final ElementWaiter waiter;
 
     @Getter
@@ -38,10 +34,10 @@ public abstract class AbstractElement implements InternalElement {
 
     private final ActionFactory actions;
 
-    private String elementName;
+    private String elementName = "empty (strongly recommend to add)";
 
     @Getter
-    private String elementDescription;
+    private String elementDescription = "empty (recommend to add)";
 
     private Page page;
 
@@ -69,7 +65,7 @@ public abstract class AbstractElement implements InternalElement {
         this(avatarBy, null, browser, waiter);
     }
 
-    public AbstractElement(By avatarBy, InternalElement parentElement, ElementWaiter waiter ) {
+    public AbstractElement(By avatarBy, InternalElement parentElement, ElementWaiter waiter) {
         this.avatarBy = avatarBy;
         this.waiter = waiter;
         this.browser = parentElement.getBrowser();
@@ -81,7 +77,7 @@ public abstract class AbstractElement implements InternalElement {
         this.actions = new ActionFactory(this);
     }
 
-    public AbstractElement(By avatarBy, InternalElement parentElement, Browser browser, ElementWaiter waiter ) {
+    public AbstractElement(By avatarBy, InternalElement parentElement, Browser browser, ElementWaiter waiter) {
         this.avatarBy = avatarBy;
         this.waiter = waiter;
         this.browser = browser;
@@ -93,6 +89,12 @@ public abstract class AbstractElement implements InternalElement {
         this.actions = new ActionFactory(this);
     }
     //endregion
+
+
+    @Override
+    public ElementWaiter getWaiter() {
+        return waiter.newInstance();
+    }
 
     protected StateResolver newStateResolver() {
         return new StateResolver(this);
@@ -153,31 +155,57 @@ public abstract class AbstractElement implements InternalElement {
 
     @Override
     public Action<String> getClickAction() {
-        return actions.newAction(() -> getFinder().get().click(), "Click");
+        return actions.newAction(WebElement::click, "Click");
     }
 
     @Override
     public Action<String> getTextAction() {
-        return actions.newAction(() -> getBrowser().actions().getText(getFinder().get()), "Get text");
+        return actions.newAction(webElement -> {
+            return getBrowser().actions().getText(webElement);
+        }, "Get text");
     }
 
     @Override
     public State exists() {
-        return State.of(() -> getFinder().find().isSuccess(), StateType.EXISTS).withName("Exists");
+        return State.of(() -> Objects.nonNull(getFinder().get()), StateType.EXISTS, stateWaitResult -> getFinder().getLast()
+                .ifPresent(waitResult -> stateWaitResult.withCause(waitResult.getCause())));
     }
 
     @Override
-    public MultiState displayed() {
-        return MultiState.of(StateType.OTHER, exists(), State.of(() -> getFinder().get().isDisplayed(), StateType.MULTI_FINAL)).withName("Displayed");
+    public SetState displayed() {
+        return (SetState) SetState.of(StateType.DISPLAYED, exists(), State.of(() -> getFinder().get().isDisplayed(), StateType.SELENIUM_DISPLAYED)).withName("Exists And Displayed");
     }
 
     @Override
-    public MultiState enabled() {
-        return MultiState.of(StateType.OTHER, exists(), State.of(() -> getFinder().get().isEnabled(), StateType.MULTI_FINAL)).withName("Enabled");
+    public SetState enabled() {
+        return (SetState) SetState.of(StateType.ENABLED, exists(), State.of(() -> getFinder().get().isEnabled(), StateType.SELENIUM_ENABLED)).withName("Exists And Enabled");
     }
 
     @Override
-    public MultiState ready() {
-        return MultiState.of(StateType.READY, displayed().get(), enabled().get());
+    public SetState ready() {
+        return SetState.of(StateType.READY, displayed().get(), enabled().get());
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PumpElement(");
+        sb.append("type=").append(getClass().getSimpleName());
+        sb.append(", avatarBy=").append(avatarBy);
+        if (page == null) {
+            sb.append(", browser=").append(browser.getConfig().getType());
+        }
+        if (parentElement != null) {
+            sb.append(", parentElement=").append(parentElement.getClass().getSimpleName()).append(":").append(parentElement.getBy());
+        }
+        sb.append(", elementName='").append(elementName).append('\'');
+        sb.append(", elementDescription='").append(elementDescription).append('\'');
+        if (page != null) {
+            sb.append(", page=").append(page);
+        }
+        if (isList()) {
+            sb.append(", listIndex=").append(listIndex);
+        }
+        sb.append(')');
+        return sb.toString();
     }
 }
