@@ -28,7 +28,7 @@ public class State extends AbstractState<Callable<Boolean>> {
     }
 
     public enum StateType {
-        EXISTS, DISPLAYED, SELENIUM_DISPLAYED, ENABLED, SELENIUM_ENABLED, SELECTED, SELENIUM_SELECTED, READY, OTHER;
+        EXISTS, DISPLAYED, SELENIUM_DISPLAYED, ENABLED, SELENIUM_ENABLED, SELECTED, SELENIUM_SELECTED, READY, OTHER, OR_STATUS_UNION;
 
         @Getter
         private boolean not = false;

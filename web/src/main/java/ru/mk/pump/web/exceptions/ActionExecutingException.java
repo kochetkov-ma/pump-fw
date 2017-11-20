@@ -7,7 +7,7 @@ import ru.mk.pump.web.elements.internal.Action;
 @SuppressWarnings("unused")
 public class ActionExecutingException extends PumpException {
 
-    private static final String TITLE = "Executing action error";
+    private static final String TITLE = "Executing action '%s' error";
 
     public ActionExecutingException(Action action) {
         super(message(null, action));
@@ -27,7 +27,7 @@ public class ActionExecutingException extends PumpException {
     }
 
     private static PumpMessage message(String desc, Action action) {
-        return new PumpMessage(TITLE).withDesc(desc)
+        return new PumpMessage(String.format(TITLE, action.name())).withDesc(desc)
             .addExtraInfo("action name", action.name())
             .addExtraInfo("action stage", action.getStage().name())
             .addExtraInfo("action parameters", action.getParameters().toString());

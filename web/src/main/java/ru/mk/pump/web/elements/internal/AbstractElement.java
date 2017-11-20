@@ -1,21 +1,20 @@
 package ru.mk.pump.web.elements.internal;
 
+import java.util.Optional;
+import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import ru.mk.pump.commons.utils.Waiter.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.internal.State.StateType;
 import ru.mk.pump.web.page.Page;
-
-import java.util.Objects;
-import java.util.Optional;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class AbstractElement implements InternalElement {
 
     private final By avatarBy;
-
 
     private final ElementWaiter waiter;
 
@@ -27,12 +26,16 @@ public abstract class AbstractElement implements InternalElement {
     @Getter(AccessLevel.PROTECTED)
     private final ActionExecutor actionExecutor;
 
+    @Getter
     private final StateResolver stateResolver;
 
     @Getter
     private final Finder finder;
 
     private final ActionFactory actions;
+
+    private final Consumer<WaitResult<Boolean>> TEAR_DOWN = stateWaitResult -> getFinder().getLast()
+        .ifPresent(waitResult -> stateWaitResult.withCause(waitResult.getCause()));
 
     private String elementName = "empty (strongly recommend to add)";
 
@@ -90,12 +93,6 @@ public abstract class AbstractElement implements InternalElement {
     }
     //endregion
 
-
-    @Override
-    public ElementWaiter getWaiter() {
-        return waiter.newInstance();
-    }
-
     protected StateResolver newStateResolver() {
         return new StateResolver(this);
     }
@@ -135,6 +132,11 @@ public abstract class AbstractElement implements InternalElement {
     }
 
     @Override
+    public ElementWaiter getWaiter() {
+        return waiter.newInstance();
+    }
+
+    @Override
     public boolean isList() {
         return listIndex != -1;
     }
@@ -165,25 +167,41 @@ public abstract class AbstractElement implements InternalElement {
         }, "Get text");
     }
 
+    public State notExists() {
+        return (State) State.of(() -> !getFinder().findFast().isSuccess(), StateType.EXISTS.not(), TEAR_DOWN).withName("Not Exists in DOM");
+    }
+
+    public SetState notDisplayed() {
+        return (SetState) SetState.of(StateType.DISPLAYED.not(), notExists(), State.of(() -> {
+            final WaitResult<WebElement> res = getFinder().findFast();
+            return !res.isSuccess() || !res.getResult().isDisplayed();
+        }, StateType.SELENIUM_DISPLAYED.not(), TEAR_DOWN)).withName("Not Exists Or Not Displayed");
+    }
+
     @Override
     public State exists() {
-        return State.of(() -> Objects.nonNull(getFinder().get()), StateType.EXISTS, stateWaitResult -> getFinder().getLast()
-                .ifPresent(waitResult -> stateWaitResult.withCause(waitResult.getCause())));
+        return (State) State.of(() -> getFinder().findFast().isSuccess(), StateType.EXISTS, TEAR_DOWN).withName("Exists in DOM");
     }
 
     @Override
     public SetState displayed() {
-        return (SetState) SetState.of(StateType.DISPLAYED, exists(), State.of(() -> getFinder().get().isDisplayed(), StateType.SELENIUM_DISPLAYED)).withName("Exists And Displayed");
+        return (SetState) SetState.of(StateType.DISPLAYED, exists(), State.of(() -> {
+            final WaitResult<WebElement> res = getFinder().findFast();
+            return res.isSuccess() && res.getResult().isDisplayed();
+        }, StateType.SELENIUM_DISPLAYED, TEAR_DOWN)).withName("Exists And Displayed");
     }
 
     @Override
     public SetState enabled() {
-        return (SetState) SetState.of(StateType.ENABLED, exists(), State.of(() -> getFinder().get().isEnabled(), StateType.SELENIUM_ENABLED)).withName("Exists And Enabled");
+        return (SetState) SetState.of(StateType.ENABLED, exists(), State.of(() -> {
+            final WaitResult<WebElement> res = getFinder().findFast();
+            return res.isSuccess() && res.getResult().isEnabled();
+        }, StateType.SELENIUM_ENABLED, TEAR_DOWN)).withName("Exists And Enabled");
     }
 
     @Override
     public SetState ready() {
-        return SetState.of(StateType.READY, displayed().get(), enabled().get());
+        return (SetState) SetState.of(StateType.READY, displayed().get(), enabled().get()).withName("Ready to interact");
     }
 
     @Override

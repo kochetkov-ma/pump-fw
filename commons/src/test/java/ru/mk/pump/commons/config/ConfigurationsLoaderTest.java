@@ -95,6 +95,6 @@ public class ConfigurationsLoaderTest {
         configurationsLoader.toObject(Stands.class);
         log.debug(Strings.toPrettyString(configurationsLoader.getHistory().asList()));
         final Optional<Info<String>> lst = configurationsLoader.getHistory().findLastById(ConfigurationsLoader.getHistoryId(Stands.class, "env"));
-        log.debug(lst.get().getPayload().toString());
+        log.debug(lst.orElse(Info.of("undefined")).getPayload());
     }
 }

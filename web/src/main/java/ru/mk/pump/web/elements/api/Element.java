@@ -6,4 +6,8 @@ public interface Element {
 
     void click();
 
+    boolean isDisplayed();
+
+    boolean isNotDisplayed();
+
 }

@@ -3,38 +3,42 @@ package ru.mk.pump.web.elements.internal;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.internal.State.StateType;
 
-import java.util.*;
-
 @SuppressWarnings("unused")
-public class SetState extends AbstractState<Set<State>> {
+public class SetState extends AbstractState<Set<AbstractState>> {
 
-    private SetState(Set<State> states, StateType stateType) {
+    private SetState(Set<AbstractState> states, StateType stateType) {
 
         super(ImmutableSet.copyOf(states), stateType);
     }
 
-    @Override
-    public Set<State> get() {
-        return getPayload();
-    }
-
-    public static SetState of(StateType stateType, State... states) {
+    public static SetState of(StateType stateType, AbstractState... states) {
         return new SetState(Sets.newLinkedHashSet(Arrays.asList(states)), stateType);
     }
 
     @SafeVarargs
-    public static SetState of(StateType stateType, Set<State>... states) {
-        final Set<State> res = new LinkedHashSet<>();
+    public static SetState of(StateType stateType, Set<AbstractState>... states) {
+        final Set<AbstractState> res = new LinkedHashSet<>();
         Arrays.stream(states).forEach(res::addAll);
         return new SetState(res, stateType);
     }
 
     @Override
+    public Set<AbstractState> get() {
+        return getPayload();
+    }
+
+    @Override
     public Map<String, String> getInfo() {
-        return ImmutableMap.<String, String>builder().putAll(super.getInfo()).put("states", Strings.toPrettyString(getPayload())).build();
+        return ImmutableMap.<String, String>builder().putAll(super.getInfo()).put("states", Strings.toPrettyString(getPayload(), "states".length() + 3))
+            .build();
     }
 
     @Override

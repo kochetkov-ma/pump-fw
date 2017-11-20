@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.constants.StringConstants;
@@ -22,6 +23,12 @@ public class Strings {
     public static String NORMALIZE = "[-+.^:(),\\s\\n\\t]";
 
     public static String WIN_FILE_NORMALIZE = "[\\\\/:*?<>|]";
+
+    public String space(int count) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        IntStream.range(0, count).forEach((index) -> stringBuilder.append(StringConstants.SPACE));
+        return stringBuilder.toString();
+    }
 
     public String space(String... strings) {
         return trim(Arrays.stream(strings).filter(i -> i != null && !i.isEmpty()).collect(Collectors.joining(StringConstants.SPACE)));
@@ -40,6 +47,12 @@ public class Strings {
     public String toPrettyString(Collection<?> collection) {
         final StringBuilder sb = new StringBuilder();
         collection.forEach((value) -> sb.append(value.toString()).append(LINE));
+        return trim(sb.toString());
+    }
+
+    public String toPrettyString(Collection<?> collection, int offset) {
+        final StringBuilder sb = new StringBuilder();
+        collection.forEach((value) -> sb.append(value.toString()).append(LINE).append(space(offset)));
         return trim(sb.toString());
     }
 
@@ -83,7 +96,7 @@ public class Strings {
         return trim(value.toLowerCase().replaceAll(NORMALIZE, ""));
     }
 
-    public boolean isEmpty(String value){
+    public boolean isEmpty(String value) {
         return com.google.common.base.Strings.isNullOrEmpty(value);
     }
 

@@ -111,7 +111,7 @@ public class Waiter {
                     .pollInterval(intervalMs, TimeUnit.MILLISECONDS)
                     .atMost(timeoutSec, TimeUnit.SECONDS)
                     .until(action, matcher);
-        } catch (ConditionTimeoutException ex) {
+        } catch (Exception ex) {
             try {
                 result = action.call();
             } catch (Throwable throwable) {
@@ -162,30 +162,30 @@ public class Waiter {
                 new TimeoutException(new PumpMessage("Waiter timeout exception", null, w.getInfo()), w.getCause());
 
         public static WaitResult<Boolean> trueResult(long elapsedTime, int timeoutS) {
-            return new WaitResult(true, elapsedTime);
+            return new WaitResult(true, elapsedTime).withResult(false);
         }
 
         public static WaitResult<Boolean> falseResult(long elapsedTime, int timeoutS, Throwable cause) {
-            return new WaitResult(false, elapsedTime).withCause(cause);
+            return new WaitResult(false, elapsedTime).withResult(false).withCause(cause);
         }
 
         public static WaitResult<Boolean> empty() {
             return new WaitResult(false, 0);
         }
 
-        protected WaitResult(boolean success, long elapsedTime) {
+        public WaitResult(boolean success, long elapsedTime) {
 
             this.success = success;
             this.elapsedTime = elapsedTime;
         }
 
-        protected WaitResult<T> withResult(T result) {
+        public WaitResult<T> withResult(T result) {
 
             this.result = result;
             return this;
         }
 
-        protected WaitResult<T> withInfo(int timeoutS, int intervalMs) {
+        public WaitResult<T> withInfo(int timeoutS, int intervalMs) {
             this.timeoutS = timeoutS;
             this.intervalMs = intervalMs;
             return this;
@@ -222,7 +222,7 @@ public class Waiter {
         public WaitResult<T> throwExceptionOnFail(@NotNull Function<WaitResult<T>, ? extends RuntimeException> newExceptionWithWaiterInfo) {
             if (!isSuccess()) {
                 final RuntimeException ex = newExceptionWithWaiterInfo.apply(this);
-                if (ex.getCause() == null){
+                if (ex.getCause() == null && getCause() != null){
                     ex.initCause(getCause());
                 }
                 throw ex;

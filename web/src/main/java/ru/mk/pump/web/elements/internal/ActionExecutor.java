@@ -62,6 +62,9 @@ public class ActionExecutor extends AbstractNotifier {
                 stateResolver.resolve(tAction.getTarget().ready()).result().ifPresent(WaitResult::throwExceptionOnFail);
             }
             return payloadExecute(tAction);
+        }catch (Throwable throwable){
+            notifyOnFail(tAction, throwable);
+            throw new ActionExecutingException(tAction, throwable);
         } finally {
             if (afterActionError.isEmpty()) {
                 tAction.setStage(ActionStage.FINALLY);
@@ -88,7 +91,7 @@ public class ActionExecutor extends AbstractNotifier {
         ActionExecutor helperExecutor;
         actionExecutionTry++;
         try {
-            if (beforeActions.isEmpty()) {
+            if (!beforeActions.isEmpty()) {
                 tAction.setStage(ActionStage.BEFORE);
                 helperExecutor = new ActionExecutor(getActionListeners());
                 beforeActions.forEach(helperExecutor::payloadExecute);
@@ -97,7 +100,7 @@ public class ActionExecutor extends AbstractNotifier {
             tAction.setStage(ActionStage.MAIN);
             result = tAction.get();
 
-            if (afterActions.isEmpty()) {
+            if (!afterActions.isEmpty()) {
                 tAction.setStage(ActionStage.AFTER);
                 helperExecutor = new ActionExecutor(getActionListeners());
                 afterActions.forEach(helperExecutor::payloadExecute);

@@ -15,7 +15,7 @@ public class ElementWaiter {
     @Getter
     private final int timeoutS;
 
-    private final int delayMs;
+    private int delayMs;
 
     private final Waiter waiter;
 
@@ -32,6 +32,11 @@ public class ElementWaiter {
 
     public ElementWaiter clear() {
         waiter.clear();
+        return this;
+    }
+
+    public ElementWaiter withDelay(int delayMs){
+        this.delayMs = delayMs;
         return this;
     }
 

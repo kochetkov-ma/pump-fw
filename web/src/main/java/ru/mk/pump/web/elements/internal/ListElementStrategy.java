@@ -38,7 +38,7 @@ public class ListElementStrategy extends FindStrategy {
             return res;
         } catch (WebDriverException ex) {
             getTarget().getFinder().setCache(null);
-            throw new ElementFinderNotFoundException("Find root element error", getTarget());
+            throw new ElementFinderNotFoundException("Find root element error", getTarget(), ex);
         }
     }
 
