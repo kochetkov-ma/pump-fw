@@ -3,8 +3,9 @@ package ru.mk.pump.web.elements.internal.impl;
 import org.openqa.selenium.By;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.api.concrete.Button;
+import ru.mk.pump.web.elements.internal.BaseElement;
 
-public class ButtonImpl extends BaseElement implements Button {
+class ButtonImpl extends BaseElement implements Button {
 
     public ButtonImpl(By avatarBy, Browser browser) {
         super(avatarBy, browser);

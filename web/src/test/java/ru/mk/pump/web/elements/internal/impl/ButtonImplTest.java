@@ -6,12 +6,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.utils.ProjectResources;
-import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
+import ru.mk.pump.web.elements.internal.BaseElement;
 
 @Slf4j
 public class ButtonImplTest {
