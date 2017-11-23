@@ -1,6 +1,6 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.web.elements.internal.InternalElement;
+import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
 @SuppressWarnings("unused")
 public class ElementFinderNotFoundException extends ElementFinderException {

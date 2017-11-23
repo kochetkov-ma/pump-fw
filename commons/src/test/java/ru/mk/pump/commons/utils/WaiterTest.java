@@ -112,7 +112,8 @@ public class WaiterTest {
 
     @Test
     public void testWait() {
-        assertThatThrownBy(() -> new Waiter().wait(1, 0, callableWithEx)).isInstanceOf(RuntimeException.class);
+        assertThat(new Waiter().withReThrow(false).wait(1, 0, callableWithEx).getCause()).isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> new Waiter().withReThrow(true).wait(1, 0, callableWithEx)).isInstanceOf(RuntimeException.class);
         assertThatThrownBy(() -> new Waiter().wait(1, 0, callableWithAssert)).isInstanceOf(VerifyError.class);
         assertThatCode(() -> new Waiter().withIgnoreExceptions(RuntimeException.class).wait(1, 0, callableWithEx)).doesNotThrowAnyException();
         assertThatThrownBy(() -> new Waiter().withIgnoreExceptions(VerifyError.class).wait(1, 0, callableWithAssert)).isInstanceOf(VerifyError.class);

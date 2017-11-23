@@ -29,11 +29,13 @@ public class Waiter {
     /**
      * ALL ASSERTS. CAN BE CLEAN
      */
-    private Class<? extends Throwable>[] DEFAULT_NOT_IGNORED_THROWABLE = new Class[]{AssertionError.class};
+    private Class<? extends Throwable>[] DEFAULT_NOT_IGNORED_THROWABLE = new Class[]{Error.class};
 
     private Set<Class<? extends Throwable>> notIgnoringException = Sets.newHashSet();
 
     private Set<Class<? extends Throwable>> ignoringException = Sets.newHashSet();
+
+    private boolean reThrow = true;
 
     /**
      * default enable ignoring AssertionError.class
@@ -78,6 +80,11 @@ public class Waiter {
         return this;
     }
 
+    public Waiter withReThrow(boolean reThrow) {
+        this.reThrow = reThrow;
+        return this;
+    }
+
     /**
      * Priority is less than {@link #withNotIgnoreExceptions(Class)})
      */
@@ -91,7 +98,7 @@ public class Waiter {
     }
 
     public WaitResult<Boolean> waitIgnoreExceptions(int timeoutSec, int intervalMs, @NotNull Callable<Boolean> successCondition) {
-        notIgnoringException = Sets.newHashSet(DEFAULT_NOT_IGNORED_THROWABLE);
+        notIgnoringException.addAll(Arrays.asList(DEFAULT_NOT_IGNORED_THROWABLE));
         ignoringException.clear();
         withIgnoreExceptions(Throwable.class);
         return wait(timeoutSec, intervalMs, successCondition);
@@ -107,11 +114,14 @@ public class Waiter {
         try {
             result = Awaitility.await()
                     .conditionEvaluationListener(condition -> elapsedTime.set(condition.getElapsedTimeInMS()))
-                    .ignoreExceptionsMatching(this::checkException)
+                    .ignoreExceptionsMatching(this::isIgnore)
                     .pollInterval(intervalMs, TimeUnit.MILLISECONDS)
                     .atMost(timeoutSec, TimeUnit.SECONDS)
                     .until(action, matcher);
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
+            if (reThrow && !isIgnore(ex) && !(ex instanceof ConditionTimeoutException)) {
+                throw ex;
+            }
             try {
                 result = action.call();
             } catch (Throwable throwable) {
@@ -128,7 +138,7 @@ public class Waiter {
     }
 
     public <T> WaitResult<T> waitIgnoreExceptions(int timeoutSec, int intervalMs, @NotNull Callable<T> action, @Nullable Matcher<T> matcher) {
-        notIgnoringException = Sets.newHashSet(DEFAULT_NOT_IGNORED_THROWABLE);
+        notIgnoringException.addAll(Arrays.asList(DEFAULT_NOT_IGNORED_THROWABLE));
         ignoringException.clear();
         withIgnoreExceptions(Throwable.class);
         return wait(timeoutSec, intervalMs, action, matcher);
@@ -286,7 +296,7 @@ public class Waiter {
     //endregion
 
     //region PRIVATE
-    private boolean checkException(Throwable throwable) {
+    private boolean isIgnore(Throwable throwable) {
         //noinspection SimplifiableIfStatement
         if (notIgnoringException.stream().anyMatch(throwableClass -> throwableClass.isAssignableFrom(throwable.getClass()))) {
             return false;

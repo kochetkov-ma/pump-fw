@@ -1,6 +1,10 @@
 package ru.mk.pump.commons.exception;
 
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
+
 import com.google.common.collect.Maps;
+import java.util.Map;
+import java.util.Objects;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,10 +12,6 @@ import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
-
-import java.util.Map;
-
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class PumpMessage implements PrettyPrinter {
@@ -29,12 +29,12 @@ public class PumpMessage implements PrettyPrinter {
     /**
      * Optional
      */
-    private Map<String, String> envInformation;
+    private Map<String, String> envInformation = Maps.newLinkedHashMap();
 
     /**
      * Optional
      */
-    private Map<String, String> extraInformation;
+    private Map<String, String> extraInformation = Maps.newLinkedHashMap();
 
     /**
      * default is null for does not add by StringJoiner
@@ -48,16 +48,13 @@ public class PumpMessage implements PrettyPrinter {
         } else {
             this.description = "";
         }
-        if (envInformation != null) {
-            this.envInformation = envInformation;
-        } else {
-            this.envInformation = Maps.newHashMap();
+        if (Objects.nonNull(envInformation)) {
+            this.envInformation.putAll(envInformation);
         }
-        if (extraInformation != null) {
-            this.extraInformation = extraInformation;
-        } else {
-            this.extraInformation = Maps.newHashMap();
+        if (Objects.nonNull(extraInformation)) {
+            this.extraInformation.putAll(extraInformation);
         }
+
     }
 
     public PumpMessage(@NonNull String title, String description, Map<String, String> extraInformation) {
@@ -135,10 +132,10 @@ public class PumpMessage implements PrettyPrinter {
     @Override
     public String toString() {
         return "PumpMessage{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", envInformation=" + envInformation +
-                ", extraInformation=" + extraInformation +
-                '}';
+            "title='" + title + '\'' +
+            ", description='" + description + '\'' +
+            ", envInformation=" + envInformation +
+            ", extraInformation=" + extraInformation +
+            '}';
     }
 }

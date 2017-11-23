@@ -2,7 +2,7 @@ package ru.mk.pump.web.exceptions;
 
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
-import ru.mk.pump.web.elements.internal.Action;
+import ru.mk.pump.web.elements.internal.interfaces.Action;
 
 @SuppressWarnings("unused")
 public class ActionExecutingException extends PumpException {

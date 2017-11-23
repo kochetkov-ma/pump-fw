@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- Stop output INFO at start -->
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+    </layout>
+  </appender>
+  <appender class="ch.qos.logback.core.FileAppender" name="FILE">
+    <file>build/framework.log</file>
+    <encoder>
+      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+    </encoder>
+  </appender>
+  <root level="INFO">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="FILE"/>
+  </root>
+  <logger level="INFO" name="ru.mk.pump"/>
+  <logger level="WARN" name="org.reflections"/>
+</configuration>

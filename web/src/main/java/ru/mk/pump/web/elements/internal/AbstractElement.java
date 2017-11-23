@@ -1,18 +1,25 @@
 package ru.mk.pump.web.elements.internal;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.elements.api.ActionListener;
 import ru.mk.pump.web.elements.internal.State.StateType;
+import ru.mk.pump.web.elements.internal.interfaces.Action;
+import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.Page;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
-public abstract class AbstractElement implements InternalElement {
+@SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue", "unchecked"})
+abstract class AbstractElement<CHILD> implements InternalElement {
 
     private final By avatarBy;
 
@@ -47,68 +54,80 @@ public abstract class AbstractElement implements InternalElement {
     private int listIndex = -1;
 
     //region CONSTRUCTORS
-    public AbstractElement(By avatarBy, Page page, ElementWaiter waiter) {
-        this(avatarBy, null, page, waiter);
+    public AbstractElement(By avatarBy, Page page) {
+        this(avatarBy, null, null, page);
     }
 
-    public AbstractElement(By avatarBy, InternalElement parentElement, Page page, ElementWaiter waiter) {
+    public AbstractElement(By avatarBy, InternalElement parentElement) {
+        this(avatarBy, parentElement, null, null);
+    }
+
+    public AbstractElement(By avatarBy, Browser browser) {
+        this(avatarBy, null, browser, null);
+    }
+
+    private AbstractElement(@NotNull By avatarBy, @Nullable InternalElement parentElement, @Nullable Browser browser, @Nullable Page page) {
         this.avatarBy = avatarBy;
-        this.browser = page.getBrowser();
         this.page = page;
-        this.waiter = waiter;
         this.parentElement = parentElement;
-
-        this.finder = new Finder(this);
-        this.stateResolver = newStateResolver();
-        this.actionExecutor = newActionExecutor(stateResolver);
-        this.actions = new ActionFactory(this);
+        if (parentElement != null) {
+            parentElement.getPage().ifPresent(i -> this.page = i);
+            this.browser = parentElement.getBrowser();
+        } else {
+            if (page != null) {
+                this.browser = page.getBrowser();
+            } else {
+                this.browser = browser;
+            }
+        }
+        this.waiter = newDelegateWaiter();
+        this.finder = newDelegateFinder();
+        this.stateResolver = newDelegateStateResolver();
+        this.actionExecutor = newDelegateActionExecutor(stateResolver);
+        this.actions = newDelegateActionFactory();
     }
 
-    public AbstractElement(By avatarBy, Browser browser, ElementWaiter waiter) {
-        this(avatarBy, null, browser, waiter);
-    }
-
-    public AbstractElement(By avatarBy, InternalElement parentElement, ElementWaiter waiter) {
-        this.avatarBy = avatarBy;
-        this.waiter = waiter;
-        this.browser = parentElement.getBrowser();
-        this.parentElement = parentElement;
-
-        this.finder = new Finder(this);
-        this.stateResolver = newStateResolver();
-        this.actionExecutor = newActionExecutor(stateResolver);
-        this.actions = new ActionFactory(this);
-    }
-
-    public AbstractElement(By avatarBy, InternalElement parentElement, Browser browser, ElementWaiter waiter) {
-        this.avatarBy = avatarBy;
-        this.waiter = waiter;
-        this.browser = browser;
-        this.parentElement = parentElement;
-
-        this.finder = new Finder(this);
-        this.stateResolver = newStateResolver();
-        this.actionExecutor = newActionExecutor(stateResolver);
-        this.actions = new ActionFactory(this);
-    }
     //endregion
 
-    protected StateResolver newStateResolver() {
+    //region delegates
+    protected ElementWaiter newDelegateWaiter() {
+        return new ElementWaiter();
+    }
+
+    protected Finder newDelegateFinder() {
+        return new Finder(this);
+    }
+
+    protected ActionFactory newDelegateActionFactory() {
+        return new ActionFactory(this);
+    }
+
+    protected StateResolver newDelegateStateResolver() {
         return new StateResolver(this);
     }
 
-    protected ActionExecutor newActionExecutor(StateResolver stateResolver) {
+    protected ActionExecutor newDelegateActionExecutor(StateResolver stateResolver) {
         return new ActionExecutor().withStateResolver(stateResolver);
     }
 
-    public AbstractElement withName(String elementName) {
-        this.elementName = elementName;
+    public AbstractElement addActionListener(List<ActionListener> actionListener) {
+        actionListener.forEach(actionExecutor::addListener);
         return this;
     }
+    //endregion
 
-    public AbstractElement withDescription(String elementDescription) {
-        this.elementDescription = elementDescription;
-        return this;
+    public CHILD withName(String elementName) {
+        if (!Strings.isEmpty(elementName)) {
+            this.elementName = elementName;
+        }
+        return (CHILD) this;
+    }
+
+    public CHILD withDescription(String elementDescription) {
+        if (!Strings.isEmpty(elementDescription)) {
+            this.elementDescription = elementDescription;
+        }
+        return (CHILD) this;
     }
 
     @Override

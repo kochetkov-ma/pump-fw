@@ -1,16 +1,17 @@
 package ru.mk.pump.web.elements.internal;
 
-import org.openqa.selenium.WebElement;
-
 import java.util.function.Consumer;
 import java.util.function.Function;
+import org.openqa.selenium.WebElement;
+import ru.mk.pump.web.elements.internal.interfaces.Action;
+import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
+@SuppressWarnings("WeakerAccess")
 public class ActionFactory {
 
     private final InternalElement element;
 
-    public ActionFactory(InternalElement element) {
-
+    protected ActionFactory(InternalElement element) {
         this.element = element;
     }
 
@@ -26,5 +27,4 @@ public class ActionFactory {
         }, element, name) {
         };
     }
-
 }

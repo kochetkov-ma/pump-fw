@@ -1,13 +1,13 @@
 package ru.mk.pump.web.elements.internal;
 
+import java.util.concurrent.Callable;
 import lombok.Getter;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
 
-import java.util.concurrent.Callable;
-
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class ElementWaiter {
 
     public static final int DEFAULT_TIMEOUT_S = 10;
@@ -15,15 +15,16 @@ public class ElementWaiter {
     @Getter
     private final int timeoutS;
 
-    private int delayMs;
-
     private final Waiter waiter;
+
+    private int delayMs;
 
     public ElementWaiter(int timeoutS, int delayMs) {
 
         this.timeoutS = timeoutS;
         this.delayMs = delayMs;
         this.waiter = new Waiter();
+        //waiter.withNotIgnoreExceptions(BrowserException.class);
     }
 
     public ElementWaiter() {
@@ -35,7 +36,12 @@ public class ElementWaiter {
         return this;
     }
 
-    public ElementWaiter withDelay(int delayMs){
+    public ElementWaiter withReThrow(boolean reThrow) {
+        this.waiter.withReThrow(reThrow);
+        return this;
+    }
+
+    public ElementWaiter withDelay(int delayMs) {
         this.delayMs = delayMs;
         return this;
     }

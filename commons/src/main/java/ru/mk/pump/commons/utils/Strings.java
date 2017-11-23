@@ -44,6 +44,13 @@ public class Strings {
         return trim(stringBuilder.toString());
     }
 
+    public String mapToPrettyString(Map<?, ?> map, int offset) {
+        final StringBuilder stringBuilder = new StringBuilder();
+        map.forEach((key, value) -> stringBuilder.append(key.toString()).append(KEY_VALUE_PRETTY_DELIMITER).append(value.toString()).append(LINE)
+            .append(space(offset)));
+        return trim(stringBuilder.toString());
+    }
+
     public String toPrettyString(Collection<?> collection) {
         final StringBuilder sb = new StringBuilder();
         collection.forEach((value) -> sb.append(value.toString()).append(LINE));
@@ -52,7 +59,7 @@ public class Strings {
 
     public String toPrettyString(Collection<?> collection, int offset) {
         final StringBuilder sb = new StringBuilder();
-        collection.forEach((value) -> sb.append(value.toString()).append(LINE).append(space(offset)));
+        collection.forEach((value) -> sb.append(value.toString()).append(LINE).append(space(offset + 3)));
         return trim(sb.toString());
     }
 

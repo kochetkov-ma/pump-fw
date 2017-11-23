@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.mk.pump.commons.utils.History.Info;
@@ -77,7 +78,6 @@ public class ConfigurationsLoaderTest {
         configurationsLoader.load();
         /*create new object from class*/
         final Stands stand = configurationsLoader.toObject(Stands.class);
-
         assertThat(stand.getName()).isEqualTo("standsName");
         assertThat(stand.isComplex()).isEqualTo(true);
         assertThat(stand.getStandOne()).isEqualTo(one);

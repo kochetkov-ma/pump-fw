@@ -6,11 +6,12 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFinderException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 
 @SuppressWarnings("WeakerAccess")
-public class ListElementStrategy extends FindStrategy {
+class ListElementStrategy extends FindStrategy {
 
 
     public ListElementStrategy(InternalElement target) {

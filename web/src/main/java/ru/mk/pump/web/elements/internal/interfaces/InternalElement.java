@@ -1,8 +1,13 @@
-package ru.mk.pump.web.elements.internal;
+package ru.mk.pump.web.elements.internal.interfaces;
 
 import java.util.Optional;
 import org.openqa.selenium.By;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.elements.internal.ElementWaiter;
+import ru.mk.pump.web.elements.internal.Finder;
+import ru.mk.pump.web.elements.internal.interfaces.ElementAction;
+import ru.mk.pump.web.elements.internal.interfaces.ElementState;
+import ru.mk.pump.web.elements.internal.interfaces.MultiElement;
 import ru.mk.pump.web.page.Page;
 
 public interface InternalElement extends ElementAction, ElementState, MultiElement {

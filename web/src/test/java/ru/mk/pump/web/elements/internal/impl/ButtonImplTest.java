@@ -33,19 +33,26 @@ public class ButtonImplTest {
 
     @Test
     public void test() {
-
         final BaseElement div = new ButtonImpl(By.xpath(".//div[contains(@class,'b-calculator__rightblock')]"), browser);
-
         final BaseElement section = new ButtonImpl(By.tagName("section"), browser).setIndex(1);
 
-        final BaseElement button = new ButtonImpl(By.xpath(".//button[@data-aid='startRegistration1']"), div);
+        final BaseElement buttonSection = new ButtonImpl(By.xpath(".//button[@data-aid='startRegistration']"), section);
+        final BaseElement buttonDiv = new ButtonImpl(By.xpath(".//button[@data-aid='startRegistration']"), div);
 
         browser.start();
         browser.open("https://app-digitalmortgage003.open.ru/");
         //browser.open("https://ipotekaonline.open.ru/");
 
-        log.info(button.getText());
-        //log.info(String.valueOf(button.isNotDisplayed()));
+        //browser.close();
+
+        //log.info(Boolean.toString(buttonSection.isDisplayed()));
+        //log.info(Boolean.toString(buttonDiv.isDisplayed()));
+
+        log.info(buttonSection.getText());
+        log.info(buttonDiv.getText());
+
+        //log.info(Boolean.toString(buttonSection.isNotDisplayed()));
+        //log.info(Boolean.toString(buttonDiv.isNotDisplayed()));
 
     }
 

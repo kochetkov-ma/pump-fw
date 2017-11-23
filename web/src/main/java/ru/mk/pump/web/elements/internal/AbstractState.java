@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue"})
 abstract class AbstractState<T> implements StrictInfo {
 
     private final State.StateType stateType;
@@ -58,7 +58,7 @@ abstract class AbstractState<T> implements StrictInfo {
         return Optional.ofNullable(tearDown);
     }
 
-    abstract public T get();
+    abstract T get();
 
     public AbstractState<T> withName(String name) {
         this.name = name;
@@ -117,11 +117,9 @@ abstract class AbstractState<T> implements StrictInfo {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(getClass().getSimpleName() + "(");
-        sb.append("stateType=").append(stateType.toString());
-        sb.append(", result=").append(Objects.toString(result));
-        sb.append(", name='").append(name).append('\'');
-        sb.append(')');
-        return sb.toString();
+        return getClass().getSimpleName() + "(" + "stateType=" + stateType.toString()
+            + ", result=" + Objects.toString(result)
+            + ", name='" + name + '\''
+            + ')';
     }
 }

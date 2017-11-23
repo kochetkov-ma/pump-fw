@@ -5,6 +5,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ru.mk.pump.web.elements.api.ActionListener;
+import ru.mk.pump.web.elements.internal.interfaces.Action;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @NoArgsConstructor
@@ -13,7 +15,7 @@ abstract class AbstractNotifier {
     @Getter(AccessLevel.PROTECTED)
     private Set<ActionListener> actionListeners = new CopyOnWriteArraySet<>();
 
-    public AbstractNotifier(Set<ActionListener> actionListeners) {
+    protected AbstractNotifier(Set<ActionListener> actionListeners) {
         this.actionListeners = actionListeners;
     }
 

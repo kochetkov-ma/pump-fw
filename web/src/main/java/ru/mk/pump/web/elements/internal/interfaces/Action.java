@@ -1,4 +1,4 @@
-package ru.mk.pump.web.elements.internal;
+package ru.mk.pump.web.elements.internal.interfaces;
 
 import java.util.Map;
 import ru.mk.pump.commons.activity.Parameter;

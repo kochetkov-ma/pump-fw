@@ -3,14 +3,15 @@ package ru.mk.pump.web.elements.internal;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.openqa.selenium.WebElement;
+import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
-public abstract class FindStrategy {
+abstract class FindStrategy {
 
     @Getter(AccessLevel.PROTECTED)
     private final InternalElement target;
 
 
-    public FindStrategy(InternalElement internalElement) {
+    FindStrategy(InternalElement internalElement) {
 
         this.target = internalElement;
     }

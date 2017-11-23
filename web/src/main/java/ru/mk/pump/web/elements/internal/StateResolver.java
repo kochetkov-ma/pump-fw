@@ -7,12 +7,13 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
 import ru.mk.pump.web.elements.internal.State.StateType;
+import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+import ru.mk.pump.web.exceptions.BrowserException;
 import ru.mk.pump.web.exceptions.ElementException;
 
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused"})
@@ -53,11 +54,15 @@ public class StateResolver {
                 try {
                     return s.call();
                 } catch (Exception e) {
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    }
                     return false;
                 }
             }))
             .withExceptionOnFail(waitResult -> newResolvedException(state.name(), state.getInfo(), waitResult));
         state.getTearDown().ifPresent(waitResultConsumer -> waitResultConsumer.accept(res));
+        throwIfCause(res);
         return (OrState) state.setResult(res);
     }
 
@@ -67,12 +72,13 @@ public class StateResolver {
             .wait(state.get())
             .withExceptionOnFail(waitResult -> newResolvedException(state.name(), state.getInfo(), waitResult));
         state.getTearDown().ifPresent(waitResultConsumer -> waitResultConsumer.accept(res));
+        throwIfCause(res);
         return (State) state.setResult(res);
     }
 
     protected PumpException newResolvedException(String state, Map<String, String> stateExceptionInfo, WaitResult<Boolean> waitResult) {
         return new ElementException(
-            format("Element was not become to expected state '%s' in timeout '%s' sec", state, internalElement.getWaiter().getTimeoutS())
+            format("Element was not became to expected state '%s' in timeout '%s' sec", state, internalElement.getWaiter().getTimeoutS())
             , internalElement
             , (pumpMessage -> pumpMessage.addExtraInfo(stateExceptionInfo))
             , waitResult.getCause());
@@ -94,17 +100,24 @@ public class StateResolver {
             getPayload().add(payLoad);
             return this;
         }
+    }
 
-
+    private void throwIfCause(WaitResult<Boolean> booleanWaitResult) {
+        booleanWaitResult.ifHasCause(cause -> {
+            if (cause instanceof BrowserException) {
+                booleanWaitResult.throwExceptionOnFail();
+            }
+        });
     }
 
     private SetState reorganizeIfNeed(SetState state) {
         final List<State> andStates = Lists.newArrayList();
-        final OrState notStates = (OrState)new OrState(Lists.newArrayList(), StateType.OR_STATUS_UNION).withName("");
+        final OrState notStates = (OrState) new OrState(Lists.newArrayList(), StateType.OR_STATUS_UNION).withName("");
         for (AbstractState item : state.get()) {
             if (item instanceof State) {
                 if (item.type().isNot()) {
-                    notStates.withPayLoad(((State) item).getPayload()).withName(notStates.name() + " OR " + item.name()).withTearDown(((State)item).getTearDown().orElse(null));
+                    notStates.withPayLoad(((State) item).getPayload()).withName(notStates.name() + " OR " + item.name())
+                        .withTearDown(((State) item).getTearDown().orElse(null));
                 } else {
                     andStates.add((State) item);
                 }

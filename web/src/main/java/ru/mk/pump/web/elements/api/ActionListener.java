@@ -1,4 +1,6 @@
-package ru.mk.pump.web.elements.internal;
+package ru.mk.pump.web.elements.api;
+
+import ru.mk.pump.web.elements.internal.interfaces.Action;
 
 public interface ActionListener {
 

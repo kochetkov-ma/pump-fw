@@ -9,12 +9,13 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
+import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFinderException;
 
 @SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
 @Slf4j
 @ToString(of = {"findStrategy", "logReturnCacheAmount", "logFindSelfAmount", "logFindAmount"})
-class Finder {
+public class Finder {
 
     public static final int FIND_TIMEOUT_S = 1;
 

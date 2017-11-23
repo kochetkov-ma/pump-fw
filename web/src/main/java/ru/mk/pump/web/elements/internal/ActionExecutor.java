@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
-import ru.mk.pump.web.elements.internal.Action.ActionStage;
+import ru.mk.pump.web.elements.api.ActionListener;
+import ru.mk.pump.web.elements.internal.interfaces.Action;
+import ru.mk.pump.web.elements.internal.interfaces.Action.ActionStage;
 import ru.mk.pump.web.exceptions.ActionExecutingException;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ public class ActionExecutor extends AbstractNotifier {
 
     private StateResolver stateResolver;
 
-    public ActionExecutor(Set<ActionListener> actionListeners) {
+    protected ActionExecutor(Set<ActionListener> actionListeners) {
         super(actionListeners);
     }
 
@@ -86,7 +88,7 @@ public class ActionExecutor extends AbstractNotifier {
         return true;
     }
 
-    private <T> T payloadExecute(Action<T> tAction) {
+    protected  <T> T payloadExecute(Action<T> tAction) {
         T result = null;
         ActionExecutor helperExecutor;
         actionExecutionTry++;
@@ -125,5 +127,4 @@ public class ActionExecutor extends AbstractNotifier {
         notifyOnSuccess(tAction, result);
         return result;
     }
-
 }

@@ -12,15 +12,25 @@ public final class Parameter<T> {
 
     private T value;
 
-    private String stringValue;
+    private String stringValue = "undefined";
 
     private Parameter(Function<String, T> stringTFunction, Class<T> tClass) {
         this.stringTFunction = stringTFunction;
         this.tClass = tClass;
     }
 
+    private Parameter(Class<T> tClass, T value) {
+        this.value = value;
+        this.tClass = tClass;
+        this.stringTFunction = null;
+    }
+
     public static Parameter<String> of(String value) {
-        return new Parameter<>(null, String.class).withValue(value);
+        return new Parameter<>((str) -> str, String.class).withValue(value);
+    }
+
+    public static <T> Parameter<T> of(Class<T> tClass, T value) {
+        return new Parameter<>(tClass, value);
     }
 
     public static <T> Parameter<T> of(Function<String, T> stringTFunction, Class<T> tClass) {
@@ -29,7 +39,9 @@ public final class Parameter<T> {
 
     public Parameter<T> withValue(String stringValue) {
         this.stringValue = stringValue;
-        this.value = stringTFunction.apply(stringValue);
+        if (stringTFunction != null) {
+            this.value = stringTFunction.apply(stringValue);
+        }
         return this;
     }
 
@@ -58,5 +70,13 @@ public final class Parameter<T> {
 
     public Class<T> getParameterClass() {
         return tClass;
+    }
+
+    @Override
+    public String toString() {
+        return "Parameter(tClass=" + tClass.getSimpleName()
+            + ", value=" + value
+            + ", stringValue='" + stringValue + '\''
+            + ')';
     }
 }

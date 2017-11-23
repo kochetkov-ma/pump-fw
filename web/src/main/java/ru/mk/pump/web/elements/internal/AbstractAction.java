@@ -6,6 +6,8 @@ import java.util.function.Function;
 
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.web.elements.internal.interfaces.Action;
+import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 abstract class AbstractAction<T> implements Action<T> {
@@ -24,13 +26,13 @@ abstract class AbstractAction<T> implements Action<T> {
 
     private Map<String, Parameter> parameters = new HashMap<>();
 
-    public AbstractAction(Function<WebElement,T> actionFunction, InternalElement internalElement, String name) {
+    AbstractAction(Function<WebElement,T> actionFunction, InternalElement internalElement, String name) {
         this.actionSupplier = actionFunction;
         this.internalElement = internalElement;
         this.name = name;
     }
 
-    protected WebElement getInteractElement(){
+    WebElement getInteractElement(){
         return internalElement.getFinder().findFast().throwExceptionOnFail().getResult();
     }
 
