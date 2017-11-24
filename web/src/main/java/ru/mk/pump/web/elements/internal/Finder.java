@@ -90,6 +90,11 @@ public class Finder {
         return lastResult;
     }
 
+    public Finder clearCache() {
+        this.cache = null;
+        return this;
+    }
+
     Optional<WebElement> getCache() {
         return Optional.ofNullable(cache);
     }
