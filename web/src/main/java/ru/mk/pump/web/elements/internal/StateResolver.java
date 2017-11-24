@@ -37,7 +37,7 @@ public class StateResolver {
             } else if (item instanceof OrState) {
                 resolve((OrState) item);
             }
-            @SuppressWarnings({"unchecked", "ConstantConditions"}) final WaitResult<Boolean> res = (WaitResult<Boolean>) item.result().get();
+            @SuppressWarnings("unchecked") final WaitResult<Boolean> res = item.result();
             syncTimeLeft = syncTimeLeft - res.getElapsedTime();
             if (syncTimeLeft <= 0 || !res.isSuccess()) {
                 return (SetState) finalState.setResult(WaitResult.falseResult(timeout - syncTimeLeft, internalElement.getWaiter().getTimeoutS(), res.getCause())

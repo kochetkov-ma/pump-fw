@@ -6,5 +6,5 @@ public interface Event {
 
     String getName();
 
-    Map<String, Parameter> getParams();
+    Map<String, Parameter<?>> getParams();
 }

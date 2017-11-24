@@ -17,7 +17,7 @@ public abstract class AbstractActivity extends Observable implements Activity {
 
     private volatile boolean activated = false;
 
-    private Map<String, Parameter> param;
+    private Map<String, Parameter<?>> param;
 
     private Activity prevActivity;
 
@@ -40,13 +40,13 @@ public abstract class AbstractActivity extends Observable implements Activity {
         this(null, UUID.randomUUID());
     }
 
-    public AbstractActivity withParam(Map<String, Parameter> param) {
+    public AbstractActivity withParam(Map<String, Parameter<?>> param) {
         this.param = param;
         return this;
     }
 
     @Override
-    public Map<String, Parameter> getParams() {
+    public Map<String, Parameter<?>> getParams() {
         return param;
     }
 

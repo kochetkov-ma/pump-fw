@@ -40,8 +40,8 @@ abstract class AbstractState<T> implements StrictInfo {
         return result != null;
     }
 
-    public Optional<WaitResult<Boolean>> result() {
-        return Optional.ofNullable(result);
+    public WaitResult<Boolean> result() {
+        return result;
     }
 
     public AbstractState<T> setResult(@Nullable WaitResult<Boolean> result) {

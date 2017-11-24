@@ -1,11 +1,14 @@
 package ru.mk.pump.web.elements.internal;
 
+import com.google.common.collect.Sets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-
+import java.util.Set;
+import java.util.function.BiFunction;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
@@ -14,7 +17,7 @@ abstract class AbstractAction<T> implements Action<T> {
 
     private static final int MAX_TRY = 5;
 
-    private final Function<WebElement,T> actionSupplier;
+    private final BiFunction<WebElement, Map<String, Parameter<?>>, T> actionSupplier;
 
     private final InternalElement internalElement;
 
@@ -24,15 +27,19 @@ abstract class AbstractAction<T> implements Action<T> {
 
     private ActionStage currentStage;
 
-    private Map<String, Parameter> parameters = new HashMap<>();
+    private Set<ActionStrategy> actionStrategies = Sets.newHashSet();
 
-    AbstractAction(Function<WebElement,T> actionFunction, InternalElement internalElement, String name) {
+    private Map<String, Parameter<?>> parameters = new HashMap<>();
+
+    private SetState stateSet;
+
+    AbstractAction(BiFunction<WebElement, Map<String, Parameter<?>>, T> actionFunction, InternalElement internalElement, String name) {
         this.actionSupplier = actionFunction;
         this.internalElement = internalElement;
         this.name = name;
     }
 
-    WebElement getInteractElement(){
+    WebElement getInteractElement() {
         return internalElement.getFinder().findFast().throwExceptionOnFail().getResult();
     }
 
@@ -44,7 +51,7 @@ abstract class AbstractAction<T> implements Action<T> {
         while (actionExecutionTry <= MAX_TRY) {
             try {
                 actionExecutionTry++;
-                return actionSupplier.apply(getInteractElement());
+                return actionSupplier.apply(getInteractElement(), getParameters());
             } catch (RuntimeException ignore) {
                 ex = ignore;
             } catch (Error ignore) {
@@ -58,16 +65,6 @@ abstract class AbstractAction<T> implements Action<T> {
     }
 
     @Override
-    public ActionStage getStage() {
-        return currentStage;
-    }
-
-    @Override
-    public void setStage(ActionStage currentStage) {
-        this.currentStage = currentStage;
-    }
-
-    @Override
     public String name() {
         return name;
     }
@@ -78,18 +75,48 @@ abstract class AbstractAction<T> implements Action<T> {
     }
 
     @Override
-    public Action<T> withParameters(Map<String, Parameter> parameters) {
+    public Action<T> withParameters(Map<String, Parameter<?>> parameters) {
         this.parameters.putAll(parameters);
         return this;
     }
 
     @Override
-    public Map<String, Parameter> getParameters() {
+    public SetState getRedefineState() {
+        return stateSet;
+    }
+
+    @Override
+    public Set<ActionStrategy> getStrategy() {
+        return actionStrategies;
+    }
+
+    @Override
+    public Action<T> redefineExpectedState(SetState stateSet) {
+        this.stateSet = stateSet;
+        return this;
+    }
+
+    @Override
+    public Action<T> withStrategy(ActionStrategy... strategies) {
+        actionStrategies.addAll(Arrays.asList(strategies));
+        return this;
+    }
+
+    @Override
+    public Map<String, Parameter<?>> getParameters() {
         return parameters;
     }
 
     @Override
     public int getTry() {
         return actionExecutionTry;
+    }
+
+    public ActionStage getStage() {
+        return currentStage;
+    }
+
+    public void setStage(ActionStage currentStage) {
+        this.currentStage = currentStage;
     }
 }

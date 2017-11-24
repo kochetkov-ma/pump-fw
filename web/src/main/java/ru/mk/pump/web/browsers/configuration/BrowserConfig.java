@@ -30,5 +30,5 @@ public class BrowserConfig {
 
     private boolean selenoidVnc = false;
 
-    private Map<String, Parameter> extraParams = Maps.newHashMap();
+    private Map<String, Parameter<?>> extraParams = Maps.newHashMap();
 }

@@ -39,10 +39,10 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     @Getter
     private final Finder finder;
 
-    private final ActionFactory actions;
-
     private final Consumer<WaitResult<Boolean>> TEAR_DOWN = stateWaitResult -> getFinder().getLast()
         .ifPresent(waitResult -> stateWaitResult.withCause(waitResult.getCause()));
+
+    private final ActionsStore actionsStore;
 
     private String elementName = "empty (strongly recommend to add)";
 
@@ -84,7 +84,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         this.finder = newDelegateFinder();
         this.stateResolver = newDelegateStateResolver();
         this.actionExecutor = newDelegateActionExecutor(stateResolver);
-        this.actions = newDelegateActionFactory();
+        this.actionsStore = new ActionsStore(this, newDelegateActionFactory());
     }
 
     //endregion
@@ -176,14 +176,32 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     @Override
     public Action<String> getClickAction() {
-        return actions.newAction(WebElement::click, "Click");
+        return actionsStore.clickAction();
     }
 
     @Override
     public Action<String> getTextAction() {
-        return actions.newAction(webElement -> {
-            return getBrowser().actions().getText(webElement);
-        }, "Get text");
+        return actionsStore.textAction();
+    }
+
+    @Override
+    public Action getFocusAction() {
+        return actionsStore.focusAction();
+    }
+
+    @Override
+    public <T extends InternalElement> Action<List<T>> getSubItemsAction(By by, Class<T> elementClass) {
+        return actionsStore.subItemsAction(by, elementClass);
+    }
+
+    @Override
+    public Action getInputAction() {
+        return actionsStore.inputAction();
+    }
+
+    @Override
+    public <T extends InternalElement> Action getSubItemAction(By by, Class<T> elementClass) {
+        return actionsStore.subItemAction(by, elementClass);
     }
 
     public State notExists() {
@@ -222,6 +240,15 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     public SetState ready() {
         return (SetState) SetState.of(StateType.READY, displayed().get(), enabled().get()).withName("Ready to interact");
     }
+
+    @Override
+    public SetState clear() {
+        return (SetState) SetState.of(StateType.OTHER, exists(), State.of(() -> {
+            final WaitResult<WebElement> res = getFinder().findFast();
+            return res.isSuccess() && Strings.isEmpty(getBrowser().actions().getText(res.getResult()));
+        }, StateType.OTHER, TEAR_DOWN)).withName("Text of the element became an empty");
+    }
+
 
     @Override
     public String toString() {

@@ -21,7 +21,7 @@ public class ElementConfig {
 
     private Set<Annotation> annotations = Sets.newHashSet();
 
-    private Map<String, Parameter> parameters = Maps.newHashMap();
+    private Map<String, Parameter<?>> parameters = Maps.newHashMap();
 
     private int index = -1;
 
@@ -49,7 +49,7 @@ public class ElementConfig {
         return this;
     }
 
-    public ElementConfig withParameters(@NotNull Map<String, Parameter> parameters) {
+    public ElementConfig withParameters(@NotNull Map<String, Parameter<?>> parameters) {
         this.parameters.putAll(parameters);
         return this;
     }

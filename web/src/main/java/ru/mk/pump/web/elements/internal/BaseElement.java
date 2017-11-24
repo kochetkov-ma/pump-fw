@@ -20,7 +20,7 @@ import ru.mk.pump.web.page.Page;
 @Slf4j
 public class BaseElement extends AbstractElement<BaseElement> implements Element {
 
-    private Map<String, Parameter> elementParams;
+    private Map<String, Parameter<?>> elementParams;
 
     public BaseElement(By avatarBy, Page page) {
         super(avatarBy, page);
@@ -34,11 +34,11 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         super(avatarBy, browser);
     }
 
-    public Map<String, Parameter> getParams() {
+    public Map<String, Parameter<?>> getParams() {
         return elementParams;
     }
 
-    public BaseElement withParams(Map<String, Parameter> elementConfig) {
+    public BaseElement withParams(Map<String, Parameter<?>> elementConfig) {
         this.elementParams = elementConfig;
         return this;
     }
@@ -58,20 +58,14 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     public boolean isDisplayed() {
         final SetState res = getStateResolver().resolve(displayed());
         log.info(StringConstants.LINE + Strings.mapToPrettyString(res.getInfo()));
-        return res.result().orElseThrow(this::onEmptyResult).isSuccess();
+        return res.result().isSuccess();
     }
 
     @Override
     public boolean isNotDisplayed() {
         final SetState res = getStateResolver().resolve(notDisplayed());
         log.info(StringConstants.LINE + Strings.mapToPrettyString(res.getInfo()));
-        return res.result().orElseThrow(this::onEmptyResult).isSuccess();
-    }
-
-    @Override
-    public BaseElement setIndex(int index) {
-        super.setIndex(index);
-        return this;
+        return res.result().isSuccess();
     }
 
     @Override
@@ -90,7 +84,15 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return result;
     }
 
-    private PumpException onEmptyResult() {
-        return new PumpException("Empty result");
+    @Override
+    protected ActionExecutor newDelegateActionExecutor(StateResolver stateResolver) {
+        return super.newDelegateActionExecutor(stateResolver)
+            .addBefore(getFocusAction());
+    }
+
+    @Override
+    public BaseElement setIndex(int index) {
+        super.setIndex(index);
+        return this;
     }
 }

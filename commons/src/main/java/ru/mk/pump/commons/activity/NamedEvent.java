@@ -5,7 +5,7 @@ import java.util.Map;
 
 public final class NamedEvent implements Event {
 
-    final Map<String, Parameter> parameterMap = Maps.newHashMap();
+    final Map<String, Parameter<?>> parameterMap = Maps.newHashMap();
 
     private final String name;
 
@@ -28,7 +28,7 @@ public final class NamedEvent implements Event {
     }
 
     @Override
-    public Map<String, Parameter> getParams() {
+    public Map<String, Parameter<?>> getParams() {
         return parameterMap;
     }
 }

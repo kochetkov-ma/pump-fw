@@ -7,7 +7,7 @@ import java.util.UUID;
 @SuppressWarnings("UnusedReturnValue")
 public interface Activity extends Closeable {
 
-    Map<String, Parameter> getParams();
+    Map<String, Parameter<?>> getParams();
 
     boolean isClosed();
 

@@ -66,7 +66,7 @@ public class ElementImplDispatcher implements StrictInfo {
         return interfaceToImplMap;
     }
 
-    public <T extends BaseElement> long addParams(@NotNull Class<T> elementImpl, @NotNull Map<String, Parameter> parameters) {
+    public <T extends BaseElement> long addParams(@NotNull Class<T> elementImpl, @NotNull Map<String, Parameter<?>> parameters) {
         return getAll().values().stream()
             .filter(impl -> elementImpl.isAssignableFrom(impl.getImplementation()))
             .map(impl -> impl.setParameters(parameters))
@@ -103,18 +103,18 @@ public class ElementImplDispatcher implements StrictInfo {
 
         private final Class<T> implementation;
 
-        private Map<String, Parameter> parameters;
+        private Map<String, Parameter<?>> parameters;
 
-        private ElementImpl(@NotNull Class<T> implementation, @Nullable Map<String, Parameter> parameters) {
+        private ElementImpl(@NotNull Class<T> implementation, @Nullable Map<String, Parameter<?>> parameters) {
             this.implementation = implementation;
             this.parameters = parameters;
         }
 
-        public static <T extends BaseElement> ElementImpl<T> of(@NotNull Class<T> implementation, @Nullable Map<String, Parameter> parameters) {
+        public static <T extends BaseElement> ElementImpl<T> of(@NotNull Class<T> implementation, @Nullable Map<String, Parameter<?>> parameters) {
             return new ElementImpl<>(implementation, parameters);
         }
 
-        public ElementImpl<T> setParameters(Map<String, Parameter> parameters) {
+        public ElementImpl<T> setParameters(Map<String, Parameter<?>> parameters) {
             this.parameters = parameters;
             return this;
         }

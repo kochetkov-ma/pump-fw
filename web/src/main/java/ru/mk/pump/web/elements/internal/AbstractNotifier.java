@@ -19,6 +19,11 @@ abstract class AbstractNotifier {
         this.actionListeners = actionListeners;
     }
 
+    public AbstractNotifier clearListeners() {
+        actionListeners.clear();
+        return this;
+    }
+
     public AbstractNotifier addListener(ActionListener actionListener) {
         actionListeners.add(actionListener);
         return this;

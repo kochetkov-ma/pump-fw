@@ -19,6 +19,13 @@ public final class Parameter<T> {
         this.tClass = tClass;
     }
 
+    private Parameter(Class<T> tClass, T value ,String stringValue) {
+        this.value = value;
+        this.tClass = tClass;
+        this.stringValue = stringValue;
+        this.stringTFunction = null;
+    }
+
     private Parameter(Class<T> tClass, T value) {
         this.value = value;
         this.tClass = tClass;
@@ -31,6 +38,10 @@ public final class Parameter<T> {
 
     public static <T> Parameter<T> of(Class<T> tClass, T value) {
         return new Parameter<>(tClass, value);
+    }
+
+    public static <T> Parameter<T> of(Class<T> tClass, T value, String stringPresentValue) {
+        return new Parameter<>(tClass, value, stringPresentValue);
     }
 
     public static <T> Parameter<T> of(Function<String, T> stringTFunction, Class<T> tClass) {

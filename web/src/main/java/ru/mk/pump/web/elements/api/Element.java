@@ -2,12 +2,14 @@ package ru.mk.pump.web.elements.api;
 
 import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.interfaces.StrictInfo;
+import ru.mk.pump.web.elements.api.part.Clickable;
+import ru.mk.pump.web.elements.api.part.Text;
 
-public interface Element extends PrettyPrinter, StrictInfo{
+public interface Element extends PrettyPrinter, StrictInfo, Clickable, Text {
 
-    String getText();
 
-    void click();
+
+
 
     boolean isDisplayed();
 

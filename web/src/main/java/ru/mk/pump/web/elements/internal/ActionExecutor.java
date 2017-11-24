@@ -1,19 +1,19 @@
 package ru.mk.pump.web.elements.internal;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
-import ru.mk.pump.commons.utils.Waiter.WaitResult;
 import ru.mk.pump.web.elements.api.ActionListener;
+import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.Action.ActionStage;
 import ru.mk.pump.web.exceptions.ActionExecutingException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @NoArgsConstructor
@@ -41,6 +41,13 @@ public class ActionExecutor extends AbstractNotifier {
         return this;
     }
 
+    public ActionExecutor clearAllActions() {
+        beforeActions.clear();
+        afterActions.clear();
+        afterActionError.clear();
+        return this;
+    }
+
     public ActionExecutor addBefore(Action beforeAction) {
         this.beforeActions.add(beforeAction);
         return this;
@@ -59,16 +66,21 @@ public class ActionExecutor extends AbstractNotifier {
     public <T> T execute(Action<T> tAction) {
         tAction.setStage(ActionStage.NOT_RUN);
         try {
-            if (stateResolver != null) {
+            if (tAction.getRedefineState() != null) {
                 tAction.setStage(ActionStage.BEFORE);
-                stateResolver.resolve(tAction.getTarget().ready()).result().ifPresent(WaitResult::throwExceptionOnFail);
+                stateResolver.resolve(tAction.getRedefineState()).result().throwExceptionOnFail();
+            } else {
+                if (stateResolver != null) {
+                    tAction.setStage(ActionStage.BEFORE);
+                    stateResolver.resolve(tAction.getTarget().ready()).result().throwExceptionOnFail();
+                }
             }
             return payloadExecute(tAction);
-        }catch (Throwable throwable){
+        } catch (Throwable throwable) {
             notifyOnFail(tAction, throwable);
             throw new ActionExecutingException(tAction, throwable);
         } finally {
-            if (afterActionError.isEmpty()) {
+            if (!afterActionError.isEmpty() && isRightStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_FINALLY)) {
                 tAction.setStage(ActionStage.FINALLY);
                 final ActionExecutor helperExecutor = new ActionExecutor(getActionListeners());
                 afterActionError.forEach(helperExecutor::payloadExecute);
@@ -88,12 +100,12 @@ public class ActionExecutor extends AbstractNotifier {
         return true;
     }
 
-    protected  <T> T payloadExecute(Action<T> tAction) {
+    protected <T> T payloadExecute(Action<T> tAction) {
         T result = null;
         ActionExecutor helperExecutor;
         actionExecutionTry++;
         try {
-            if (!beforeActions.isEmpty()) {
+            if (!beforeActions.isEmpty() && isRightStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_BEFORE)) {
                 tAction.setStage(ActionStage.BEFORE);
                 helperExecutor = new ActionExecutor(getActionListeners());
                 beforeActions.forEach(helperExecutor::payloadExecute);
@@ -102,7 +114,7 @@ public class ActionExecutor extends AbstractNotifier {
             tAction.setStage(ActionStage.MAIN);
             result = tAction.get();
 
-            if (!afterActions.isEmpty()) {
+            if (!afterActions.isEmpty() && isRightStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_AFTER)) {
                 tAction.setStage(ActionStage.AFTER);
                 helperExecutor = new ActionExecutor(getActionListeners());
                 afterActions.forEach(helperExecutor::payloadExecute);
@@ -126,5 +138,10 @@ public class ActionExecutor extends AbstractNotifier {
         }
         notifyOnSuccess(tAction, result);
         return result;
+    }
+
+    private boolean isRightStrategy(Action<?> action, ActionStrategy... strategies) {
+        return action.getStrategy().isEmpty() || action.getStrategy().stream().anyMatch(i -> i.equals(ActionStrategy.STANDARD)) || Arrays.stream(strategies)
+            .anyMatch(item -> action.getStrategy().stream().anyMatch(strategy -> strategy.equals(item)));
     }
 }
