@@ -75,7 +75,6 @@ public class ActionExecutor extends AbstractNotifier {
                     stateResolver.resolve(tAction.getTarget().ready()).result().throwExceptionOnFail();
                 }
             }
-            return payloadExecute(tAction);
         } catch (Throwable throwable) {
             notifyOnFail(tAction, throwable);
             throw new ActionExecutingException(tAction, throwable);
@@ -88,6 +87,7 @@ public class ActionExecutor extends AbstractNotifier {
             }
             actionExecutionTry = 0;
         }
+        return payloadExecute(tAction);
     }
 
     protected boolean needNewExecution(Action tAction, Throwable throwable) {

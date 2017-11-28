@@ -9,11 +9,10 @@ public interface ElementAction {
 
     Action getTextAction();
 
+    Action getClearAction();
+
     Action getFocusAction();
 
-    <T extends InternalElement> Action<List<T>> getSubItemsAction(By by, Class<T> elementClass);
+    Action getInputAction(CharSequence ... keys);
 
-    Action getInputAction();
-
-    <T extends InternalElement> Action getSubItemAction(By by, Class<T> elementClass);
 }

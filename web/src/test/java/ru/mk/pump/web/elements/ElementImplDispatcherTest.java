@@ -135,5 +135,10 @@ public class ElementImplDispatcherTest {
         public InputComplexImpl(By avatarBy, Browser browser) {
             super(avatarBy, browser);
         }
+
+        @Override
+        public String set(String... text) {
+            return null;
+        }
     }
 }

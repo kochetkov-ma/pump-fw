@@ -6,9 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.constants.StringConstants;
-import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.elements.ElementFactory;
+import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.Page;
@@ -21,6 +22,8 @@ import ru.mk.pump.web.page.Page;
 public class BaseElement extends AbstractElement<BaseElement> implements Element {
 
     private Map<String, Parameter<?>> elementParams;
+
+    private ElementFactory selfElementFactory;
 
     public BaseElement(By avatarBy, Page page) {
         super(avatarBy, page);
@@ -43,9 +46,20 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return this;
     }
 
+
     @Override
     public String getText() {
         return getActionExecutor().execute(getTextAction());
+    }
+
+    @Override
+    public void clear() {
+        getActionExecutor().execute(getClearAction());
+    }
+
+    @Override
+    public String getTextSilent() {
+        return getActionExecutor().execute(getTextAction().redefineExpectedState(exists()));
     }
 
     @Override
@@ -66,6 +80,11 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         final SetState res = getStateResolver().resolve(notDisplayed());
         log.info(StringConstants.LINE + Strings.mapToPrettyString(res.getInfo()));
         return res.result().isSuccess();
+    }
+
+    @Override
+    public <T extends Element> SubElementHelper<T> getSubElements(Class<T> subElementClazz) {
+        return new SubElementHelper<>(subElementClazz, this, getSubElementFactory());
     }
 
     @Override
@@ -94,5 +113,22 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     public BaseElement setIndex(int index) {
         super.setIndex(index);
         return this;
+    }
+
+    public BaseElement setSelfFactory(ElementFactory selfElementFactory) {
+        this.selfElementFactory = selfElementFactory;
+        return this;
+    }
+
+    private ElementFactory getSubElementFactory() {
+        if (selfElementFactory == null) {
+            if (getPage().isPresent()) {
+                return new ElementFactory(new ElementImplDispatcher(), getPage().get());
+            } else {
+                return new ElementFactory(new ElementImplDispatcher(), getBrowser());
+            }
+        } else {
+            return selfElementFactory;
+        }
     }
 }

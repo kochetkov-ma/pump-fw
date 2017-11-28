@@ -1,6 +1,8 @@
 package ru.mk.pump.web.elements.internal.impl;
 
+import java.util.Map;
 import org.openqa.selenium.By;
+import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.concrete.Button;
@@ -24,5 +26,10 @@ class InputImpl extends BaseElement implements Input{
 
     public InputImpl(By avatarBy, Browser browser) {
         super(avatarBy, browser);
+    }
+
+    @Override
+    public String set(String... text) {
+        return getActionExecutor().execute(getInputAction(text));
     }
 }

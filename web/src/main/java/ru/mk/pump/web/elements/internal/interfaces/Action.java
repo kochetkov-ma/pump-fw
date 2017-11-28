@@ -26,11 +26,11 @@ public interface Action<T> {
 
     int getTry();
 
-    SetState getRedefineState();
+    InternalState<?> getRedefineState();
 
     Set<ActionStrategy> getStrategy();
 
-    Action<T> redefineExpectedState(SetState stateSet);
+    Action<T> redefineExpectedState(InternalState<?> stateSet);
 
     Action<T> withStrategy(ActionStrategy ... strategies);
 

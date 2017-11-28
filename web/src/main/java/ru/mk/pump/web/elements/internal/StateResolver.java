@@ -13,6 +13,7 @@ import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
 import ru.mk.pump.web.elements.internal.State.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+import ru.mk.pump.web.elements.internal.interfaces.InternalState;
 import ru.mk.pump.web.exceptions.BrowserException;
 import ru.mk.pump.web.exceptions.ElementException;
 
@@ -23,32 +24,51 @@ public class StateResolver {
     @Getter
     private final InternalElement internalElement;
 
+    private boolean fast = false;
+
     public StateResolver(InternalElement internalElement) {
         this.internalElement = internalElement;
     }
 
-    public SetState resolve(SetState state) {
-        final SetState finalState = reorganizeIfNeed(state);
-        final long timeout = internalElement.getWaiter().getTimeoutS() * 1000;
-        long syncTimeLeft = timeout;
-        for (AbstractState item : finalState.get()) {
-            if (item instanceof State) {
-                resolve((State) item);
-            } else if (item instanceof OrState) {
-                resolve((OrState) item);
-            }
-            @SuppressWarnings("unchecked") final WaitResult<Boolean> res = item.result();
-            syncTimeLeft = syncTimeLeft - res.getElapsedTime();
-            if (syncTimeLeft <= 0 || !res.isSuccess()) {
-                return (SetState) finalState.setResult(WaitResult.falseResult(timeout - syncTimeLeft, internalElement.getWaiter().getTimeoutS(), res.getCause())
-                    .withExceptionOnFail(waitResult -> newResolvedException(finalState.name(), finalState.getInfo(), waitResult)));
-            }
+
+    public <T extends InternalState<?>> T resolveFast(InternalState<?> state) {
+        fast = true;
+        try {
+            return resolve(state);
+        } finally {
+            fast = false;
         }
-        return (SetState) finalState.setResult(WaitResult.trueResult(timeout - syncTimeLeft, internalElement.getWaiter().getTimeoutS()));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends InternalState<?>> T resolve(InternalState<?> state) {
+        final InternalState<?> finalState = reorganizeIfNeed(state);
+        final long timeout = waiter().getTimeoutS() * 1000;
+        long syncTimeLeft = timeout;
+        if (state instanceof State) {
+            return (T) resolve((State) state);
+        } else if (state instanceof SetState) {
+            for (AbstractState<?> item : ((SetState) finalState).get()) {
+                if (item instanceof State) {
+                    resolve((State) item);
+                } else if (item instanceof OrState) {
+                    resolve((OrState) item);
+                }
+                final WaitResult<Boolean> res = item.result();
+                syncTimeLeft = syncTimeLeft - res.getElapsedTime();
+                if (syncTimeLeft <= 0 || !res.isSuccess()) {
+                    return (T) finalState
+                        .setResult(WaitResult.falseResult(timeout - syncTimeLeft, waiter().getTimeoutS(), res.getCause())
+                            .withExceptionOnFail(waitResult -> newResolvedException(finalState.name(), finalState.getInfo(), waitResult)));
+                }
+            }
+            return (T) finalState.setResult(WaitResult.trueResult(timeout - syncTimeLeft, waiter().getTimeoutS()));
+        }
+        throw new UnsupportedOperationException(String.format("Unsupported state type '%s'", state.getClass().getSimpleName()));
     }
 
     OrState resolve(OrState state) {
-        final WaitResult<Boolean> res = internalElement.getWaiter()
+        final WaitResult<Boolean> res = waiter()
             .withDelay(50)
             .wait(() -> state.get().stream().anyMatch(s -> {
                 try {
@@ -66,8 +86,8 @@ public class StateResolver {
         return (OrState) state.setResult(res);
     }
 
-    public State resolve(State state) {
-        final WaitResult<Boolean> res = internalElement.getWaiter()
+    State resolve(State state) {
+        final WaitResult<Boolean> res = waiter()
             .withDelay(50)
             .wait(state.get())
             .withExceptionOnFail(waitResult -> newResolvedException(state.name(), state.getInfo(), waitResult));
@@ -78,7 +98,7 @@ public class StateResolver {
 
     protected PumpException newResolvedException(String state, Map<String, String> stateExceptionInfo, WaitResult<Boolean> waitResult) {
         return new ElementException(
-            format("Element was not became to expected state '%s' in timeout '%s' sec", state, internalElement.getWaiter().getTimeoutS())
+            format("Element was not became to expected state '%s' in timeout '%s' sec", state, waiter().getTimeoutS())
             , internalElement
             , (pumpMessage -> pumpMessage.addExtraInfo(stateExceptionInfo))
             , waitResult.getCause());
@@ -102,6 +122,14 @@ public class StateResolver {
         }
     }
 
+    private ElementWaiter waiter() {
+        if (fast) {
+            return ElementWaiter.newFastInstance(200);
+        } else {
+            return internalElement.getWaiter();
+        }
+    }
+
     private void throwIfCause(WaitResult<Boolean> booleanWaitResult) {
         booleanWaitResult.ifHasCause(cause -> {
             if (cause instanceof BrowserException) {
@@ -110,22 +138,27 @@ public class StateResolver {
         });
     }
 
-    private SetState reorganizeIfNeed(SetState state) {
-        final List<State> andStates = Lists.newArrayList();
-        final OrState notStates = (OrState) new OrState(Lists.newArrayList(), StateType.OR_STATUS_UNION).withName("");
-        for (AbstractState item : state.get()) {
-            if (item instanceof State) {
-                if (item.type().isNot()) {
-                    notStates.withPayLoad(((State) item).getPayload()).withName(notStates.name() + " OR " + item.name())
-                        .withTearDown(((State) item).getTearDown().orElse(null));
-                } else {
-                    andStates.add((State) item);
+    private InternalState<?> reorganizeIfNeed(InternalState<?> state) {
+        if (state instanceof SetState) {
+            final List<State> andStates = Lists.newArrayList();
+            final OrState notStates = (OrState) new OrState(Lists.newArrayList(), StateType.OR_STATUS_UNION).withName("");
+            for (AbstractState item : ((SetState) state).get()) {
+                if (item instanceof State) {
+                    if (item.type().isNot()) {
+                        notStates.withPayLoad(((State) item).getPayload()).withName(notStates.name() + " OR " + item.name())
+                            .withTearDown(((State) item).getTearDown().orElse(null));
+                    } else {
+                        andStates.add((State) item);
+                    }
                 }
             }
-        }
-        if (notStates.getPayload().size() > 1) {
-            notStates.withName(notStates.name().replaceFirst(" OR ", ""));
-            return (SetState) SetState.of(state.type(), ImmutableSet.<AbstractState>builder().add(notStates).addAll(andStates).build()).withName(state.name());
+            if (notStates.getPayload().size() > 1) {
+                notStates.withName(notStates.name().replaceFirst(" OR ", ""));
+                return SetState.of(state.type(), ImmutableSet.<AbstractState>builder().add(notStates).addAll(andStates).build())
+                    .withName(state.name());
+            } else {
+                return state;
+            }
         } else {
             return state;
         }

@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
+import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.exception.UtilException;
 
 import java.util.Objects;
@@ -39,8 +40,8 @@ public final class RandomUtil {
     /**
      * +79207101122 - 12 chars
      */
-    public String newRussianMobilePhone(String fullPrefixWithCode) {
-        if (Objects.isNull(fullPrefixWithCode) || fullPrefixWithCode.isEmpty()) {
+    public String newRussianMobilePhone(@Nullable String fullPrefixWithCode) {
+        if (Strings.isEmpty(fullPrefixWithCode)) {
             fullPrefixWithCode = RUSSIAN_CODE;
         } else if (!fullPrefixWithCode.startsWith("+")) {
             if (!fullPrefixWithCode.startsWith("7")) {

@@ -7,7 +7,8 @@ import java.util.UUID;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString(exclude = "prevActivity")
+@SuppressWarnings("unused")
+@ToString()
 public abstract class AbstractActivity extends Observable implements Activity {
 
     @Setter
@@ -18,8 +19,6 @@ public abstract class AbstractActivity extends Observable implements Activity {
     private volatile boolean activated = false;
 
     private Map<String, Parameter<?>> param;
-
-    private Activity prevActivity;
 
     protected AbstractActivity(Observer observer, UUID uuid) {
         this.uuid = uuid;

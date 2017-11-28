@@ -41,30 +41,33 @@ class ActionsStore {
 
     Action clear() {
         return actions.newAction((webElement, param) -> {
+            final ClearType clearType;
             if (param.containsKey("clearType")) {
-                final ClearType clearType = param.get("clearType").getValue(ClearType.class);
-                switch (clearType) {
-                    case BASIC:
-                        webElement.clear();
+                clearType = param.get("clearType").getValue(ClearType.class);
+            } else {
+                clearType = ClearType.ADVANCED;
+            }
+            switch (clearType) {
+                case BASIC:
+                    webElement.clear();
+                    return;
+                case KEYBOARD:
+                    webElement.clear();
+                    webElement.sendKeys(Keys.CONTROL, "a");
+                    webElement.sendKeys(Keys.BACK_SPACE);
+                    return;
+                case ADVANCED:
+                    //webElement.clear();
+                    SetState state = element.getStateResolver().resolveFast(element.clearState());
+                    if (state.isResolved() && state.result().isSuccess()) {
                         return;
-                    case KEYBOARD:
-                        webElement.clear();
-                        webElement.sendKeys(Keys.CONTROL, "a");
-                        webElement.sendKeys(Keys.BACK_SPACE);
-                        return;
-                    case ADVANCED:
-                        webElement.clear();
-                        SetState state = element.getStateResolver().resolve(element.clear());
-                        if (state.isResolved() && state.result().isSuccess()) {
-                            return;
-                        }
-                        webElement.sendKeys(Keys.CONTROL, "a");
-                        webElement.sendKeys(Keys.BACK_SPACE);
-                        element.getStateResolver().resolve(element.clear()).result().throwExceptionOnFail();
-                        break;
-                    default:
-                        throw new UnsupportedOperationException("ClearType has been modified. Add new type of ClearType in ActionStore");
-                }
+                    }
+                    webElement.sendKeys(Keys.CONTROL, "a");
+                    webElement.sendKeys(Keys.BACK_SPACE);
+                    element.getStateResolver().resolveFast(element.clearState()).result().throwExceptionOnFail();
+                    return;
+                default:
+                    throw new UnsupportedOperationException("ClearType has been modified. Add new type of ClearType in ActionStore");
             }
         }, "Clear element text");
     }
@@ -101,7 +104,7 @@ class ActionsStore {
                         scrollScript = SCROLL_CENTER;
                 }
             }
-            element.getBrowser().actions().executeScript(scrollScript);
+            element.getBrowser().actions().executeScript(scrollScript, webElement);
         }, "Focus on element");
     }
 

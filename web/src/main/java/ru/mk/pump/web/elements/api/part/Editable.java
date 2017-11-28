@@ -11,6 +11,8 @@ import ru.mk.pump.commons.activity.Parameter;
 @SuppressWarnings("unused")
 public interface Editable {
 
+    String PARAM_NAME = "setValue";
+
     /**
      * [RUS]
      * Общий метод для установки значения в элемент

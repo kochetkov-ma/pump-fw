@@ -51,6 +51,7 @@ public class ElementException extends PumpException {
         final PumpMessage res = new PumpMessage(TITLE).withDesc(desc)
                 .addExtraInfo("type", element.getClass().getSimpleName())
                 .addExtraInfo("is list", String.valueOf(element.isList()))
+                .addExtraInfo("index", String.valueOf(element.getIndex()))
                 .addExtraInfo("name", element.getName())
                 .addExtraInfo("by", element.getBy().toString())
                 .addEnvInfo("browser id", element.getBrowser().getId())

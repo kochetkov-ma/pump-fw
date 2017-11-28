@@ -13,5 +13,5 @@ public interface ElementState {
 
     SetState ready();
 
-    SetState clear();
+    SetState clearState();
 }

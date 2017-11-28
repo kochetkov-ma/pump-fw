@@ -25,4 +25,9 @@ class DataInputImpl extends BaseElement implements Input {
     public DataInputImpl(By avatarBy, Browser browser) {
         super(avatarBy, browser);
     }
+
+    @Override
+    public String set(String... text) {
+        return null;
+    }
 }

@@ -83,8 +83,8 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         this.waiter = newDelegateWaiter();
         this.finder = newDelegateFinder();
         this.stateResolver = newDelegateStateResolver();
-        this.actionExecutor = newDelegateActionExecutor(stateResolver);
         this.actionsStore = new ActionsStore(this, newDelegateActionFactory());
+        this.actionExecutor = newDelegateActionExecutor(stateResolver);
     }
 
     //endregion
@@ -152,7 +152,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     @Override
     public ElementWaiter getWaiter() {
-        return waiter.newInstance();
+        return waiter.clone();
     }
 
     @Override
@@ -185,23 +185,18 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     }
 
     @Override
+    public Action getClearAction() {
+        return actionsStore.clear();
+    }
+
+    @Override
     public Action getFocusAction() {
         return actionsStore.focusAction();
     }
 
     @Override
-    public <T extends InternalElement> Action<List<T>> getSubItemsAction(By by, Class<T> elementClass) {
-        return actionsStore.subItemsAction(by, elementClass);
-    }
-
-    @Override
-    public Action getInputAction() {
-        return actionsStore.inputAction();
-    }
-
-    @Override
-    public <T extends InternalElement> Action getSubItemAction(By by, Class<T> elementClass) {
-        return actionsStore.subItemAction(by, elementClass);
+    public Action<String> getInputAction(CharSequence ... keys) {
+        return actionsStore.inputAction(keys);
     }
 
     public State notExists() {
@@ -242,7 +237,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     }
 
     @Override
-    public SetState clear() {
+    public SetState clearState() {
         return (SetState) SetState.of(StateType.OTHER, exists(), State.of(() -> {
             final WaitResult<WebElement> res = getFinder().findFast();
             return res.isSuccess() && Strings.isEmpty(getBrowser().actions().getText(res.getResult()));

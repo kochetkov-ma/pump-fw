@@ -41,13 +41,13 @@ public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
 
         /*set browser init size*/
         if (getConfig().getSizeOrDevice().useSize()) {
-            chromeOptions.addArguments("--window-size=" + getSize() + "--no-sandbox");
+            chromeOptions.addArguments("window-size=" + getSize(), "--no-sandbox");
         } else if (getConfig().getSizeOrDevice().isFullScreen()) {
             if (getConfig().isRemoteDriver()) {
-                chromeOptions.addArguments("--window-size=" + WebConstants.DEFAULT_FULLSCREEN);
+                chromeOptions.addArguments("window-size=" + WebConstants.DEFAULT_FULLSCREEN, "--no-sandbox");
             } else {
                 //chromeOptions.addArguments("--window-size=" + WebConstants.DEFAULT_FULLSCREEN);
-                chromeOptions.addArguments("--start-maximized");
+                chromeOptions.addArguments("--start-maximized", "--no-sandbox");
             }
         }
 

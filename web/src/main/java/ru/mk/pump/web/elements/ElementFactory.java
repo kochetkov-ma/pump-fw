@@ -133,7 +133,7 @@ public class ElementFactory implements StrictInfo {
     }
 
     private <R extends BaseElement> R fillElement(R element, ElementConfig elementConfig) {
-        element.withParams(elementConfig.getParameters()).withName(elementConfig.getName()).withDescription(elementConfig.getDescription())
+        element.setSelfFactory(this).withParams(elementConfig.getParameters()).withName(elementConfig.getName()).withDescription(elementConfig.getDescription())
             .addActionListener(actionListeners);
         if (elementConfig.getIndex() != -1) {
             element.setIndex(elementConfig.getIndex());

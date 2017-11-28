@@ -10,9 +10,10 @@ import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Waiter.WaitResult;
+import ru.mk.pump.web.elements.internal.interfaces.InternalState;
 
 @SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue"})
-abstract class AbstractState<T> implements StrictInfo {
+abstract class AbstractState<T> implements InternalState<T> {
 
     private final State.StateType stateType;
 
@@ -36,21 +37,19 @@ abstract class AbstractState<T> implements StrictInfo {
         this.tearDown = tearDown;
     }
 
-    boolean isResolved() {
-        return result != null;
+    @Override
+    abstract public T get();
+
+    public State.StateType type() {
+        return stateType;
     }
 
-    public WaitResult<Boolean> result() {
-        return result;
+    public String name() {
+        return name;
     }
 
-    public AbstractState<T> setResult(@Nullable WaitResult<Boolean> result) {
-        this.result = result;
-        return this;
-    }
-
-    public AbstractState<T> withTearDown(Consumer<WaitResult<Boolean>> tearDown) {
-        this.tearDown = tearDown;
+    public AbstractState<T> withName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -58,19 +57,22 @@ abstract class AbstractState<T> implements StrictInfo {
         return Optional.ofNullable(tearDown);
     }
 
-    abstract T get();
-
-    public AbstractState<T> withName(String name) {
-        this.name = name;
+    public AbstractState<T> withTearDown(Consumer<WaitResult<Boolean>> tearDown) {
+        this.tearDown = tearDown;
         return this;
     }
 
-    public String name() {
-        return name;
+    public AbstractState<T> setResult(@Nullable WaitResult<Boolean> result) {
+        this.result = result;
+        return this;
     }
 
-    public State.StateType type() {
-        return stateType;
+    public WaitResult<Boolean> result() {
+        return result;
+    }
+
+    public boolean isResolved() {
+        return result != null;
     }
 
     @Override

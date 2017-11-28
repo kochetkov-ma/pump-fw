@@ -5,16 +5,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.Wait;
 import ru.mk.pump.commons.utils.ProjectResources;
+import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
+import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.internal.BaseElement;
 
 @Slf4j
-public class ButtonImplTest {
+public class ImplsTest {
 
     private Browsers browsers;
 
@@ -54,6 +57,19 @@ public class ButtonImplTest {
         //log.info(Boolean.toString(buttonSection.isNotDisplayed()));
         //log.info(Boolean.toString(buttonDiv.isNotDisplayed()));
 
+    }
+
+    @Test
+    public void testInputImpl() {
+        final Input input = new InputImpl(By.id("lastNameId"), browser);
+
+        browser.start();
+        browser.open("https://app-digitalmortgage003.open.ru/registration");
+
+
+        log.info(input.set("МАКС"));
+        input.clear();
+        Waiter.sleep(3000);
     }
 
     @After

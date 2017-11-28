@@ -1,7 +1,9 @@
 package ru.mk.pump.web.elements.internal;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import lombok.Getter;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.utils.Waiter;
@@ -19,6 +21,17 @@ public class ElementWaiter {
 
     private int delayMs;
 
+    private ElementWaiter(int timeoutMs) {
+
+        this.timeoutS = timeoutMs;
+        this.delayMs = 50;
+        this.waiter = new Waiter();
+        try {
+            FieldUtils.writeField(waiter, "TIMEOUT_UNITS", TimeUnit.MILLISECONDS, true);
+        } catch (IllegalAccessException ignore) {
+        }
+    }
+
     public ElementWaiter(int timeoutS, int delayMs) {
 
         this.timeoutS = timeoutS;
@@ -29,6 +42,10 @@ public class ElementWaiter {
 
     public ElementWaiter() {
         this(DEFAULT_TIMEOUT_S, 0);
+    }
+
+    static ElementWaiter newFastInstance(@SuppressWarnings("SameParameterValue") int timeoutMs) {
+        return new ElementWaiter(timeoutMs);
     }
 
     public ElementWaiter clear() {
@@ -59,7 +76,8 @@ public class ElementWaiter {
         return waiter.waitIgnoreExceptions(timeoutS, delayMs, supplier);
     }
 
-    public ElementWaiter newInstance() {
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    public ElementWaiter clone() {
         return new ElementWaiter(this.timeoutS, this.delayMs);
     }
 }

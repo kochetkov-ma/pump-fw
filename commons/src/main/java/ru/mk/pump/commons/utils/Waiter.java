@@ -26,6 +26,8 @@ import java.util.function.Function;
 @SuppressWarnings({"unchecked", "UnusedReturnValue", "unused", "WeakerAccess"})
 public class Waiter {
 
+    private TimeUnit TIMEOUT_UNITS = TimeUnit.SECONDS;
+
     /**
      * ALL ASSERTS. CAN BE CLEAN
      */
@@ -116,7 +118,7 @@ public class Waiter {
                     .conditionEvaluationListener(condition -> elapsedTime.set(condition.getElapsedTimeInMS()))
                     .ignoreExceptionsMatching(this::isIgnore)
                     .pollInterval(intervalMs, TimeUnit.MILLISECONDS)
-                    .atMost(timeoutSec, TimeUnit.SECONDS)
+                    .atMost(timeoutSec, TIMEOUT_UNITS)
                     .until(action, matcher);
         } catch (Throwable ex) {
             if (reThrow && !isIgnore(ex) && !(ex instanceof ConditionTimeoutException)) {
