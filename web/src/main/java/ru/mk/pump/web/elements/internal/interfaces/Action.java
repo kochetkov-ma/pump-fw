@@ -3,12 +3,13 @@ package ru.mk.pump.web.elements.internal.interfaces;
 import java.util.Map;
 import java.util.Set;
 import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.SetState;
 import ru.mk.pump.web.elements.internal.State;
 
 @SuppressWarnings("unused")
-public interface Action<T> {
+public interface Action<T> extends StrictInfo{
 
     T get();
 

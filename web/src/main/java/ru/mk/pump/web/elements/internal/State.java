@@ -2,7 +2,7 @@ package ru.mk.pump.web.elements.internal;
 
 
 import lombok.Getter;
-import ru.mk.pump.commons.utils.Waiter.WaitResult;
+import ru.mk.pump.commons.utils.WaitResult;
 
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;

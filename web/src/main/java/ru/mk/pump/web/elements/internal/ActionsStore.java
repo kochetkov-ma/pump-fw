@@ -57,7 +57,7 @@ class ActionsStore {
                     webElement.sendKeys(Keys.BACK_SPACE);
                     return;
                 case ADVANCED:
-                    //webElement.clear();
+                    webElement.clear();
                     SetState state = element.getStateResolver().resolveFast(element.clearState());
                     if (state.isResolved() && state.result().isSuccess()) {
                         return;

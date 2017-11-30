@@ -1,6 +1,5 @@
 package ru.mk.pump.web.elements.internal;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
@@ -8,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.internal.State.StateType;
 
@@ -20,6 +20,7 @@ public class SetState extends AbstractState<Set<AbstractState>> {
     }
 
     public static SetState of(StateType stateType, AbstractState... states) {
+
         return new SetState(Sets.newLinkedHashSet(Arrays.asList(states)), stateType);
     }
 
@@ -37,7 +38,11 @@ public class SetState extends AbstractState<Set<AbstractState>> {
 
     @Override
     public Map<String, String> getInfo() {
-        return ImmutableMap.<String, String>builder().putAll(super.getInfo()).put("states", Strings.toPrettyString(getPayload(), "states".length() + 3))
+        return StrictInfo.infoBuilder("SetState")
+            .put("state type", type().name())
+            .put("state name", name())
+            .put("result", Objects.toString(result()))
+            .put("states", Strings.toPrettyString(getPayload()))
             .build();
     }
 

@@ -15,7 +15,6 @@ import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.exception.TimeoutException;
 import ru.mk.pump.commons.exception.VerifyError;
-import ru.mk.pump.commons.utils.Waiter.WaitResult;
 
 @Slf4j
 public class WaiterTest {

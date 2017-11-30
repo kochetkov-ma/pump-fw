@@ -54,9 +54,7 @@ public class SubElementHelperTest {
     public void find() {
 
         parent.isDisplayed();
-
         final By byChild = By.xpath(".//button[@data-aid='startRegistration']");
-
         log.info(parent.getSubElements(Button.class).find(byChild).getText());
 
     }

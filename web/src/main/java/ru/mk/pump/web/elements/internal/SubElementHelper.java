@@ -10,12 +10,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.commons.utils.Waiter.WaitResult;
+import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.ElementConfig;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementException;
+import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class SubElementHelper<T extends Element> {
@@ -159,12 +160,13 @@ public class SubElementHelper<T extends Element> {
     }
 
     private ElementException exceptionNoExists(WaitResult<?> res, String byString) {
-        return new ElementException(
-            String.format("Cannot find sub elements '%s' by '%s' because parent is not exists", subElementClass.getSimpleName(), byString), parent,
-            res.getCause());
+        return new ElementFinderNotFoundException(
+            String.format("Cannot find sub elements '%s' by '%s' because parent is not exists", subElementClass.getSimpleName(), byString), res.getCause())
+            .withTargetElement(parent);
     }
 
     private ElementException exceptionNoExistsSub(String byString) {
-        return new ElementException(String.format("Cannot find any sub elements '%s' by '%s' ", subElementClass.getSimpleName(), byString), parent);
+        return new ElementException(String.format("Cannot find any sub elements '%s' by '%s' ", subElementClass.getSimpleName(), byString))
+            .withTargetElement(parent);
     }
 }

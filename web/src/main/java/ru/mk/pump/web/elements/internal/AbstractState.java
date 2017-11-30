@@ -1,6 +1,6 @@
 package ru.mk.pump.web.elements.internal;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -8,8 +8,7 @@ import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
-import ru.mk.pump.commons.interfaces.StrictInfo;
-import ru.mk.pump.commons.utils.Waiter.WaitResult;
+import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.internal.interfaces.InternalState;
 
 @SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue"})
@@ -77,7 +76,12 @@ abstract class AbstractState<T> implements InternalState<T> {
 
     @Override
     public Map<String, String> getInfo() {
-        return ImmutableMap.of("stateType", stateType.toString(), "result", Objects.toString(result), "name", name);
+        final LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        result.put("type", getClass().getSimpleName());
+        result.put("stateType", stateType.toString());
+        result.put("result", Objects.toString(result));
+        result.put("name", name);
+        return result;
     }
 
     @Override

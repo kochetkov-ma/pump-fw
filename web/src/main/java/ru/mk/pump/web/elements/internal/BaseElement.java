@@ -1,6 +1,5 @@
 package ru.mk.pump.web.elements.internal;
 
-import com.google.common.collect.Maps;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -45,7 +44,6 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         this.elementParams = elementConfig;
         return this;
     }
-
 
     @Override
     public String getText() {
@@ -93,17 +91,6 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     @Override
-    public Map<String, String> getInfo() {
-        final Map<String, String> result = Maps.newLinkedHashMap();
-        result.put("type", getClass().getSimpleName());
-        result.put("name", getName());
-        result.put("description", getElementDescription());
-        result.put("browser", getBrowser().getId());
-        result.put("elementParams", Strings.mapToPrettyString(elementParams, "elementParams".length() + 3));
-        return result;
-    }
-
-    @Override
     protected ActionExecutor newDelegateActionExecutor(StateResolver stateResolver) {
         return super.newDelegateActionExecutor(stateResolver)
             .addBefore(getFocusAction());
@@ -115,6 +102,13 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return this;
     }
 
+    @Override
+    public Map<String, String> getInfo() {
+        final Map<String, String> res = super.getInfo();
+        res.put("elementParams", Strings.mapToPrettyString(elementParams));
+        return res;
+    }
+
     public BaseElement setSelfFactory(ElementFactory selfElementFactory) {
         this.selfElementFactory = selfElementFactory;
         return this;
@@ -122,8 +116,8 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     private ElementFactory getSubElementFactory() {
         if (selfElementFactory == null) {
-            if (getPage().isPresent()) {
-                return new ElementFactory(new ElementImplDispatcher(), getPage().get());
+            if (getPage() != null) {
+                return new ElementFactory(new ElementImplDispatcher(), getPage());
             } else {
                 return new ElementFactory(new ElementImplDispatcher(), getBrowser());
             }

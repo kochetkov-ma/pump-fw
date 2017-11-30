@@ -3,12 +3,12 @@ package ru.mk.pump.commons.exception;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class PumpException extends AbstractPumpException {
 
-    public PumpException(String message, String prefix) {
-        super(new PumpMessage(message).withPre(prefix));
+    public PumpException(String title) {
+        super(new PumpMessage(title));
     }
 
-    public PumpException(String message) {
-        super(new PumpMessage(message));
+    public PumpException(String title, Throwable cause) {
+        super(new PumpMessage(title), cause);
     }
 
     public PumpException(PumpMessage exceptionMessage) {
@@ -19,11 +19,12 @@ public class PumpException extends AbstractPumpException {
         super(exceptionMessage, cause);
     }
 
-    public PumpException(String message, String prefix, Throwable cause) {
-        super(new PumpMessage(message).withPre(prefix), cause);
-    }
-
-    public PumpException(String message, Throwable cause) {
-        super(new PumpMessage(message), cause);
+    @Override
+    protected Throwable checkCauseAndReorganize(Throwable cause) {
+        if (cause instanceof PumpException) {
+            final PumpException exception = (PumpException) cause;
+            getEnv().entrySet().removeIf((entry) -> exception.getEnv().containsKey(entry.getKey()));
+        }
+        return cause;
     }
 }

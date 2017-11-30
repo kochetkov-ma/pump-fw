@@ -9,13 +9,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
-import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
@@ -26,16 +27,20 @@ import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.ElementConfig;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+import ru.mk.pump.web.exceptions.ElementFactoryException;
 import ru.mk.pump.web.page.Page;
 
 @SuppressWarnings({"unchecked", "unused", "WeakerAccess"})
 @ToString(exclude = {"elementImplDispatcher"})
 public class ElementFactory implements StrictInfo {
 
+    @Getter
     private final Page page;
 
+    @Getter
     private final ElementImplDispatcher elementImplDispatcher;
 
+    @Getter
     private final Browser browser;
 
     private Set<Class<? extends Annotation>> requirements = Sets.newHashSet();
@@ -86,7 +91,7 @@ public class ElementFactory implements StrictInfo {
                 return (R) fillElement(constructor.newInstance(by, page), elementConfig);
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassCastException ex) {
-            throw new PumpException(new PumpMessage("Error element builder").addExtraInfo(getInfo()), ex);
+            throw new ElementFactoryException(new PumpMessage("Error element builder").addExtraInfo(getInfo()), ex);
         }
     }
 
@@ -99,13 +104,13 @@ public class ElementFactory implements StrictInfo {
             constructor.setAccessible(true);
             return (R) fillElement(constructor.newInstance(by, (InternalElement) parent), elementConfig);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassCastException ex) {
-            throw new PumpException(new PumpMessage("Error element builder").addExtraInfo(getInfo()), ex);
+            throw new ElementFactoryException(new PumpMessage("Error element builder").addExtraInfo(getInfo()), ex);
         }
     }
 
     @Override
     public Map<String, String> getInfo() {
-        final Map<String, String> res = Maps.newLinkedHashMap();
+        final LinkedHashMap<String, String> res = Maps.newLinkedHashMap();
         if (browser != null) {
             res.put("browser", browser.toString());
         }
@@ -120,9 +125,9 @@ public class ElementFactory implements StrictInfo {
         return res;
     }
 
-    private void checkParent(Element parent) {
+    private void checkParent(Element parent) throws ElementFactoryException {
         if (!(parent instanceof InternalElement)) {
-            throw new PumpException(new PumpMessage(String
+            throw new ElementFactoryException(new PumpMessage(String
                 .format("Parent element '%s' is not accessible expected interface '%s'", parent.getClass().getSimpleName(),
                     InternalElement.class.getSimpleName())).addExtraInfo(getInfo()));
         }

@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.interfaces.StrictInfo;
-import ru.mk.pump.commons.utils.Waiter.WaitResult;
+import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.internal.State;
 
 public interface InternalState<T> extends StrictInfo {

@@ -9,6 +9,7 @@ import com.google.common.collect.SetMultimap;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -21,13 +22,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 import ru.mk.pump.commons.activity.Parameter;
-import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.BaseElement;
+import ru.mk.pump.web.exceptions.ElementDiscoveryException;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @ToString(of = {"DEFAULT_ANNOTATION_IMPL", "DEFAULT_PACKAGE_IMPL", "DEFAULT_PACKAGE_INTERFACE", "interfaceToImplMap"})
@@ -75,12 +76,12 @@ public class ElementImplDispatcher implements StrictInfo {
 
     @Override
     public Map<String, String> getInfo() {
-        final Map<String, String> res = Maps.newLinkedHashMap();
+        final LinkedHashMap<String, String> res = Maps.newLinkedHashMap();
         res.put("DEFAULT_PACKAGE_INTERFACE", Arrays.toString(DEFAULT_PACKAGE_INTERFACE));
         res.put("DEFAULT_PACKAGE_IMPL", Arrays.toString(DEFAULT_PACKAGE_IMPL));
         res.put("DEFAULT_ANNOTATION_IMPL", DEFAULT_ANNOTATION_IMPL.getSimpleName());
         interfaceToImplMap.asMap()
-            .forEach((key, value) -> res.put(key.getSimpleName(), Strings.toPrettyString(value, key.getSimpleName().length() + 3)));
+            .forEach((key, value) -> res.put(key.getSimpleName(), Strings.toPrettyString(value)));
         return res;
     }
 
@@ -135,14 +136,14 @@ public class ElementImplDispatcher implements StrictInfo {
     private <T extends Element, R extends BaseElement> ElementImpl<R> findByElementConfig(Class<T> elementInterface,
         @Nullable Set<Class<? extends Annotation>> requirements) {
         if (!interfaceToImplMap.containsKey(elementInterface)) {
-            throw new PumpException(
+            throw new ElementDiscoveryException(
                 new PumpMessage(format("Interface '%s' do not exists in ElementImplDispatcher. You have to add this using #addImplementation",
                     elementInterface.getSimpleName()))
                     .addEnvInfo(this));
         }
         final Collection<ElementImpl<? extends BaseElement>> implementations = interfaceToImplMap.get(elementInterface);
         if (implementations.isEmpty()) {
-            throw new PumpException(
+            throw new ElementDiscoveryException(
                 new PumpMessage(
                     format("Interface '%s' do not have any implementations  in ElementImplDispatcher. You have to add using #addImplementation",
                         elementInterface.getSimpleName()))

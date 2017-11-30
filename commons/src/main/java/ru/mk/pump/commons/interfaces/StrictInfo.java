@@ -1,12 +1,15 @@
 package ru.mk.pump.commons.interfaces;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 public interface StrictInfo {
 
-    /**
-     *  Recommend using <b>Linked</b>Map implementation
-     * @return Map of information about Object like {@link #toString()}
-     */
+    static ImmutableMap.Builder<String, String> infoBuilder(String type) {
+        final ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder()
+            .put("type", type);
+        return builder;
+    }
+
     Map<String, String> getInfo();
 }

@@ -1,6 +1,9 @@
 package ru.mk.pump.web.elements.internal;
 
+import com.google.common.collect.Maps;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
@@ -10,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.commons.utils.Waiter.WaitResult;
+import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.api.ActionListener;
 import ru.mk.pump.web.elements.internal.State.StateType;
@@ -71,7 +74,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         this.page = page;
         this.parentElement = parentElement;
         if (parentElement != null) {
-            parentElement.getPage().ifPresent(i -> this.page = i);
+            this.page = parentElement.getPage();
             this.browser = parentElement.getBrowser();
         } else {
             if (page != null) {
@@ -91,7 +94,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     //region delegates
     protected ElementWaiter newDelegateWaiter() {
-        return new ElementWaiter();
+        return ElementWaiter.newWaiterS();
     }
 
     protected Finder newDelegateFinder() {
@@ -141,8 +144,8 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     }
 
     @Override
-    public Optional<Page> getPage() {
-        return Optional.ofNullable(page);
+    public Page getPage() {
+        return page;
     }
 
     @Override
@@ -152,7 +155,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     @Override
     public ElementWaiter getWaiter() {
-        return waiter.clone();
+        return waiter;
     }
 
     @Override
@@ -185,17 +188,17 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     }
 
     @Override
-    public Action getClearAction() {
+    public Action<?> getClearAction() {
         return actionsStore.clear();
     }
 
     @Override
-    public Action getFocusAction() {
+    public Action<?> getFocusAction() {
         return actionsStore.focusAction();
     }
 
     @Override
-    public Action<String> getInputAction(CharSequence ... keys) {
+    public Action<String> getInputAction(CharSequence... keys) {
         return actionsStore.inputAction(keys);
     }
 
@@ -266,5 +269,31 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         }
         sb.append(')');
         return sb.toString();
+    }
+
+    @Override
+    public Map<String, String> getInfo() {
+        final LinkedHashMap<String, String> result = Maps.newLinkedHashMap();
+        result.put("type", getClass().getSimpleName());
+        if (isList()) {
+            result.put("list index", String.valueOf(getIndex()));
+        } else {
+            result.put("list element", "no");
+        }
+        result.put("name", getName());
+        result.put("description", getElementDescription());
+        result.put("by", getBy().toString());
+        if (parentElement != null) {
+            result.put("parentElement", Strings.space(parentElement.getName(), parentElement.getBy().toString()));
+        } else {
+            result.put("parentElement", "no");
+        }
+        if (page != null) {
+            result.put("page", Strings.space(page.getName(), page.getUrl()));
+        } else {
+            result.put("page", "no");
+        }
+        result.put("browser", getBrowser().getId());
+        return result;
     }
 }

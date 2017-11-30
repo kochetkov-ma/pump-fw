@@ -1,7 +1,6 @@
 package ru.mk.pump.web.elements.internal;
 
 import java.util.List;
-
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriverException;
@@ -21,7 +20,8 @@ class ListElementStrategy extends FindStrategy {
     @Override
     public WebElement findSelf() {
         if (!getTarget().isList()) {
-            throw new ElementFinderException(String.format("Selected find strategy '%s' don't work with no list elements", getClass().getSimpleName()), getTarget());
+            throw new ElementFinderException(String.format("Selected find strategy '%s' don't work with no list elements", getClass().getSimpleName()))
+                .withTargetElement(getTarget());
         }
         if (isRoot()) {
             return getFromRoot();
@@ -39,16 +39,17 @@ class ListElementStrategy extends FindStrategy {
             return res;
         } catch (WebDriverException ex) {
             getTarget().getFinder().setCache(null);
-            throw new ElementFinderNotFoundException("Find root element error", getTarget(), ex);
+            throw new ElementFinderNotFoundException("Find root element error", ex).withTargetElement(getTarget());
         }
     }
 
-    protected List<WebElement> getList(){
+    protected List<WebElement> getList() {
         try {
             return getTarget().getParent()
-                    .orElseThrow(() -> new ElementFinderException("Cannot find parent element", getTarget()))
-                    .getFinder().get().findElements(getTarget().getBy());
-        } catch (StaleElementReferenceException ex){
+                .orElseThrow(() -> new ElementFinderNotFoundException("Cannot find parent element")
+                    .withTargetElement(getTarget()))
+                .getFinder().get().findElements(getTarget().getBy());
+        } catch (StaleElementReferenceException ex) {
             getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
             throw ex;
         } catch (NoSuchElementException ex) {
@@ -62,8 +63,10 @@ class ListElementStrategy extends FindStrategy {
     protected WebElement getFromList(List<WebElement> webElements) {
         /*Когда список элементов изменился нужно пересчитывать все элементы*/
         if (webElements.size() <= getTarget().getIndex()) {
-            throw new ElementFinderNotFoundException(String
-                .format("Expected element index '%s' is exceeds the list size '%s'", getTarget().getIndex(), webElements.size()), getTarget());
+            throw new ElementFinderNotFoundException(
+                String.format("Expected element index '%s' is exceeds the list size '%s'", getTarget().getIndex(), webElements.size()))
+                .withTargetElement(getTarget())
+                .withTargetInfo("finder strategy", this);
         }
         try {
             final WebElement res = webElements.get(getTarget().getIndex());

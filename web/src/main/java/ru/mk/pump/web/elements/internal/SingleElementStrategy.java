@@ -5,7 +5,6 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.exceptions.ElementFinderException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 
 @SuppressWarnings("WeakerAccess")
@@ -21,7 +20,7 @@ class SingleElementStrategy extends FindStrategy {
             return getFromRoot();
         } else {
             final WebElement parent = getTarget().getParent()
-                .orElseThrow(() -> new ElementFinderException("Cannot find parent element", getTarget()))
+                .orElseThrow(() -> new ElementFinderNotFoundException("Cannot find parent element").withTargetElement(getTarget()))
                 .getFinder().get();
             return getFromParent(parent);
         }
@@ -34,7 +33,7 @@ class SingleElementStrategy extends FindStrategy {
             return res;
         } catch (WebDriverException ex) {
             getTarget().getFinder().setCache(null);
-            throw new ElementFinderNotFoundException("Find root element error", getTarget(), ex);
+            throw new ElementFinderNotFoundException("Find root element error", ex).withTargetElement(getTarget());
         }
     }
 
@@ -43,7 +42,7 @@ class SingleElementStrategy extends FindStrategy {
             final WebElement res = parent.findElement(getTarget().getBy());
             getTarget().getFinder().setCache(res);
             return res;
-        } catch (StaleElementReferenceException ex){
+        } catch (StaleElementReferenceException ex) {
             getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
             throw ex;
         } catch (NoSuchElementException ex) {

@@ -1,14 +1,15 @@
 package ru.mk.pump.web.browsers;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
-import ru.mk.pump.commons.exception.PumpMessage;
-import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.commons.activity.AbstractActivity;
 import ru.mk.pump.commons.activity.Activity;
+import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.exceptions.BrowserException;
 
 /**
@@ -58,7 +59,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
     public Browser start() {
         this.driver = builder.createAndStartDriver();
         if (driver == null) {
-            throw new BrowserException(new PumpMessage("Cannot start browser. Incorrect driver builder", toString()));
+            throw new BrowserException("Cannot start browser. Incorrect driver builder", this);
         }
         activate();
         return this;
@@ -68,7 +69,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
     @Override
     public WebDriver getDriver() {
         if (driver == null) {
-            throw new BrowserException(new PumpMessage("Cannot get WebDriver - browser was not started or closed", toString()));
+            throw new BrowserException("Cannot get WebDriver - browser was not started or closed", this);
         }
         return this.driver;
     }
@@ -140,5 +141,12 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
         super.close();
     }
 
-
+    @Override
+    public Map<String, String> getInfo() {
+        final LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        result.put("id", id);
+        result.put("builder", builder.getClass().getSimpleName());
+        result.put("config", config.toString());
+        return result;
+    }
 }

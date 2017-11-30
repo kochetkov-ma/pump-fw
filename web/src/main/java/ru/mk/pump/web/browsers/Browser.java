@@ -4,10 +4,11 @@ import java.io.Closeable;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
+import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public interface Browser extends Closeable {
+public interface Browser extends Closeable, StrictInfo {
 
     String getId();
 

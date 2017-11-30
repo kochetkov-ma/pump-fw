@@ -1,27 +1,32 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+import ru.mk.pump.commons.exception.PumpMessage;
+import ru.mk.pump.web.elements.internal.Finder;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class ElementFinderException extends ElementException {
 
-    public ElementFinderException(String message) {
-        super(message);
+    static final String FINDER = "finder";
+
+    public ElementFinderException(String title) {
+        super(title);
     }
 
-    public ElementFinderException(InternalElement element) {
-        super(element);
+    public ElementFinderException(String title, Throwable cause) {
+        super(title, cause);
     }
 
-    public ElementFinderException(InternalElement element, Throwable throwable) {
-        super(element, throwable);
+    public ElementFinderException(PumpMessage exceptionMessage) {
+        super(exceptionMessage);
     }
 
-    public ElementFinderException(String message, InternalElement element) {
-        super(message, element);
+    public ElementFinderException(PumpMessage exceptionMessage, Throwable cause) {
+        super(exceptionMessage, cause);
     }
 
-    public ElementFinderException(String message, InternalElement element, Throwable throwable) {
-        super(message, element, throwable);
+    public ElementException withTarget(Finder finder) {
+        addTarget(FINDER, finder);
+        withElement(finder.getMainElement());
+        return this;
     }
 }

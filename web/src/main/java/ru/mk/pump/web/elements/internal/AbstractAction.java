@@ -3,11 +3,13 @@ package ru.mk.pump.web.elements.internal;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
@@ -65,6 +67,14 @@ abstract class AbstractAction<T> implements Action<T> {
         throw error;
     }
 
+    public ActionStage getStage() {
+        return currentStage;
+    }
+
+    public void setStage(ActionStage currentStage) {
+        this.currentStage = currentStage;
+    }
+
     @Override
     public String name() {
         return name;
@@ -79,6 +89,16 @@ abstract class AbstractAction<T> implements Action<T> {
     public Action<T> withParameters(Map<String, Parameter<?>> parameters) {
         this.parameters.putAll(parameters);
         return this;
+    }
+
+    @Override
+    public Map<String, Parameter<?>> getParameters() {
+        return parameters;
+    }
+
+    @Override
+    public int getTry() {
+        return actionExecutionTry;
     }
 
     @Override
@@ -104,20 +124,18 @@ abstract class AbstractAction<T> implements Action<T> {
     }
 
     @Override
-    public Map<String, Parameter<?>> getParameters() {
-        return parameters;
-    }
-
-    @Override
-    public int getTry() {
-        return actionExecutionTry;
-    }
-
-    public ActionStage getStage() {
-        return currentStage;
-    }
-
-    public void setStage(ActionStage currentStage) {
-        this.currentStage = currentStage;
+    public Map<String, String> getInfo() {
+        final LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        result.put("type", this.name);
+        result.put("try", String.valueOf(this.actionExecutionTry));
+        result.put("action strategies", Strings.toString(this.actionStrategies));
+        result.put("current stage", this.currentStage.toString());
+        result.put("target element", Strings.space(internalElement.getName(), internalElement.getBy().toString()));
+        result.put("parameters", this.parameters.toString());
+        result.put("max tries", String.valueOf(MAX_TRY));
+        if (stateSet != null) {
+            result.put("redefined stateSet", this.stateSet.toString());
+        }
+        return result;
     }
 }

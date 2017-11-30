@@ -1,27 +1,23 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+import ru.mk.pump.commons.exception.PumpMessage;
 
 @SuppressWarnings("unused")
 public class ElementFinderNotFoundException extends ElementFinderException {
 
-    public ElementFinderNotFoundException(String message) {
-        super(message);
+    public ElementFinderNotFoundException(String title) {
+        super(title);
     }
 
-    public ElementFinderNotFoundException(InternalElement element) {
-        super(element);
+    public ElementFinderNotFoundException(String title, Throwable cause) {
+        super(title, cause);
     }
 
-    public ElementFinderNotFoundException(InternalElement element, Throwable throwable) {
-        super(element, throwable);
+    public ElementFinderNotFoundException(PumpMessage exceptionMessage) {
+        super(exceptionMessage);
     }
 
-    public ElementFinderNotFoundException(String message, InternalElement element) {
-        super(message, element);
-    }
-
-    public ElementFinderNotFoundException(String message, InternalElement element, Throwable throwable) {
-        super(message, element, throwable);
+    public ElementFinderNotFoundException(PumpMessage exceptionMessage, Throwable cause) {
+        super(exceptionMessage, cause);
     }
 }

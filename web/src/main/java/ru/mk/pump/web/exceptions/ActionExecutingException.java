@@ -1,35 +1,37 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.exception.PumpMessage;
-import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 
-@SuppressWarnings("unused")
-public class ActionExecutingException extends ElementException {
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class ActionExecutingException extends AbstractWebException {
 
-    private static final String TITLE = "Executing action '%s' error";
+    static final String ACTION = "action";
+
+    static final String TITLE = "Executing action '%s' error";
 
     public ActionExecutingException(Action action) {
-        super(action.getTarget(), (m) -> message(m, null, action));
+        this(action, null);
     }
 
     public ActionExecutingException(Action action, Throwable throwable) {
-        super(action.getTarget(), (m) -> message(m, null, action), throwable);
+        super(message(action), throwable);
+        withBrowser(action.getTarget().getBrowser());
+        withPage(action.getTarget().getPage());
+        addTarget(ACTION, action);
     }
 
-    public ActionExecutingException(String message, Action action) {
-        super(action.getTarget(), (m) -> message(m, message, action));
+    public ActionExecutingException(String description, Action action) {
+        this(action);
+        getSourceMessage().withDesc(description);
     }
 
-    public ActionExecutingException(String message, Action action, Throwable throwable) {
-        super(action.getTarget(), (m) -> message(m, message, action), throwable);
+    public ActionExecutingException(String description, Action action, Throwable throwable) {
+        this(action, throwable);
+        getSourceMessage().withDesc(description);
     }
 
-    private static PumpMessage message(PumpMessage message, String desc, Action action) {
-        return message.withDesc(Strings.concat(StringConstants.DOT, String.format(TITLE, action.name()), desc))
-            .addExtraInfo("action name", action.name())
-            .addExtraInfo("action stage", action.getStage().name())
-            .addExtraInfo("action parameters", action.getParameters().toString());
+    private static PumpMessage message(Action action) {
+        return new PumpMessage(String.format(TITLE, action.name()));
     }
 }

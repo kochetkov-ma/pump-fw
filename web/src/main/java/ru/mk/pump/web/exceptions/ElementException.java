@@ -1,64 +1,48 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
+import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
-import java.util.function.Consumer;
-
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ElementException extends PumpException {
+public class ElementException extends AbstractWebException {
 
-    private static final String TITLE = "Pump element error";
+    static final String ELEMENT = "element";
 
-    public ElementException(String message) {
-        super(message);
+    private static final String TITLE = "Pump element '%s' error";
+
+    public ElementException(String title) {
+        super(title);
     }
 
-    public ElementException(InternalElement element) {
-        super(message(null, element, null));
+    public ElementException(String title, Throwable cause) {
+        super(title, cause);
     }
 
-    public ElementException(InternalElement element, Consumer<PumpMessage> pumpMessageConsumer) {
-        super(message(null, element, pumpMessageConsumer));
+    public ElementException(PumpMessage exceptionMessage) {
+        super(exceptionMessage);
     }
 
-    public ElementException(InternalElement element, Throwable throwable) {
-        super(message(null, element, null), throwable);
+    public ElementException(PumpMessage exceptionMessage, Throwable cause) {
+        super(exceptionMessage, cause);
     }
 
-    public ElementException(InternalElement element, Consumer<PumpMessage> pumpMessageConsume, Throwable throwable) {
-        super(message(null, element, pumpMessageConsume), throwable);
+    private static PumpMessage message(Action action) {
+        return new PumpMessage(String.format(TITLE, action.name()))
+            .addExtraInfo(action);
     }
 
-    public ElementException(String message, InternalElement element) {
-        super(message(message, element, null));
+    public ElementException withTargetElement(InternalElement element) {
+        addTarget(ELEMENT, element);
+        withBrowser(element.getBrowser());
+        withPage(element.getPage());
+        return this;
     }
 
-    public ElementException(String message, InternalElement element, Consumer<PumpMessage> pumpMessageConsumer) {
-        super(message(message, element, pumpMessageConsumer));
-    }
-
-    public ElementException(String message, InternalElement element, Throwable throwable) {
-        super(message(message, element, null), throwable);
-    }
-
-    public ElementException(String message, InternalElement element, Consumer<PumpMessage> pumpMessageConsume, Throwable throwable) {
-        super(message(message, element, pumpMessageConsume), throwable);
-    }
-
-    private static PumpMessage message(String desc, InternalElement element, Consumer<PumpMessage> pumpMessageConsumer) {
-        final PumpMessage res = new PumpMessage(TITLE).withDesc(desc)
-                .addExtraInfo("type", element.getClass().getSimpleName())
-                .addExtraInfo("is list", String.valueOf(element.isList()))
-                .addExtraInfo("index", String.valueOf(element.getIndex()))
-                .addExtraInfo("name", element.getName())
-                .addExtraInfo("by", element.getBy().toString())
-                .addEnvInfo("browser id", element.getBrowser().getId())
-                .addEnvInfo("browser config", element.getBrowser().toString());
-        if (pumpMessageConsumer != null) {
-            pumpMessageConsumer.accept(res);
-        }
-        return res;
+    ElementException withElement(InternalElement element) {
+        addEnv(ELEMENT, element);
+        withBrowser(element.getBrowser());
+        withPage(element.getPage());
+        return this;
     }
 }

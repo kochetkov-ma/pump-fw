@@ -6,12 +6,14 @@ import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.constants.StringConstants;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -38,37 +40,59 @@ public class Strings {
         return trim(Arrays.stream(strings).filter(i -> i != null && !i.isEmpty()).collect(Collectors.joining(delimiter)));
     }
 
-    public String mapToPrettyString(Map<?, ?> map) {
+    public String mapToPrettyString(@Nullable Map<?, ?> map) {
+        return mapToPrettyString(map, 0);
+    }
+
+    public String mapToPrettyString(@Nullable Map<?, ?> map, int offset) {
         final StringBuilder stringBuilder = new StringBuilder();
-        map.forEach((key, value) -> stringBuilder.append(key.toString()).append(KEY_VALUE_PRETTY_DELIMITER).append(value.toString()).append(LINE));
-        return trim(stringBuilder.toString());
+        if (map == null) {
+            return "null";
+        }
+        map.forEach((key, value) -> {
+            if (key != null && value != null) {
+                stringBuilder.append(key.toString()).append(KEY_VALUE_PRETTY_DELIMITER).append(value.toString()).append(LINE);
+                if (offset != 0) {
+                    stringBuilder.append(space(offset + StringConstants.KEY_VALUE_PRETTY_DELIMITER.length()));
+                }
+            }
+        });
+        return trimEnd(stringBuilder.toString());
     }
 
-    public String mapToPrettyString(Map<?, ?> map, int offset) {
-        final StringBuilder stringBuilder = new StringBuilder();
-        map.forEach((key, value) -> stringBuilder.append(key.toString()).append(KEY_VALUE_PRETTY_DELIMITER).append(value.toString()).append(LINE)
-            .append(space(offset)));
-        return trim(stringBuilder.toString());
+    public String toPrettyString(@Nullable Collection<?> collection) {
+        return toPrettyString(collection, 0);
     }
 
-    public String toPrettyString(Collection<?> collection) {
+    public String toPrettyString(@Nullable Collection<?> collection, int offset) {
         final StringBuilder sb = new StringBuilder();
-        collection.forEach((value) -> sb.append(value.toString()).append(LINE));
-        return trim(sb.toString());
-    }
-
-    public String toPrettyString(Collection<?> collection, int offset) {
-        final StringBuilder sb = new StringBuilder();
-        collection.forEach((value) -> sb.append(value.toString()).append(LINE).append(space(offset + 3)));
-        return trim(sb.toString());
+        if (collection == null) {
+            return "null";
+        }
+        collection.forEach((value) -> {
+            if (value != null) {
+                if (offset != 0) {
+                    sb.append(space(offset));
+                }
+                sb.append(value.toString());
+                if (!StringUtils.contains(value.toString(), LINE)) {
+                    sb.append(LINE);
+                }
+            }
+        });
+        return trimEnd(sb.toString());
     }
 
     public boolean match(@NotNull String regEx, String actual) {
         return actual != null && actual.matches(regEx);
     }
 
-    public String listToString(List<?> list) {
+    public String toString(Collection<?> list) {
         return trim(Arrays.toString(list.toArray()));
+    }
+
+    public String trimEnd(String string) {
+        return org.apache.commons.lang3.StringUtils.stripEnd(string, LINE + " ");
     }
 
     public String trim(String string) {
@@ -101,6 +125,10 @@ public class Strings {
             return "";
         }
         return trim(value.toLowerCase().replaceAll(NORMALIZE, ""));
+    }
+
+    public String toString(Object object) {
+        return ReflectionToStringBuilder.toString(object);
     }
 
     public boolean isEmpty(String value) {

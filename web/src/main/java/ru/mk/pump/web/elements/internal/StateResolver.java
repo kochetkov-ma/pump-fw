@@ -5,17 +5,16 @@ import static java.lang.String.format;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.PumpException;
-import ru.mk.pump.commons.utils.Waiter.WaitResult;
+import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.internal.State.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalState;
 import ru.mk.pump.web.exceptions.BrowserException;
-import ru.mk.pump.web.exceptions.ElementException;
+import ru.mk.pump.web.exceptions.ElementStateException;
 
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused"})
 @Slf4j
@@ -59,7 +58,7 @@ public class StateResolver {
                 if (syncTimeLeft <= 0 || !res.isSuccess()) {
                     return (T) finalState
                         .setResult(WaitResult.falseResult(timeout - syncTimeLeft, waiter().getTimeoutS(), res.getCause())
-                            .withExceptionOnFail(waitResult -> newResolvedException(finalState.name(), finalState.getInfo(), waitResult)));
+                            .withExceptionOnFail(waitResult -> newResolvedException(finalState, waitResult)));
                 }
             }
             return (T) finalState.setResult(WaitResult.trueResult(timeout - syncTimeLeft, waiter().getTimeoutS()));
@@ -80,7 +79,7 @@ public class StateResolver {
                     return false;
                 }
             }))
-            .withExceptionOnFail(waitResult -> newResolvedException(state.name(), state.getInfo(), waitResult));
+            .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult));
         state.getTearDown().ifPresent(waitResultConsumer -> waitResultConsumer.accept(res));
         throwIfCause(res);
         return (OrState) state.setResult(res);
@@ -90,19 +89,17 @@ public class StateResolver {
         final WaitResult<Boolean> res = waiter()
             .withDelay(50)
             .wait(state.get())
-            .withExceptionOnFail(waitResult -> newResolvedException(state.name(), state.getInfo(), waitResult));
+            .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult));
         state.getTearDown().ifPresent(waitResultConsumer -> waitResultConsumer.accept(res));
         throwIfCause(res);
         return (State) state.setResult(res);
     }
 
-    protected PumpException newResolvedException(String state, Map<String, String> stateExceptionInfo, WaitResult<Boolean> waitResult) {
-        return new ElementException(
-            format("Element was not became to expected state '%s' in timeout '%s' sec", state, waiter().getTimeoutS())
-            , internalElement
-            , (pumpMessage -> pumpMessage.addExtraInfo(stateExceptionInfo))
-            , waitResult.getCause());
-
+    protected PumpException newResolvedException(InternalState<?> state, WaitResult<Boolean> waitResult) {
+        return new ElementStateException(format("Element was not became to expected state '%s' in timeout '%s' sec", state.name(), waiter().getTimeoutS()),
+            waitResult.getCause())
+            .withTargetState(state)
+            .withElement(internalElement);
     }
 
     private static class OrState extends AbstractState<List<Callable<Boolean>>> {
@@ -124,7 +121,7 @@ public class StateResolver {
 
     private ElementWaiter waiter() {
         if (fast) {
-            return ElementWaiter.newFastInstance(200);
+            return ElementWaiter.newWaiterMs(500);
         } else {
             return internalElement.getWaiter();
         }

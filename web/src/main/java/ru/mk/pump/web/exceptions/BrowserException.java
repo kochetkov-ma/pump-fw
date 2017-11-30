@@ -1,24 +1,30 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.commons.exception.PumpException;
-import ru.mk.pump.commons.exception.PumpMessage;
+import ru.mk.pump.web.browsers.Browser;
 
 @SuppressWarnings("unused")
-public class BrowserException extends PumpException {
+public class BrowserException extends AbstractWebException {
 
-    public BrowserException(String message) {
-        super(message);
+    public BrowserException(String title) {
+        super(title);
     }
 
-    public BrowserException(PumpMessage exceptionMessage) {
-        super(exceptionMessage);
+    public BrowserException(String title, Browser browser) {
+        super(title);
+        withTargetBrowser(browser);
     }
 
-    public BrowserException(PumpMessage exceptionMessage, Throwable cause) {
-        super(exceptionMessage, cause);
+    public BrowserException(String title, Browser browser, Throwable cause) {
+        super(title, cause);
+        withTargetBrowser(browser);
     }
 
-    public BrowserException(String message, Throwable cause) {
-        super(message, cause);
+    public BrowserException(String title, Throwable cause) {
+        super(title, cause);
+    }
+
+    public BrowserException withTargetBrowser(Browser browser) {
+        addTarget(BROWSER, browser);
+        return this;
     }
 }
