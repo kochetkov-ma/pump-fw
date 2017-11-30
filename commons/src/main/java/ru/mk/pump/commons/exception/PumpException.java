@@ -18,13 +18,4 @@ public class PumpException extends AbstractPumpException {
     public PumpException(PumpMessage exceptionMessage, Throwable cause) {
         super(exceptionMessage, cause);
     }
-
-    @Override
-    protected Throwable checkCauseAndReorganize(Throwable cause) {
-        if (cause instanceof PumpException) {
-            final PumpException exception = (PumpException) cause;
-            getEnv().entrySet().removeIf((entry) -> exception.getEnv().containsKey(entry.getKey()));
-        }
-        return cause;
-    }
 }

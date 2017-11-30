@@ -41,22 +41,46 @@ abstract class AbstractPumpException extends RuntimeException {
     }
 
     protected AbstractPumpException addEnv(String name, StrictInfo info) {
-        env.put(name, info);
+        if (canAddEnv(name, getCause())) {
+            env.put(name, info);
+        }
         return this;
     }
 
     protected AbstractPumpException addTarget(String name, StrictInfo info) {
-        target.put(name, info);
+
+        if (canAddTarget(name, getCause())) {
+            target.put(name, info);
+        }
         return this;
     }
 
-    abstract protected Throwable checkCauseAndReorganize(Throwable cause);
+    private boolean canAddTarget(String nameToCheck, Throwable cause) {
+        if (cause != null && cause != this && cause instanceof AbstractPumpException) {
+            final AbstractPumpException exception = (AbstractPumpException) cause;
+            if (exception.getTarget() != null && !exception.getTarget().containsKey(nameToCheck)) {
+                return canAddTarget(nameToCheck, cause.getCause());
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean canAddEnv(String nameToCheck, Throwable cause) {
+        if (cause != null &&cause != this && cause instanceof AbstractPumpException) {
+            final AbstractPumpException exception = (AbstractPumpException) cause;
+            if (exception.getEnv() != null && !exception.getEnv().containsKey(nameToCheck)) {
+                return canAddEnv(nameToCheck, cause.getCause());
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private synchronized void initInfo() {
         if (!freeze) {
-            if (getCause() != null && getCause() != this) {
-                checkCauseAndReorganize(getCause());
-            }
             getEnv().forEach((key, value) -> getSourceMessage().addEnvInfo(key, value));
             getTarget().forEach((key, value) -> getSourceMessage().addExtraInfo(key, value));
             freeze = true;
