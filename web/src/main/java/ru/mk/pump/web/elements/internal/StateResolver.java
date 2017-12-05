@@ -18,7 +18,7 @@ import ru.mk.pump.web.exceptions.ElementStateException;
 
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused"})
 @Slf4j
-public class StateResolver {
+public class StateResolver extends StateNotifier {
 
     @Getter
     private final InternalElement internalElement;
@@ -35,17 +35,21 @@ public class StateResolver {
         try {
             return resolve(state);
         } finally {
+
             fast = false;
         }
     }
 
     @SuppressWarnings("unchecked")
     public <T extends InternalState<?>> T resolve(InternalState<?> state) {
+        notifyOnBefore(state);
         final InternalState<?> finalState = reorganizeIfNeed(state);
         final long timeout = waiter().getTimeoutS() * 1000;
         long syncTimeLeft = timeout;
         if (state instanceof State) {
-            return (T) resolve((State) state);
+            final T res = (T) resolve((State) state);
+            notifyOnBefore(res);
+            return res;
         } else if (state instanceof SetState) {
             for (AbstractState<?> item : ((SetState) finalState).get()) {
                 if (item instanceof State) {
@@ -56,12 +60,16 @@ public class StateResolver {
                 final WaitResult<Boolean> res = item.result();
                 syncTimeLeft = syncTimeLeft - res.getElapsedTime();
                 if (syncTimeLeft <= 0 || !res.isSuccess()) {
-                    return (T) finalState
+                    finalState
                         .setResult(WaitResult.falseResult(timeout - syncTimeLeft, waiter().getTimeoutS(), res.getCause())
                             .withExceptionOnFail(waitResult -> newResolvedException(finalState, waitResult)));
+                    notifyOnBefore(finalState);
+                    return (T) finalState;
                 }
             }
-            return (T) finalState.setResult(WaitResult.trueResult(timeout - syncTimeLeft, waiter().getTimeoutS()));
+            finalState.setResult(WaitResult.trueResult(timeout - syncTimeLeft, waiter().getTimeoutS()));
+            notifyOnBefore(finalState);
+            return (T) finalState;
         }
         throw new UnsupportedOperationException(String.format("Unsupported state type '%s'", state.getClass().getSimpleName()));
     }

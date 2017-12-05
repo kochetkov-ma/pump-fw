@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
-import ru.mk.pump.web.elements.api.ActionListener;
+import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.Action.ActionStage;
@@ -18,7 +18,7 @@ import ru.mk.pump.web.exceptions.ActionExecutingException;
 @SuppressWarnings({"WeakerAccess", "unused"})
 @NoArgsConstructor
 @Slf4j
-public class ActionExecutor extends AbstractNotifier {
+public class ActionExecutor extends ActionNotifier {
 
     private static final int MAX_TRY = 5;
 

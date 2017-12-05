@@ -15,7 +15,7 @@ import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.elements.api.ActionListener;
+import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.internal.State.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
@@ -213,6 +213,13 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         }, StateType.SELENIUM_DISPLAYED.not(), TEAR_DOWN)).withName("Not Exists Or Not Displayed");
     }
 
+    public SetState notEnabled() {
+        return (SetState) SetState.of(StateType.ENABLED.not(), notExists(), State.of(() -> {
+            final WaitResult<WebElement> res = getFinder().findFast();
+            return !res.isSuccess() || !res.getResult().isEnabled();
+        }, StateType.SELENIUM_ENABLED.not(), TEAR_DOWN)).withName("Not Exists Or Not Enabled");
+    }
+
     @Override
     public State exists() {
         return (State) State.of(() -> getFinder().findFast().isSuccess(), StateType.EXISTS, TEAR_DOWN).withName("Exists in DOM");
@@ -225,6 +232,8 @@ abstract class AbstractElement<CHILD> implements InternalElement {
             return res.isSuccess() && res.getResult().isDisplayed();
         }, StateType.SELENIUM_DISPLAYED, TEAR_DOWN)).withName("Exists And Displayed");
     }
+
+
 
     @Override
     public SetState enabled() {

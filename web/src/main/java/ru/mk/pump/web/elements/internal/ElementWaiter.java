@@ -4,7 +4,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.utils.WaitResult;
@@ -12,9 +11,9 @@ import ru.mk.pump.commons.utils.Waiter;
 
 @Slf4j
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class ElementWaiter{
+public class ElementWaiter {
 
-    public static final int DEFAULT_TIMEOUT_S = 1;
+    public static int DEFAULT_TIMEOUT_S = 10;
 
     @Getter
     private final int timeoutS;

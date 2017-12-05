@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.History;
 import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.web.browsers.builders.ChromeDriverBuilder;
+import ru.mk.pump.web.browsers.builders.GhostDriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.exceptions.BrowserException;
 
@@ -30,6 +31,8 @@ public class Browsers implements AutoCloseable {
         switch (browserConfig.getType()) {
             case CHROME:
                 return new ChromeDriverBuilder(browserConfig);
+            case PHANTOMJS:
+                return new GhostDriverBuilder(browserConfig);
             case FIREFOX:
                 throw new UnsupportedOperationException();
             case IE:

@@ -22,7 +22,7 @@ import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
-import ru.mk.pump.web.elements.api.ActionListener;
+import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.ElementConfig;
 import ru.mk.pump.web.elements.internal.BaseElement;

@@ -3,6 +3,7 @@ package ru.mk.pump.web.browsers;
 import java.util.Set;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
+import org.openqa.selenium.Dimension;
 import ru.mk.pump.commons.activity.AbstractActivityManager;
 import ru.mk.pump.commons.activity.Activity;
 import ru.mk.pump.commons.activity.NamedEvent;
@@ -19,6 +20,16 @@ public class WindowManager extends AbstractActivityManager {
         this.browser = browser;
         setFilterActivityClass(Window.class);
         add(browser);
+    }
+
+    public WindowManager setSize(Dimension dimension) {
+        browser.getDriver().manage().window().setSize(dimension);
+        return this;
+    }
+
+    public WindowManager mazimize() {
+        browser.getDriver().manage().window().maximize();
+        return this;
     }
 
     public Window newTab() {

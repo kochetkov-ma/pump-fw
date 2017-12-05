@@ -41,7 +41,7 @@ public class BuilderHelper {
         capabilities.setCapability(CapabilityType.ForSeleniumServer.ENSURING_CLEAN_SESSION, true);
         capabilities.setCapability(CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
 
-        capabilities.setCapability(CapabilityType.PAGE_LOAD_STRATEGY, "none");
+        //capabilities.setCapability(CapabilityType.PAGE_LOAD_STRATEGY, "none");
         capabilities.setCapability(CapabilityType.HAS_NATIVE_EVENTS, false);
 
         if (!Strings.isEmpty(browserConfig.getVersion())) {

@@ -11,7 +11,7 @@ ext {
             logger      : "latest.release",
             junit       : "4.12",
             jackson     : "2.9.0.pr4",
-            selenium    : "3.6.0",
+            selenium    : "3.8.1",
             allure      : "latest.release",
             assertj     : "3.8.0",
             allureJunit4: "latest.release"

@@ -69,7 +69,6 @@ public abstract class AbstractActivity extends Observable implements Activity {
         setChanged();
         notifyObservers(NamedEvent.of("activate"));
         activated = true;
-        clearChanged();
         return this;
     }
 
@@ -79,7 +78,6 @@ public abstract class AbstractActivity extends Observable implements Activity {
             setChanged();
             notifyObservers(NamedEvent.of("disable"));
             activated = false;
-            clearChanged();
         }
         return this;
     }
@@ -91,7 +89,6 @@ public abstract class AbstractActivity extends Observable implements Activity {
             notifyObservers(NamedEvent.of("close"));
             activated = false;
             closed = true;
-            clearChanged();
         }
     }
 }

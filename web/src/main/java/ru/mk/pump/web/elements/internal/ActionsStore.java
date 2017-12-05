@@ -14,7 +14,7 @@ import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
 /**
  * [RUS]
- * Польностью package-private хранилище действий для {@link AbstractElement}
+ * Полностью package-private хранилище действий для {@link AbstractElement}
  * Исключительно для удобства
  */
 @SuppressWarnings("unused")

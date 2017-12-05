@@ -11,42 +11,51 @@ import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
 import ru.mk.pump.web.elements.internal.BaseElement;
+import ru.mk.pump.web.elements.internal.ElementWaiter;
 
 abstract class AbstractElementTest {
 
-    protected Browsers browsers;
+    private static final BrowserType BROWSER_TYPE = BrowserType.PHANTOMJS;
 
-    protected Browser browser;
+    Browsers browsers;
 
-    protected MainPage mainPage;
+    Browser browser;
+
+    MainPage mainPage;
 
     @Before
     public void setUp() {
         browsers = new Browsers();
-        final BrowserConfig config = new BrowserConfig(false, Size.of(true), BrowserType.CHROME);
-        config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
+        final BrowserConfig config = new BrowserConfig(false, Size.of(true), BROWSER_TYPE);
+        if (BROWSER_TYPE == BrowserType.PHANTOMJS) {
+            config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
+        }
         browser = browsers.newBrowser(config);
-
-        createPages(browser);
     }
 
     @After
     public void tearDown() throws Exception {
+        ElementWaiter.DEFAULT_TIMEOUT_S = 10;
         browsers.close();
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Getter
     class MainPage {
 
-        private String url = "https://app-digitalmortgage003.open.ru/";
+        private final BaseElement childButtonSectionFail;
 
-        private BaseElement parentDiv;
+        private final BaseElement parentDivFail;
 
-        private BaseElement parentSection;
+        private final String url = "https://app-digitalmortgage003.open.ru/";
 
-        private BaseElement childButtonSection;
+        private final BaseElement parentDiv;
 
-        private BaseElement childButtonDiv;
+        private final BaseElement parentSection;
+
+        private final BaseElement childButtonSection;
+
+        private final BaseElement childButtonDiv;
 
         private MainPage(Browser browser) {
             /*parents*/
@@ -55,11 +64,17 @@ abstract class AbstractElementTest {
 
             /*childes*/
             childButtonSection = new BaseElement(By.xpath(".//button[@data-aid='startRegistration']"), parentDiv);
-            childButtonDiv = new BaseElement(By.xpath(".//button[@text()='Требования к заемщику']"), parentSection);
+            childButtonDiv = new BaseElement(By.xpath(".//a[text()='Требования к заемщику']"), parentSection);
+
+            /*failParent*/
+            parentDivFail = new BaseElement(By.xpath(".//div[contains(@class,'b-calculator__rightblock1')]"), browser);
+            /*failChild*/
+            childButtonSectionFail = new BaseElement(By.xpath(".//button[@data-aid='startRegistration']"), parentDivFail);
+
         }
     }
 
-    private void createPages(Browser browser) {
+    void createPages(Browser browser) {
         mainPage = new MainPage(browser);
     }
 

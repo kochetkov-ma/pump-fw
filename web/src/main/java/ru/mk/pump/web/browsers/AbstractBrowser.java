@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver.Navigation;
 import ru.mk.pump.commons.activity.AbstractActivity;
 import ru.mk.pump.commons.activity.Activity;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
+import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.exceptions.BrowserException;
 
 /**
@@ -132,7 +133,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
 
         if (driver != null && !isClosed()) {
             if (isStarted()) {
-                driver.quit();
+                forkCloseByBrowserType();
                 driver = null;
             } else {
                 driver = null;
@@ -148,5 +149,14 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
         result.put("builder", builder.getClass().getSimpleName());
         result.put("config", config.toString());
         return result;
+    }
+
+    private void forkCloseByBrowserType() {
+        if (getConfig().getType() == BrowserType.PHANTOMJS) {
+            driver.close();
+            driver.quit();
+        } else {
+            driver.quit();
+        }
     }
 }

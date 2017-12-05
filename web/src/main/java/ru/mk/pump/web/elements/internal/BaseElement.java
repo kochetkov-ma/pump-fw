@@ -4,7 +4,6 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
-import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.ElementFactory;
@@ -69,14 +68,36 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     @Override
     public boolean isDisplayed() {
         final SetState res = getStateResolver().resolve(displayed());
-        log.info(StringConstants.LINE + Strings.mapToPrettyString(res.getInfo()));
         return res.result().isSuccess();
     }
 
     @Override
     public boolean isNotDisplayed() {
         final SetState res = getStateResolver().resolve(notDisplayed());
-        log.info(StringConstants.LINE + Strings.mapToPrettyString(res.getInfo()));
+        return res.result().isSuccess();
+    }
+
+    @Override
+    public boolean isExists() {
+        final State res = getStateResolver().resolve(exists());
+        return res.result().isSuccess();
+    }
+
+    @Override
+    public boolean isNotExists() {
+        final State res = getStateResolver().resolve(notExists());
+        return res.result().isSuccess();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        final State res = getStateResolver().resolve(enabled());
+        return res.result().isSuccess();
+    }
+
+    @Override
+    public boolean isNotEnabled() {
+        final State res = getStateResolver().resolve(notEnabled());
         return res.result().isSuccess();
     }
 

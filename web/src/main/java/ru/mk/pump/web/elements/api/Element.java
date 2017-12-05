@@ -12,6 +12,14 @@ public interface Element extends PrettyPrinter, StrictInfo, Clickable, Text {
 
     boolean isNotDisplayed();
 
+    boolean isExists();
+
+    boolean isNotExists();
+
+    boolean isEnabled();
+
+    boolean isNotEnabled();
+
     <T extends Element> SubElementHelper<T> getSubElements(Class<T> subElementClazz);
 
 }
