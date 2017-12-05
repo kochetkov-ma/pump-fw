@@ -58,11 +58,7 @@ abstract class AbstractPumpException extends RuntimeException {
     private boolean canAddTarget(String nameToCheck, Throwable cause) {
         if (cause != null && cause != this && cause instanceof AbstractPumpException) {
             final AbstractPumpException exception = (AbstractPumpException) cause;
-            if (exception.getTarget() != null && !exception.getTarget().containsKey(nameToCheck)) {
-                return canAddTarget(nameToCheck, cause.getCause());
-            } else {
-                return false;
-            }
+            return exception.getTarget() != null && !exception.getTarget().containsKey(nameToCheck) && canAddTarget(nameToCheck, cause.getCause());
         }
         return true;
     }
@@ -70,11 +66,7 @@ abstract class AbstractPumpException extends RuntimeException {
     private boolean canAddEnv(String nameToCheck, Throwable cause) {
         if (cause != null &&cause != this && cause instanceof AbstractPumpException) {
             final AbstractPumpException exception = (AbstractPumpException) cause;
-            if (exception.getEnv() != null && !exception.getEnv().containsKey(nameToCheck)) {
-                return canAddEnv(nameToCheck, cause.getCause());
-            } else {
-                return false;
-            }
+            return exception.getEnv() != null && !exception.getEnv().containsKey(nameToCheck) && canAddEnv(nameToCheck, cause.getCause());
         }
         return true;
     }
