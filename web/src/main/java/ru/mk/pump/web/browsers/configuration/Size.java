@@ -1,7 +1,9 @@
 package ru.mk.pump.web.browsers.configuration;
 
 import lombok.Getter;
+import org.openqa.selenium.Dimension;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.web.constants.WebConstants;
 
 /**
  * <ul>
@@ -39,7 +41,7 @@ public final class Size {
     }
 
     public static Size of(int x, int y) {
-        return new Size(0, 0, false, null);
+        return new Size(x, y, false, null);
     }
 
     public static Size of(boolean fullScreen) {
@@ -53,5 +55,14 @@ public final class Size {
 
     public boolean useSize() {
         return !useDevice() && !fullScreen && !defaultSize;
+    }
+
+    public Dimension getDimension() {
+        if (useSize()) {
+            return new Dimension(x, y);
+        } else {
+            final String[] size = WebConstants.DEFAULT_FULLSCREEN.split(",");
+            return new Dimension(Integer.valueOf(size[0]), Integer.valueOf(size[1]));
+        }
     }
 }

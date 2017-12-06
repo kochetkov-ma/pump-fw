@@ -30,7 +30,7 @@ public class StateResolver extends StateNotifier {
     }
 
 
-    public <T extends InternalState<?>> T resolveFast(InternalState<?> state) {
+    public <T extends InternalState<?>> T resolveFast(T state) {
         fast = true;
         try {
             return resolve(state);
@@ -41,7 +41,7 @@ public class StateResolver extends StateNotifier {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends InternalState<?>> T resolve(InternalState<?> state) {
+    public <T extends InternalState<?>> T resolve(T state) {
         notifyOnBefore(state);
         final InternalState<?> finalState = reorganizeIfNeed(state);
         final long timeout = waiter().getTimeoutS() * 1000;

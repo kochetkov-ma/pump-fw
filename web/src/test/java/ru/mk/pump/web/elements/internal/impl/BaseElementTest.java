@@ -1,15 +1,16 @@
 package ru.mk.pump.web.elements.internal.impl;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import ru.mk.pump.commons.utils.Waiter;
-import ru.mk.pump.web.elements.api.concrete.Input;
+import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.web.elements.api.Element;
+import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.exceptions.ActionExecutingException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
@@ -26,8 +27,24 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         browsers.close();
+    }
+
+    @Test
+    public void testGetTextSilent() {
+        ElementWaiter.DEFAULT_TIMEOUT_S = 1;
+        createPages(browser);
+
+        browser.start();
+        browser.open(regPage.getUrl());
+
+        Assertions.assertThatThrownBy(() -> regPage.getHiddenItems().getText())
+            .isInstanceOf(ActionExecutingException.class);
+        final String res = regPage.getHiddenItems().getTextHidden();
+        log.info(res);
+        Assertions.assertThat(res)
+            .isNotEmpty();
     }
 
     @Test
@@ -71,8 +88,6 @@ public class BaseElementTest extends AbstractElementTest {
             .hasCauseInstanceOf(ElementStateException.class)
             .matches(throwable -> throwable.getCause().getCause() instanceof ElementFinderNotFoundException)
             .matches(throwable -> throwable.getCause().getCause().getCause() instanceof NoSuchElementException);
-
-
     }
 
     @Test
@@ -80,19 +95,94 @@ public class BaseElementTest extends AbstractElementTest {
         browser.start();
         browser.open(mainPage.getUrl());
 
-        log.info(mainPage.getChildButtonDiv().getText());
-        log.info(mainPage.getChildButtonSection().getText());
+        mainPage.getChildButtonSection().click();
     }
 
     @Test
-    public void testInputImpl() {
-        final Input input = new InputImpl(By.id("lastNameId"), browser);
+    public void testClickFail() {
+        ElementWaiter.DEFAULT_TIMEOUT_S = 1;
+        createPages(browser);
+        browser.start();
+        browser.open(mainPage.getUrl());
+
+        Assertions.assertThatThrownBy(() -> mainPage.getParentDivFail().click())
+            .isInstanceOf(ActionExecutingException.class)
+            .hasMessageContaining("Executing action 'Click' error")
+            .hasMessageContaining("type : Click")
+            .hasCauseInstanceOf(ElementStateException.class)
+            .matches(throwable -> throwable.getCause().getCause() instanceof ElementFinderNotFoundException)
+            .matches(throwable -> throwable.getCause().getCause().getCause() instanceof NoSuchElementException);
+    }
+
+    @Test
+    public void clear() {
+        browser.start();
+        browser.open(regPage.getUrl());
+
+        log.info(regPage.getInputSurname().set("МАКС"));
+        regPage.getInputSurname().clear();
+        Assertions.assertThat(regPage.getInputSurname().getTextHidden()).isEmpty();
+    }
+
+    @Test
+    public void isAllState() {
+        browser.start();
+        browser.open(regPage.getUrl());
+
+        Assertions.assertThat(regPage.getHiddenItems().isExists()).isTrue();
+        Assertions.assertThat(regPage.getInputSurname().isDisplayed()).isTrue();
+        Assertions.assertThat(regPage.getInputSurname().isEnabled()).isTrue();
+    }
+
+    @Test
+    public void isNotAllState() {
+        browser.start();
+        browser.open(regPage.getUrl());
+
+        Assertions.assertThat(regPage.getHiddenItems().isNotDisplayed()).isTrue();
+        Assertions.assertThat(regPage.getNotExists().isNotEnabled()).isTrue();
+        Assertions.assertThat(regPage.getNotExists().isNotExists()).isTrue();
+    }
+
+    @Test
+    public void isNotAllStateFail() {
+        ElementWaiter.DEFAULT_TIMEOUT_S = 1;
+        createPages(browser);
 
         browser.start();
-        browser.open("https://app-digitalmortgage003.open.ru/registration");
+        browser.open(regPage.getUrl());
 
-        log.info(input.set("МАКС"));
-        input.clear();
-        Waiter.sleep(3000);
+        Assertions.assertThat(regPage.getHiddenItems().isNotEnabled()).isFalse();
+        Assertions.assertThat(regPage.getInputSurname().isNotEnabled()).isFalse();
+        Assertions.assertThat(regPage.getInputSurname().isNotExists()).isFalse();
+    }
+
+    @Test
+    public void isAllStateFail() {
+        ElementWaiter.DEFAULT_TIMEOUT_S = 1;
+        createPages(browser);
+
+        browser.start();
+        browser.open(regPage.getUrl());
+
+        Assertions.assertThat(regPage.getHiddenItems().isDisplayed()).isFalse();
+        Assertions.assertThat(regPage.getNotExists().isEnabled()).isFalse();
+        Assertions.assertThat(regPage.getNotExists().isExists()).isFalse();
+    }
+
+    @Test
+    public void getSubElements() {
+        browser.start();
+        browser.open(regPage.getUrl());
+
+        List<Element> elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced(".//div[@class='items']",
+            (el) -> el.getAttribute("class").equals("item"),
+            ".//div[@class='item']");
+        log.info(Strings.toPrettyString(elementList));
+
+        elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced(null,
+            (el) -> el.getAttribute("class").equals("item"),
+            ".//div[@class='item1']");
+        log.info(Strings.toPrettyString(elementList));
     }
 }

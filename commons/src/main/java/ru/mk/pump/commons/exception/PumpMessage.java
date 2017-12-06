@@ -89,14 +89,19 @@ public class PumpMessage implements PrettyPrinter {
         sb.append(Strings.concat(StringConstants.DOT_SPACE, preTitleMessage, title)).append(LINE);
         if (!description.isEmpty()) {
             sb.append("[Description]")
+                .append(StringConstants.LINE)
                 .append(Strings.toPrettyString(Arrays.asList(description.split(LINE)), OFFSET))
                 .append(StringConstants.LINE);
         }
         if (!extraInformation.isEmpty()) {
-            sb.append("[Additional information]").append(StringConstants.LINE).append(Strings.toPrettyString(extraInformation, OFFSET)).append(LINE);
+            sb.append("[Additional information]")
+                .append(StringConstants.LINE)
+                .append(Strings.toPrettyString(extraInformation, OFFSET)).append(LINE);
         }
         if (!envInformation.isEmpty()) {
-            sb.append("[Environment information]").append(StringConstants.LINE).append(Strings.toPrettyString(envInformation, OFFSET)).append(LINE);
+            sb.append("[Environment information]")
+                .append(StringConstants.LINE)
+                .append(Strings.toPrettyString(envInformation, OFFSET)).append(LINE);
         }
         return Strings.trimEnd(sb.toString());
     }

@@ -66,7 +66,7 @@ public class SubElementHelperTest {
 
         final By byChild = By.xpath(".//button");
 
-        parent.getSubElements(Button.class).findList(byChild).forEach(i -> log.info(i.getTextSilent()));
+        parent.getSubElements(Button.class).findList(byChild).forEach(i -> log.info(i.getTextHidden()));
 
     }
 
@@ -79,9 +79,9 @@ public class SubElementHelperTest {
 
         final Predicate<WebElement> pred1 = (el) -> "button".equals(el.getTagName());
 
-        parent.getSubElements(Button.class).findListXpathAdvanced(".//div", pred1, "/button").forEach(i -> log.info(i.getTextSilent()));
+        parent.getSubElements(Button.class).findListXpathAdvanced(".//div", pred1, "/button").forEach(i -> log.info(i.getTextHidden()));
         parent.getSubElements(Button.class).findListXpathAdvanced(".//div", pred2, "/button", "/button[text()='Подать заявку']")
-            .forEach(i -> log.info(i.getTextSilent()));
+            .forEach(i -> log.info(i.getTextHidden()));
     }
 
     @Test

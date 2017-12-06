@@ -44,10 +44,10 @@ public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
             chromeOptions.addArguments("window-size=" + getSize(), "--no-sandbox");
         } else if (getConfig().getSizeOrDevice().isFullScreen()) {
             if (getConfig().isRemoteDriver()) {
+                /*start-maximized не всегда работает на удаленном драйвере*/
                 chromeOptions.addArguments("window-size=" + WebConstants.DEFAULT_FULLSCREEN, "--no-sandbox");
             } else {
-                //chromeOptions.addArguments("--window-size=" + WebConstants.DEFAULT_FULLSCREEN);
-                chromeOptions.addArguments("--start-maximized", "--no-sandbox");
+                chromeOptions.addArguments("start-maximized", "--no-sandbox");
             }
         }
 

@@ -95,6 +95,7 @@ public class ElementImplDispatcher implements StrictInfo {
                 .collect(Collectors.toList())
             );
         }
+        addImplementation(Element.class, ElementImpl.of(BaseElement.class, null));
     }
 
     @SuppressWarnings("WeakerAccess")

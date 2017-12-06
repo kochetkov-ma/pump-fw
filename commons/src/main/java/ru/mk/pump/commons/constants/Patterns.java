@@ -6,5 +6,5 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Patterns {
 
-    public static final Pattern UUID_PATTERN = Pattern.compile("(.*)-?(.{8}-.{4}-.{4}-.{4}-.{12})");
+    public static final Pattern UUID_PATTERN = Pattern.compile("([^-]*)-?(.{8}-.{4}-.{4}-.{4}-.{12})");
 }

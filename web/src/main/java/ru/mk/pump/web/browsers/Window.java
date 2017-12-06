@@ -45,7 +45,9 @@ public final class Window extends AbstractActivity {
 
     @Override
     public Activity activate() {
-        driver.switchTo().window(getFullId());
+        if (!getFullId().equals(driver.getWindowHandle())) {
+            driver.switchTo().window(getFullId());
+        }
         return super.activate();
     }
 

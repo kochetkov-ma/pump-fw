@@ -5,7 +5,7 @@ public interface Text {
 
     void clear();
 
-    String getTextSilent();
+    String getTextHidden();
 
 
 }

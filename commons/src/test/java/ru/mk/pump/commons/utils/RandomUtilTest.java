@@ -21,7 +21,7 @@ public class RandomUtilTest {
         assertThatThrownBy(() -> RandomUtil.newRussianMobilePhone("+893072000001"))
                 .hasNoCause()
                 .isInstanceOf(UtilException.class)
-                .hasMessage("Pump utility exception. Cannot generate new phone for prefix size more 12 chars. Actual prefix +893072000001");
+                .hasMessage("Cannot generate new phone for prefix size more 12 chars. Actual prefix +893072000001");
 
     }
 

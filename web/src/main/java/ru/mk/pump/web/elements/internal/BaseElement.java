@@ -55,7 +55,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     @Override
-    public String getTextSilent() {
+    public String getTextHidden() {
         return getActionExecutor().execute(getTextAction().redefineExpectedState(exists()));
     }
 
@@ -91,13 +91,13 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     @Override
     public boolean isEnabled() {
-        final State res = getStateResolver().resolve(enabled());
+        final SetState res = getStateResolver().resolve(enabled());
         return res.result().isSuccess();
     }
 
     @Override
     public boolean isNotEnabled() {
-        final State res = getStateResolver().resolve(notEnabled());
+        final SetState res = getStateResolver().resolve(notEnabled());
         return res.result().isSuccess();
     }
 

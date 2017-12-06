@@ -36,7 +36,7 @@ public class VerifyTest {
             .hasNoCause()
             .isInstanceOf(VerifyError.class)
             .hasMessageContaining("Pump verify fail. Описание проверки")
-            .hasMessageContaining("[Description] : Ожидается 'false' актуальное значение 'true'");
+            .hasMessageContaining("Ожидается 'false' актуальное значение 'true'");
     }
 
     @Test
@@ -46,7 +46,7 @@ public class VerifyTest {
             .hasNoCause()
             .isInstanceOf(VerifyError.class)
             .hasMessageContaining("Pump verify fail. Описание проверки")
-            .hasMessageContaining("[Description] : Ожидается 'true' актуальное значение 'false'");
+            .hasMessageContaining("Ожидается 'true' актуальное значение 'false'");
     }
 
     @Test
@@ -57,7 +57,7 @@ public class VerifyTest {
             .hasNoCause()
             .isInstanceOf(VerifyError.class)
             .hasMessageContaining("Pump verify fail. Описание проверки")
-            .hasMessageContaining("[Description] : Объекты совпадают. Тип объектов : Object String");
+            .hasMessageContaining("Объекты совпадают. Тип объектов : Object String");
     }
 
     @Test
@@ -67,7 +67,7 @@ public class VerifyTest {
             .hasNoCause()
             .isInstanceOf(VerifyError.class)
             .hasMessageContaining("Pump verify fail. Описание проверки")
-            .hasMessageContaining("[Description] : Ожидаемая строка 'тест1' совпадает с актуальной строкой 'тест'");
+            .hasMessageContaining("Ожидаемая строка 'тест1' совпадает с актуальной строкой 'тест'");
     }
 
     @Test
@@ -79,7 +79,7 @@ public class VerifyTest {
             .hasNoCause()
             .isInstanceOf(VerifyError.class)
             .hasMessageContaining("Pump verify fail. Описание проверки")
-            .hasMessageContaining("[Description] : Ожидаемая строка 'тест2' содержится в актуальной строке 'тест1'");
+            .hasMessageContaining("Ожидаемая строка 'тест2' содержится в актуальной строке 'тест1'");
     }
 
     @Test
@@ -134,7 +134,7 @@ public class VerifyTest {
             .isInstanceOf(VerifyError.class)
             .hasMessageContaining("Pump verify fail. Описание")
             .hasMessageContaining(
-                "[Description] : Ожидаемый список '[1, OBJECT, строка]' равен актуальному списку '[OBJECT, строка, 1]'")
+                "Ожидаемый список '[1, OBJECT, строка]' равен актуальному списку '[OBJECT, строка, 1]'")
             .hasMessageContaining("Актуальное значение 'OBJECT' типа '' равно ожидаемому значению '1' типа 'Long' index 0");
 
         assertThatThrownBy(() -> verify.listEquals("Описание", list4, list3, Collators.equals(), null))
@@ -142,7 +142,7 @@ public class VerifyTest {
             .isInstanceOf(VerifyError.class)
             .hasMessageContaining("Pump verify fail. Описание")
             .hasMessageContaining(
-                "[Description] : Размер ожидаемого списка '[1, OBJECT]' равен размеру актуального списка '[1, OBJECT, строка]'");
+                "Размер ожидаемого списка '[1, OBJECT]' равен размеру актуального списка '[1, OBJECT, строка]'");
 
         assertThatCode(() -> verify.listStrictContains("Описание", stringList3, stringList1, Collators.equals(), null)).doesNotThrowAnyException();
         assertThatCode(() -> verify.listStrictContains("Описание", stringList4, stringList1, Collators.equals(), null)).doesNotThrowAnyException();

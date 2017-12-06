@@ -20,6 +20,6 @@ public interface Element extends PrettyPrinter, StrictInfo, Clickable, Text {
 
     boolean isNotEnabled();
 
-    <T extends Element> SubElementHelper<T> getSubElements(Class<T> subElementClazz);
+    <T extends Element> SubElementHelper<T> getSubElements(Class<T> subElementInterfaceClazz);
 
 }

@@ -1,12 +1,15 @@
 package ru.mk.pump.web.elements.internal;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Strings;
@@ -40,31 +43,31 @@ public class SubElementHelper<T extends Element> {
         this.elementConfig = elementConfig;
     }
 
-    public T find(By by) {
-        parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, by.toString()));
-        final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, by.toString())).getResult();
-        final List<WebElement> elements = sourceWebElement.findElements(by);
-        if (elements.isEmpty()) {
-            throw exceptionNoExistsSub(by.toString());
-        }
-        return elementFactory.newElement(subElementClass, by, elementConfig);
+    public T find(@NotNull By... bys) {
+        return findList(bys).get(0);
 
     }
 
-    public List<T> findList(By by) {
-        parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, by.toString()));
-        final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, by.toString())).getResult();
-        final List<WebElement> elements = sourceWebElement.findElements(by);
-        if (elements.isEmpty()) {
-            throw exceptionNoExistsSub(by.toString());
+    public List<T> findList(@NotNull By... bys) {
+        if (bys.length == 0) {
+            return Collections.emptyList();
         }
-        return IntStream.range(0, elements.size()).boxed()
-            .map(index -> {
-                final T newElement = elementFactory.newElement(subElementClass, by, elementConfig);
-                ((InternalElement) newElement).setIndex(index);
-                return newElement;
-            })
-            .collect(Collectors.toList());
+        for (By currentBy : bys) {
+            parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
+            final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()))
+                .getResult();
+            final List<WebElement> elements = sourceWebElement.findElements(currentBy);
+            if (elements.size() > 0) {
+                return IntStream.range(0, elements.size()).boxed()
+                    .map(index -> {
+                        final T newElement = elementFactory.newElement(subElementClass, currentBy, elementConfig);
+                        ((InternalElement) newElement).setIndex(index);
+                        return newElement;
+                    })
+                    .collect(Collectors.toList());
+            }
+        }
+        throw exceptionNoExistsSub(Arrays.toString(bys));
     }
 
 
@@ -86,8 +89,8 @@ public class SubElementHelper<T extends Element> {
      * @throws ElementException если не найдено списка элементов, соответствующего условию
      * @return Полностью готовый список элементов, созданный с помощью ElementFactory.
      */
-    public List<T> findListXpathAdvanced(String xpathString, Predicate<WebElement> webElementPredicate, String... postfixXpaths) {
-        final Pair<Integer, By> context = findXpath(xpathString, webElementPredicate, postfixXpaths);
+    public List<T> findListXpathAdvanced(@Nullable String xpathString, @Nullable Predicate<WebElement> webElementPredicate, @Nullable String... postfixXpaths) {
+        final Pair<Integer, By> context = findXpath(xpathString, webElementPredicate, false, postfixXpaths);
         return IntStream.range(0, context.getKey()).boxed()
             .map(index -> {
                 final T newElement = elementFactory.newElement(subElementClass, context.getValue(), elementConfig);
@@ -115,58 +118,64 @@ public class SubElementHelper<T extends Element> {
      * @throws ElementException если не найдено элемента, соответствующего условию
      * @return Полностью готовый элемент, созданный с помощью ElementFactory.
      */
-    public T findXpathAdvanced(String xpathString, Predicate<WebElement> webElementPredicate, String... postfixXpaths) {
-        return elementFactory.newElement(subElementClass, findOneXpath(xpathString, webElementPredicate, postfixXpaths), elementConfig);
+    public T findXpathAdvanced(@Nullable String xpathString, @Nullable Predicate<WebElement> webElementPredicate, @Nullable String... postfixXpaths) {
+        return elementFactory.newElement(subElementClass, findXpath(xpathString, webElementPredicate, true, postfixXpaths).getValue(), elementConfig);
     }
 
-    private By findOneXpath(String xpathString, Predicate<WebElement> webElementAttributePredicate, String... postfixXpaths) {
+    private Pair<Integer, By> findXpath(String xpathString, Predicate<WebElement> webElementAttributePredicate, boolean one, String... postfixXpaths) {
         if (webElementAttributePredicate == null) {
             webElementAttributePredicate = (el) -> true;
         }
-        By byResult = By.xpath(xpathString);
-        parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
-        final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString))
-            .getResult();
-        final Iterator<String> iterator = Arrays.asList(postfixXpaths).iterator();
-        List<WebElement> elements = sourceWebElement.findElements(byResult);
-        while (elements.isEmpty() || !webElementAttributePredicate.test(elements.get(0))) {
-            if (!iterator.hasNext()) {
-                throw exceptionNoExistsSub("xpath: " + xpathString);
-            }
-            byResult = By.xpath(xpathString + iterator.next());
-            elements = sourceWebElement.findElements(byResult);
+        By byResult;
+        final String xpathFinal;
+        if (Strings.isEmpty(xpathString)) {
+            xpathFinal = ".";
+            byResult = By.xpath(".");
+        } else {
+            xpathFinal = xpathString;
+            byResult = By.xpath(xpathString);
         }
-        return byResult;
-    }
 
-    private Pair<Integer, By> findXpath(String xpathString, Predicate<WebElement> webElementAttributePredicate, String... postfixXpaths) {
-        if (webElementAttributePredicate == null) {
-            webElementAttributePredicate = (el) -> true;
-        }
-        By byResult = By.xpath(xpathString);
         parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
         final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString))
             .getResult();
-        final Iterator<String> iterator = Arrays.asList(postfixXpaths).iterator();
+        final Iterator<String> iterator;
+        if (postfixXpaths == null) {
+            iterator = Collections.emptyIterator();
+        } else {
+            iterator = Arrays.asList(postfixXpaths).iterator();
+        }
         List<WebElement> elements = sourceWebElement.findElements(byResult);
-        while (elements.isEmpty() || !elements.stream().allMatch(webElementAttributePredicate)) {
+        while (checkPredicate(elements, webElementAttributePredicate, one)) {
             if (!iterator.hasNext()) {
-                throw exceptionNoExistsSub("xpath: " + xpathString);
+                throw exceptionNoExistsSub(byResult.toString());
             }
-            byResult = By.xpath(xpathString + iterator.next());
+            byResult = By.xpath(xpathFinal + "/" + iterator.next());
             elements = sourceWebElement.findElements(byResult);
         }
         return Pair.of(sourceWebElement.findElements(byResult).size(), byResult);
     }
 
+    private boolean checkPredicate(List<WebElement> webElements, Predicate<WebElement> webElementAttributePredicate, boolean one) {
+        if (one) {
+            return webElements.isEmpty() || !webElementAttributePredicate.test(webElements.get(0));
+        } else {
+            return webElements.isEmpty() || !webElements.stream().allMatch(webElementAttributePredicate);
+        }
+    }
+
     private ElementException exceptionNoExists(WaitResult<?> res, String byString) {
         return new ElementFinderNotFoundException(
-            String.format("Cannot find sub elements '%s' by '%s' because parent is not exists", subElementClass.getSimpleName(), byString), res.getCause())
+            String.format("Cannot find sub elements '%s' by '%s' because parent is not exists", subElementClass.getSimpleName(), logPath(byString)), res.getCause())
             .withTargetElement(parent);
     }
 
     private ElementException exceptionNoExistsSub(String byString) {
-        return new ElementException(String.format("Cannot find any sub elements '%s' by '%s' ", subElementClass.getSimpleName(), byString))
+        return new ElementFinderNotFoundException(String.format("Cannot find any sub elements '%s' by '%s' ", subElementClass.getSimpleName(), logPath(byString)))
             .withTargetElement(parent);
+    }
+
+    private String logPath(String byString){
+        return "parent[" + parent.getBy().toString() + "]" + byString;
     }
 }
