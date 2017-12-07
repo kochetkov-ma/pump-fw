@@ -16,36 +16,76 @@ public class XpathTest {
         assertThat(Xpath.fixIfXpath(By.tagName("//tag//")).toString()).isEqualTo("By.tagName: //tag//");
         assertThat(Xpath.fixIfXpath(By.className("//class//")).toString()).isEqualTo("By.className: //class//");
 
-        assertThat(Xpath.fixIfXpath(By.xpath("div[@class='test test']//div/./..//////div/../../..")).toString())
-            .isEqualTo("By.xpath: ./div[@class='test test']//div/./..//div/../../..");
+        assertThat(Xpath.fixIfXpath(By.xpath("////")).toString())
+            .isEqualTo("By.xpath: .");
 
-        assertThat(Xpath.fixIfXpath(By.xpath("//div[@class='test test']//div/./..//////div/../../..//")).toString())
-            .isEqualTo("By.xpath: .//div[@class='test test']//div/./..//div/../../..");
+        assertThat(Xpath.fixIfXpath(By.xpath(".....///...//../././..")).toString())
+            .isEqualTo("By.xpath: .");
 
-        assertThat(Xpath.fixIfXpath(By.xpath("/div[@class='test test']//div/./..//////div/../../../")).toString())
-            .isEqualTo("By.xpath: ./div[@class='test test']//div/.//div/..");
+        assertThat(Xpath.fixIfXpath(By.xpath(".")).toString())
+            .isEqualTo("By.xpath: .");
 
-        assertThat(Xpath.fixIfXpath(By.xpath(".div[@class='test test']//div/./..//////div/../../../.")).toString())
-            .isEqualTo("By.xpath: ./div[@class='test test']//div/.//div/..");
+        assertThat(Xpath.fixIfXpath(By.xpath("./.div")).toString())
+            .isEqualTo("By.xpath: ./div");
 
-        assertThat(Xpath.fixIfXpath(By.xpath(".div[@class='test test']//div/./..//////div/../../../././")).toString())
-            .isEqualTo("By.xpath: ./div[@class='test test']//div/.//div/..");
+        assertThat(Xpath.fixIfXpath(By.xpath("div")).toString())
+            .isEqualTo("By.xpath: ./div");
 
-        assertThat(Xpath.fixIfXpath(By.xpath("./../div[@class='test test']//div/./..//////div/../../../././")).toString())
-            .isEqualTo("By.xpath: ./div[@class='test test']//div/.//div/..");
+        assertThat(Xpath.fixIfXpath(By.xpath("/div/")).toString())
+            .isEqualTo("By.xpath: ./div");
 
-        assertThat(Xpath.fixIfXpath(By.xpath("./../div[@class='test test']//div/./..//////div/../../../././")).toString())
-            .isEqualTo("By.xpath: ./div[@class='test test']//div/.//div/..");
+        assertThat(Xpath.fixIfXpath(By.xpath("./div/.")).toString())
+            .isEqualTo("By.xpath: ./div");
 
-        assertThat(Xpath.fixIfXpath(By.xpath("./../////div[@class='test test']//div/./..//////div/../......./../././")).toString())
-            .isEqualTo("By.xpath: ./div[@class='test test']//div/.//div/..");
+        assertThat(Xpath.fixIfXpath(By.xpath("/./div/./")).toString())
+            .isEqualTo("By.xpath: ./div");
 
-        assertThat(Xpath.fixIfXpath(By.xpath("//////...../../////div[@class='test test']//div/./..//////div/../......./../././...........")).toString())
-            .isEqualTo("By.xpath: ./div[@class='test test']//div/.//div/..");
+        assertThat(Xpath.fixIfXpath(By.xpath("/././div/././")).toString())
+            .isEqualTo("By.xpath: ./div");
 
-        assertThat(
-            Xpath.fixIfXpath(By.xpath("//////...../../////div[@class='test test']//div/./..//////div/.././././././././../././///........///////")).toString())
-            .isEqualTo("By.xpath: ./div[@class='test test']//div/.//div/..");
+        assertThat(Xpath.fixIfXpath(By.xpath("div.")).toString())
+            .isEqualTo("By.xpath: ./div");
 
+        assertThat(Xpath.fixIfXpath(By.xpath("./div")).toString())
+            .isEqualTo("By.xpath: ./div");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("div/..")).toString())
+            .isEqualTo("By.xpath: ./div/..");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("div..")).toString())
+            .isEqualTo("By.xpath: ./div/..");
+
+        assertThat(Xpath.fixIfXpath(By.xpath(".div..")).toString())
+            .isEqualTo("By.xpath: ./div/..");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("./div/..")).toString())
+            .isEqualTo("By.xpath: ./div/..");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("..div..")).toString())
+            .isEqualTo("By.xpath: ./../div/..");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("./../div/..")).toString())
+            .isEqualTo("By.xpath: ./../div/..");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("/.//./div/././/")).toString())
+            .isEqualTo("By.xpath: .//div");
+
+        assertThat(Xpath.fixIfXpath(By.xpath(".//div")).toString())
+            .isEqualTo("By.xpath: .//div");
+
+        assertThat(Xpath.fixIfXpath(By.xpath(".//div")).toString())
+            .isEqualTo("By.xpath: .//div");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("/././div/div//div/../..//div/././/")).toString())
+            .isEqualTo("By.xpath: ./div/div//div/../..//div");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("/././div/div////////////////div/../././..//.div/././/")).toString())
+            .isEqualTo("By.xpath: ./div/div//div/../..//div");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("....../././div/div/....../////////div/../././..//.div/././/")).toString())
+            .isEqualTo("By.xpath: ../div/div/..//div/../..//div");
+
+        assertThat(Xpath.fixIfXpath(By.xpath("./div/div//div/../..//div")).toString())
+            .isEqualTo("By.xpath: ./div/div//div/../..//div");
     }
 }

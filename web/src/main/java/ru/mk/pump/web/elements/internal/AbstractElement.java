@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
@@ -19,6 +20,7 @@ import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.internal.State.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+import ru.mk.pump.web.elements.utils.Xpath;
 import ru.mk.pump.web.page.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue", "unchecked"})
@@ -47,6 +49,9 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     private final ActionsStore actionsStore;
 
+    @Setter(AccessLevel.PROTECTED)
+    protected boolean xpathAutoFix = true;
+
     private String elementName = "empty (strongly recommend to add)";
 
     @Getter
@@ -70,7 +75,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     }
 
     private AbstractElement(@NotNull By avatarBy, @Nullable InternalElement parentElement, @Nullable Browser browser, @Nullable Page page) {
-        this.avatarBy = avatarBy;
+        this.avatarBy = xpathAutoFix ? Xpath.fixIfXpath(avatarBy) : avatarBy;
         this.page = page;
         this.parentElement = parentElement;
         if (parentElement != null) {
@@ -232,7 +237,6 @@ abstract class AbstractElement<CHILD> implements InternalElement {
             return res.isSuccess() && res.getResult().isDisplayed();
         }, StateType.SELENIUM_DISPLAYED, TEAR_DOWN)).withName("Exists And Displayed");
     }
-
 
 
     @Override

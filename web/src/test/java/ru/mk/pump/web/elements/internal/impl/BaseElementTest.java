@@ -7,10 +7,10 @@ import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.exceptions.ActionExecutingException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
@@ -175,14 +175,48 @@ public class BaseElementTest extends AbstractElementTest {
         browser.start();
         browser.open(regPage.getUrl());
 
-        List<Element> elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced(".//div[@class='items']",
+        List<Element> elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced("//div[@class='item']",
+            (el) -> el.getAttribute("class").equals("item"));
+        log.info(Strings.toPrettyString(elementList));
+        Assertions.assertThat(elementList).hasSize(19);
+
+        elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced(".//div[@class='items']",
             (el) -> el.getAttribute("class").equals("item"),
             ".//div[@class='item']");
         log.info(Strings.toPrettyString(elementList));
+        Assertions.assertThat(elementList).hasSize(19);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced(null,
             (el) -> el.getAttribute("class").equals("item"),
-            ".//div[@class='item1']");
+            ".//div[@class='item']");
         log.info(Strings.toPrettyString(elementList));
+        Assertions.assertThat(elementList).hasSize(19);
+
+        elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced("",
+            (el) -> el.getAttribute("class").equals("item"),
+            ".//div[@class='item']");
+        log.info(Strings.toPrettyString(elementList));
+        Assertions.assertThat(elementList).hasSize(19);
+
+        elementList = regPage.getDropDownRegions().getSubElements(Element.class).findList(By.xpath("//div[@class='items']"), By.className("item"));
+        log.info(Strings.toPrettyString(elementList));
+        Assertions.assertThat(elementList).hasSize(1);
+
+        elementList = regPage.getDropDownRegions().getSubElements(Element.class)
+            .findList(els -> els.size() > 1, By.xpath("//div[@class='items']"), By.className("item"));
+        log.info(Strings.toPrettyString(elementList));
+        Assertions.assertThat(elementList).hasSize(19);
+
+        Element element = regPage.getDropDownRegions().getSubElements(Element.class)
+            .find(By.xpath("//div[@class='items']"), By.className("item"));
+        log.info(Strings.toString(element));
+        Assertions.assertThat(element).isNotNull();
+
+        element = regPage.getDropDownRegions().getSubElements(Element.class)
+            .findXpathAdvanced(".//div[@class='items']",
+                (el) -> el.getAttribute("class").equals("item"),
+                ".//div[@class='item']");
+        log.info(Strings.toString(element));
+        Assertions.assertThat(element).isNotNull();
     }
 }

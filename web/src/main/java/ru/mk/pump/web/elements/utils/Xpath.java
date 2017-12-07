@@ -1,7 +1,5 @@
 package ru.mk.pump.web.elements.utils;
 
-import java.util.Arrays;
-import java.util.regex.Pattern;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -14,44 +12,53 @@ import ru.mk.pump.commons.utils.Strings;
 @Slf4j
 public class Xpath {
 
-    private final static Pattern[] PATTERN_TO_DEL = {Pattern.compile("/{3,}"),
-        Pattern.compile("\\.{3,}"),
-        Pattern.compile("([^.]\\./)+$"),
-        Pattern.compile("(/\\.[^.])+$"),
-        Pattern.compile("(/\\.)+$"),
-        Pattern.compile("/+$")};
-
-    private final static Pattern[] PATTERN_TO_DOUBLE_SLASH = {Pattern.compile("/{3,}"),
-        Pattern.compile("([^.]\\.//)+$"),
-        Pattern.compile("([^/]/\\.//)+$")};
-
-    private final static Pattern[] PATTERN_TO_DOUBLE_DOT = {Pattern.compile("\\.\\.\\.{3,}")};
 
     public String fixXpath(String xpath) {
-        xpath = Arrays.stream(PATTERN_TO_DOUBLE_SLASH)
-            .reduce(xpath, (str, p) -> str.replaceAll(p.pattern(), "//"), (str1, str2) -> str2);
-        xpath = Arrays.stream(PATTERN_TO_DOUBLE_DOT)
-            .reduce(xpath, (str, p) -> str.replaceAll(p.pattern(), ".."), (str1, str2) -> str2);
-        xpath = Arrays.stream(PATTERN_TO_DEL)
-            .reduce(xpath, (str, p) -> str.replaceAll(p.pattern(), ""), (str1, str2) -> str2);
-        xpath = Arrays.stream(PATTERN_TO_DEL)
-            .reduce(xpath, (str, p) -> str.replaceAll(p.pattern(), ""), (str1, str2) -> str2);
+        log.debug("[XPATH] source '{}'", xpath);
 
-        if (xpath.startsWith("./") || xpath.startsWith(".//")) {
-            return xpath;
+        if (xpath == null || xpath.matches("[./]*")) {
+            return ".";
         }
-        if (xpath.startsWith("//")) {
-            return "." + xpath;
+        /*более двух слэшей*/
+        xpath = xpath.replaceAll("/{3,}", "//");
+        /*более двух точек*/
+        xpath = xpath.replaceAll("\\.{3,}", "\\.\\.");
+        /*более одного '/.'*/
+        xpath = xpath.replaceAll("(/\\.){2,}", "/.");
+        /*более одного './'*/
+        xpath = xpath.replaceAll("(/\\.){2,}", "./");
+
+
+
+        /*одинокий '/./'*/
+        xpath = xpath.replaceAll("(?<![./])/\\./(?![./])", "");
+
+        /*одинокий '/.'*/
+        xpath = xpath.replaceAll("(?<!/)/\\.(?!\\.)", "");
+        /*одинокий './'*/
+        xpath = xpath.replaceAll("(?<=[\\w/])\\./(?!/)", "");
+        /*одинокая точка в конце*/
+        xpath = xpath.replaceAll("(?<![./])\\.(?![./])", "");
+        /*две одинокие точки в конце*/
+        xpath = xpath.replaceAll("(?<!/)(\\.\\.)(?!/)", "/..");
+        /*точка в начале слова*/
+        xpath = xpath.replaceAll("(?<=[./])\\.(?=\\w)", "./");
+
+        /*одинокий слэш в самом конце*/
+        xpath = xpath.replaceAll("(?<!/)/$", "");
+        /*одинокие два слэша вконце*/
+        xpath = xpath.replaceAll("//$", "");
+        /*одинокий './'*/
+        xpath = xpath.replaceAll("(?<=[\\w/])\\./(?!/)", "");
+
+        /*точку вначале для конкатенации*/
+        if (xpath.startsWith("//") || xpath.startsWith("/")) {
+            xpath = "." + xpath;
+        } else if (!xpath.startsWith(".")) {
+            xpath = "./" + xpath;
         }
-        if (xpath.startsWith("/")) {
-            return "." + xpath;
-        }
-        if (!xpath.startsWith(".")) {
-            return "./" + xpath;
-        }
-        if (xpath.startsWith(".")) {
-            return xpath.replaceFirst("\\.", "./");
-        }
+
+        log.debug("[XPATH] result '{}'", xpath);
         return xpath;
     }
 
@@ -64,6 +71,10 @@ public class Xpath {
             return By.xpath(fixXpath(stringXpath));
         }
         return by;
+    }
+
+    public String concat(String mainXpath, String xpath) {
+        return fixXpath(mainXpath) + "/" + fixXpath(xpath);
     }
 
     private String getXpathStringOrNull(ByXPath by) {

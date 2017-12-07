@@ -18,6 +18,7 @@ import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.ElementConfig;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+import ru.mk.pump.web.elements.utils.Xpath;
 import ru.mk.pump.web.exceptions.ElementException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 
@@ -48,7 +49,7 @@ public class SubElementHelper<T extends Element> {
 
     }
 
-    public List<T> findList(@NotNull By... bys) {
+    public List<T> findList(@NotNull Predicate<List<WebElement>> webElementListPredicate, @NotNull By... bys) {
         if (bys.length == 0) {
             return Collections.emptyList();
         }
@@ -56,11 +57,11 @@ public class SubElementHelper<T extends Element> {
             parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
             final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()))
                 .getResult();
-            final List<WebElement> elements = sourceWebElement.findElements(currentBy);
-            if (elements.size() > 0) {
+            final List<WebElement> elements = sourceWebElement.findElements(Xpath.fixIfXpath(currentBy));
+            if (webElementListPredicate.test(elements)) {
                 return IntStream.range(0, elements.size()).boxed()
                     .map(index -> {
-                        final T newElement = elementFactory.newElement(subElementClass, currentBy, elementConfig);
+                        final T newElement = elementFactory.newElement(subElementClass, Xpath.fixIfXpath(currentBy), elementConfig);
                         ((InternalElement) newElement).setIndex(index);
                         return newElement;
                     })
@@ -68,6 +69,10 @@ public class SubElementHelper<T extends Element> {
             }
         }
         throw exceptionNoExistsSub(Arrays.toString(bys));
+    }
+
+    public List<T> findList(@NotNull By... bys) {
+        return findList((els) -> !els.isEmpty(), bys);
     }
 
 
@@ -128,13 +133,9 @@ public class SubElementHelper<T extends Element> {
         }
         By byResult;
         final String xpathFinal;
-        if (Strings.isEmpty(xpathString)) {
-            xpathFinal = ".";
-            byResult = By.xpath(".");
-        } else {
-            xpathFinal = xpathString;
-            byResult = By.xpath(xpathString);
-        }
+
+        xpathFinal = Xpath.fixXpath(xpathString);
+        byResult = By.xpath(xpathFinal);
 
         parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
         final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString))
@@ -150,7 +151,7 @@ public class SubElementHelper<T extends Element> {
             if (!iterator.hasNext()) {
                 throw exceptionNoExistsSub(byResult.toString());
             }
-            byResult = By.xpath(xpathFinal + "/" + iterator.next());
+            byResult = By.xpath(Xpath.concat(xpathFinal, iterator.next()));
             elements = sourceWebElement.findElements(byResult);
         }
         return Pair.of(sourceWebElement.findElements(byResult).size(), byResult);
@@ -166,16 +167,18 @@ public class SubElementHelper<T extends Element> {
 
     private ElementException exceptionNoExists(WaitResult<?> res, String byString) {
         return new ElementFinderNotFoundException(
-            String.format("Cannot find sub elements '%s' by '%s' because parent is not exists", subElementClass.getSimpleName(), logPath(byString)), res.getCause())
+            String.format("Cannot find sub elements '%s' by '%s' because parent is not exists", subElementClass.getSimpleName(), logPath(byString)),
+            res.getCause())
             .withTargetElement(parent);
     }
 
     private ElementException exceptionNoExistsSub(String byString) {
-        return new ElementFinderNotFoundException(String.format("Cannot find any sub elements '%s' by '%s' ", subElementClass.getSimpleName(), logPath(byString)))
+        return new ElementFinderNotFoundException(
+            String.format("Cannot find any sub elements '%s' by '%s' ", subElementClass.getSimpleName(), logPath(byString)))
             .withTargetElement(parent);
     }
 
-    private String logPath(String byString){
-        return "parent[" + parent.getBy().toString() + "]" + byString;
+    private String logPath(String byString) {
+        return "parent[" + parent.getBy().toString() + "] " + byString;
     }
 }
