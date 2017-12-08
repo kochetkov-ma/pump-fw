@@ -1,8 +1,10 @@
 package ru.mk.pump.web.elements.internal.impl;
 
 import lombok.Getter;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.ProjectResources;
@@ -17,31 +19,43 @@ import ru.mk.pump.web.elements.api.concrete.Selector;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 
-abstract class AbstractElementTest {
+@SuppressWarnings("WeakerAccess")
+public abstract class AbstractElementTest {
 
-    //private static final BrowserType BROWSER_TYPE = BrowserType.valueOf(EnvVariables.get("BROWSER", "PHANTOMJS"));
-    private static final BrowserType BROWSER_TYPE = BrowserType.CHROME;
-    Browsers browsers;
+    private static final BrowserType BROWSER_TYPE = BrowserType.valueOf(EnvVariables.get("BROWSER", "PHANTOMJS"));
+    //private static final BrowserType BROWSER_TYPE = BrowserType.CHROME;
 
-    Browser browser;
+    static Browsers browsers;
 
-    MainPage mainPage;
-    RegPage regPage;
+    protected Browser browser;
 
-    @Before
-    public void setUp() {
-        browsers = new Browsers();
-        final BrowserConfig config = new BrowserConfig(false, Size.of(true), BROWSER_TYPE);
-        if (BROWSER_TYPE != BrowserType.PHANTOMJS) {
-            config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
-        }
-        browser = browsers.newBrowser(config);
+    protected MainPage mainPage;
+
+    protected RegPage regPage;
+
+    @AfterAll
+    public static void afterAll() {
+        browsers.close();
     }
 
-    @After
+    @BeforeAll
+    public static void beforeAll() {
+        browsers = new Browsers();
+    }
+
+    @BeforeEach
+    public void setUp() {
+        if (!browsers.has()) {
+            browser = createBrowser();
+            browser.start();
+        } else {
+            browser = browsers.get();
+        }
+    }
+
+    @AfterEach
     public void tearDown() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 10;
-        browsers.close();
     }
 
     void createPages(Browser browser) {
@@ -87,6 +101,7 @@ abstract class AbstractElementTest {
     @SuppressWarnings("WeakerAccess")
     @Getter
     class RegPage {
+
         private final String url = "https://app-digitalmortgage003.open.ru/registration";
 
         private final BaseElement hiddenItems;
@@ -99,13 +114,21 @@ abstract class AbstractElementTest {
 
         private final Input inputSurname;
 
-        private RegPage(Browser browser){
+        private RegPage(Browser browser) {
             inputSurname = new InputImpl(By.id("lastNameId"), browser);
             notExists = new BaseElement(By.xpath(".//div[@class='not_exists']"), browser);
             hiddenItems = new BaseElement(By.xpath(".//div[@class='items']"), browser);
             dropDownRegions = new DropDownImpl(By.id("regionAutocompleteId"), browser);
             selectorSex = new SelectorImpl(By.id("apartmentTypeId"), browser);
         }
+    }
+
+    private Browser createBrowser() {
+        final BrowserConfig config = new BrowserConfig(false, Size.of(true), BROWSER_TYPE);
+        if (BROWSER_TYPE != BrowserType.PHANTOMJS) {
+            config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
+        }
+        return browsers.newBrowser(config);
     }
 
 }

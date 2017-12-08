@@ -1,16 +1,14 @@
 package ru.mk.pump.commons.utils;
 
-import static org.junit.Assert.*;
-
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import ru.mk.pump.commons.activity.Parameter;
 
 @Slf4j
 public class StringsTest {
+
 
     @Test
     public void space() {
@@ -38,7 +36,8 @@ public class StringsTest {
 
     @Test
     public void toPrettyStringOffset() {
-        final List<String> list = Lists.newArrayList("line1", "line2", "line3", "line4", System.lineSeparator(), System.lineSeparator(), System.lineSeparator());
+        final List<String> list = Lists
+            .newArrayList("line1", "line2", "line3", "line4", System.lineSeparator(), System.lineSeparator(), System.lineSeparator());
         log.info(System.lineSeparator() + Strings.toPrettyString(list, 2));
         log.info("END");
     }
@@ -49,6 +48,14 @@ public class StringsTest {
 
     @Test
     public void testToString() {
+        log.info(Strings.toString(this));
+        log.info(Strings.toString(Parameter.of("parameter string")));
+        log.info(Strings.toString(null));
+        log.info(Strings.toString("string"));
+        log.info(Strings.toString(10.01));
+        log.info(Strings.toString(10L));
+        log.info(Strings.toString(10));
+        log.info(Strings.toString(new String[]{"string","string"}));
     }
 
     @Test

@@ -31,7 +31,7 @@ public class Xpath {
 
 
         /*одинокий '/./'*/
-        xpath = xpath.replaceAll("(?<![./])/\\./(?![./])", "");
+        xpath = xpath.replaceAll("(?<![./])/\\./(?![./])", "/");
 
         /*одинокий '/.'*/
         xpath = xpath.replaceAll("(?<!/)/\\.(?!\\.)", "");

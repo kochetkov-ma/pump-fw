@@ -1,19 +1,17 @@
 package ru.mk.pump.web.elements;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
-import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.browsers.Browsers;
-import ru.mk.pump.web.browsers.configuration.BrowserConfig;
-import ru.mk.pump.web.browsers.configuration.BrowserType;
-import ru.mk.pump.web.browsers.configuration.Size;
 import ru.mk.pump.web.elements.api.ElementConfig;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
@@ -21,78 +19,81 @@ import ru.mk.pump.web.elements.api.concrete.TextArea;
 import ru.mk.pump.web.elements.internal.BaseElement;
 
 @Slf4j
-public class ElementFactoryTest {
-
-    private Browsers browsers;
-
-    private BrowserConfig config;
-
-    private Browser browser;
+class ElementFactoryTest {
 
     private ElementFactory elementFactory;
 
-    @Before
-    public void setUp() {
-        browsers = new Browsers();
-        config = new BrowserConfig(false, Size.of(true), BrowserType.CHROME);
-        config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
-        browser = browsers.newBrowser(config);
+    private Browser browser = mock(Browser.class);
 
+    @BeforeEach
+    void setUp() {
         elementFactory = new ElementFactory(new ElementImplDispatcher(), browser);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        browsers.close();
+    @Test
+    void withMainRequirements() {
     }
 
     @Test
-    public void withMainRequirements() {
-
+    void addActionListener() {
     }
 
     @Test
-    public void addActionListener() {
+    void withActionListener() {
     }
 
     @Test
-    public void withActionListener() {
-    }
-
-    @Test
-    public void newElement() {
+    void newElement() {
+        final Map<String, Parameter<?>> param = ImmutableMap.of("дополнительные xpath", Parameter.of(By::xpath, By.class).withValue("xpath"));
         final ElementConfig config = ElementConfig.of("Тестовый элемент", "Для юнит теста")
-            .withParameters(ImmutableMap.of("дополнительные xpath", Parameter.of(By::xpath, By.class).withValue("xpath")));
+            .withParameters(param);
         final By by = By.tagName("div");
         log.info(Strings.mapToPrettyString(elementFactory.getInfo()));
 
         final Button button = elementFactory.newElement(Button.class, by, config);
-        log.info(((BaseElement) button).getName());
+        assertThat(button).isNotNull();
+        assertThat(((BaseElement) button).getParams()).isEqualTo(param);
+        assertThat(button.getName()).isEqualTo("Тестовый элемент");
+        assertThat(button.getDescription()).isEqualTo("Для юнит теста");
+        assertThat(button.getName()).isEqualTo("Тестовый элемент");
 
         final DropDown dropDown = elementFactory.newElement(DropDown.class, by, config);
-        log.info(((BaseElement) button).getParams().toString());
+        assertThat(dropDown).isNotNull();
+        assertThat(((BaseElement) dropDown).getParams()).isEqualTo(param);
+        assertThat(dropDown.getName()).isEqualTo("Тестовый элемент");
+        assertThat(dropDown.getDescription()).isEqualTo("Для юнит теста");
+        assertThat(dropDown.getName()).isEqualTo("Тестовый элемент");
+        assertThat(dropDown).isNotNull();
     }
 
     @Test
-    public void newElement1() {
+    void newElementList() {
+        final Map<String, Parameter<?>> param = ImmutableMap.of("дополнительные xpath", Parameter.of(By::xpath, By.class).withValue("xpath"),
+            "еще параметр", Parameter.of("строка"));
         final ElementConfig configParent = ElementConfig.of("Тестовый элемент", "Для юнит теста")
-            .withParameters(ImmutableMap.of("дополнительные xpath", Parameter.of(By::xpath, By.class).withValue("xpath")));
+            .withParameters(param);
         final ElementConfig configChild = ElementConfig.of("Тестовый элемент", "Для юнит теста")
-            .withParameters(ImmutableMap.of("дополнительные xpath", Parameter.of(By::xpath, By.class).withValue("xpath"),
-                "еще параметр", Parameter.of("строка")));
+            .withParameters(param);
 
         final By byParent = By.tagName("section");
         final By byChild = By.xpath(".//button[@data-aid='startRegistration']");
 
         final TextArea parent = elementFactory.newElement(TextArea.class, byParent, configParent.withIndex(1));
+        assertThat(parent).isInstanceOf(TextArea.class);
+        assertThat(((BaseElement) parent).getParams()).isEqualTo(param);
+        assertThat(parent.getName()).isEqualTo("Тестовый элемент");
+        assertThat(parent.getDescription()).isEqualTo("Для юнит теста");
+        assertThat(parent.getName()).isEqualTo("Тестовый элемент");
+        assertThat(parent.isList()).isTrue();
+        assertThat(parent.getIndex()).isEqualTo(1);
+
         final Button button = elementFactory.newElement(Button.class, byChild, parent, configChild);
-
-        browser.start();
-        browser.open("https://app-digitalmortgage003.open.ru/");
-
-        log.info(button.getText());
-
-        log.info(System.lineSeparator(), button.toPrettyString());
-
+        assertThat(button).isInstanceOf(Button.class);
+        assertThat(((BaseElement) button).getParams()).isEqualTo(param);
+        assertThat(button.getName()).isEqualTo("Тестовый элемент");
+        assertThat(button.getDescription()).isEqualTo("Для юнит теста");
+        assertThat(button.getName()).isEqualTo("Тестовый элемент");
+        assertThat(button.isList()).isFalse();
+        assertThat(button.getIndex()).isEqualTo(-1);
     }
 }

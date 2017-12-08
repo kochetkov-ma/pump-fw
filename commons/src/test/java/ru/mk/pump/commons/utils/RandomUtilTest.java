@@ -1,10 +1,10 @@
 package ru.mk.pump.commons.utils;
 
-import org.junit.Test;
-import ru.mk.pump.commons.exception.UtilException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import org.junit.jupiter.api.Test;
+import ru.mk.pump.commons.exception.UtilException;
 
 public class RandomUtilTest {
 
@@ -19,9 +19,9 @@ public class RandomUtilTest {
         assertThat(RandomUtil.newRussianMobilePhone("+8930720000")).startsWith("+8930720000").hasSize(12);
 
         assertThatThrownBy(() -> RandomUtil.newRussianMobilePhone("+893072000001"))
-                .hasNoCause()
-                .isInstanceOf(UtilException.class)
-                .hasMessage("Cannot generate new phone for prefix size more 12 chars. Actual prefix +893072000001");
+            .hasNoCause()
+            .isInstanceOf(UtilException.class)
+            .hasMessage("Cannot generate new phone for prefix size more 12 chars. Actual prefix +893072000001");
 
     }
 

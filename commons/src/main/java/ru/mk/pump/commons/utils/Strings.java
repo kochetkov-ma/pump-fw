@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.constants.StringConstants;
@@ -87,10 +88,6 @@ public class Strings {
         return actual != null && actual.matches(regEx);
     }
 
-    public String toString(Collection<?> list) {
-        return trim(Arrays.toString(list.toArray()));
-    }
-
     public String trimEnd(String string) {
         return org.apache.commons.lang3.StringUtils.stripEnd(string, LINE + " ");
     }
@@ -128,7 +125,19 @@ public class Strings {
     }
 
     public String toString(Object object) {
-        return ReflectionToStringBuilder.toString(object);
+        if (object == null) {
+            return "null";
+        }
+        if (object instanceof Collection) {
+            return trim(Arrays.toString(((Collection) object).toArray()));
+        }
+        try {
+            if (object.getClass().getMethod("toString").getDeclaringClass() != Object.class) {
+                return object.toString();
+            }
+        } catch (NoSuchMethodException ignore) {
+        }
+        return ReflectionToStringBuilder.toString(object, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     public boolean isEmpty(String value) {

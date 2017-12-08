@@ -1,6 +1,6 @@
 package ru.mk.pump.web.elements.internal.interfaces;
 
-public interface MultiElement {
+public interface Enumerated {
 
     boolean isList();
 

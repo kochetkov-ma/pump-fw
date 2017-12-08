@@ -2,11 +2,9 @@ package ru.mk.pump.web.elements.internal.impl;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.assertj.core.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import ru.mk.pump.commons.utils.Strings;
@@ -20,23 +18,17 @@ import ru.mk.pump.web.exceptions.ElementStateException;
 public class BaseElementTest extends AbstractElementTest {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setUp();
         createPages(browser);
     }
 
-    @After
-    public void tearDown() {
-        browsers.close();
-    }
-
     @Test
-    public void testGetTextSilent() {
+    void testGetTextSilent() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
         createPages(browser);
 
-        browser.start();
         browser.open(regPage.getUrl());
 
         Assertions.assertThatThrownBy(() -> regPage.getHiddenItems().getText())
@@ -48,8 +40,7 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @Test
-    public void testGetText() {
-        browser.start();
+    void testGetText() {
         browser.open("https://app-digitalmortgage003.open.ru/");
 
         String res1 = mainPage.getParentDiv().getText();
@@ -69,11 +60,10 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @Test
-    public void testGetTextFail() {
+    void testGetTextFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
         createPages(browser);
 
-        browser.start();
         browser.open(mainPage.getUrl());
 
         Assertions.assertThatThrownBy(() -> mainPage.getParentDivFail().getText())
@@ -91,18 +81,15 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @Test
-    public void testClick() {
-        browser.start();
+    void testClick() {
         browser.open(mainPage.getUrl());
-
         mainPage.getChildButtonSection().click();
     }
 
     @Test
-    public void testClickFail() {
+    void testClickFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
         createPages(browser);
-        browser.start();
         browser.open(mainPage.getUrl());
 
         Assertions.assertThatThrownBy(() -> mainPage.getParentDivFail().click())
@@ -115,8 +102,7 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @Test
-    public void clear() {
-        browser.start();
+    void clear() {
         browser.open(regPage.getUrl());
 
         log.info(regPage.getInputSurname().set("МАКС"));
@@ -125,8 +111,7 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @Test
-    public void isAllState() {
-        browser.start();
+    void isAllState() {
         browser.open(regPage.getUrl());
 
         Assertions.assertThat(regPage.getHiddenItems().isExists()).isTrue();
@@ -135,8 +120,7 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @Test
-    public void isNotAllState() {
-        browser.start();
+    void isNotAllState() {
         browser.open(regPage.getUrl());
 
         Assertions.assertThat(regPage.getHiddenItems().isNotDisplayed()).isTrue();
@@ -145,11 +129,10 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @Test
-    public void isNotAllStateFail() {
+    void isNotAllStateFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
         createPages(browser);
 
-        browser.start();
         browser.open(regPage.getUrl());
 
         Assertions.assertThat(regPage.getHiddenItems().isNotEnabled()).isFalse();
@@ -158,11 +141,10 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @Test
-    public void isAllStateFail() {
+    void isAllStateFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
         createPages(browser);
 
-        browser.start();
         browser.open(regPage.getUrl());
 
         Assertions.assertThat(regPage.getHiddenItems().isDisplayed()).isFalse();
@@ -171,32 +153,31 @@ public class BaseElementTest extends AbstractElementTest {
     }
 
     @Test
-    public void getSubElements() {
-        browser.start();
+    void getSubElements() {
         browser.open(regPage.getUrl());
 
         List<Element> elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced("//div[@class='item']",
             (el) -> el.getAttribute("class").equals("item"));
         log.info(Strings.toPrettyString(elementList));
-        Assertions.assertThat(elementList).hasSize(19);
+        Assertions.assertThat(elementList).hasSize(20);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced(".//div[@class='items']",
             (el) -> el.getAttribute("class").equals("item"),
             ".//div[@class='item']");
         log.info(Strings.toPrettyString(elementList));
-        Assertions.assertThat(elementList).hasSize(19);
+        Assertions.assertThat(elementList).hasSize(20);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced(null,
             (el) -> el.getAttribute("class").equals("item"),
             ".//div[@class='item']");
         log.info(Strings.toPrettyString(elementList));
-        Assertions.assertThat(elementList).hasSize(19);
+        Assertions.assertThat(elementList).hasSize(20);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced("",
             (el) -> el.getAttribute("class").equals("item"),
             ".//div[@class='item']");
         log.info(Strings.toPrettyString(elementList));
-        Assertions.assertThat(elementList).hasSize(19);
+        Assertions.assertThat(elementList).hasSize(20);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class).findList(By.xpath("//div[@class='items']"), By.className("item"));
         log.info(Strings.toPrettyString(elementList));
@@ -205,7 +186,7 @@ public class BaseElementTest extends AbstractElementTest {
         elementList = regPage.getDropDownRegions().getSubElements(Element.class)
             .findList(els -> els.size() > 1, By.xpath("//div[@class='items']"), By.className("item"));
         log.info(Strings.toPrettyString(elementList));
-        Assertions.assertThat(elementList).hasSize(19);
+        Assertions.assertThat(elementList).hasSize(20);
 
         Element element = regPage.getDropDownRegions().getSubElements(Element.class)
             .find(By.xpath("//div[@class='items']"), By.className("item"));

@@ -58,11 +58,16 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
 
     @Override
     public Browser start() {
-        this.driver = builder.createAndStartDriver();
-        if (driver == null) {
-            throw new BrowserException("Cannot start browser. Incorrect driver builder", this);
+        if (isClosed()){
+            throw new BrowserException("Cannot start browser. Browser has been already closed and this instance of Browser cannot start", this);
         }
-        activate();
+        if (!isStarted()) {
+            driver = builder.createAndStartDriver();
+            if (driver == null) {
+                throw new BrowserException("Cannot start browser. Incorrect driver builder", this);
+            }
+            activate();
+        }
         return this;
     }
 

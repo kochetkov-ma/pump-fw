@@ -4,13 +4,9 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import ru.mk.pump.commons.activity.AbstractActivity;
-import ru.mk.pump.commons.activity.AbstractActivityManager;
-import ru.mk.pump.commons.activity.Activity;
-import ru.mk.pump.commons.activity.ActivityManager;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class AbstractActivityManagerTest {
@@ -19,7 +15,7 @@ public class AbstractActivityManagerTest {
 
     private UUID lastUuid;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final List<Activity> activityList = Lists.newArrayList(activity(), activity(), activity());
         this.activityManager = manager(activityList);
@@ -28,16 +24,16 @@ public class AbstractActivityManagerTest {
     @Test
     public void add() {
         activityManager.add(activity());
-        Assert.assertEquals("Size is not 3", 4, activityManager.getAll().size());
+        Assertions.assertEquals(4, activityManager.getAll().size(), "Size is not 3");
     }
 
     @Test
     public void addAndActivate() {
-        Assert.assertFalse("Не должно быть активных", activityManager.hasActive());
+        Assertions.assertFalse(activityManager.hasActive());
         activityManager.addAndActivate(activity());
-        Assert.assertTrue("Новый элемент активен", activityManager.hasActive());
-        Assert.assertEquals("Активный элемент не последний UUID", lastUuid, activityManager.getActive().get().getUUID());
-        Assert.assertTrue("Активный элемент не последний UUID", activityManager.get(lastUuid).get().isActive());
+        Assertions.assertTrue(activityManager.hasActive());
+        Assertions.assertEquals(lastUuid, activityManager.getActive().get().getUUID());
+        Assertions.assertTrue(activityManager.get(lastUuid).get().isActive());
     }
 
     @Test
@@ -45,9 +41,9 @@ public class AbstractActivityManagerTest {
         activityManager.add(activity());
         activityManager.add(activity());
         activityManager.releaseAll();
-        Assert.assertEquals("Размер активити не 0", 0, activityManager.getAll().size());
-        Assert.assertFalse("Есть активные", activityManager.hasActive());
-        Assert.assertFalse("Есть предыдущий", activityManager.getPrev().isPresent());
+        Assertions.assertEquals(0, activityManager.getAll().size());
+        Assertions.assertFalse(activityManager.hasActive());
+        Assertions.assertFalse(activityManager.getPrev().isPresent());
 
     }
 
@@ -87,34 +83,34 @@ public class AbstractActivityManagerTest {
     @Test
     public void getHasActive() {
         activityManager.add(activity());
-        Assert.assertFalse(activityManager.getActive().isPresent());
-        Assert.assertFalse(activityManager.hasActive());
+        Assertions.assertFalse(activityManager.getActive().isPresent());
+        Assertions.assertFalse(activityManager.hasActive());
 
         activityManager.get(lastUuid).get().activate();
-        Assert.assertEquals(lastUuid, activityManager.getActive().get().getUUID());
-        Assert.assertTrue(activityManager.hasActive());
+        Assertions.assertEquals(lastUuid, activityManager.getActive().get().getUUID());
+        Assertions.assertTrue(activityManager.hasActive());
     }
 
     @Test
     public void getPrev() {
         Activity activity = activity();
         activityManager.add(activity);
-        Assert.assertFalse(activityManager.getPrev().isPresent());
+        Assertions.assertFalse(activityManager.getPrev().isPresent());
         activity.activate();
-        Assert.assertTrue(activityManager.getActive().get().isActive());
+        Assertions.assertTrue(activityManager.getActive().get().isActive());
         activityManager.addAndActivate(activity());
-        Assert.assertEquals(activity.getUUID(), activityManager.getPrev().get().getUUID());
-        Assert.assertFalse(activityManager.getPrev().get().isActive());
+        Assertions.assertEquals(activity.getUUID(), activityManager.getPrev().get().getUUID());
+        Assertions.assertFalse(activityManager.getPrev().get().isActive());
     }
 
     @Test
     public void getAll() {
-        Assert.assertEquals(3, activityManager.getAll().size());
+        Assertions.assertEquals(3, activityManager.getAll().size());
     }
 
     @Test
     public void get() {
-        Assert.assertEquals(lastUuid, activityManager.get(lastUuid).get().getUUID());
+        Assertions.assertEquals(lastUuid, activityManager.get(lastUuid).get().getUUID());
     }
 
     private Activity activity() {

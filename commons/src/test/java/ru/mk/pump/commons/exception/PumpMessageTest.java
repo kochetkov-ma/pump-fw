@@ -1,23 +1,21 @@
 package ru.mk.pump.commons.exception;
 
-import static org.junit.Assert.*;
-
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.utils.Strings;
 
 @Slf4j
 public class PumpMessageTest {
 
     @Test
-    public void test(){
-        final Map<String,String> map1 = ImmutableMap.of("key-1", "long long long long long long value-1", "key-2", "long long long long long long long long value-2");
-        final Map<String,String> map2 = ImmutableMap.of("key-1", "value-1", "key-2", Strings.mapToPrettyString(map1));
-        final Map<String,String> map3 = ImmutableMap.of("key-1", "value-1", "key-2", "value-2");
-        final Map<String,String> map4 = ImmutableMap.of("key-1", "value-1", "key-2", "value-2");
-
+    public void test() {
+        final Map<String, String> map1 = ImmutableMap
+            .of("key-1", "long long long long long long value-1", "key-2", "long long long long long long long long value-2");
+        final Map<String, String> map2 = ImmutableMap.of("key-1", "value-1", "key-2", Strings.mapToPrettyString(map1));
+        final Map<String, String> map3 = ImmutableMap.of("key-1", "value-1", "key-2", "value-2");
+        final Map<String, String> map4 = ImmutableMap.of("key-1", "value-1", "key-2", "value-2");
 
         PumpMessage msg = new PumpMessage("Заголовок")
             .withPre("PRE")
@@ -36,7 +34,7 @@ public class PumpMessageTest {
     }
 
     @Test
-    public void testShort(){
+    public void testShort() {
 
         PumpMessage msg = new PumpMessage("Заголовок");
 

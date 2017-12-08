@@ -7,8 +7,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
@@ -30,7 +30,7 @@ public class ElementImplDispatcherTest {
 
     private ElementImplDispatcher dispatcher;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         dispatcher = new ElementImplDispatcher();
         dispatcher.loadDefault();

@@ -79,13 +79,18 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     @Override
     public boolean isExists() {
-        final State res = getStateResolver().resolve(exists());
+        final SetState res = getStateResolver().resolve(exists());
         return res.result().isSuccess();
     }
 
     @Override
     public boolean isNotExists() {
         final State res = getStateResolver().resolve(notExists());
+        return res.result().isSuccess();
+    }
+
+    public boolean isJsReady() {
+        final State res = getStateResolver().resolve(jsReady());
         return res.result().isSuccess();
     }
 
@@ -133,6 +138,11 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     public BaseElement setSelfFactory(ElementFactory selfElementFactory) {
         this.selfElementFactory = selfElementFactory;
         return this;
+    }
+
+    @Override
+    public String getDescription() {
+        return super.getElementDescription();
     }
 
     private ElementFactory getSubElementFactory() {

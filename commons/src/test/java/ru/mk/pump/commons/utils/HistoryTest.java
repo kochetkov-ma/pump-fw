@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.utils.History.Info;
 
 @Slf4j
@@ -16,8 +16,9 @@ public class HistoryTest {
 
     private LocalDateTime intermediateDate;
 
-    @Before
+    @BeforeEach
     public void setUp() {
+
         history = new History<>(3);
         history.add(Info.of("id-1", "test-1"));
 

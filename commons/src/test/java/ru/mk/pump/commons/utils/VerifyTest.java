@@ -6,9 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.google.common.collect.Lists;
 import java.util.Comparator;
 import java.util.List;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.exception.VerifyError;
 import ru.mk.pump.commons.reporter.ReporterAllure;
 import ru.mk.pump.commons.reporter.ReporterAllure.Type;
@@ -17,14 +17,14 @@ public class VerifyTest {
 
     private Verify verify;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         if (System.getProperty("allure.results.directory") == null) {
             System.setProperty("allure.results.directory", "out/allure-result");
         }
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         this.verify = new Verify(new ReporterAllure(new DesktopScreenshoter(), Type.ALL));
     }

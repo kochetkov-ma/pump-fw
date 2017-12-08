@@ -14,13 +14,24 @@ ext {
             selenium    : "3.8.1",
             allure      : "latest.release",
             assertj     : "3.8.0",
-            allureJunit4: "latest.release"
+            allureJunit4: "latest.release",
+            junit5      : "latest.release",
+            mockito     : "2.+"
     ]
 }
 
 task info {
     doLast {
         println "Фреймворк автоматизации тестирования web на основе Selenium WebDriver"
+    }
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:+'
     }
 }
 
@@ -39,7 +50,9 @@ task clean(group: "build") {
 }
 
 subprojects {
-    apply plugin: "java"
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'org.junit.platform.gradle.plugin'
     version = rootProject.version
     compileJava.options.encoding = "UTF-8"
 
@@ -52,6 +65,10 @@ subprojects {
 
         delete "${project.projectDir}/target"
         println "dir clean finish : ${project.projectDir}/target"
+    }
+
+    junitPlatform {
+        details 'tree'
     }
 
     repositories {
@@ -75,13 +92,14 @@ subprojects {
                 "io.qameta.allure:allure-java-commons:$versions.allure"
         )
 
-        testRuntime(
-                "org.junit.jupiter:junit-jupiter-engine:+"
-        )
+        testCompileOnly('org.apiguardian:apiguardian-api:+')
+
+        testRuntime("org.junit.jupiter:junit-jupiter-engine:$versions.junit5")
 
         testCompile(
-                "org.junit.jupiter:junit-jupiter-api:+",
+                "org.junit.jupiter:junit-jupiter-api:$versions.junit5",
                 "org.assertj:assertj-core:$versions.assertj",
+                "org.mockito:mockito-core:$versions.mockito"
         )
     }
 }

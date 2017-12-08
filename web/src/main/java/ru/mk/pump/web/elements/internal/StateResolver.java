@@ -56,6 +56,10 @@ public class StateResolver extends StateNotifier {
                     resolve((State) item);
                 } else if (item instanceof OrState) {
                     resolve((OrState) item);
+                } else if (item instanceof SetState) {
+                    resolve((SetState) item);
+                } else {
+                    throw new UnsupportedOperationException(String.format("Unsupported state type '%s'", state.getClass().getSimpleName()));
                 }
                 final WaitResult<Boolean> res = item.result();
                 syncTimeLeft = syncTimeLeft - res.getElapsedTime();

@@ -4,9 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.commons.utils.Strings;
@@ -47,7 +45,7 @@ public class ConfigurationsLoaderTest {
         assertThat(stand.getUrl()).isEqualTo("yandex.ru");
         assertThat(stand.getCount()).isEqualTo(1);
         assertThat(stand.getTestDefault()).isEqualTo("default");
-        Assert.assertNull(stand.getTestNull());
+        assertThat(stand.getTestNull()).isNull();
 
     }
 

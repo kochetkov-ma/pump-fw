@@ -1,25 +1,23 @@
 package ru.mk.pump.commons.reporter;
 
 import io.qameta.allure.Step;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.reporter.ReporterAllure.Type;
 import ru.mk.pump.commons.utils.DesktopScreenshoter;
 
-@RunWith(AllureRunner.class)
 public class ReporterTest {
 
     private Reporter reporter;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.reporter = new ReporterAllure(new DesktopScreenshoter(), Type.ALL);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
 
     }

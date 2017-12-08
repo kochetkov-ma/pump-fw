@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
@@ -19,7 +19,7 @@ public class BrowsersTest {
 
     private BrowserConfig config;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         browsers = new Browsers();
         config = new BrowserConfig(false, Size.of(true), BrowserType.CHROME);
@@ -84,7 +84,7 @@ public class BrowsersTest {
     public void closeCurrentThread() {
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         browsers.close();
     }

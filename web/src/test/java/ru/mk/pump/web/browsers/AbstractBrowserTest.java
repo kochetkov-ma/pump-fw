@@ -1,10 +1,10 @@
 package ru.mk.pump.web.browsers;
 
 import java.io.IOException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
@@ -14,7 +14,7 @@ public class AbstractBrowserTest {
 
     private Browser browser;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         final BrowserConfig browserConfig = new BrowserConfig(false, Size.of(true), BrowserType.CHROME);
         browserConfig.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
@@ -22,7 +22,7 @@ public class AbstractBrowserTest {
         browser = new Browsers().newBrowser(browserConfig);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         browser.close();
     }
@@ -37,7 +37,7 @@ public class AbstractBrowserTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void windows() {
 
     }

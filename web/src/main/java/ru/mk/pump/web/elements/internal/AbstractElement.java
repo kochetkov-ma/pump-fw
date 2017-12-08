@@ -207,6 +207,12 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         return actionsStore.inputAction(keys);
     }
 
+    public State jsReady() {
+        final String js = "return document.readyState";
+        return (State) State.of(() -> "complete".equals(Strings.toString(getBrowser().actions().executeScript(js))), StateType.OTHER, TEAR_DOWN)
+            .withName("JS is completed");
+    }
+
     public State notExists() {
         return (State) State.of(() -> !getFinder().findFast().isSuccess(), StateType.EXISTS.not(), TEAR_DOWN).withName("Not Exists in DOM");
     }
@@ -226,8 +232,9 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     }
 
     @Override
-    public State exists() {
-        return (State) State.of(() -> getFinder().findFast().isSuccess(), StateType.EXISTS, TEAR_DOWN).withName("Exists in DOM");
+    public SetState exists() {
+        return (SetState) SetState.of(StateType.EXISTS, jsReady(),
+            State.of(() -> getFinder().findFast().isSuccess(), StateType.SELENIUM_EXISTS, TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
     }
 
     @Override
