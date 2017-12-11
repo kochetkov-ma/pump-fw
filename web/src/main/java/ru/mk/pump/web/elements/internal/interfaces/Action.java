@@ -6,10 +6,9 @@ import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.SetState;
-import ru.mk.pump.web.elements.internal.State;
 
 @SuppressWarnings("unused")
-public interface Action<T> extends StrictInfo{
+public interface Action<T> extends StrictInfo {
 
     T get();
 
@@ -27,13 +26,13 @@ public interface Action<T> extends StrictInfo{
 
     int getTry();
 
-    InternalState<?> getRedefineState();
+    SetState getRedefineState();
 
     Set<ActionStrategy> getStrategy();
 
-    Action<T> redefineExpectedState(InternalState<?> stateSet);
+    Action<T> redefineExpectedState(SetState stateSet);
 
-    Action<T> withStrategy(ActionStrategy ... strategies);
+    Action<T> withStrategy(ActionStrategy... strategies);
 
     enum ActionStage {
         NOT_RUN, BEFORE, MAIN, AFTER, FINALLY, COMPLETED

@@ -3,12 +3,12 @@ package ru.mk.pump.web.elements.api.listeners;
 import ru.mk.pump.commons.listener.Event;
 import ru.mk.pump.commons.listener.Listener;
 import ru.mk.pump.web.elements.api.listeners.StateListener.StateEvent;
-import ru.mk.pump.web.elements.internal.interfaces.InternalState;
+import ru.mk.pump.web.elements.internal.State;
 
-public interface StateListener extends Listener<InternalState, StateEvent> {
+public interface StateListener extends Listener<State, StateEvent> {
 
     @Override
-    default void on(Event<InternalState, StateEvent> event, Object... args) {
+    default void on(Event<State, StateEvent> event, Object... args) {
         switch (event.name()) {
             case BEFORE:
                 onBefore(event.get());
@@ -19,9 +19,9 @@ public interface StateListener extends Listener<InternalState, StateEvent> {
         }
     }
 
-    void onBefore(InternalState state);
+    void onBefore(State state);
 
-    void onFinish(InternalState state);
+    void onFinish(State state);
 
     enum StateEvent {
         BEFORE, FINISH

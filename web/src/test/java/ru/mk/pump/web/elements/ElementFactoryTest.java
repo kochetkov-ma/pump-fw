@@ -48,7 +48,7 @@ class ElementFactoryTest {
         final ElementConfig config = ElementConfig.of("Тестовый элемент", "Для юнит теста")
             .withParameters(param);
         final By by = By.tagName("div");
-        log.info(Strings.mapToPrettyString(elementFactory.getInfo()));
+        log.info(Strings.toPrettyString(elementFactory.getInfo()));
 
         final Button button = elementFactory.newElement(Button.class, by, config);
         assertThat(button).isNotNull();

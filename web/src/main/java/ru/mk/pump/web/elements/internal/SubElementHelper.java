@@ -54,6 +54,7 @@ public class SubElementHelper<T extends Element> {
             return Collections.emptyList();
         }
         for (By currentBy : bys) {
+            parent.getStateResolver().resolve(parent.jsReady());
             parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
             final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()))
                 .getResult();
@@ -137,6 +138,7 @@ public class SubElementHelper<T extends Element> {
         xpathFinal = Xpath.fixXpath(xpathString);
         byResult = By.xpath(xpathFinal);
 
+        parent.getStateResolver().resolve(parent.jsReady());
         parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
         final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString))
             .getResult();

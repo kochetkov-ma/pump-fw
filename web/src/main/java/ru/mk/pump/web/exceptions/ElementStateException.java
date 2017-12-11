@@ -1,8 +1,8 @@
 package ru.mk.pump.web.exceptions;
 
 import ru.mk.pump.commons.exception.PumpMessage;
+import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.elements.internal.interfaces.InternalState;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ElementStateException extends ElementException {
@@ -25,7 +25,7 @@ public class ElementStateException extends ElementException {
         super(exceptionMessage, cause);
     }
 
-    public ElementStateException withTargetState(InternalState<?> state) {
+    public ElementStateException withTargetState(State state) {
         addTarget(STATE, state);
         return this;
     }

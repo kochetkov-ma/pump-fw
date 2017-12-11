@@ -13,7 +13,7 @@ public class PumpMessageTest {
     public void test() {
         final Map<String, String> map1 = ImmutableMap
             .of("key-1", "long long long long long long value-1", "key-2", "long long long long long long long long value-2");
-        final Map<String, String> map2 = ImmutableMap.of("key-1", "value-1", "key-2", Strings.mapToPrettyString(map1));
+        final Map<String, String> map2 = ImmutableMap.of("key-1", "value-1", "key-2", Strings.toPrettyString(map1));
         final Map<String, String> map3 = ImmutableMap.of("key-1", "value-1", "key-2", "value-2");
         final Map<String, String> map4 = ImmutableMap.of("key-1", "value-1", "key-2", "value-2");
 

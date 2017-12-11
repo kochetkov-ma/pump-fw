@@ -90,6 +90,13 @@ public class BaseElementTest extends AbstractElementTest {
     void testClickFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
         createPages(browser);
+
+
+        browser.open(regPage.getUrl());
+
+        Assertions.assertThat(regPage.getHiddenItems().isNotEnabled()).isFalse();
+
+
         browser.open(mainPage.getUrl());
 
         Assertions.assertThatThrownBy(() -> mainPage.getParentDivFail().click())
@@ -126,11 +133,17 @@ public class BaseElementTest extends AbstractElementTest {
         Assertions.assertThat(regPage.getHiddenItems().isNotDisplayed()).isTrue();
         Assertions.assertThat(regPage.getNotExists().isNotEnabled()).isTrue();
         Assertions.assertThat(regPage.getNotExists().isNotExists()).isTrue();
+
+        Assertions.assertThat(regPage.getHiddenItems().isExists()).isTrue();
+
+        Assertions.assertThat(regPage.getHiddenItems().isNotDisplayed()).isTrue();
+        Assertions.assertThat(regPage.getNotExists().isNotEnabled()).isTrue();
+        Assertions.assertThat(regPage.getNotExists().isNotExists()).isTrue();
     }
 
     @Test
     void isNotAllStateFail() {
-        ElementWaiter.DEFAULT_TIMEOUT_S = 1;
+        ElementWaiter.DEFAULT_TIMEOUT_S = 3;
         createPages(browser);
 
         browser.open(regPage.getUrl());
@@ -142,7 +155,7 @@ public class BaseElementTest extends AbstractElementTest {
 
     @Test
     void isAllStateFail() {
-        ElementWaiter.DEFAULT_TIMEOUT_S = 1;
+        ElementWaiter.DEFAULT_TIMEOUT_S = 3;
         createPages(browser);
 
         browser.open(regPage.getUrl());
@@ -150,6 +163,7 @@ public class BaseElementTest extends AbstractElementTest {
         Assertions.assertThat(regPage.getHiddenItems().isDisplayed()).isFalse();
         Assertions.assertThat(regPage.getNotExists().isEnabled()).isFalse();
         Assertions.assertThat(regPage.getNotExists().isExists()).isFalse();
+
     }
 
     @Test

@@ -71,7 +71,7 @@ public class ElementImplDispatcherTest {
         dispatcher.addImplementation(Image.class, ElementImpl.of(ImageImpl.class, null));
         dispatcher.addImplementation(Input.class, ElementImpl.of(InputComplexImpl.class, null));
 
-        log.info(Strings.mapToPrettyString(dispatcher.getInfo()));
+        log.info(Strings.toPrettyString(dispatcher.getInfo()));
     }
 
     @Test
@@ -84,14 +84,14 @@ public class ElementImplDispatcherTest {
 
     @Test
     public void getInfo() {
-        log.info(System.lineSeparator() + Strings.mapToPrettyString(dispatcher.getInfo()));
+        log.info(System.lineSeparator() + Strings.toPrettyString(dispatcher.getInfo()));
     }
 
     @Test
     public void loadDefault() {
-        log.info(System.lineSeparator() + Strings.mapToPrettyString(dispatcher.getInfo()));
+        log.info(System.lineSeparator() + Strings.toPrettyString(dispatcher.getInfo()));
         dispatcher.loadDefault();
-        log.info(System.lineSeparator() + Strings.mapToPrettyString(dispatcher.getInfo()));
+        log.info(System.lineSeparator() + Strings.toPrettyString(dispatcher.getInfo()));
     }
 
     @Test

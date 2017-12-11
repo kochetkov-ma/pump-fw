@@ -23,7 +23,7 @@ public class ConfigurationsLoaderTest {
         final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
         assertThat(configurationsLoader.getMap()).isEmpty();
         configurationsLoader.load();
-        log.debug(Strings.mapToPrettyString(configurationsLoader.getMap()));
+        log.debug(Strings.toPrettyString(configurationsLoader.getMap()));
         assertThat(configurationsLoader.getMap()).hasSize(9)
             .containsOnlyKeys("main.reporting", "two.one", "main.url", "common", "second.count", "second.url", "main.count", "two.two", "second.reporting");
 

@@ -17,7 +17,7 @@ import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
-import ru.mk.pump.web.elements.internal.State.StateType;
+import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Xpath;
@@ -25,6 +25,9 @@ import ru.mk.pump.web.page.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue", "unchecked"})
 abstract class AbstractElement<CHILD> implements InternalElement {
+
+    /*turn off for more speed*/
+    public static boolean JS_WAIT = false;
 
     private final By avatarBy;
 
@@ -209,62 +212,67 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     public State jsReady() {
         final String js = "return document.readyState";
-        return (State) State.of(() -> "complete".equals(Strings.toString(getBrowser().actions().executeScript(js))), StateType.OTHER, TEAR_DOWN)
+        return State.of(StateType.OTHER, () -> "complete".equals(Strings.toString(getBrowser().actions().executeScript(js))), TEAR_DOWN)
             .withName("JS is completed");
     }
 
     public State notExists() {
-        return (State) State.of(() -> !getFinder().findFast().isSuccess(), StateType.EXISTS.not(), TEAR_DOWN).withName("Not Exists in DOM");
+        return State.of(StateType.EXISTS.not(), () -> !getFinder().findFast().isSuccess(), TEAR_DOWN).withName("Not Exists in DOM");
     }
 
     public SetState notDisplayed() {
-        return (SetState) SetState.of(StateType.DISPLAYED.not(), notExists(), State.of(() -> {
+        return (SetState) SetState.of(StateType.DISPLAYED.not(), notExists(), State.of(StateType.SELENIUM_DISPLAYED.not(), () -> {
             final WaitResult<WebElement> res = getFinder().findFast();
             return !res.isSuccess() || !res.getResult().isDisplayed();
-        }, StateType.SELENIUM_DISPLAYED.not(), TEAR_DOWN)).withName("Not Exists Or Not Displayed");
+        }, TEAR_DOWN)).withName("Not Exists Or Not Displayed");
     }
 
     public SetState notEnabled() {
-        return (SetState) SetState.of(StateType.ENABLED.not(), notExists(), State.of(() -> {
+        return (SetState) SetState.of(StateType.ENABLED.not(), notExists(), State.of(StateType.SELENIUM_ENABLED.not(), () -> {
             final WaitResult<WebElement> res = getFinder().findFast();
             return !res.isSuccess() || !res.getResult().isEnabled();
-        }, StateType.SELENIUM_ENABLED.not(), TEAR_DOWN)).withName("Not Exists Or Not Enabled");
+        }, TEAR_DOWN)).withName("Not Exists Or Not Enabled");
     }
 
     @Override
     public SetState exists() {
-        return (SetState) SetState.of(StateType.EXISTS, jsReady(),
-            State.of(() -> getFinder().findFast().isSuccess(), StateType.SELENIUM_EXISTS, TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
+        if (JS_WAIT) {
+            return (SetState) SetState.of(StateType.EXISTS, jsReady(),
+                State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
+        } else {
+            return (SetState) SetState.of(StateType.EXISTS,
+                State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
+        }
     }
 
     @Override
     public SetState displayed() {
-        return (SetState) SetState.of(StateType.DISPLAYED, exists(), State.of(() -> {
+        return (SetState) SetState.of(StateType.DISPLAYED, exists(), State.of(StateType.SELENIUM_DISPLAYED, () -> {
             final WaitResult<WebElement> res = getFinder().findFast();
             return res.isSuccess() && res.getResult().isDisplayed();
-        }, StateType.SELENIUM_DISPLAYED, TEAR_DOWN)).withName("Exists And Displayed");
+        }, TEAR_DOWN)).withName("Exists And Displayed");
     }
 
 
     @Override
     public SetState enabled() {
-        return (SetState) SetState.of(StateType.ENABLED, exists(), State.of(() -> {
+        return (SetState) SetState.of(StateType.ENABLED, exists(), State.of(StateType.SELENIUM_ENABLED, () -> {
             final WaitResult<WebElement> res = getFinder().findFast();
             return res.isSuccess() && res.getResult().isEnabled();
-        }, StateType.SELENIUM_ENABLED, TEAR_DOWN)).withName("Exists And Enabled");
+        }, TEAR_DOWN)).withName("Exists And Enabled");
     }
 
     @Override
     public SetState ready() {
-        return (SetState) SetState.of(StateType.READY, displayed().get(), enabled().get()).withName("Ready to interact");
+        return (SetState) SetState.of(StateType.READY, displayed(), enabled()).withName("Ready to interact");
     }
 
     @Override
     public SetState clearState() {
-        return (SetState) SetState.of(StateType.OTHER, exists(), State.of(() -> {
+        return (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.OTHER, () -> {
             final WaitResult<WebElement> res = getFinder().findFast();
             return res.isSuccess() && Strings.isEmpty(getBrowser().actions().getText(res.getResult()));
-        }, StateType.OTHER, TEAR_DOWN)).withName("Text of the element became an empty");
+        }, TEAR_DOWN)).withName("Text of the element became an empty");
     }
 
 

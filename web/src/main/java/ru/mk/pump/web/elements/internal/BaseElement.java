@@ -9,6 +9,7 @@ import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
+import ru.mk.pump.web.elements.api.listeners.StateListener;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.Page;
 
@@ -113,7 +114,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     @Override
     public String toPrettyString() {
-        return Strings.mapToPrettyString(getInfo());
+        return Strings.toPrettyString(getInfo());
     }
 
     @Override
@@ -131,7 +132,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     @Override
     public Map<String, String> getInfo() {
         final Map<String, String> res = super.getInfo();
-        res.put("elementParams", Strings.mapToPrettyString(elementParams));
+        res.put("elementParams", Strings.toPrettyString(elementParams));
         return res;
     }
 
@@ -155,5 +156,23 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         } else {
             return selfElementFactory;
         }
+    }
+
+    @Override
+    protected StateResolver newDelegateStateResolver() {
+
+        return (StateResolver) super.newDelegateStateResolver().addListener(new StateListener() {
+            @Override
+            public void onBefore(State state) {
+                log.info("BEFORE STATE");
+                log.info(Strings.toPrettyString(state.getInfo()));
+            }
+
+            @Override
+            public void onFinish(State state) {
+                log.info("FINISH STATE");
+                log.info(Strings.toPrettyString(state.getInfo()));
+            }
+        });
     }
 }

@@ -13,7 +13,6 @@ import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.elements.internal.interfaces.InternalState;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 abstract class AbstractAction<T> implements Action<T> {
@@ -34,7 +33,7 @@ abstract class AbstractAction<T> implements Action<T> {
 
     private Map<String, Parameter<?>> parameters = new HashMap<>();
 
-    private InternalState<?> stateSet;
+    private SetState stateSet;
 
     AbstractAction(BiFunction<WebElement, Map<String, Parameter<?>>, T> actionFunction, InternalElement internalElement, String name) {
         this.actionSupplier = actionFunction;
@@ -102,7 +101,7 @@ abstract class AbstractAction<T> implements Action<T> {
     }
 
     @Override
-    public InternalState<?> getRedefineState() {
+    public SetState getRedefineState() {
         return stateSet;
     }
 
@@ -112,14 +111,14 @@ abstract class AbstractAction<T> implements Action<T> {
     }
 
     @Override
-    public Action<T> redefineExpectedState(InternalState<?> stateSet) {
-        this.stateSet = stateSet;
+    public Action<T> withStrategy(ActionStrategy... strategies) {
+        actionStrategies.addAll(Arrays.asList(strategies));
         return this;
     }
 
     @Override
-    public Action<T> withStrategy(ActionStrategy... strategies) {
-        actionStrategies.addAll(Arrays.asList(strategies));
+    public Action<T> redefineExpectedState(SetState stateSet) {
+        this.stateSet = stateSet;
         return this;
     }
 

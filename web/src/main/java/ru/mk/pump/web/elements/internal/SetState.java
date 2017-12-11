@@ -1,39 +1,66 @@
 package ru.mk.pump.web.elements.internal;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.elements.internal.State.StateType;
+import ru.mk.pump.commons.utils.WaitResult;
+import ru.mk.pump.web.elements.enums.StateType;
 
 @SuppressWarnings("unused")
-public class SetState extends AbstractState<Set<AbstractState>> {
+public class SetState extends State {
 
-    private SetState(Set<AbstractState> states, StateType stateType) {
+    @Getter
+    @NotNull
+    private final Set<State> stateSet = Sets.newLinkedHashSet();
 
-        super(ImmutableSet.copyOf(states), stateType);
+    @Getter
+    @Nullable
+    private final State stateOr;
+
+    private SetState(@NotNull StateType stateType, @NotNull Set<State> states, @Nullable Set<State> statesOr,
+        @Nullable Consumer<WaitResult<Boolean>> tearDown) {
+        super(stateType, Collections.emptySet(), tearDown);
+        states.forEach(i -> {
+            if (i instanceof SetState) {
+                stateSet.addAll(((SetState) i).getStateSet());
+            } else {
+                stateSet.add(i);
+            }
+        });
+        if (statesOr != null && !statesOr.isEmpty()) {
+            stateOr = State.of(StateType.OR_STATUS_UNION, Collections.emptySet());
+            stateOr.withName("");
+            toStateOr(statesOr);
+        } else {
+            stateOr = null;
+        }
     }
 
-    public static SetState of(StateType stateType, AbstractState... states) {
-
-        return new SetState(Sets.newLinkedHashSet(Arrays.asList(states)), stateType);
-    }
-
-    @SafeVarargs
-    public static SetState of(StateType stateType, Set<AbstractState>... states) {
-        final Set<AbstractState> res = new LinkedHashSet<>();
-        Arrays.stream(states).forEach(res::addAll);
-        return new SetState(res, stateType);
-    }
-
-    @Override
-    public Set<AbstractState> get() {
-        return getPayload();
+    public static SetState of(@NotNull StateType stateType, @NotNull State... states) {
+        if (states.length == 0) {
+            throw new IllegalArgumentException("States varargs cannot be empty or null");
+        }
+        final Set<State> and = Sets.newLinkedHashSet();
+        final Set<State> or = Sets.newLinkedHashSet();
+        Arrays.stream(states).forEach(item -> {
+            if (item.type().isOr()) {
+                or.add(item);
+            } else {
+                and.add(item);
+            }
+        });
+        return new SetState(stateType, and, or, null);
     }
 
     @Override
@@ -42,7 +69,7 @@ public class SetState extends AbstractState<Set<AbstractState>> {
             .put("state type", type().name())
             .put("state name", name())
             .put("result", Objects.toString(result()))
-            .put("states", Strings.toPrettyString(getPayload()))
+            .put("states", Strings.toPrettyString(getAll()))
             .build();
     }
 
@@ -57,8 +84,34 @@ public class SetState extends AbstractState<Set<AbstractState>> {
         } else {
             sb.append(", tearDown=").append("empty");
         }
-        sb.append(", states=").append(Strings.toPrettyString(getPayload()));
+        sb.append(", states=").append(Strings.toPrettyString(getAll()));
         sb.append(')');
         return sb.toString();
+    }
+
+    private void toStateOr(Set<State> statesOrSet) {
+        if (stateOr == null) {
+            return;
+        }
+        for (State item : statesOrSet) {
+            if (item instanceof SetState && ((SetState) item).getStateOr() != null) {
+                stateOr.withPayload(Preconditions.checkNotNull(((SetState) item).getStateOr().get()));
+            } else {
+                stateOr.withPayload(item.get());
+            }
+            stateOr.withName(stateOr.name() + " OR " + item.name())
+                .withTearDown(item.getTearDown().orElse(null));
+        }
+        if (statesOrSet.size() > 1) {
+            stateOr.withName(stateOr.name().replaceFirst(" OR ", ""));
+        }
+    }
+
+    private Set<State> getAll() {
+        final ImmutableSet.Builder<State> builder = ImmutableSet.<State>builder().addAll(stateSet);
+        if (stateOr != null) {
+            builder.add(stateOr);
+        }
+        return builder.build();
     }
 }

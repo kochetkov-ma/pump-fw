@@ -41,11 +41,11 @@ public class Strings {
         return trim(Arrays.stream(strings).filter(i -> i != null && !i.isEmpty()).collect(Collectors.joining(delimiter)));
     }
 
-    public String mapToPrettyString(@Nullable Map<?, ?> map) {
-        return mapToPrettyString(map, 0);
+    public String toPrettyString(@Nullable Map<?, ?> map) {
+        return toPrettyString(map, 0);
     }
 
-    public String mapToPrettyString(@Nullable Map<?, ?> map, int offset) {
+    public String toPrettyString(@Nullable Map<?, ?> map, int offset) {
         final StringBuilder stringBuilder = new StringBuilder();
         if (map == null) {
             return "null";
