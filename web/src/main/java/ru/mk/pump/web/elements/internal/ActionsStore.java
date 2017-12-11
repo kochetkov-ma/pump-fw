@@ -108,6 +108,12 @@ class ActionsStore {
         }, "Focus on element");
     }
 
+    Action<String> attribute(String name) {
+        return actions.newAction(e -> {
+            return e.getAttribute(name);
+        }, "Get Attribute");
+    }
+
     <T extends InternalElement> Action<List<T>> subItemsAction(By by, Class<T> elementClass) {
         return null;
     }

@@ -1,6 +1,7 @@
 package ru.mk.pump.commons.exception;
 
 import com.google.common.collect.Maps;
+import java.lang.annotation.Inherited;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -8,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @Slf4j
 abstract class AbstractPumpException extends RuntimeException {
 

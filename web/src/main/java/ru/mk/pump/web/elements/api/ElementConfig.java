@@ -7,13 +7,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import lombok.Builder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 @Getter
 public class ElementConfig {
 
@@ -28,6 +27,18 @@ public class ElementConfig {
     private String name = "";
 
     private String description = "";
+
+    public static ElementConfig of(String name, Annotation... annotations) {
+        return new ElementConfig().withName(name).withAnnotations(Arrays.asList(annotations));
+    }
+
+    public static ElementConfig of(String name) {
+        return new ElementConfig().withName(name);
+    }
+
+    public static ElementConfig of(String name, String description) {
+        return new ElementConfig().withName(name).withDescription(description);
+    }
 
     public ElementConfig withRequirements(@NotNull Collection<Class<? extends Annotation>> requirements) {
         this.requirements.addAll(requirements);
@@ -72,17 +83,5 @@ public class ElementConfig {
     public ElementConfig withDescription(@Nullable String description) {
         this.description = description;
         return this;
-    }
-
-    public static ElementConfig of(String name, Annotation ... annotations){
-        return new ElementConfig().withName(name).withAnnotations(Arrays.asList(annotations));
-    }
-
-    public static ElementConfig of(String name){
-        return new ElementConfig().withName(name);
-    }
-
-    public static ElementConfig of(String name, String description){
-        return new ElementConfig().withName(name).withDescription(description);
     }
 }

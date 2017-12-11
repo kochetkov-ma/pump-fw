@@ -2,6 +2,7 @@ package ru.mk.pump.web.elements.enums;
 
 import lombok.Getter;
 
+@SuppressWarnings("unused")
 public enum StateType {
     NOT_EXISTS(true),
     NOT_SELENIUM_EXISTS(true),

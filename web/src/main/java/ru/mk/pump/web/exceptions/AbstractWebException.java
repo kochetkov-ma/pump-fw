@@ -6,6 +6,7 @@ import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.page.Page;
 
+
 public abstract class AbstractWebException extends PumpException {
 
     static final String BROWSER = "browser";

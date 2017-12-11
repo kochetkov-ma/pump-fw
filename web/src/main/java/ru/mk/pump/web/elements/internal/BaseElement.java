@@ -1,6 +1,9 @@
 package ru.mk.pump.web.elements.internal;
 
 import java.util.Map;
+import java.util.function.Function;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
@@ -19,6 +22,11 @@ import ru.mk.pump.web.page.Page;
 @SuppressWarnings("unused")
 @Slf4j
 public class BaseElement extends AbstractElement<BaseElement> implements Element {
+
+    public static final String BY_PARAM_NAME = "extraBy";
+
+    @Getter(AccessLevel.PROTECTED)
+    private By extraBy = null;
 
     private Map<String, Parameter<?>> elementParams;
 
@@ -42,7 +50,15 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     public BaseElement withParams(Map<String, Parameter<?>> elementConfig) {
         this.elementParams = elementConfig;
+        initFromParams();
         return this;
+    }
+
+    /**
+     * init extra by field from params or null. param name is {@link #BY_PARAM_NAME}
+     */
+    protected void initFromParams() {
+        extraBy = getOrNull(BY_PARAM_NAME, (param) -> param.getValue(By.class));
     }
 
     @Override
@@ -64,7 +80,6 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     public void click() {
         getActionExecutor().execute(getClickAction());
     }
-
 
     @Override
     public boolean isDisplayed() {
@@ -90,11 +105,6 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return res.result().isSuccess();
     }
 
-    public boolean isJsReady() {
-        final State res = getStateResolver().resolve(jsReady());
-        return res.result().isSuccess();
-    }
-
     @Override
     public boolean isEnabled() {
         final SetState res = getStateResolver().resolve(enabled());
@@ -112,9 +122,42 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return new SubElementHelper<>(subElementClazz, this, getSubElementFactory());
     }
 
+    public boolean isJsReady() {
+        final State res = getStateResolver().resolve(jsReady());
+        return res.result().isSuccess();
+    }
+
     @Override
     public String toPrettyString() {
         return Strings.toPrettyString(getInfo());
+    }
+
+    public BaseElement setSelfFactory(ElementFactory selfElementFactory) {
+        this.selfElementFactory = selfElementFactory;
+        return this;
+    }
+
+    @Override
+    public String getDescription() {
+        return super.getElementDescription();
+    }
+
+    @Override
+    protected StateResolver newDelegateStateResolver() {
+
+        return (StateResolver) super.newDelegateStateResolver().addListener(new StateListener() {
+            @Override
+            public void onBefore(State state) {
+                log.info("BEFORE STATE");
+                log.info(Strings.toPrettyString(state.getInfo()));
+            }
+
+            @Override
+            public void onFinish(State state) {
+                log.info("FINISH STATE");
+                log.info(Strings.toPrettyString(state.getInfo()));
+            }
+        });
     }
 
     @Override
@@ -136,14 +179,12 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return res;
     }
 
-    public BaseElement setSelfFactory(ElementFactory selfElementFactory) {
-        this.selfElementFactory = selfElementFactory;
-        return this;
-    }
-
-    @Override
-    public String getDescription() {
-        return super.getElementDescription();
+    protected <T> T getOrNull(String key, Function<Parameter<?>, T> function) {
+        if (getParams().containsKey(key)) {
+            return function.apply(getParams().get(key));
+        } else {
+            return null;
+        }
     }
 
     private ElementFactory getSubElementFactory() {
@@ -156,23 +197,5 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         } else {
             return selfElementFactory;
         }
-    }
-
-    @Override
-    protected StateResolver newDelegateStateResolver() {
-
-        return (StateResolver) super.newDelegateStateResolver().addListener(new StateListener() {
-            @Override
-            public void onBefore(State state) {
-                log.info("BEFORE STATE");
-                log.info(Strings.toPrettyString(state.getInfo()));
-            }
-
-            @Override
-            public void onFinish(State state) {
-                log.info("FINISH STATE");
-                log.info(Strings.toPrettyString(state.getInfo()));
-            }
-        });
     }
 }

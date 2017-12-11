@@ -17,6 +17,7 @@ import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
+import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
@@ -208,6 +209,11 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     @Override
     public Action<String> getInputAction(CharSequence... keys) {
         return actionsStore.inputAction(keys);
+    }
+
+    public String getAttribute(String name) {
+        return actionExecutor
+            .execute(actionsStore.attribute(name).withStrategy(ActionStrategy.NO_FINALLY, ActionStrategy.NO_AFTER).redefineExpectedState(exists()));
     }
 
     public State jsReady() {
