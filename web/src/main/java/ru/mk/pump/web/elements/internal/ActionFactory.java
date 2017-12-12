@@ -44,6 +44,4 @@ public class ActionFactory {
         }, element, name) {
         };
     }
-
-
 }

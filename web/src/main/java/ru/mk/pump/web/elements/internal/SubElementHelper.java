@@ -27,17 +27,17 @@ public class SubElementHelper<T extends Element> {
 
     private final Class<T> subElementClass;
 
-    private final AbstractElement<?> parent;
+    private final BaseElement parent;
 
     private final ElementFactory elementFactory;
 
     private final ElementConfig elementConfig;
 
-    protected SubElementHelper(Class<T> subElementClass, AbstractElement<?> parent, ElementFactory elementFactory) {
+    protected SubElementHelper(Class<T> subElementClass, BaseElement parent, ElementFactory elementFactory) {
         this(subElementClass, parent, elementFactory, ElementConfig.of(Strings.space("sub-element of", parent.getName())));
     }
 
-    protected SubElementHelper(Class<T> subElementClass, AbstractElement<?> parent, ElementFactory elementFactory, ElementConfig elementConfig) {
+    protected SubElementHelper(Class<T> subElementClass, BaseElement parent, ElementFactory elementFactory, ElementConfig elementConfig) {
         this.subElementClass = subElementClass;
         this.parent = parent;
         this.elementFactory = elementFactory;
@@ -62,7 +62,7 @@ public class SubElementHelper<T extends Element> {
             if (webElementListPredicate.test(elements)) {
                 return IntStream.range(0, elements.size()).boxed()
                     .map(index -> {
-                        final T newElement = elementFactory.newElement(subElementClass, Xpath.fixIfXpath(currentBy), elementConfig);
+                        final T newElement = elementFactory.newElement(subElementClass, Xpath.fixIfXpath(currentBy), parent, elementConfig);
                         ((InternalElement) newElement).setIndex(index);
                         return newElement;
                     })
@@ -99,7 +99,7 @@ public class SubElementHelper<T extends Element> {
         final Pair<Integer, By> context = findXpath(xpathString, webElementPredicate, false, postfixXpaths);
         return IntStream.range(0, context.getKey()).boxed()
             .map(index -> {
-                final T newElement = elementFactory.newElement(subElementClass, context.getValue(), elementConfig);
+                final T newElement = elementFactory.newElement(subElementClass, context.getValue(), parent, elementConfig);
                 ((InternalElement) newElement).setIndex(index);
                 return newElement;
             })
@@ -125,7 +125,7 @@ public class SubElementHelper<T extends Element> {
      * @return Полностью готовый элемент, созданный с помощью ElementFactory.
      */
     public T findXpathAdvanced(@Nullable String xpathString, @Nullable Predicate<WebElement> webElementPredicate, @Nullable String... postfixXpaths) {
-        return elementFactory.newElement(subElementClass, findXpath(xpathString, webElementPredicate, true, postfixXpaths).getValue(), elementConfig);
+        return elementFactory.newElement(subElementClass, findXpath(xpathString, webElementPredicate, true, postfixXpaths).getValue(), parent, elementConfig);
     }
 
     private Pair<Integer, By> findXpath(String xpathString, Predicate<WebElement> webElementAttributePredicate, boolean one, String... postfixXpaths) {

@@ -19,7 +19,7 @@ public final class Parameter<T> {
         this.tClass = tClass;
     }
 
-    private Parameter(Class<T> tClass, T value ,String stringValue) {
+    private Parameter(Class<T> tClass, T value, String stringValue) {
         this.value = value;
         this.tClass = tClass;
         this.stringValue = stringValue;
@@ -76,6 +76,9 @@ public final class Parameter<T> {
 
     @SuppressWarnings("unchecked")
     public boolean isClass(Class pClass) {
+        if (pClass == null) {
+            return false;
+        }
         return pClass.isAssignableFrom(tClass);
     }
 

@@ -1,7 +1,6 @@
 package ru.mk.pump.web.elements.internal;
 
 import java.util.Map;
-import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +11,8 @@ import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.listeners.StateListener;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+import ru.mk.pump.web.elements.utils.Parameters;
 import ru.mk.pump.web.page.Page;
 
 /**
@@ -58,7 +57,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
      * init extra by field from params or null. param name is {@link #BY_PARAM_NAME}
      */
     protected void initFromParams() {
-        extraBy = getOrNull(BY_PARAM_NAME, (param) -> param.getValue(By.class));
+        extraBy = Parameters.getOrNull(getParams(), BY_PARAM_NAME, By.class);
     }
 
     @Override
@@ -142,6 +141,8 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return super.getElementDescription();
     }
 
+    /* for test */
+    /*
     @Override
     protected StateResolver newDelegateStateResolver() {
 
@@ -159,6 +160,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
             }
         });
     }
+    */
 
     @Override
     protected ActionExecutor newDelegateActionExecutor(StateResolver stateResolver) {
@@ -177,14 +179,6 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         final Map<String, String> res = super.getInfo();
         res.put("elementParams", Strings.toPrettyString(elementParams));
         return res;
-    }
-
-    protected <T> T getOrNull(String key, Function<Parameter<?>, T> function) {
-        if (getParams().containsKey(key)) {
-            return function.apply(getParams().get(key));
-        } else {
-            return null;
-        }
     }
 
     private ElementFactory getSubElementFactory() {

@@ -110,7 +110,7 @@ public abstract class AbstractElementTest {
 
         private final DropDown dropDownRegions;
 
-        private final Selector selectorSex;
+        private final Selector selectorProgram;
 
         private final Input inputSurname;
 
@@ -119,7 +119,7 @@ public abstract class AbstractElementTest {
             notExists = new BaseElement(By.xpath(".//div[@class='not_exists']"), browser);
             hiddenItems = new BaseElement(By.xpath(".//div[@class='items']"), browser);
             dropDownRegions = new DropDownImpl(By.id("regionAutocompleteId"), browser);
-            selectorSex = new SelectorImpl(By.id("apartmentTypeId"), browser);
+            selectorProgram = new SelectorImpl(By.id("apartmentTypeId"), browser);
         }
     }
 

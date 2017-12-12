@@ -50,7 +50,7 @@ abstract class AbstractAction<T> implements Action<T> {
         RuntimeException ex = null;
         Error error = null;
         actionExecutionTry = 0;
-        while (actionExecutionTry <= MAX_TRY) {
+        while (actionExecutionTry < MAX_TRY) {
             try {
                 actionExecutionTry++;
                 return actionSupplier.apply(getInteractElement(), getParameters());
