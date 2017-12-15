@@ -8,27 +8,28 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("ConstantConditions")
 @Slf4j
-public class AbstractActivityManagerTest {
+class AbstractActivityManagerTest {
 
     private ActivityManager activityManager;
 
-    private UUID lastUuid;
+    private String lastUuid;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         final List<Activity> activityList = Lists.newArrayList(activity(), activity(), activity());
         this.activityManager = manager(activityList);
     }
 
     @Test
-    public void add() {
+    void add() {
         activityManager.add(activity());
         Assertions.assertEquals(4, activityManager.getAll().size(), "Size is not 3");
     }
 
     @Test
-    public void addAndActivate() {
+    void addAndActivate() {
         Assertions.assertFalse(activityManager.hasActive());
         activityManager.addAndActivate(activity());
         Assertions.assertTrue(activityManager.hasActive());
@@ -37,7 +38,7 @@ public class AbstractActivityManagerTest {
     }
 
     @Test
-    public void releaseAll() {
+    void releaseAll() {
         activityManager.add(activity());
         activityManager.add(activity());
         activityManager.releaseAll();
@@ -48,7 +49,7 @@ public class AbstractActivityManagerTest {
     }
 
     @Test
-    public void releaseActive() {
+    void releaseActive() {
         activityManager.addAndActivate(activity());
         activityManager.addAndActivate(activity());
         log.info(String.valueOf(activityManager.getActive().isPresent()));
@@ -63,7 +64,7 @@ public class AbstractActivityManagerTest {
     }
 
     @Test
-    public void activate() {
+    void activate() {
         Activity activity = activityManager.getAll().get(0);
         activity.activate();
         log.info(String.valueOf(activityManager.getActive().isPresent()));
@@ -81,7 +82,7 @@ public class AbstractActivityManagerTest {
     }
 
     @Test
-    public void getHasActive() {
+    void getHasActive() {
         activityManager.add(activity());
         Assertions.assertFalse(activityManager.getActive().isPresent());
         Assertions.assertFalse(activityManager.hasActive());
@@ -92,7 +93,7 @@ public class AbstractActivityManagerTest {
     }
 
     @Test
-    public void getPrev() {
+    void getPrev() {
         Activity activity = activity();
         activityManager.add(activity);
         Assertions.assertFalse(activityManager.getPrev().isPresent());
@@ -104,17 +105,17 @@ public class AbstractActivityManagerTest {
     }
 
     @Test
-    public void getAll() {
+    void getAll() {
         Assertions.assertEquals(3, activityManager.getAll().size());
     }
 
     @Test
-    public void get() {
+    void get() {
         Assertions.assertEquals(lastUuid, activityManager.get(lastUuid).get().getUUID());
     }
 
     private Activity activity() {
-        lastUuid = UUID.randomUUID();
+        lastUuid = UUID.randomUUID().toString();
         return new AbstractActivity(lastUuid) {
         };
     }

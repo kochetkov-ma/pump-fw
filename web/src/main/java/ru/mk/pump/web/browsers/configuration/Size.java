@@ -8,10 +8,10 @@ import ru.mk.pump.web.constants.WebConstants;
 /**
  * <ul>
  *  orders
- *  <li>if set deviceName then use device
- *  <li>if set fullScreen then use fullScreen
- *  <li>if set defaultSize then use default
- *  <li>if set X and Y then use there
+ *  <li>if type deviceName then use device
+ *  <li>if type fullScreen then use fullScreen
+ *  <li>if type defaultSize then use default
+ *  <li>if type X and Y then use there
  * </ul>
  */
 public final class Size {

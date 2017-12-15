@@ -12,12 +12,25 @@ import ru.mk.pump.commons.activity.Parameter;
 public class Parameters {
 
     @Nullable
-    public <T> T getOrNull(@NotNull Map<String, Parameter<?>> parameterMap, @Nullable String key, @Nullable Class<T> expectedClass) {
+    public <T> T getOrDefault(@NotNull Map<String, Parameter<?>> parameterMap, @NotNull String key, @Nullable Class<T> expectedClass,
+        @Nullable T defaultValue) {
+        return getOrDefault(parameterMap, key, p -> p.getValue(expectedClass), defaultValue);
+    }
+
+    @Nullable
+    public <T> T getOrDefault(@NotNull Map<String, Parameter<?>> parameterMap, @NotNull String key, @NotNull Function<Parameter<?>, T> function,
+        @Nullable T defaultValue) {
+        final T res = getOrNull(parameterMap, key, function);
+        return res != null ? res : defaultValue;
+    }
+
+    @Nullable
+    public <T> T getOrNull(@NotNull Map<String, Parameter<?>> parameterMap, @NotNull String key, @Nullable Class<T> expectedClass) {
         return getOrNull(parameterMap, key, p -> p.getValue(expectedClass));
     }
 
     @Nullable
-    public <T> T getOrNull(Map<String, Parameter<?>> parameterMap, String key, Function<Parameter<?>, T> function) {
+    public <T> T getOrNull(@NotNull Map<String, Parameter<?>> parameterMap, @NotNull String key, @NotNull Function<Parameter<?>, T> function) {
         if (parameterMap.containsKey(key)) {
             return function.apply(parameterMap.get(key));
         } else {

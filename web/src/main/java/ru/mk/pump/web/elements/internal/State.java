@@ -34,17 +34,17 @@ public class State implements StrictInfo{
         this.tearDown = tearDown;
     }
 
-    static State of(@NotNull StateType stateType, @NotNull Set<Callable<Boolean>> payload) {
+    public static State of(@NotNull StateType stateType, @NotNull Set<Callable<Boolean>> payload) {
         return new State(stateType, payload, null);
     }
 
     @SuppressWarnings("unchecked")
-    static State of(@NotNull StateType stateType, @NotNull Callable<Boolean> payload) {
+    public static State of(@NotNull StateType stateType, @NotNull Callable<Boolean> payload) {
         return new State(stateType, Sets.newHashSet(payload), null);
     }
 
     @SuppressWarnings("unchecked")
-    static State of(@NotNull StateType stateType, @NotNull Callable<Boolean> payload, Consumer<WaitResult<Boolean>> tearDown) {
+    public static State of(@NotNull StateType stateType, @NotNull Callable<Boolean> payload, Consumer<WaitResult<Boolean>> tearDown) {
         return new State(stateType, Sets.newHashSet(payload), tearDown);
     }
 

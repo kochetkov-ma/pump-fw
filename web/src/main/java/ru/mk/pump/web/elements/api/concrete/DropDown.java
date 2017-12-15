@@ -7,7 +7,7 @@ public interface DropDown extends Element, SelectedItems {
 
     boolean isExpand();
 
-    void collapse();
+    boolean isNotExpand();
 
     SelectedItems expand();
 }

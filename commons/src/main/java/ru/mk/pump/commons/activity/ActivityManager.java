@@ -23,7 +23,7 @@ public interface ActivityManager extends Observer {
 
     ActivityManager releaseActive();
 
-    ActivityManager release(UUID uuid);
+    ActivityManager release(String uuid);
 
     boolean hasActive();
 
@@ -33,5 +33,5 @@ public interface ActivityManager extends Observer {
 
     List<Activity> getAll();
 
-    Optional<Activity> get(UUID uuid);
+    Optional<Activity> get(String uuid);
 }

@@ -1,16 +1,20 @@
 package ru.mk.pump.web.elements.internal;
 
+import com.google.common.collect.Maps;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
+import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
 import ru.mk.pump.web.page.Page;
@@ -22,12 +26,11 @@ import ru.mk.pump.web.page.Page;
 @Slf4j
 public class BaseElement extends AbstractElement<BaseElement> implements Element {
 
-    public static final String BY_PARAM_NAME = "extraBy";
+    private final Map<String, Parameter<?>> elementParams = Maps.newHashMap();
 
     @Getter(AccessLevel.PROTECTED)
-    private By extraBy = null;
-
-    private Map<String, Parameter<?>> elementParams;
+    @Setter(AccessLevel.PROTECTED)
+    private By[] extraBy = new By[0];
 
     private ElementFactory selfElementFactory;
 
@@ -48,16 +51,16 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     public BaseElement withParams(Map<String, Parameter<?>> elementConfig) {
-        this.elementParams = elementConfig;
+        elementParams.putAll(elementConfig);
         initFromParams();
         return this;
     }
 
     /**
-     * init extra by field from params or null. param name is {@link #BY_PARAM_NAME}
+     * init extra by field from params or null. param name is {@link ElementParams#BASE_EXTRA_BY}
      */
     protected void initFromParams() {
-        extraBy = Parameters.getOrNull(getParams(), BY_PARAM_NAME, By.class);
+        extraBy = Parameters.getOrDefault(getParams(), ElementParams.BASE_EXTRA_BY, By[].class, extraBy);
     }
 
     @Override
@@ -72,7 +75,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     @Override
     public String getTextHidden() {
-        return getActionExecutor().execute(getTextAction().redefineExpectedState(exists()));
+        return getActionExecutor().execute(getTextAction().withStrategy(ActionStrategy.SIMPLE).redefineExpectedState(exists()));
     }
 
     @Override
@@ -177,7 +180,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     @Override
     public Map<String, String> getInfo() {
         final Map<String, String> res = super.getInfo();
-        res.put("elementParams", Strings.toPrettyString(elementParams));
+        res.put("element parameters", Strings.toPrettyString(getParams()));
         return res;
     }
 

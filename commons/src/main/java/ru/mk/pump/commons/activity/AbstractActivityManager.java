@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +22,7 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
 
     public static final String DISABLE_EVENT_NAME = "disable";
 
-    private final Map<UUID, Activity> activityMap;
+    private final Map<String, Activity> activityMap;
 
     private Activity activeCache = null;
 
@@ -84,8 +83,8 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
 
     @Override
     public ActivityManager releaseAll() {
-        final Map<UUID, Activity> helperMap = Maps.newHashMap(activityMap);
-        for (UUID uuid : helperMap.keySet()) {
+        final Map<String, Activity> helperMap = Maps.newHashMap(activityMap);
+        for (String uuid : helperMap.keySet()) {
             release(uuid);
         }
         return this;
@@ -104,7 +103,7 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
     }
 
     @Override
-    public ActivityManager release(UUID uuid) {
+    public ActivityManager release(String uuid) {
         get(uuid).ifPresent(item -> {
             try {
                 item.close();
@@ -142,7 +141,7 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
     }
 
     @Override
-    public Optional<Activity> get(@NotNull UUID uuid) {
+    public Optional<Activity> get(@NotNull String uuid) {
         if (inCache(uuid)) {
             return Optional.of(cache);
         } else {
@@ -200,14 +199,14 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
     }
 
     //region PRIVATE M
-    private Optional<Activity> getAndCache(@NotNull UUID uuid) {
+    private Optional<Activity> getAndCache(@NotNull String uuid) {
         return Optional.ofNullable(activityMap.computeIfPresent(uuid, (key, value) -> {
             cache = value;
             return value;
         }));
     }
 
-    private void clearAllCache(UUID uuid) {
+    private void clearAllCache(String uuid) {
         if (inActiveCache(uuid)) {
             activeCache = prevCache;
         }
@@ -219,15 +218,15 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
         }
     }
 
-    private boolean inActiveCache(UUID uuid) {
+    private boolean inActiveCache(String uuid) {
         return activeCache != null && uuid.equals(activeCache.getUUID());
     }
 
-    private boolean inCache(UUID uuid) {
+    private boolean inCache(String uuid) {
         return cache != null && uuid.equals(cache.getUUID());
     }
 
-    private boolean inPrevCache(UUID uuid) {
+    private boolean inPrevCache(String uuid) {
         return prevCache != null && uuid.equals(prevCache.getUUID());
     }
     //endregion

@@ -22,8 +22,8 @@ import ru.mk.pump.web.elements.internal.ElementWaiter;
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractElementTest {
 
-    private static final BrowserType BROWSER_TYPE = BrowserType.valueOf(EnvVariables.get("BROWSER", "PHANTOMJS"));
-    //private static final BrowserType BROWSER_TYPE = BrowserType.CHROME;
+    //private static final BrowserType BROWSER_TYPE = BrowserType.valueOf(EnvVariables.get("BROWSER", "PHANTOMJS"));
+    private static final BrowserType BROWSER_TYPE = BrowserType.CHROME;
 
     static Browsers browsers;
 
@@ -110,6 +110,8 @@ public abstract class AbstractElementTest {
 
         private final DropDown dropDownRegions;
 
+        private final DropDown dropDownPages;
+
         private final Selector selectorProgram;
 
         private final Input inputSurname;
@@ -120,6 +122,7 @@ public abstract class AbstractElementTest {
             hiddenItems = new BaseElement(By.xpath(".//div[@class='items']"), browser);
             dropDownRegions = new DropDownImpl(By.id("regionAutocompleteId"), browser);
             selectorProgram = new SelectorImpl(By.id("apartmentTypeId"), browser);
+            dropDownPages = new DropDownImpl(By.tagName("select"), browser);
         }
     }
 

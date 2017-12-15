@@ -39,7 +39,7 @@ public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
         chromeOptions.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         getBuilderHelper().findLocalBrowserPath().ifPresent(chromeOptions::setBinary);
 
-        /*set browser init size*/
+        /*type browser init size*/
         if (getConfig().getSizeOrDevice().useSize()) {
             chromeOptions.addArguments("window-size=" + getSize(), "--no-sandbox");
         } else if (getConfig().getSizeOrDevice().isFullScreen()) {

@@ -27,7 +27,7 @@ class DataInputImpl extends BaseElement implements Input {
     }
 
     @Override
-    public String set(String... text) {
+    public String type(String... text) {
         return null;
     }
 }

@@ -66,20 +66,22 @@ public class ActionExecutor extends ActionNotifier {
     public <T> T execute(Action<T> tAction) {
         tAction.setStage(ActionStage.NOT_RUN);
         try {
-            if (tAction.getRedefineState() != null) {
-                tAction.setStage(ActionStage.BEFORE);
-                stateResolver.resolve(tAction.getRedefineState()).result().throwExceptionOnFail();
-            } else {
-                if (stateResolver != null) {
+            if (isExcludedStrategy(tAction, ActionStrategy.NO_STATE_CHECK)){
+                if (tAction.getRedefineState() != null) {
                     tAction.setStage(ActionStage.BEFORE);
-                    stateResolver.resolve(tAction.getTarget().ready()).result().throwExceptionOnFail();
+                    stateResolver.resolve(tAction.getRedefineState()).result().throwExceptionOnFail();
+                } else {
+                    if (stateResolver != null) {
+                        tAction.setStage(ActionStage.BEFORE);
+                        stateResolver.resolve(tAction.getTarget().ready()).result().throwExceptionOnFail();
+                    }
                 }
             }
         } catch (Throwable throwable) {
             notifyOnFail(tAction, throwable);
             throw new ActionExecutingException(tAction, throwable);
         } finally {
-            if (!afterActionError.isEmpty() && isRightStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_FINALLY)) {
+            if (!afterActionError.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_FINALLY)) {
                 tAction.setStage(ActionStage.FINALLY);
                 final ActionExecutor helperExecutor = new ActionExecutor(getActionListeners());
                 afterActionError.forEach(helperExecutor::payloadExecute);
@@ -105,7 +107,7 @@ public class ActionExecutor extends ActionNotifier {
         ActionExecutor helperExecutor;
         actionExecutionTry++;
         try {
-            if (!beforeActions.isEmpty() && isRightStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_BEFORE)) {
+            if (!beforeActions.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_BEFORE)) {
                 tAction.setStage(ActionStage.BEFORE);
                 helperExecutor = new ActionExecutor(getActionListeners());
                 beforeActions.forEach(helperExecutor::payloadExecute);
@@ -114,7 +116,7 @@ public class ActionExecutor extends ActionNotifier {
             tAction.setStage(ActionStage.MAIN);
             result = tAction.get();
 
-            if (!afterActions.isEmpty() && isRightStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_AFTER)) {
+            if (!afterActions.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_AFTER)) {
                 tAction.setStage(ActionStage.AFTER);
                 helperExecutor = new ActionExecutor(getActionListeners());
                 afterActions.forEach(helperExecutor::payloadExecute);
@@ -140,8 +142,8 @@ public class ActionExecutor extends ActionNotifier {
         return result;
     }
 
-    private boolean isRightStrategy(Action<?> action, ActionStrategy... strategies) {
+    private boolean isExcludedStrategy(Action<?> action, ActionStrategy... strategies) {
         return action.getStrategy().isEmpty() || action.getStrategy().stream().anyMatch(i -> i.equals(ActionStrategy.STANDARD)) || Arrays.stream(strategies)
-            .anyMatch(item -> action.getStrategy().stream().anyMatch(strategy -> strategy.equals(item)));
+            .noneMatch(item -> action.getStrategy().stream().anyMatch(strategy -> strategy.equals(item)));
     }
 }

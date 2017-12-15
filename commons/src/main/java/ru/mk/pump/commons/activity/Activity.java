@@ -2,16 +2,15 @@ package ru.mk.pump.commons.activity;
 
 import java.io.Closeable;
 import java.util.Map;
-import java.util.UUID;
 
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface Activity extends Closeable {
 
     Map<String, Parameter<?>> getParams();
 
     boolean isClosed();
 
-    UUID getUUID();
+    String getUUID();
 
     boolean isActive();
 

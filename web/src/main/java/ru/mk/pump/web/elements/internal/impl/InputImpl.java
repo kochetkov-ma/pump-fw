@@ -1,20 +1,16 @@
 package ru.mk.pump.web.elements.internal.impl;
 
-import java.util.Map;
 import org.openqa.selenium.By;
-import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.annotations.FrameworkImpl;
-import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.elements.api.concrete.Input;
-import ru.mk.pump.web.elements.api.concrete.TextArea;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @FrameworkImpl
-class InputImpl extends BaseElement implements Input{
+class InputImpl extends BaseElement implements Input {
 
     public InputImpl(By avatarBy, Page page) {
         super(avatarBy, page);
@@ -29,7 +25,7 @@ class InputImpl extends BaseElement implements Input{
     }
 
     @Override
-    public String set(String... text) {
+    public String type(String... text) {
         return getActionExecutor().execute(getInputAction(text));
     }
 }

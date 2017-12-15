@@ -45,7 +45,11 @@ public class SubElementHelper<T extends Element> {
     }
 
     public T find(@NotNull By... bys) {
-        return findList(bys).get(0);
+        final List<T> list = findList(bys);
+        if (list.isEmpty()) {
+            throw exceptionNoExistsSub(Arrays.toString(bys));
+        }
+        return list.get(0);
 
     }
 
@@ -54,7 +58,7 @@ public class SubElementHelper<T extends Element> {
             return Collections.emptyList();
         }
         for (By currentBy : bys) {
-            parent.getStateResolver().resolve(parent.jsReady());
+            parent.getStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
             parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
             final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()))
                 .getResult();
@@ -69,7 +73,7 @@ public class SubElementHelper<T extends Element> {
                     .collect(Collectors.toList());
             }
         }
-        throw exceptionNoExistsSub(Arrays.toString(bys));
+        return Collections.emptyList();
     }
 
     public List<T> findList(@NotNull By... bys) {
@@ -97,6 +101,9 @@ public class SubElementHelper<T extends Element> {
      */
     public List<T> findListXpathAdvanced(@Nullable String xpathString, @Nullable Predicate<WebElement> webElementPredicate, @Nullable String... postfixXpaths) {
         final Pair<Integer, By> context = findXpath(xpathString, webElementPredicate, false, postfixXpaths);
+        if (context.getKey() < 1) {
+            return Collections.emptyList();
+        }
         return IntStream.range(0, context.getKey()).boxed()
             .map(index -> {
                 final T newElement = elementFactory.newElement(subElementClass, context.getValue(), parent, elementConfig);
@@ -125,7 +132,11 @@ public class SubElementHelper<T extends Element> {
      * @return Полностью готовый элемент, созданный с помощью ElementFactory.
      */
     public T findXpathAdvanced(@Nullable String xpathString, @Nullable Predicate<WebElement> webElementPredicate, @Nullable String... postfixXpaths) {
-        return elementFactory.newElement(subElementClass, findXpath(xpathString, webElementPredicate, true, postfixXpaths).getValue(), parent, elementConfig);
+        final Pair<Integer, By> context = findXpath(xpathString, webElementPredicate, true, postfixXpaths);
+        if (context.getKey() < 1) {
+            throw exceptionNoExistsSub(xpathString + " " + Strings.toString(postfixXpaths));
+        }
+        return elementFactory.newElement(subElementClass, context.getValue(), parent, elementConfig);
     }
 
     private Pair<Integer, By> findXpath(String xpathString, Predicate<WebElement> webElementAttributePredicate, boolean one, String... postfixXpaths) {
@@ -138,7 +149,7 @@ public class SubElementHelper<T extends Element> {
         xpathFinal = Xpath.fixXpath(xpathString);
         byResult = By.xpath(xpathFinal);
 
-        parent.getStateResolver().resolve(parent.jsReady());
+        parent.getStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
         parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
         final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString))
             .getResult();
@@ -149,10 +160,7 @@ public class SubElementHelper<T extends Element> {
             iterator = Arrays.asList(postfixXpaths).iterator();
         }
         List<WebElement> elements = sourceWebElement.findElements(byResult);
-        while (checkPredicate(elements, webElementAttributePredicate, one)) {
-            if (!iterator.hasNext()) {
-                throw exceptionNoExistsSub(byResult.toString());
-            }
+        while (iterator.hasNext() && checkPredicate(elements, webElementAttributePredicate, one)) {
             byResult = By.xpath(Xpath.concat(xpathFinal, iterator.next()));
             elements = sourceWebElement.findElements(byResult);
         }

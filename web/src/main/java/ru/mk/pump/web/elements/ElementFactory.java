@@ -61,7 +61,7 @@ public class ElementFactory implements StrictInfo {
     }
     //endregion
 
-    //region set
+    //region type
     public ElementFactory withMainRequirements(@NotNull Class<? extends Annotation>[] requirements) {
         this.requirements.addAll(Arrays.asList(requirements));
         return this;

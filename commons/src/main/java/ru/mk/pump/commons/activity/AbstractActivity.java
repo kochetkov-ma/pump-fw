@@ -12,7 +12,7 @@ import lombok.ToString;
 public abstract class AbstractActivity extends Observable implements Activity {
 
     @Setter
-    private UUID uuid;
+    private String uuid;
 
     private volatile boolean closed = false;
 
@@ -20,7 +20,7 @@ public abstract class AbstractActivity extends Observable implements Activity {
 
     private Map<String, Parameter<?>> param;
 
-    protected AbstractActivity(Observer observer, UUID uuid) {
+    protected AbstractActivity(Observer observer, String uuid) {
         this.uuid = uuid;
         if (observer != null) {
             addObserver(observer);
@@ -28,15 +28,15 @@ public abstract class AbstractActivity extends Observable implements Activity {
     }
 
     protected AbstractActivity(Observer observer) {
-        this(observer, UUID.randomUUID());
+        this(observer, UUID.randomUUID().toString());
     }
 
-    protected AbstractActivity(UUID uuid) {
+    protected AbstractActivity(String uuid) {
         this(null, uuid);
     }
 
     protected AbstractActivity() {
-        this(null, UUID.randomUUID());
+        this(null, UUID.randomUUID().toString());
     }
 
     public AbstractActivity withParam(Map<String, Parameter<?>> param) {
@@ -55,7 +55,7 @@ public abstract class AbstractActivity extends Observable implements Activity {
     }
 
     @Override
-    public UUID getUUID() {
+    public String getUUID() {
         return uuid;
     }
 

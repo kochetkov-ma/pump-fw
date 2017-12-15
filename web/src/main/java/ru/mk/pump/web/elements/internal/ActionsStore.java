@@ -87,7 +87,7 @@ class ActionsStore {
             + "window.scrollBy(0, elementTop-(viewPortHeight/2));";
 
         return actions.newAction((webElement, param) -> {
-            String scrollScript = SCROLL_CENTER;
+            String scrollScript = SCROLL_TOP;
             if (param.containsKey("focusType")) {
                 final FocusType focusType = param.get("focusType").getValue(FocusType.class);
                 switch (focusType) {
@@ -101,7 +101,7 @@ class ActionsStore {
                         scrollScript = SCROLL_CENTER;
                         break;
                     default:
-                        scrollScript = SCROLL_CENTER;
+                        scrollScript = SCROLL_TOP;
                 }
             }
             element.getBrowser().actions().executeScript(scrollScript, webElement);

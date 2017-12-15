@@ -137,7 +137,7 @@ public class ElementImplDispatcherTest {
         }
 
         @Override
-        public String set(String... text) {
+        public String type(String... text) {
             return null;
         }
     }

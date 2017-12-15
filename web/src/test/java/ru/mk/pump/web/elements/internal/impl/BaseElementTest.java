@@ -112,7 +112,7 @@ public class BaseElementTest extends AbstractElementTest {
     void clear() {
         browser.open(regPage.getUrl());
 
-        log.info(regPage.getInputSurname().set("МАКС"));
+        log.info(regPage.getInputSurname().type("МАКС"));
         regPage.getInputSurname().clear();
         Assertions.assertThat(regPage.getInputSurname().getTextHidden()).isEmpty();
     }
