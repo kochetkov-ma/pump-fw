@@ -10,6 +10,21 @@ import ru.mk.pump.web.elements.enums.SelectedStrategy;
 @UtilityClass
 public class ElementParams {
 
+    //region InputDropDown
+    /**
+     * drop down element parameter is array of {@link org.openqa.selenium.By} in InputDropDownImpl
+     */
+    public static final String INPUTDROPDOWN_DROPDOWN_BY = "iddDropDownBy";
+    /**
+     * input element parameter is array of {@link org.openqa.selenium.By} in InputDropDownImpl
+     */
+    public static final String INPUTDROPDOWN_INPUT_BY = "iddInputBy";
+    /**
+     * load icon element parameter is array of {@link org.openqa.selenium.By} in InputDropDownImpl (when ajax list of element loading too long)
+     */
+    public static final String INPUTDROPDOWN_LOAD_BY = "iddLoadBy";
+    //endregion
+
 
     /**
      * is element's sub items static

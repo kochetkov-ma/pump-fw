@@ -13,7 +13,6 @@ import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.part.Editable;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
@@ -51,6 +50,7 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
     private SelectedStrategy selectedStrategy = SelectedStrategy.CONTAINS;
 
     @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
     private Boolean staticItems = true;
 
     {
@@ -129,7 +129,7 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
         Preconditions.checkArgListSize(index, elements);
         final Action<String> action = actionFactory.newAction(w -> {
             elements.get(index).click();
-        }, "Select item by index " + index).withStrategy(ActionStrategy.NO_AFTER, ActionStrategy.NO_FINALLY,  ActionStrategy.NO_STATE_CHECK);
+        }, "Select item by index " + index).withStrategy(ActionStrategy.NO_AFTER, ActionStrategy.NO_FINALLY, ActionStrategy.NO_STATE_CHECK);
         getActionExecutor().execute(action);
     }
 
@@ -142,7 +142,7 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
 
     @Override
     public List<Element> getItems() {
-        if (itemsCache == null ) {
+        if (!staticItems || itemsCache == null) {
             refreshItemsCache();
         }
         return itemsCache;

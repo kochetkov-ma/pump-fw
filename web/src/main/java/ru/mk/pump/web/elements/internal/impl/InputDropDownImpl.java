@@ -20,6 +20,8 @@ import ru.mk.pump.web.page.Page;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class InputDropDownImpl extends BaseElement implements InputDropDown {
 
+    public final static By[] DEFAULT_LOAD_ICON = {};
+
     public final static By[] DEFAULT_INPUT_BY = {};
 
     public final static By[] DEFAULT_DROP_DOWN_BY = {};
@@ -27,6 +29,10 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
     private By[] inputBy = DEFAULT_INPUT_BY;
 
     private By[] dropDownBy = DEFAULT_DROP_DOWN_BY;
+
+    private By[] loadIconBy = DEFAULT_LOAD_ICON;
+
+    private Element loadIcon;
 
     private DropDown dropDown;
 
@@ -46,12 +52,8 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
 
     @Override
     public String type(String... text) {
-        final String res = getInput().type(text);
-        ((DropDownImpl) getDropDown()).refreshItemsCache();
-        return res;
+        return getInput().type(text);
     }
-
-    protected
 
     /**
      * @param params
@@ -88,9 +90,25 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
         throw new IllegalArgumentException(String.format("Params map '%s' does not contains '%s'", Strings.toString(params), ElementParams.EDITABLE_SET));
     }
 
+    @Override
+    protected void initFromParams() {
+        super.initFromParams();
+        inputBy = Parameters.getOrDefault(getParams(), ElementParams.INPUTDROPDOWN_INPUT_BY, By[].class, inputBy);
+        dropDownBy = Parameters.getOrDefault(getParams(), ElementParams.INPUTDROPDOWN_DROPDOWN_BY, By[].class, dropDownBy);
+        loadIconBy = Parameters.getOrDefault(getParams(), ElementParams.INPUTDROPDOWN_LOAD_BY, By[].class, loadIconBy);
+    }
+
+    protected Element getLoadIcon() {
+        if (loadIcon == null) {
+            loadIcon = getSubElements(Element.class).find(loadIconBy);
+        }
+        return loadIcon;
+    }
+
     protected Input getInput() {
         if (input == null) {
             input = getSubElements(Input.class).find(inputBy);
+            ((BaseElement) input).withParams(getParams());
         }
         return input;
     }
@@ -98,6 +116,8 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
     protected DropDown getDropDown() {
         if (dropDown == null) {
             dropDown = getSubElements(DropDown.class).find(dropDownBy);
+            ((DropDownImpl) dropDown).setStaticItems(false);
+            ((BaseElement) dropDown).withParams(getParams());
         }
         return dropDown;
     }
