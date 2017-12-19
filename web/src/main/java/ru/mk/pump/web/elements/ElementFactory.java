@@ -22,9 +22,9 @@ import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
-import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.ElementConfig;
+import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFactoryException;
@@ -138,7 +138,12 @@ public class ElementFactory implements StrictInfo {
     }
 
     private <R extends BaseElement> R fillElement(R element, ElementConfig elementConfig) {
-        element.setSelfFactory(this).withParams(elementConfig.getParameters()).withName(elementConfig.getName()).withDescription(elementConfig.getDescription())
+        element.setSelfFactory(this)
+            .withParams(elementConfig.getParameters())
+            .withName(elementConfig.getName())
+            .withDescription(elementConfig.getDescription())
+            .withReporter(elementConfig.getReporter())
+            .withVerifier(elementConfig.getVerifier())
             .addActionListener(actionListeners);
         if (elementConfig.getIndex() != -1) {
             element.setIndex(elementConfig.getIndex());

@@ -6,9 +6,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.reporter.Reporter;
+import ru.mk.pump.commons.reporter.ReporterAllure;
+import ru.mk.pump.commons.utils.BrowserScreenshoter;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.ElementFactory;
@@ -33,6 +38,16 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     private By[] extraBy = new By[0];
 
     private ElementFactory selfElementFactory;
+
+    @Getter(AccessLevel.PROTECTED)
+    private Reporter reporter;
+
+    @Getter(AccessLevel.PROTECTED)
+    private Verifier verifier;
+
+    {
+        initLocal();
+    }
 
     public BaseElement(By avatarBy, Page page) {
         super(avatarBy, page);
@@ -61,6 +76,20 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
      */
     protected void initFromParams() {
         extraBy = Parameters.getOrDefault(getParams(), ElementParams.BASE_EXTRA_BY, By[].class, extraBy);
+    }
+
+    public BaseElement withVerifier(@Nullable Verifier verifier) {
+        if (verifier != null) {
+            this.verifier = verifier;
+        }
+        return this;
+    }
+
+    public BaseElement withReporter(@Nullable Reporter reporter) {
+        if (reporter != null) {
+            this.reporter = reporter;
+        }
+        return this;
     }
 
     @Override
@@ -144,6 +173,12 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return super.getElementDescription();
     }
 
+    @Override
+    protected ActionExecutor newDelegateActionExecutor(StateResolver stateResolver) {
+        return super.newDelegateActionExecutor(stateResolver)
+            .addBefore(getFocusAction());
+    }
+
     /* for test */
     /*
     @Override
@@ -166,12 +201,6 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     */
 
     @Override
-    protected ActionExecutor newDelegateActionExecutor(StateResolver stateResolver) {
-        return super.newDelegateActionExecutor(stateResolver)
-            .addBefore(getFocusAction());
-    }
-
-    @Override
     public BaseElement setIndex(int index) {
         super.setIndex(index);
         return this;
@@ -182,6 +211,11 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         final Map<String, String> res = super.getInfo();
         res.put("element parameters", Strings.toPrettyString(getParams()));
         return res;
+    }
+
+    private void initLocal() {
+        withReporter(new ReporterAllure(new BrowserScreenshoter(getBrowser().getDriver())));
+        withVerifier(new Verifier(getReporter()));
     }
 
     private ElementFactory getSubElementFactory() {

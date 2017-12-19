@@ -15,7 +15,7 @@ import ru.mk.pump.commons.reporter.ReporterAllure.Type;
 
 public class VerifyTest {
 
-    private Verify verify;
+    private Verifier verify;
 
     @BeforeAll
     public static void setUp() {
@@ -26,7 +26,7 @@ public class VerifyTest {
 
     @BeforeEach
     public void before() {
-        this.verify = new Verify(new ReporterAllure(new DesktopScreenshoter(), Type.ALL));
+        this.verify = new Verifier(new ReporterAllure(new DesktopScreenshoter(), Type.ALL));
     }
 
     @Test

@@ -2,6 +2,8 @@ package ru.mk.pump.web.elements.internal.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.ListUtils;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
@@ -12,7 +14,10 @@ import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.InputDropDown;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
+import ru.mk.pump.web.elements.api.part.Text;
+import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.BaseElement;
+import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
 import ru.mk.pump.web.page.Page;
@@ -52,7 +57,17 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
 
     @Override
     public String type(String... text) {
-        return getInput().type(text);
+        final List<String> oldItems = getItemsText(getItems());
+        final String res = getInput().type(text);
+        if (loadIconBy != null) {
+            getLoadIcon().isDisplayed();
+            getLoadIcon().isNotDisplayed();
+        }
+        if (!isChanged(oldItems)) {
+            getReporter().error(String.format("InputDropDown items did not changed after type text '%s'", Strings.toString(text)),
+                "ITEMS : " + Strings.toPrettyString(oldItems) + System.lineSeparator() + Strings.toPrettyString(getInfo()));
+        }
+        return res;
     }
 
     /**
@@ -168,5 +183,17 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
     @Override
     public void typeAndSelect(String inputAndDropDownText) {
         typeAndSelect(inputAndDropDownText, inputAndDropDownText);
+    }
+
+    protected boolean isChanged(List<String> oldItems) {
+        return getStateResolver().resolve(itemsIsChangedOrEmpty(oldItems)).result().isSuccess();
+    }
+
+    protected State itemsIsChangedOrEmpty(List<String> oldItems) {
+        return State.of(StateType.OTHER, () -> !ListUtils.isEqualList(getItemsText(getItems()), oldItems));
+    }
+
+    private List<String> getItemsText(List<Element> items) {
+        return items.stream().map(Text::getTextHidden).collect(Collectors.toList());
     }
 }

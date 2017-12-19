@@ -14,7 +14,7 @@ import java.util.*;
 import static java.lang.String.format;
 
 @SuppressWarnings("ALL")
-public class Verify {
+public class Verifier {
 
     private final Reporter reporter;
 
@@ -24,22 +24,22 @@ public class Verify {
 
     private boolean needTrim = true;
 
-    public Verify(Reporter reporter) {
+    public Verifier(Reporter reporter) {
 
         this.reporter = reporter;
     }
 
-    public Verify withFailOnError(boolean failOnError) {
+    public Verifier withFailOnError(boolean failOnError) {
         failOnError = failOnError;
         return this;
     }
 
-    public Verify withNeedTrim(boolean needTrim) {
+    public Verifier withNeedTrim(boolean needTrim) {
         this.needTrim = needTrim;
         return this;
     }
 
-    public Verify checkErrors() {
+    public Verifier checkErrors() {
         if (hasErrors()) {
             throw lastError;
         }

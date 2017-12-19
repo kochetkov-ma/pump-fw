@@ -11,6 +11,8 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.reporter.Reporter;
+import ru.mk.pump.commons.utils.Verifier;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Getter
@@ -27,6 +29,10 @@ public class ElementConfig {
     private String name = "";
 
     private String description = "";
+
+    private Verifier verifier;
+
+    private Reporter reporter;
 
     public static ElementConfig of(String name, Annotation... annotations) {
         return new ElementConfig().withName(name).withAnnotations(Arrays.asList(annotations));
@@ -77,6 +83,16 @@ public class ElementConfig {
 
     public ElementConfig withName(@Nullable String name) {
         this.name = name;
+        return this;
+    }
+
+    public ElementConfig withVerifier(@Nullable Verifier verifier) {
+        this.verifier = verifier;
+        return this;
+    }
+
+    public ElementConfig withReporter(@Nullable Reporter reporter) {
+        this.reporter = reporter;
         return this;
     }
 
