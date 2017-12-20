@@ -234,4 +234,15 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
     private boolean hasLoadIcon() {
         return loadIconBy != null && loadIconBy.length > 0;
     }
+
+    @Override
+    public String getText() {
+        return getInput().getText();
+    }
+
+    @Override
+    public String getTextHidden() {
+        return getInput().getTextHidden();
+    }
+
 }

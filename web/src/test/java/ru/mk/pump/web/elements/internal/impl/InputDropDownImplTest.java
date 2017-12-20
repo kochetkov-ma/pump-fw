@@ -6,7 +6,6 @@ import org.assertj.core.api.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.activity.Parameter;
-import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.constants.ElementParams;
 
 @Slf4j
@@ -28,11 +27,26 @@ class InputDropDownImplTest extends AbstractElementTest {
     @Test
     void set() {
         regPage.getInputDropDownRegions().set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Мос")));
-        regPage.getInputDropDownRegions().set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Мос"), ElementParams.INPUT_DROPDOWN_SET, Parameter.of("Москва")));
+        regPage.getInputDropDownRegions()
+            .set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Мос"), ElementParams.INPUT_DROPDOWN_SET, Parameter.of("Москва")));
     }
 
     @Test
-    void getInput() {
+    void getText() {
+        String res = regPage.getInputDropDownRegions().getText();
+        log.info(res);
+        regPage.getInputDropDownRegions().set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Москва")));
+        res = regPage.getInputDropDownRegions().getText();
+        log.info(res);
+    }
+
+    @Test
+    void getTextHidden() {
+        String res = regPage.getInputDropDownRegions().getTextHidden();
+        log.info(res);
+        regPage.getInputDropDownRegions().set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Москва")));
+        res = regPage.getInputDropDownRegions().getTextHidden();
+        log.info(res);
     }
 
     @Test
