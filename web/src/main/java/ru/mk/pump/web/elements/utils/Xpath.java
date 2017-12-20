@@ -16,7 +16,7 @@ public class Xpath {
     public String fixXpath(String xpath) {
         log.debug("[XPATH] source '{}'", xpath);
 
-        if (xpath == null || xpath.matches("[./]*")) {
+        if (xpath == null || xpath.matches("[.]*|[/]*")) {
             return ".";
         }
         /*более двух слэшей*/
@@ -52,6 +52,9 @@ public class Xpath {
         xpath = xpath.replaceAll("(?<=[\\w/])\\./(?!/)", "");
 
         /*точку вначале для конкатенации*/
+        if (xpath == null || xpath.matches("[.]{3,}|[/]{3,}")) {
+            return ".";
+        }
         if (xpath.startsWith("//") || xpath.startsWith("/")) {
             xpath = "." + xpath;
         } else if (!xpath.startsWith(".")) {

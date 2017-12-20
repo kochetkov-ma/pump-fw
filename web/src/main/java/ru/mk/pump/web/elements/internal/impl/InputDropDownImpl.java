@@ -1,9 +1,11 @@
 package ru.mk.pump.web.elements.internal.impl;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import org.apache.commons.collections.ListUtils;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
@@ -14,22 +16,24 @@ import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.InputDropDown;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
-import ru.mk.pump.web.elements.api.part.Text;
 import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
+import ru.mk.pump.web.exceptions.ElementException;
 import ru.mk.pump.web.page.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
+@Slf4j
+@ToString(exclude = {"loadIcon", "dropDown", "input"})
 public class InputDropDownImpl extends BaseElement implements InputDropDown {
 
     public final static By[] DEFAULT_LOAD_ICON = {};
 
-    public final static By[] DEFAULT_INPUT_BY = {};
+    public final static By[] DEFAULT_INPUT_BY = {By.tagName("input")};
 
-    public final static By[] DEFAULT_DROP_DOWN_BY = {};
+    public final static By[] DEFAULT_DROP_DOWN_BY = {By.xpath(".")};
 
     private By[] inputBy = DEFAULT_INPUT_BY;
 
@@ -57,15 +61,16 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
 
     @Override
     public String type(String... text) {
-        final List<String> oldItems = getItemsText(getItems());
+        final String oldItems = ((DropDownImpl) getDropDown()).getItemsTextFast();
         final String res = getInput().type(text);
-        if (loadIconBy != null) {
+        if (hasLoadIcon()) {
             getLoadIcon().isDisplayed();
             getLoadIcon().isNotDisplayed();
         }
         if (!isChanged(oldItems)) {
-            getReporter().error(String.format("InputDropDown items did not changed after type text '%s'", Strings.toString(text)),
-                "ITEMS : " + Strings.toPrettyString(oldItems) + System.lineSeparator() + Strings.toPrettyString(getInfo()));
+            getReporter().warn(String.format("InputDropDown items did not changed after type text '%s'", Strings.toString(text)),
+                "OLD ITEMS : " + oldItems + System.lineSeparator() + "CURRENT ITEMS : " + ((DropDownImpl) getDropDown()).getItemsTextFast()
+                    + System.lineSeparator() + Strings.toPrettyString(getInfo()));
         }
         return res;
     }
@@ -113,6 +118,21 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
         loadIconBy = Parameters.getOrDefault(getParams(), ElementParams.INPUTDROPDOWN_LOAD_BY, By[].class, loadIconBy);
     }
 
+    @Override
+    public void clear() {
+        getInput().clear();
+    }
+
+    @Override
+    public Map<String, String> getInfo() {
+        final Map<String, String> res = super.getInfo();
+        res.put("drop down", Strings.toPrettyString(getDropDown().getInfo(), "drop down".length()));
+        res.put("input", Strings.toPrettyString(getInput().getInfo(), "input".length()));
+        res.put("load icon", Strings.toString(loadIconBy));
+        return res;
+
+    }
+
     protected Element getLoadIcon() {
         if (loadIcon == null) {
             loadIcon = getSubElements(Element.class).find(loadIconBy);
@@ -132,7 +152,8 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
         if (dropDown == null) {
             dropDown = getSubElements(DropDown.class).find(dropDownBy);
             ((DropDownImpl) dropDown).setStaticItems(false);
-            ((BaseElement) dropDown).withParams(getParams());
+            ((BaseElement) dropDown).withParams(getParams())
+                .withParams(ImmutableMap.of("beforeSelect", Parameter.of(Boolean.class, false)));
         }
         return dropDown;
     }
@@ -155,11 +176,13 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
     @Override
     public void select(String itemText) {
         getDropDown().select(itemText);
+        checkItemsDisappear();
     }
 
     @Override
     public void select(int index) {
         getDropDown().select(index);
+        checkItemsDisappear();
     }
 
     @Override
@@ -170,6 +193,15 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
     @Override
     public List<Element> getItems() {
         return getDropDown().getItems();
+    }
+
+    public boolean isItemsDisappear() {
+        final DropDownImpl dropDown = (DropDownImpl) getDropDown();
+        if (dropDown.getItemsCache().isEmpty()) {
+            return true;
+        }
+        final Element element = dropDown.getItemsCache().get(0);
+        return element.isNotDisplayed();
     }
 
     @Override
@@ -185,15 +217,21 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
         typeAndSelect(inputAndDropDownText, inputAndDropDownText);
     }
 
-    protected boolean isChanged(List<String> oldItems) {
-        return getStateResolver().resolve(itemsIsChangedOrEmpty(oldItems)).result().isSuccess();
+    protected boolean isChanged(String oldItems) {
+        return getStateResolver().resolve(itemsIsChangedOrEmpty(oldItems), 1000).result().isSuccess();
     }
 
-    protected State itemsIsChangedOrEmpty(List<String> oldItems) {
-        return State.of(StateType.OTHER, () -> !ListUtils.isEqualList(getItemsText(getItems()), oldItems));
+    protected State itemsIsChangedOrEmpty(String oldItems) {
+        return State.of(StateType.OTHER, () -> !StringUtils.equalsIgnoreCase(((DropDownImpl) getDropDown()).getItemsTextFast(), oldItems));
     }
 
-    private List<String> getItemsText(List<Element> items) {
-        return items.stream().map(Text::getTextHidden).collect(Collectors.toList());
+    private void checkItemsDisappear() {
+        if (!isItemsDisappear()) {
+            throw new ElementException("Items did not disappeared after selection").withTargetElement(this);
+        }
+    }
+
+    private boolean hasLoadIcon() {
+        return loadIconBy != null && loadIconBy.length > 0;
     }
 }

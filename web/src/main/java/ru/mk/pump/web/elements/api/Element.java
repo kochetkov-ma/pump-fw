@@ -21,6 +21,14 @@ public interface Element extends PrettyPrinter, StrictInfo, Clickable, Text, Ele
 
     boolean isNotEnabled();
 
+    boolean isDisplayed(int timeoutMs);
+
+    boolean isNotDisplayed(int timeoutMs);
+
+    boolean isExists(int timeoutMs);
+
+    boolean isNotExists(int timeoutMs);
+
     String getAttribute(String name);
 
     <T extends Element> SubElementHelper<T> getSubElements(Class<T> subElementInterfaceClazz);

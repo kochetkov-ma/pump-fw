@@ -9,6 +9,7 @@ import com.google.common.collect.SetMultimap;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -154,14 +155,15 @@ public class ElementImplDispatcher implements StrictInfo {
         if (requirements != null && !requirements.isEmpty()) {
             expectedImpl = implementations.stream()
                 .filter(item -> requirements.stream().allMatch(an -> item.getImplementation().isAnnotationPresent(an)))
-                .findFirst();
+                .min(Comparator.comparingInt(e -> e.getImplementation().getAnnotations().length));
             if (!expectedImpl.isPresent()) {
                 log.warn("[ElementImplDispatcher] Cannot find implementation with all of this annotations '{}'", requirements);
             }
         }
         if (!expectedImpl.isPresent()) {
             expectedImpl = implementations.stream()
-                .filter(item -> item.getImplementation().isAnnotationPresent(FrameworkImpl.class)).findFirst();
+                .filter(item -> item.getImplementation().isAnnotationPresent(FrameworkImpl.class))
+                .min(Comparator.comparingInt(e -> e.getImplementation().getAnnotations().length));
         }
         //TODO::may be ClassCastException
         if (expectedImpl.isPresent()) {

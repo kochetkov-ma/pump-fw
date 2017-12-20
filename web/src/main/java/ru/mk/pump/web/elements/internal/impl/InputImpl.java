@@ -1,6 +1,8 @@
 package ru.mk.pump.web.elements.internal.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.concrete.Input;
@@ -10,6 +12,7 @@ import ru.mk.pump.web.page.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @FrameworkImpl
+@Slf4j
 class InputImpl extends BaseElement implements Input {
 
     public InputImpl(By avatarBy, Page page) {

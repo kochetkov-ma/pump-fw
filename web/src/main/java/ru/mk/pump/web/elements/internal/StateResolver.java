@@ -18,19 +18,26 @@ public class StateResolver extends StateNotifier {
     @Getter
     private final InternalElement internalElement;
 
-    private boolean fast = false;
-
     public StateResolver(InternalElement internalElement) {
         this.internalElement = internalElement;
     }
 
 
-    public SetState resolveFast(SetState state) {
-        fast = true;
-        try {
-            return resolve(state);
-        } finally {
-            fast = false;
+    public State resolveFast(State state) {
+        return resolve(state, 500);
+    }
+
+    public State resolve(State state, int timeoutMs) {
+        final StateResolver resolver = new StateResolver(internalElement) {
+            @Override
+            protected ElementWaiter waiter() {
+                return ElementWaiter.newWaiterMs(timeoutMs);
+            }
+        };
+        if (state instanceof SetState) {
+            return resolver.resolve((SetState) state);
+        } else {
+            return resolver.resolve(state);
         }
     }
 
@@ -101,6 +108,10 @@ public class StateResolver extends StateNotifier {
             .withElement(internalElement);
     }
 
+    protected ElementWaiter waiter() {
+        return internalElement.getWaiter();
+    }
+
     private boolean call(Callable<Boolean> s) {
         try {
             return s.call();
@@ -109,14 +120,6 @@ public class StateResolver extends StateNotifier {
                 throw (RuntimeException) e;
             }
             return false;
-        }
-    }
-
-    private ElementWaiter waiter() {
-        if (fast) {
-            return ElementWaiter.newWaiterMs(500);
-        } else {
-            return internalElement.getWaiter();
         }
     }
 

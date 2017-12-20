@@ -1,17 +1,34 @@
 package ru.mk.pump.web.elements.internal.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.google.common.collect.ImmutableMap;
+import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.utils.Waiter;
+import ru.mk.pump.web.constants.ElementParams;
 
-class InputDropDownImplTest extends AbstractElementTest{
+@Slf4j
+class InputDropDownImplTest extends AbstractElementTest {
+
+    @Override
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        createPages(browser);
+        browser.open(regPage.getUrl());
+    }
 
     @Test
     void type() {
+        Assertions.assertThat(regPage.getInputDropDownRegions().type("Москва")).isEqualTo("Москва");
     }
 
     @Test
     void set() {
+        regPage.getInputDropDownRegions().set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Мос")));
+        regPage.getInputDropDownRegions().set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Мос"), ElementParams.INPUT_DROPDOWN_SET, Parameter.of("Москва")));
     }
 
     @Test

@@ -149,6 +149,26 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     @Override
+    public boolean isDisplayed(int timeoutMs) {
+        return getStateResolver().resolve(displayed(), timeoutMs).result().isSuccess();
+    }
+
+    @Override
+    public boolean isNotDisplayed(int timeoutMs) {
+        return getStateResolver().resolve(notDisplayed(), timeoutMs).result().isSuccess();
+    }
+
+    @Override
+    public boolean isExists(int timeoutMs) {
+        return getStateResolver().resolve(exists(), timeoutMs).result().isSuccess();
+    }
+
+    @Override
+    public boolean isNotExists(int timeoutMs) {
+        return getStateResolver().resolve(notExists(), timeoutMs).result().isSuccess();
+    }
+
+    @Override
     public <T extends Element> SubElementHelper<T> getSubElements(Class<T> subElementClazz) {
         return new SubElementHelper<>(subElementClazz, this, getSubElementFactory());
     }

@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import lombok.ToString;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
@@ -15,6 +16,7 @@ import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
+@ToString(exclude = {"actionSupplier", "stateSet"})
 abstract class AbstractAction<T> implements Action<T> {
 
     private static final int MAX_TRY = 5;

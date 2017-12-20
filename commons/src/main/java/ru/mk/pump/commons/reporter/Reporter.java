@@ -16,6 +16,10 @@ public interface Reporter {
 
     void info(String title, String description);
 
+    void warn(String title, String description, Attachment attachment);
+
+    void warn(String title, String description);
+
     void error(String title, String description);
 
     /**

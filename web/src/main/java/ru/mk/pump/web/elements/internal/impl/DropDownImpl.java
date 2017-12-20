@@ -25,6 +25,8 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
 
     private Clickable expandButton = null;
 
+    private Boolean beforeSelect = true;
+
     public DropDownImpl(By avatarBy, Page page) {
         super(avatarBy, page);
     }
@@ -41,28 +43,33 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
     protected void initFromParams() {
         super.initFromParams();
         expandBy = Parameters.getOrDefault(getParams(), ElementParams.DROPDOWN_EXPAND_BY, By[].class, expandBy);
+        beforeSelect = Parameters.getOrDefault(getParams(), "beforeSelect", Boolean.class, beforeSelect);
     }
 
     @Override
     public void select(String itemText) {
-        beforeSelect();
+        if (beforeSelect) {
+            beforeSelect();
+        }
         super.select(itemText);
     }
 
     @Override
     public void select(int index) {
-        beforeSelect();
+        if (beforeSelect) {
+            beforeSelect();
+        }
         super.select(index);
     }
 
     @Override
     public boolean isExpand() {
-        return getStateResolver().resolve(expandState()).result().getResult();
+        return getStateResolver().resolve(expandState(), 1000).result().getResult();
     }
 
     @Override
     public boolean isNotExpand() {
-        return getItems().isEmpty() || getItems().get(0).isNotDisplayed();
+        return getItems().isEmpty() || getItems().get(0).isNotDisplayed(1000);
     }
 
     @Override

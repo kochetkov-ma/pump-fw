@@ -43,6 +43,8 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
     @Setter(AccessLevel.PROTECTED)
     protected List<Element> itemsCache = null;
 
+    protected By itemsByCache;
+
     @Getter(AccessLevel.PROTECTED)
     private String selectedCondition = DEFAULT_SELECTED;
 
@@ -148,7 +150,22 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
         return itemsCache;
     }
 
+    public String getItemsTextFast() {
+        final List<Element> items = getItems();
+        if (items.isEmpty()) {
+            return "";
+        }
+        return items.get(0).getSubElements(Element.class).find(By.xpath("/../")).getTextHidden();
+    }
+
     public void refreshItemsCache() {
-        itemsCache = getSubElements(Element.class).findList(getExtraBy());
+        if (itemsByCache == null) {
+            itemsCache = getSubElements(Element.class).findList(getExtraBy());
+            if (!itemsCache.isEmpty()) {
+                itemsByCache = itemsCache.get(0).getBy();
+            }
+        } else {
+            itemsCache = getSubElements(Element.class).findList(itemsByCache);
+        }
     }
 }

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
-import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.browsers.Browsers;
@@ -15,6 +14,7 @@ import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.Input;
+import ru.mk.pump.web.elements.api.concrete.InputDropDown;
 import ru.mk.pump.web.elements.api.concrete.Selector;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
@@ -55,6 +55,7 @@ public abstract class AbstractElementTest {
 
     @AfterEach
     public void tearDown() {
+
         ElementWaiter.DEFAULT_TIMEOUT_S = 10;
     }
 
@@ -108,6 +109,8 @@ public abstract class AbstractElementTest {
 
         private final BaseElement notExists;
 
+        private final InputDropDown inputDropDownRegions;
+
         private final DropDown dropDownRegions;
 
         private final DropDown dropDownPages;
@@ -123,6 +126,7 @@ public abstract class AbstractElementTest {
             dropDownRegions = new DropDownImpl(By.id("regionAutocompleteId"), browser);
             selectorProgram = new SelectorImpl(By.id("apartmentTypeId"), browser);
             dropDownPages = new DropDownImpl(By.tagName("select"), browser);
+            inputDropDownRegions = new InputDropDownImpl(By.id("regionAutocompleteId"), browser);
         }
     }
 

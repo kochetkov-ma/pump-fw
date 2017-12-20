@@ -81,6 +81,16 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     }
 
     @Override
+    public void warn(String title, String description, Attachment attachment) {
+        step(Type.WARNING, title, description, new Info(attachment, null));
+    }
+
+    @Override
+    public void warn(String title, String description) {
+        step(Type.WARNING, title, description, new Info(null, null));
+    }
+
+    @Override
     public void error(String title, String description) {
         step(Type.ERROR, title, description, new Info(null, new AssertionError("Test error")));
     }
@@ -202,7 +212,14 @@ public class ReporterAllure implements Reporter, AutoCloseable {
         }
 
         if (level.getPriority() >= minimumLevelForDuplicateInSlf4.getPriority()) {
-            log.info(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title), description, info.toString()));
+            if (level.getPriority() < 3) {
+                log.info(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title), description, info.toString()));
+            } else if (level.getPriority() == 3) {
+                log.warn(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title), description, info.toString()));
+            } else if (level.getPriority() > 3) {
+                log.error(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title), description, info.toString()));
+            }
+
         }
         if (info.attachment() != null) {
             attach(info.attachment());

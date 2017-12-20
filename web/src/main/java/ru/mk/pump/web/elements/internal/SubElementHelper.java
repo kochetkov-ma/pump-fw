@@ -44,6 +44,10 @@ public class SubElementHelper<T extends Element> {
         this.elementConfig = elementConfig;
     }
 
+    public SubElementHelper<T> newWithElementConfig(ElementConfig elementConfig) {
+        return new SubElementHelper<>(subElementClass, parent, elementFactory, elementConfig);
+    }
+
     public T find(@NotNull By... bys) {
         final List<T> list = findList(bys);
         if (list.isEmpty()) {
