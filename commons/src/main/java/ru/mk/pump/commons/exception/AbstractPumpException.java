@@ -1,7 +1,6 @@
 package ru.mk.pump.commons.exception;
 
 import com.google.common.collect.Maps;
-import java.lang.annotation.Inherited;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,7 +22,7 @@ abstract class AbstractPumpException extends RuntimeException {
     private final PumpMessage sourceMessage;
 
 
-    private volatile boolean freeze = false;
+    private volatile boolean freeze;
 
     public AbstractPumpException(PumpMessage exceptionMessage) {
         this(exceptionMessage, null);
@@ -65,7 +64,7 @@ abstract class AbstractPumpException extends RuntimeException {
     }
 
     private boolean canAddEnv(String nameToCheck, Throwable cause) {
-        if (cause != null &&cause != this && cause instanceof AbstractPumpException) {
+        if (cause != null && cause != this && cause instanceof AbstractPumpException) {
             final AbstractPumpException exception = (AbstractPumpException) cause;
             return exception.getEnv() != null && !exception.getEnv().containsKey(nameToCheck) && canAddEnv(nameToCheck, cause.getCause());
         }

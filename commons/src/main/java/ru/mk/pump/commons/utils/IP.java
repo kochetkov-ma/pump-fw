@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.UtilException;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 @UtilityClass
 @Slf4j
 public final class IP {

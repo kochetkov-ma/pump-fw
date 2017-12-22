@@ -13,6 +13,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContexts;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 @UtilityClass
 public class HttpClients {
 

@@ -15,6 +15,7 @@ import ru.mk.pump.commons.exception.UtilException;
 /**
  * ONLY IN CALLER PROJECT DIRS
  */
+@SuppressWarnings("unused")
 @UtilityClass
 @Slf4j
 public final class ProjectResources {
@@ -38,7 +39,7 @@ public final class ProjectResources {
         while (result != null && !buildDir.equals(result.getParent())) {
             result = result.getParent();
         }
-        if (result == null){
+        if (result == null) {
             throw new UtilException("Cannot get build Path from " + innerProjectPath);
         }
         return result;
