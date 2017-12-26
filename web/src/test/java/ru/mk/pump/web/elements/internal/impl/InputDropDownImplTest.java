@@ -9,7 +9,7 @@ import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.constants.ElementParams;
 
 @Slf4j
-class InputDropDownImplTest extends AbstractElementTest {
+class InputDropDownImplTest extends AbstractWebTest {
 
     @Override
     @BeforeEach

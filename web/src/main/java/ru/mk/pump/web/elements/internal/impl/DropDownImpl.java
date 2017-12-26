@@ -8,9 +8,6 @@ import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
-import ru.mk.pump.web.elements.enums.StateType;
-import ru.mk.pump.web.elements.internal.SetState;
-import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
 import ru.mk.pump.web.page.Page;
@@ -64,7 +61,7 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
 
     @Override
     public boolean isExpand() {
-        return getStateResolver().resolve(expandState(), 1000).result().getResult();
+        return !getItems().isEmpty() && getItems().get(0).isDisplayed(1000);
     }
 
     @Override
@@ -78,10 +75,6 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
             getExpandButton().click();
         }
         return this;
-    }
-
-    protected SetState expandState() {
-        return SetState.of(StateType.OTHER, State.of(StateType.OTHER, () -> !getItems().isEmpty()), displayed());
     }
 
     protected Clickable getExpandButton() {

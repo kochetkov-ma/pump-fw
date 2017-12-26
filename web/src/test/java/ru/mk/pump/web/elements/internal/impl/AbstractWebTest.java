@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
+import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.browsers.Browsers;
@@ -20,18 +21,20 @@ import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 
 @SuppressWarnings("WeakerAccess")
-public abstract class AbstractElementTest {
+public abstract class AbstractWebTest {
 
-    //private static final BrowserType BROWSER_TYPE = BrowserType.valueOf(EnvVariables.get("BROWSER", "PHANTOMJS"));
-    private static final BrowserType BROWSER_TYPE = BrowserType.CHROME;
+    private static final BrowserType BROWSER_TYPE = BrowserType.valueOf(EnvVariables.get("BROWSER", "PHANTOMJS"));
+    //private static final BrowserType BROWSER_TYPE = BrowserType.CHROME;
 
-    static Browsers browsers;
+    public static Browsers browsers;
 
-    protected Browser browser;
+    public Browser browser;
 
-    protected MainPage mainPage;
+    public MainPage mainPage;
 
-    protected RegPage regPage;
+    public RegPage regPage;
+
+    public static BrowserConfig config;
 
     @AfterAll
     public static void afterAll() {
@@ -40,6 +43,10 @@ public abstract class AbstractElementTest {
 
     @BeforeAll
     public static void beforeAll() {
+        config = new BrowserConfig(false, Size.of(true), BROWSER_TYPE);
+        if (BROWSER_TYPE != BrowserType.PHANTOMJS) {
+            config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
+        }
         browsers = new Browsers();
     }
 
@@ -113,8 +120,6 @@ public abstract class AbstractElementTest {
 
         private final DropDown dropDownRegions;
 
-        private final DropDown dropDownPages;
-
         private final Selector selectorProgram;
 
         private final Input inputSurname;
@@ -125,16 +130,11 @@ public abstract class AbstractElementTest {
             hiddenItems = new BaseElement(By.xpath(".//div[@class='items']"), browser);
             dropDownRegions = new DropDownImpl(By.id("regionAutocompleteId"), browser);
             selectorProgram = new SelectorImpl(By.id("apartmentTypeId"), browser);
-            dropDownPages = new DropDownImpl(By.tagName("select"), browser);
             inputDropDownRegions = new InputDropDownImpl(By.id("regionAutocompleteId"), browser);
         }
     }
 
-    private Browser createBrowser() {
-        final BrowserConfig config = new BrowserConfig(false, Size.of(true), BROWSER_TYPE);
-        if (BROWSER_TYPE != BrowserType.PHANTOMJS) {
-            config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
-        }
+    protected Browser createBrowser() {
         return browsers.newBrowser(config);
     }
 

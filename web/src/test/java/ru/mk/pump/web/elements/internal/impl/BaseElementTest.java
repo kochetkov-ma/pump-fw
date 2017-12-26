@@ -15,7 +15,7 @@ import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 import ru.mk.pump.web.exceptions.ElementStateException;
 
 @Slf4j
-public class BaseElementTest extends AbstractElementTest {
+public class BaseElementTest extends AbstractWebTest {
 
     @Override
     @BeforeEach

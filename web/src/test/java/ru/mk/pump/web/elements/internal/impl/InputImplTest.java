@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class InputImplTest extends AbstractElementTest{
+public class InputImplTest extends AbstractWebTest {
 
     @Override
     @BeforeEach

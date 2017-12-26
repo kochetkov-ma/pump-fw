@@ -11,18 +11,20 @@ import org.junit.jupiter.api.Test;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
+import ru.mk.pump.web.elements.internal.impl.AbstractWebTest;
 
 @Slf4j
-public class BrowsersTest {
-
-    private Browsers browsers;
-
-    private BrowserConfig config;
+public class BrowsersTest extends AbstractWebTest {
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         browsers = new Browsers();
-        config = new BrowserConfig(false, Size.of(true), BrowserType.CHROME);
+    }
+
+
+    @Override
+    public void tearDown() {
+        super.tearDown();
     }
 
     @Test
@@ -50,6 +52,7 @@ public class BrowsersTest {
         threadTwo.join();
         threadOne.join();
 
+        assertThat(browsers.getBrowsers().size()).isEqualTo(0);
         assertThat((List) FieldUtils.readField(browsers, "internalAllBrowsers", true)).hasSize(5);
     }
 
@@ -82,10 +85,5 @@ public class BrowsersTest {
 
     @Test
     public void closeCurrentThread() {
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        browsers.close();
     }
 }

@@ -17,10 +17,10 @@ import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.ElementConfig;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
-import ru.mk.pump.web.elements.internal.impl.AbstractElementTest;
+import ru.mk.pump.web.elements.internal.impl.AbstractWebTest;
 
 @Slf4j
-public class SubElementHelperTest extends AbstractElementTest {
+public class SubElementHelperTest extends AbstractWebTest {
 
     private TextArea parent;
 

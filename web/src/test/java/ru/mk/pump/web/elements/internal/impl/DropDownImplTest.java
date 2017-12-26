@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 
 @Slf4j
-class DropDownImplTest extends AbstractElementTest {
+class DropDownImplTest extends AbstractWebTest {
 
     @Override
     @BeforeEach
@@ -29,19 +29,15 @@ class DropDownImplTest extends AbstractElementTest {
 
     @Test
     void items() {
-        regPage.getDropDownRegions().getItems().forEach(i -> log.info(i.getTextHidden()));
-
-        regPage.getDropDownPages().getItems().forEach(i -> log.info(i.getTextHidden()));
+        Assertions.assertThat(regPage.getDropDownRegions().getItems()).hasSize(20);
     }
 
     @Test
     void isExpand() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 3;
         createPages(browser);
-
-        /*тэг select всегда развернут и его элементы видимы и по ним можно нормально кикать, хотя в браузере не рендерится ...*/
-        Assertions.assertThat(regPage.getDropDownPages().isExpand()).isTrue();
         Assertions.assertThat(regPage.getDropDownRegions().isExpand()).isFalse();
+        /*тэг select всегда развернут и его элементы видимы и по ним можно нормально кикать, хотя в браузере не рендерится ...*/
     }
 
     @Test
@@ -56,8 +52,5 @@ class DropDownImplTest extends AbstractElementTest {
     void expand() {
         regPage.getDropDownRegions().expand();
         Assertions.assertThat(regPage.getDropDownRegions().isExpand()).isTrue();
-
-        regPage.getDropDownPages().expand();
-        Assertions.assertThat(regPage.getDropDownPages().isExpand()).isTrue();
     }
 }

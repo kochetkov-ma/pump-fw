@@ -46,6 +46,9 @@ task clean(group: "build") {
 
         delete "${rootDir}/target"
         println "dir clean finish : ${rootDir}/target"
+
+        delete "${rootDir}/allure-results"
+        println "dir clean finish : ${rootDir}/allure-results"
     }
 }
 
@@ -65,6 +68,9 @@ subprojects {
 
         delete "${project.projectDir}/target"
         println "dir clean finish : ${project.projectDir}/target"
+
+        delete "${project.projectDir}/allure-results"
+        println "dir clean finish : ${project.projectDir}/allure-results"
     }
 
     junitPlatform {

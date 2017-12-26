@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.constants.ElementParams;
-import ru.mk.pump.web.elements.api.part.Editable;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
@@ -19,7 +18,7 @@ import ru.mk.pump.web.exceptions.ActionExecutingException;
 import ru.mk.pump.web.exceptions.SubElementsNotFoundException;
 
 @Slf4j
-class SelectorImplTest extends AbstractElementTest {
+class SelectorImplTest extends AbstractWebTest {
 
     @Override
     @BeforeEach
