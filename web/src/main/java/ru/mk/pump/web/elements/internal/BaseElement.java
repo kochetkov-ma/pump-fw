@@ -22,7 +22,7 @@ import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 /**
  * PUBLIC BASE IMPLEMENTATION InternalElement interface

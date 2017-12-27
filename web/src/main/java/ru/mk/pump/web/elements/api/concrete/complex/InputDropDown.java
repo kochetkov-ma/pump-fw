@@ -1,4 +1,7 @@
-package ru.mk.pump.web.elements.api.concrete;
+package ru.mk.pump.web.elements.api.concrete.complex;
+
+import ru.mk.pump.web.elements.api.concrete.DropDown;
+import ru.mk.pump.web.elements.api.concrete.Input;
 
 public interface InputDropDown extends Input, DropDown {
 

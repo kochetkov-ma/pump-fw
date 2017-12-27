@@ -1,6 +1,6 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 @SuppressWarnings("unused")
 public class PageException extends AbstractWebException {

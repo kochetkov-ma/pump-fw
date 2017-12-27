@@ -6,7 +6,7 @@ import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.elements.internal.Finder;
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 public interface InternalElement extends ElementAction, ElementState, Enumerated, StrictInfo {
 

@@ -3,7 +3,6 @@ package ru.mk.pump.web.elements.internal.impl;
 import com.google.common.collect.ImmutableMap;
 import java.util.List;
 import java.util.Map;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -11,10 +10,12 @@ import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
+import ru.mk.pump.web.elements.api.Complex;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.Input;
-import ru.mk.pump.web.elements.api.concrete.InputDropDown;
+import ru.mk.pump.web.elements.api.concrete.complex.Child;
+import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
 import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.BaseElement;
@@ -22,12 +23,11 @@ import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
 import ru.mk.pump.web.exceptions.ElementException;
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @Slf4j
-@ToString(exclude = {"loadIcon", "dropDown", "input"})
-public class InputDropDownImpl extends BaseElement implements InputDropDown {
+class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
 
     public final static By[] DEFAULT_LOAD_ICON = {};
 
@@ -35,17 +35,17 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
 
     public final static By[] DEFAULT_DROP_DOWN_BY = {By.xpath(".")};
 
-    private By[] inputBy = DEFAULT_INPUT_BY;
+    private final Child<Input> input;
 
-    private By[] dropDownBy = DEFAULT_DROP_DOWN_BY;
+    private final Child<DropDown> dropDown;
 
-    private By[] loadIconBy = DEFAULT_LOAD_ICON;
+    private final Child<Element> loadIcon;
 
-    private Element loadIcon;
-
-    private DropDown dropDown;
-
-    private Input input;
+    {
+        input = new Child<Input>(ElementParams.INPUTDROPDOWN_INPUT_BY, this).withDefaultBy(DEFAULT_INPUT_BY);
+        dropDown = new Child<DropDown>(ElementParams.INPUTDROPDOWN_DROPDOWN_BY, this).withDefaultBy(DEFAULT_DROP_DOWN_BY);
+        loadIcon = new Child<>(ElementParams.INPUTDROPDOWN_LOAD_BY, this).withDefaultBy(DEFAULT_LOAD_ICON);
+    }
 
     public InputDropDownImpl(By avatarBy, Page page) {
         super(avatarBy, page);
@@ -60,10 +60,19 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
     }
 
     @Override
+    public String toString() {
+        return "InputDropDownImpl(" +
+            "input=" + Strings.toString(input) +
+            ", dropDown=" + Strings.toString(dropDown) +
+            ", loadIcon=" + Strings.toString(loadIcon) +
+            ") " + super.toString();
+    }
+
+    @Override
     public String type(String... text) {
         final String oldItems = ((DropDownImpl) getDropDown()).getItemsTextFast();
         final String res = getInput().type(text);
-        if (hasLoadIcon()) {
+        if (loadIcon.isDefined()) {
             getLoadIcon().isDisplayed();
             getLoadIcon().isNotDisplayed();
         }
@@ -90,7 +99,7 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
                     return;
                 }
                 throw new IllegalArgumentException(
-                    String.format("Parameter '%s' is not instance of String.class or Integer.class", params.get(ElementParams.EDITABLE_SET)));
+                    String.format("FindByParameter '%s' is not instance of String.class or Integer.class", params.get(ElementParams.EDITABLE_SET)));
             }
         } else {
             if (params.get(ElementParams.INPUT_DROPDOWN_SET).isClass(String.class)) {
@@ -105,7 +114,7 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
                 return;
             }
             throw new IllegalArgumentException(
-                String.format("Parameter '%s' is not instance of String.class or Integer.class", params.get(ElementParams.EDITABLE_SET)));
+                String.format("FindByParameter '%s' is not instance of String.class or Integer.class", params.get(ElementParams.EDITABLE_SET)));
         }
         throw new IllegalArgumentException(String.format("Params map '%s' does not contains '%s'", Strings.toString(params), ElementParams.EDITABLE_SET));
     }
@@ -113,9 +122,11 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
     @Override
     protected void initFromParams() {
         super.initFromParams();
-        inputBy = Parameters.getOrDefault(getParams(), ElementParams.INPUTDROPDOWN_INPUT_BY, By[].class, inputBy);
-        dropDownBy = Parameters.getOrDefault(getParams(), ElementParams.INPUTDROPDOWN_DROPDOWN_BY, By[].class, dropDownBy);
-        loadIconBy = Parameters.getOrDefault(getParams(), ElementParams.INPUTDROPDOWN_LOAD_BY, By[].class, loadIconBy);
+    }
+
+    @Override
+    public String getText() {
+        return getInput().getText();
     }
 
     @Override
@@ -124,38 +135,35 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
     }
 
     @Override
+    public String getTextHidden() {
+        return getInput().getTextHidden();
+    }
+
+    @Override
     public Map<String, String> getInfo() {
         final Map<String, String> res = super.getInfo();
         res.put("drop down", Strings.toPrettyString(getDropDown().getInfo(), "drop down".length()));
         res.put("input", Strings.toPrettyString(getInput().getInfo(), "input".length()));
-        res.put("load icon", Strings.toString(loadIconBy));
+        res.put("load icon", Strings.toString(loadIcon));
         return res;
 
     }
 
     protected Element getLoadIcon() {
-        if (loadIcon == null) {
-            loadIcon = getSubElements(Element.class).find(loadIconBy);
-        }
-        return loadIcon;
+        return loadIcon.get(Element.class);
     }
 
     protected Input getInput() {
-        if (input == null) {
-            input = getSubElements(Input.class).find(inputBy);
-            ((BaseElement) input).withParams(getParams());
-        }
-        return input;
+        final Input res = input.get(Input.class);
+        ((BaseElement) res).withParams(getParams());
+        return res;
     }
 
     protected DropDown getDropDown() {
-        if (dropDown == null) {
-            dropDown = getSubElements(DropDown.class).find(dropDownBy);
-            ((DropDownImpl) dropDown).setStaticItems(false);
-            ((BaseElement) dropDown).withParams(getParams())
-                .withParams(ImmutableMap.of("beforeSelect", Parameter.of(Boolean.class, false)));
-        }
-        return dropDown;
+        final DropDown res = dropDown.get(DropDown.class);
+        ((DropDownImpl) res).setStaticItems(false);
+        ((BaseElement) res).withParams(getParams()).withParams(ImmutableMap.of("beforeSelect", Parameter.of(Boolean.class, false)));
+        return res;
     }
 
     @Override
@@ -225,24 +233,10 @@ public class InputDropDownImpl extends BaseElement implements InputDropDown {
         return State.of(StateType.OTHER, () -> !StringUtils.equalsIgnoreCase(((DropDownImpl) getDropDown()).getItemsTextFast(), oldItems));
     }
 
+
     private void checkItemsDisappear() {
         if (!isItemsDisappear()) {
             throw new ElementException("Items did not disappeared after selection").withTargetElement(this);
         }
     }
-
-    private boolean hasLoadIcon() {
-        return loadIconBy != null && loadIconBy.length > 0;
-    }
-
-    @Override
-    public String getText() {
-        return getInput().getText();
-    }
-
-    @Override
-    public String getTextHidden() {
-        return getInput().getTextHidden();
-    }
-
 }

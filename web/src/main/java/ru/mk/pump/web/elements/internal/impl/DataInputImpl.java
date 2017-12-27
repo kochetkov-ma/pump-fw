@@ -7,7 +7,7 @@ import ru.mk.pump.web.elements.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @FrameworkImpl

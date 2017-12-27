@@ -4,7 +4,7 @@ import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 
 public abstract class AbstractWebException extends PumpException {

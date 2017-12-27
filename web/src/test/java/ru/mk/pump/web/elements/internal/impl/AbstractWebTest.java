@@ -15,7 +15,7 @@ import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.Input;
-import ru.mk.pump.web.elements.api.concrete.InputDropDown;
+import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.api.concrete.Selector;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.ElementWaiter;

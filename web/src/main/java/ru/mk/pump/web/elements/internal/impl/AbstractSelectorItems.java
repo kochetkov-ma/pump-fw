@@ -21,9 +21,9 @@ import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
-import ru.mk.pump.web.elements.utils.Preconditions;
+import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.web.exceptions.SubElementsNotFoundException;
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 @SuppressWarnings("WeakerAccess")
 abstract class AbstractSelectorItems extends BaseElement implements SelectedItems {
@@ -103,7 +103,7 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
                 return;
             }
             throw new IllegalArgumentException(
-                String.format("Parameter '%s' is not instance of String.class or Integer.class", params.get(ElementParams.EDITABLE_SET)));
+                String.format("FindByParameter '%s' is not instance of String.class or Integer.class", params.get(ElementParams.EDITABLE_SET)));
         }
         throw new IllegalArgumentException(String.format("Params map '%s' does not contains '%s'", Strings.toString(params), ElementParams.EDITABLE_SET));
     }

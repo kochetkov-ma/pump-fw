@@ -28,7 +28,7 @@ import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFactoryException;
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 @SuppressWarnings({"unchecked", "unused", "WeakerAccess"})
 @ToString(exclude = {"elementImplDispatcher"})

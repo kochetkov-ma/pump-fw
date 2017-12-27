@@ -10,7 +10,7 @@ import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @FrameworkImpl

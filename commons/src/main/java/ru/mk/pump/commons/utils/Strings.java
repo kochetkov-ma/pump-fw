@@ -140,8 +140,19 @@ public class Strings {
         return ReflectionToStringBuilder.toString(object, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
-    public boolean isEmpty(String value) {
-        return com.google.common.base.Strings.isNullOrEmpty(value);
+    /**
+     * Check null or empty
+     * @return true if null or empty
+     */
+    public boolean isEmpty(@Nullable String value) {
+        return StringUtils.isEmpty(value);
     }
 
+    /**
+     * Check null or blank or only whitespace
+     * @return true if null or empty or only whitespace
+     */
+    public boolean isBlank(@Nullable String value) {
+        return StringUtils.isBlank(value);
+    }
 }

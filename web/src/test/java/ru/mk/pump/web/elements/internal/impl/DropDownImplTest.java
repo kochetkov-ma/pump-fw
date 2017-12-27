@@ -43,7 +43,6 @@ class DropDownImplTest extends AbstractWebTest {
     @Test
     void isNotExpand() {
         createPages(browser);
-
         Assertions.assertThat(regPage.getDropDownRegions().isNotExpand()).isTrue();
     }
 

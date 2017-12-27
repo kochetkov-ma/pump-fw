@@ -26,7 +26,6 @@ public enum StateType {
     OTHER(false, NOT_OTHER),
     OR_STATUS_UNION(false);
 
-
     @Getter
     private boolean not;
 

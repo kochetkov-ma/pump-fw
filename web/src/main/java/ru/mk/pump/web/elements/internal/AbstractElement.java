@@ -22,7 +22,7 @@ import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Xpath;
-import ru.mk.pump.web.page.Page;
+import ru.mk.pump.web.page.api.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue", "unchecked"})
 abstract class AbstractElement<CHILD> implements InternalElement {

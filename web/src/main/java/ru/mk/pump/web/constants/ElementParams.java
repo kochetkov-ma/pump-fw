@@ -5,6 +5,7 @@ import java.util.Map;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.text.WordUtils;
 import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
 
 @UtilityClass
@@ -36,7 +37,7 @@ public class ElementParams {
     public static final String EDITABLE_SET = "setValue";
 
     /**
-     * {@link ru.mk.pump.web.elements.api.concrete.InputDropDown#set(Map)}  parameter name to find item
+     * {@link InputDropDown#set(Map)}  parameter name to find item
      */
     public static final String INPUT_DROPDOWN_SET = "setItemValue";
 
