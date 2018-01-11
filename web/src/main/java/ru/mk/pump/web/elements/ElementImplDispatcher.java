@@ -24,17 +24,19 @@ import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.exception.PumpMessage;
-import ru.mk.pump.commons.interfaces.StrictInfo;
+import ru.mk.pump.commons.utils.ReflectionUtils;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.elements.annotations.FrameworkImpl;
+import ru.mk.pump.web.common.api.ImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
+import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
+import ru.mk.pump.web.elements.api.annotations.Requirements;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.exceptions.ElementDiscoveryException;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @ToString(of = {"DEFAULT_ANNOTATION_IMPL", "DEFAULT_PACKAGE_IMPL", "DEFAULT_PACKAGE_INTERFACE", "interfaceToImplMap"})
 @Slf4j
-public class ElementImplDispatcher implements StrictInfo {
+public class ElementImplDispatcher implements ImplDispatcher {
 
     private final static Class<? extends Annotation> DEFAULT_ANNOTATION_IMPL = FrameworkImpl.class;
 
@@ -53,9 +55,12 @@ public class ElementImplDispatcher implements StrictInfo {
         loadDefault();
     }
 
+    @Override
     public <R extends BaseElement> ElementImpl<R> findImplementation(@NotNull Class<? extends Element> elementInterface,
         @Nullable Set<Class<? extends Annotation>> requirements) {
-        return findByElementConfig(elementInterface, requirements);
+        final ElementImpl<R> result = findByElementConfig(elementInterface, requirements);
+        log.debug("[ElementImplDispatcher] find implementation for interface '{}' is '{}'", elementInterface, result);
+        return result;
     }
 
     public <T extends Element, V extends BaseElement> ElementImplDispatcher addImplementation(@NotNull Class<T> elementInterface,
@@ -91,12 +96,13 @@ public class ElementImplDispatcher implements StrictInfo {
         final Reflections reflectionsInterface = new Reflections((Object[]) DEFAULT_PACKAGE_INTERFACE);
         for (Class<? extends Element> aClass : reflectionsInterface.getSubTypesOf(Element.class)) {
             interfaceToImplMap.putAll(aClass, reflectionsImpl.getSubTypesOf(BaseElement.class).stream()
-                .filter(aClass::isAssignableFrom)
+                .filter(cls -> ReflectionUtils.hasInterfaceOrSuperclass(aClass, cls))
                 .map(item -> ElementImpl.of(item, null))
                 .collect(Collectors.toList())
             );
         }
         addImplementation(Element.class, ElementImpl.of(BaseElement.class, null));
+        log.debug("[ElementImplDispatcher] implementation load - success : {}", Strings.toPrettyString(getInfo()));
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -154,7 +160,9 @@ public class ElementImplDispatcher implements StrictInfo {
         Optional<ElementImpl<? extends BaseElement>> expectedImpl = Optional.empty();
         if (requirements != null && !requirements.isEmpty()) {
             expectedImpl = implementations.stream()
-                .filter(item -> requirements.stream().allMatch(an -> item.getImplementation().isAnnotationPresent(an)))
+                .filter(item -> requirements.stream()
+                    .filter(a -> a.isAnnotationPresent(Requirements.class))
+                    .allMatch(an -> item.getImplementation().isAnnotationPresent(an)))
                 .min(Comparator.comparingInt(e -> e.getImplementation().getAnnotations().length));
             if (!expectedImpl.isPresent()) {
                 log.warn("[ElementImplDispatcher] Cannot find implementation with all of this annotations '{}'", requirements);
@@ -169,7 +177,7 @@ public class ElementImplDispatcher implements StrictInfo {
         if (expectedImpl.isPresent()) {
             return (ElementImpl<R>) expectedImpl.orElseThrow(UnknownError::new);
         }
-        log.debug("[ElementImplDispatcher] Cannot find implementation with default annotation '{}'", DEFAULT_ANNOTATION_IMPL);
+        log.debug("[ElementImplDispatcher] Cannot find implementation of '{}' with default annotation '{}'", elementInterface, DEFAULT_ANNOTATION_IMPL);
         return (ElementImpl<R>) implementations.iterator().next();
     }
 }

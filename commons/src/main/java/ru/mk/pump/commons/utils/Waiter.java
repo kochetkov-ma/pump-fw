@@ -68,7 +68,7 @@ public class Waiter implements Cloneable {
     }
 
     /**
-     * Priority is greater than {@link #withIgnoreExceptions(Class)})
+     * Priority is greater than {@link #withIgnoreExceptions(Class)}
      */
     public Waiter withNotIgnoreExceptions(@NotNull Class<? extends Throwable> notIgnoringThrowable) {
         notIgnoringException.add(notIgnoringThrowable);

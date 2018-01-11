@@ -12,6 +12,7 @@ import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Complex;
 import ru.mk.pump.web.elements.api.Element;
+import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.complex.Child;
@@ -27,6 +28,7 @@ import ru.mk.pump.web.page.api.Page;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @Slf4j
+@FrameworkImpl
 class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
 
     public final static By[] DEFAULT_LOAD_ICON = {};

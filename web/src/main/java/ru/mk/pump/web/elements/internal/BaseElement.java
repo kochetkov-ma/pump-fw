@@ -15,6 +15,7 @@ import ru.mk.pump.commons.utils.BrowserScreenshoter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.common.pageobject.Initializer;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
@@ -44,6 +45,8 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     @Getter(AccessLevel.PROTECTED)
     private Verifier verifier;
+
+    private Initializer initializer;
 
     {
         initLocal();
@@ -238,15 +241,14 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         withVerifier(new Verifier(getReporter()));
     }
 
-    private ElementFactory getSubElementFactory() {
+    protected ElementFactory getSubElementFactory() {
         if (selfElementFactory == null) {
             if (getPage() != null) {
-                return new ElementFactory(new ElementImplDispatcher(), getPage());
+                selfElementFactory = new ElementFactory(new ElementImplDispatcher(), getPage());
             } else {
-                return new ElementFactory(new ElementImplDispatcher(), getBrowser());
+                selfElementFactory = new ElementFactory(new ElementImplDispatcher(), getBrowser());
             }
-        } else {
-            return selfElementFactory;
         }
+        return selfElementFactory;
     }
 }

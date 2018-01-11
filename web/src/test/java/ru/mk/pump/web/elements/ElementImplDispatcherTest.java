@@ -14,8 +14,9 @@ import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
-import ru.mk.pump.web.elements.annotations.Date;
-import ru.mk.pump.web.elements.annotations.FrameworkImpl;
+import ru.mk.pump.web.elements.api.annotations.Date;
+import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
+import ru.mk.pump.web.elements.api.annotations.Requirements;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.Image;
@@ -101,6 +102,7 @@ public class ElementImplDispatcherTest {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
+    @Requirements
     @interface ToTest {
 
     }

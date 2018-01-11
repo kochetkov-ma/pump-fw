@@ -61,7 +61,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     @Getter
     private String elementDescription = "empty (recommend to add)";
 
-    private Page page;
+    private final Page page;
 
     private int listIndex = -1;
 
@@ -80,12 +80,12 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     private AbstractElement(@NotNull By avatarBy, @Nullable InternalElement parentElement, @Nullable Browser browser, @Nullable Page page) {
         this.avatarBy = xpathAutoFix ? Xpath.fixIfXpath(avatarBy) : avatarBy;
-        this.page = page;
         this.parentElement = parentElement;
         if (parentElement != null) {
             this.page = parentElement.getPage();
             this.browser = parentElement.getBrowser();
         } else {
+            this.page = page;
             if (page != null) {
                 this.browser = page.getBrowser();
             } else {

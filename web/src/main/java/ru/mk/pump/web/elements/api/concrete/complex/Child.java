@@ -2,6 +2,7 @@ package ru.mk.pump.web.elements.api.concrete.complex;
 
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +14,7 @@ import ru.mk.pump.web.elements.utils.Parameters;
 
 @SuppressWarnings("WeakerAccess")
 @ToString(exclude = {"parentElement", "cache"})
+@Slf4j
 public class Child<T extends Element> {
 
     private final BaseElement parentElement;
@@ -44,8 +46,10 @@ public class Child<T extends Element> {
      * @return new child element
      */
     public T find(Class<T> childClass) {
+        log.trace("Child.find call : {}", childClass);
         cache = parentElement.getSubElements(childClass).find(extractBys());
         ((BaseElement) cache).withParams(parentElement.getParams());
+        log.trace("Child.find return : {}", cache.getClass());
         return cache;
     }
 
@@ -56,9 +60,12 @@ public class Child<T extends Element> {
      * @return new child element
      */
     public T get(Class<T> childClass) {
+        log.trace("Child.get call : {}", childClass);
         if (cache == null) {
+            log.trace("Child.get return : call #find");
             return find(childClass);
         }
+        log.trace("Child.get return from cache : {}", cache.getClass());
         return cache;
     }
 

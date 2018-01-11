@@ -16,7 +16,8 @@ ext {
             assertj     : "3.8.0",
             allureJunit4: "latest.release",
             junit5      : "latest.release",
-            mockito     : "2.+"
+            mockito     : "2.+",
+            trove       : "3.+"
     ]
 }
 
@@ -95,7 +96,9 @@ subprojects {
                 "ch.qos.logback:logback-classic:$versions.logger",
                 "ch.qos.logback:logback-core:$versions.logger",
                 "org.seleniumhq.selenium:selenium-java:$versions.selenium",
-                "io.qameta.allure:allure-java-commons:$versions.allure"
+                "io.qameta.allure:allure-java-commons:$versions.allure",
+                "net.sf.trove4j:trove4j:$versions.trove"
+
         )
 
         testCompileOnly('org.apiguardian:apiguardian-api:+')

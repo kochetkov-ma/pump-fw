@@ -1,4 +1,4 @@
-package ru.mk.pump.web.component.internal;
+package ru.mk.pump.web.common.pageobject;
 
 import com.google.common.collect.Maps;
 import ru.mk.pump.commons.activity.Parameter;
@@ -12,7 +12,7 @@ public abstract class ParameterTransformer<T, A extends Annotation> {
 
     protected abstract Parameter<T> getParameter(A annotation);
 
-    public Map.Entry<String, Parameter<T>> trasform(A annotation) {
+    Map.Entry<String, Parameter<T>> transform(A annotation) {
         return Maps.immutableEntry(getName(annotation), getParameter(annotation));
     }
 }

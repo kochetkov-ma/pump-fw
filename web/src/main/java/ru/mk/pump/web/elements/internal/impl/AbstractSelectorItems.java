@@ -5,6 +5,7 @@ import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
@@ -26,6 +27,7 @@ import ru.mk.pump.web.exceptions.SubElementsNotFoundException;
 import ru.mk.pump.web.page.api.Page;
 
 @SuppressWarnings("WeakerAccess")
+@Slf4j
 abstract class AbstractSelectorItems extends BaseElement implements SelectedItems {
 
     private static final String DEFAULT_SELECTED = "selected";
@@ -151,10 +153,13 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
     }
 
     public String getItemsTextFast() {
+        log.trace("AbstractSelectorItems.getItemsTextFast call");
         final List<Element> items = getItems();
         if (items.isEmpty()) {
+            log.trace("AbstractSelectorItems.getItemsTextFast return : ''");
             return "";
         }
+        log.trace("AbstractSelectorItems.getItemsTextFast return : call #getTextHidden");
         return items.get(0).getSubElements(Element.class).find(By.xpath("/../")).getTextHidden();
     }
 

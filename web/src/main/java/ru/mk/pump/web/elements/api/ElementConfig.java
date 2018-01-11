@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.activity.Parameter;
@@ -16,11 +17,10 @@ import ru.mk.pump.commons.utils.Verifier;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Getter
+@ToString
 public class ElementConfig {
 
     private Set<Class<? extends Annotation>> requirements = Sets.newHashSet();
-
-    private Set<Annotation> annotations = Sets.newHashSet();
 
     private Map<String, Parameter<?>> parameters = Maps.newHashMap();
 
@@ -33,10 +33,6 @@ public class ElementConfig {
     private Verifier verifier;
 
     private Reporter reporter;
-
-    public static ElementConfig of(String name, Annotation... annotations) {
-        return new ElementConfig().withName(name).withAnnotations(Arrays.asList(annotations));
-    }
 
     public static ElementConfig of(String name) {
         return new ElementConfig().withName(name);
@@ -53,16 +49,6 @@ public class ElementConfig {
 
     public ElementConfig addRequirement(@NotNull Class<? extends Annotation> requirement) {
         this.requirements.add(requirement);
-        return this;
-    }
-
-    public ElementConfig withAnnotations(@NotNull Collection<Annotation> annotations) {
-        this.annotations.addAll(annotations);
-        return this;
-    }
-
-    public ElementConfig addAnnotation(@NotNull Annotation annotation) {
-        this.annotations.add(annotation);
         return this;
     }
 

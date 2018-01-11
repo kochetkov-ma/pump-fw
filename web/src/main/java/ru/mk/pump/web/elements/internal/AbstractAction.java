@@ -44,6 +44,7 @@ abstract class AbstractAction<T> implements Action<T> {
     }
 
     WebElement getInteractElement() {
+
         return internalElement.getFinder().findFast().throwExceptionOnFail().getResult();
     }
 

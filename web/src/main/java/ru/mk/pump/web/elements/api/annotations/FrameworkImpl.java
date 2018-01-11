@@ -1,17 +1,19 @@
-package ru.mk.pump.web.elements.annotations;
+package ru.mk.pump.web.elements.api.annotations;
 
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.omg.CORBA.Object;
 
+/**
+ * Requirements Marker. Default element implementation from pump framework
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Date{
+@Requirements
+public @interface FrameworkImpl {
 
 }

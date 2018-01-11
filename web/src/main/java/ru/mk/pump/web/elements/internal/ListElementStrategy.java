@@ -1,14 +1,17 @@
 package ru.mk.pump.web.elements.internal;
 
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFinderException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 
+@Slf4j
 @SuppressWarnings("WeakerAccess")
 class ListElementStrategy extends FindStrategy {
 
@@ -45,10 +48,13 @@ class ListElementStrategy extends FindStrategy {
 
     protected List<WebElement> getList() {
         try {
-            return getTarget().getParent()
+            log.debug("Try to findElements for {}", getTarget());
+            final List<WebElement> webElements = getTarget().getParent()
                 .orElseThrow(() -> new ElementFinderNotFoundException("Cannot find parent element")
                     .withTargetElement(getTarget()))
                 .getFinder().get().findElements(getTarget().getBy());
+            log.debug("Result getList() : " + Strings.toPrettyString(webElements));
+            return webElements;
         } catch (StaleElementReferenceException ex) {
             getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
             throw ex;

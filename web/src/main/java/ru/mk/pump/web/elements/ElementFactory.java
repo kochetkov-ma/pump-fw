@@ -21,6 +21,7 @@ import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.common.api.ImplDispatcher;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.ElementConfig;
@@ -38,7 +39,7 @@ public class ElementFactory implements StrictInfo {
     private final Page page;
 
     @Getter
-    private final ElementImplDispatcher elementImplDispatcher;
+    private final ImplDispatcher elementImplDispatcher;
 
     @Getter
     private final Browser browser;
@@ -48,13 +49,13 @@ public class ElementFactory implements StrictInfo {
     private List<ActionListener> actionListeners = Lists.newArrayList();
 
     //region constructors
-    public ElementFactory(@NotNull ElementImplDispatcher elementImplDispatcher, @NotNull Page page) {
+    public ElementFactory(@NotNull ImplDispatcher elementImplDispatcher, @NotNull Page page) {
         this.elementImplDispatcher = elementImplDispatcher;
         this.page = page;
         this.browser = page.getBrowser();
     }
 
-    public ElementFactory(@NotNull ElementImplDispatcher elementImplDispatcher, @NotNull Browser browser) {
+    public ElementFactory(@NotNull ImplDispatcher elementImplDispatcher, @NotNull Browser browser) {
         this.elementImplDispatcher = elementImplDispatcher;
         this.browser = browser;
         this.page = null;
@@ -76,8 +77,8 @@ public class ElementFactory implements StrictInfo {
         this.actionListeners.addAll(actionListener);
         return this;
     }
-    //endregion
 
+    //endregion
     public <R extends Element> R newElement(@NotNull Class<R> interfaceClass, @NotNull By by, @NotNull ElementConfig elementConfig) {
         final ElementImpl<? extends BaseElement> elementImplClass = elementImplDispatcher.findImplementation(interfaceClass, getRequirements(elementConfig));
         try {
@@ -91,7 +92,11 @@ public class ElementFactory implements StrictInfo {
                 return (R) fillElement(constructor.newInstance(by, page), elementConfig);
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassCastException ex) {
-            throw new ElementFactoryException(new PumpMessage("Error element builder").addExtraInfo(getInfo()), ex);
+            throw new ElementFactoryException(new PumpMessage(String
+                .format("Error when try to creating element with interface '%s'", interfaceClass.getCanonicalName()))
+                .addExtraInfo("by", Strings.toString(by))
+                .addExtraInfo("elementConfig", Strings.toString(elementConfig))
+                .addExtraInfo("factory", this), ex);
         }
     }
 
@@ -104,7 +109,12 @@ public class ElementFactory implements StrictInfo {
             constructor.setAccessible(true);
             return (R) fillElement(constructor.newInstance(by, (InternalElement) parent), elementConfig);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassCastException ex) {
-            throw new ElementFactoryException(new PumpMessage("Error element builder").addExtraInfo(getInfo()), ex);
+            throw new ElementFactoryException(new PumpMessage(String
+                .format("Error when try to creating element with interface '%s'", interfaceClass.getCanonicalName()))
+                .addExtraInfo("by", Strings.toString(by))
+                .addExtraInfo("elementConfig", Strings.toString(elementConfig))
+                .addExtraInfo("factory", this)
+                .addExtraInfo("parent", parent), ex);
         }
     }
 
@@ -112,16 +122,16 @@ public class ElementFactory implements StrictInfo {
     public Map<String, String> getInfo() {
         final LinkedHashMap<String, String> res = Maps.newLinkedHashMap();
         if (browser != null) {
-            res.put("browser", browser.toString());
+            res.put("browser", browser.getId());
         }
         if (page != null) {
-            res.put("page", page.toString());
+            res.put("page", page.getName());
         }
         if (!requirements.isEmpty()) {
             res.put("requirements", Strings.toPrettyString(requirements));
         }
         res.put("actionListeners", String.valueOf(actionListeners.size()));
-        res.putAll(elementImplDispatcher.getInfo());
+        res.put("impl dispatcher", Strings.toPrettyString(elementImplDispatcher.getInfo()));
         return res;
     }
 

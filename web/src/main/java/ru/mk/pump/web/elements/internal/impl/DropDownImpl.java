@@ -3,7 +3,7 @@ package ru.mk.pump.web.elements.internal.impl;
 import org.openqa.selenium.By;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
-import ru.mk.pump.web.elements.annotations.FrameworkImpl;
+import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.part.Clickable;

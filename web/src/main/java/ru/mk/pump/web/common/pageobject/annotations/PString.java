@@ -1,9 +1,10 @@
-package ru.mk.pump.web.component.annotations;
+package ru.mk.pump.web.common.pageobject.annotations;
 
 import ru.mk.pump.commons.activity.Parameter;
-import ru.mk.pump.web.component.internal.ParameterTransformer;
+import ru.mk.pump.web.common.pageobject.ParameterTransformer;
 
 import java.lang.annotation.*;
+import ru.mk.pump.web.common.pageobject.ParameterTransformerAnnotation;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
