@@ -2,7 +2,6 @@ package ru.mk.pump.web.page;
 
 import java.util.List;
 import lombok.Getter;
-import lombok.ToString;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,8 +14,12 @@ import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
+import ru.mk.pump.web.common.api.annotations.PFindBy;
+import ru.mk.pump.web.common.api.annotations.PFindBys;
+import ru.mk.pump.web.common.api.annotations.PString;
+import ru.mk.pump.web.common.api.annotations.PStrings;
+import ru.mk.pump.web.common.api.annotations.Title;
 import ru.mk.pump.web.component.BaseComponent;
-import ru.mk.pump.web.elements.api.annotations.Title;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
@@ -71,7 +74,7 @@ public abstract class AbstractPageTest {
     public static class RegPage extends BasePage {
 
         @FindBy(tagName = "h1")
-        @Title("Заголовок")
+        @Title(value = "Заголовок", desc = "Главный заголовок страницы")
         @Getter
         private TextArea pageTitle;
 
@@ -120,6 +123,15 @@ public abstract class AbstractPageTest {
         private TextArea header;
 
         @FindBy(id = "regionAutocompleteId")
+        @PStrings({
+            @PString(name = "testParam1", value = "paramValue1"),
+            @PString(name = "testParam2", value = "paramValue2")
+        })
+        @PFindBys({
+            @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
+            @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
+            @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
+        })
         @Getter
         private InputDropDown inputDropDownRegions;
 

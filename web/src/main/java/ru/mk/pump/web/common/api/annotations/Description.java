@@ -1,4 +1,4 @@
-package ru.mk.pump.web.elements.api.annotations;
+package ru.mk.pump.web.common.api.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

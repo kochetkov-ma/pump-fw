@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
@@ -19,15 +20,19 @@ import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
 import ru.mk.pump.web.elements.internal.ActionFactory;
 import ru.mk.pump.web.elements.internal.BaseElement;
+import ru.mk.pump.web.elements.internal.DocParameters;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
-import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.web.exceptions.SubElementsNotFoundException;
 import ru.mk.pump.web.page.api.Page;
 
+/**
+ * {@inheritDoc}
+ */
 @SuppressWarnings("WeakerAccess")
 @Slf4j
+@DocParameters({ElementParams.SELECTED_CONDITION, ElementParams.SELECTED_STRATEGY, ElementParams.STATIC_ITEMS})
 abstract class AbstractSelectorItems extends BaseElement implements SelectedItems {
 
     private static final String DEFAULT_SELECTED = "selected";

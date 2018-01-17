@@ -47,6 +47,11 @@ public class ElementParams {
     public static final String DROPDOWN_EXPAND_BY = "extraBy";
 
     /**
+     * parameter is {@link String} in DropDownImpl. Internal usage
+     */
+    public static final String DROPDOWN_BEFORE_SELECT = "beforeSelect";
+
+    /**
      * parameter is {@link org.openqa.selenium.By} in BaseElement
      */
     public static final String BASE_EXTRA_BY = "extraBy";

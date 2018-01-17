@@ -30,6 +30,7 @@ import ru.mk.pump.web.page.api.Page;
  */
 @SuppressWarnings("unused")
 @Slf4j
+@DocParameters({ElementParams.BASE_EXTRA_BY})
 public class BaseElement extends AbstractElement<BaseElement> implements Element {
 
     private final Map<String, Parameter<?>> elementParams = Maps.newHashMap();
@@ -78,6 +79,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
      * init extra by field from params or null. param name is {@link ElementParams#BASE_EXTRA_BY}
      */
     protected void initFromParams() {
+
         extraBy = Parameters.getOrDefault(getParams(), ElementParams.BASE_EXTRA_BY, By[].class, extraBy);
     }
 

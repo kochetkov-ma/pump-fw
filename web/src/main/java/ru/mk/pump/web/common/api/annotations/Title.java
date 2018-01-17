@@ -1,4 +1,4 @@
-package ru.mk.pump.web;
+package ru.mk.pump.web.common.api.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -13,4 +13,6 @@ import java.lang.annotation.Target;
 public @interface Title {
 
     String value() default "";
+
+    String desc() default "";
 }

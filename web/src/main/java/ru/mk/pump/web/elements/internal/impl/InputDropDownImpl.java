@@ -20,6 +20,7 @@ import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
 import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.BaseElement;
+import ru.mk.pump.web.elements.internal.DocParameters;
 import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
@@ -29,6 +30,7 @@ import ru.mk.pump.web.page.api.Page;
 @SuppressWarnings({"WeakerAccess", "unused"})
 @Slf4j
 @FrameworkImpl
+@DocParameters({ElementParams.INPUTDROPDOWN_INPUT_BY, ElementParams.INPUTDROPDOWN_DROPDOWN_BY, ElementParams.INPUTDROPDOWN_LOAD_BY})
 class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
 
     public final static By[] DEFAULT_LOAD_ICON = {};
@@ -119,11 +121,6 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
                 String.format("FindByParameter '%s' is not instance of String.class or Integer.class", params.get(ElementParams.EDITABLE_SET)));
         }
         throw new IllegalArgumentException(String.format("Params map '%s' does not contains '%s'", Strings.toString(params), ElementParams.EDITABLE_SET));
-    }
-
-    @Override
-    protected void initFromParams() {
-        super.initFromParams();
     }
 
     @Override

@@ -2,6 +2,7 @@ package ru.mk.pump.commons.activity;
 
 
 import java.util.function.Function;
+import ru.mk.pump.commons.utils.Strings;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class Parameter<T> {
@@ -89,7 +90,7 @@ public final class Parameter<T> {
     @Override
     public String toString() {
         return "Parameter(tClass=" + tClass.getSimpleName()
-            + ", value=" + value
+            + ", value=" + Strings.toString(value)
             + ", stringValue='" + stringValue + '\''
             + ')';
     }

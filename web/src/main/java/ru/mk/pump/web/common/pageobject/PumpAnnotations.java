@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.support.pagefactory.Annotations;
 import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.web.common.api.ParameterTransformer;
+import ru.mk.pump.web.common.api.annotations.Title;
 import ru.mk.pump.web.elements.api.annotations.Requirements;
 
 @Slf4j
@@ -23,7 +25,7 @@ class PumpAnnotations extends Annotations {
     @NotNull Map<String, Parameter<?>> buildParameters() {
         final Map<String, Parameter<?>> parameters = Maps.newHashMap();
 
-        for (Annotation annotation : getField().getDeclaredAnnotations()) {
+        for (Annotation annotation : getField().getAnnotations()) {
             if (annotation.annotationType().isAnnotationPresent(ParameterTransformerAnnotation.class)) {
                 try {
                     final ParameterTransformer parameterBuilder = annotation.annotationType()
@@ -31,7 +33,7 @@ class PumpAnnotations extends Annotations {
                         .newInstance();
                     if (parameterBuilder != null) {
                         //noinspection unchecked
-                        parameters.entrySet().add(parameterBuilder.transform(annotation));
+                        parameters.putAll(parameterBuilder.transform(annotation));
                     } else {
                         log.error("Cannot find parameter transformer for annotation '{}' and field '{}'", annotation, getField());
                     }
@@ -46,10 +48,16 @@ class PumpAnnotations extends Annotations {
     }
 
     @NotNull String getName() {
+        if (getField().isAnnotationPresent(Title.class)){
+            return getField().getAnnotation(Title.class).value();
+        }
         return "";
     }
 
     @NotNull String getDescription() {
+        if (getField().isAnnotationPresent(Title.class)){
+            return getField().getAnnotation(Title.class).desc();
+        }
         return "";
     }
 

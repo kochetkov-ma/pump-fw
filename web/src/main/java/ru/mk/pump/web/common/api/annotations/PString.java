@@ -1,14 +1,14 @@
-package ru.mk.pump.web.common.pageobject.annotations;
+package ru.mk.pump.web.common.api.annotations;
 
 import ru.mk.pump.commons.activity.Parameter;
-import ru.mk.pump.web.common.pageobject.ParameterTransformer;
+import ru.mk.pump.web.common.pageobject.SingleParameterTransformer;
 
 import java.lang.annotation.*;
 import ru.mk.pump.web.common.pageobject.ParameterTransformerAnnotation;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.FIELD, ElementType.TYPE})
 @ParameterTransformerAnnotation(PString.StringParameterTransformer.class)
 public @interface PString {
 
@@ -16,7 +16,7 @@ public @interface PString {
 
     String value();
 
-    class StringParameterTransformer extends ParameterTransformer<String, PString> {
+    class StringParameterTransformer extends SingleParameterTransformer<String, PString> {
 
         @Override
         public String getName(PString annotation) {

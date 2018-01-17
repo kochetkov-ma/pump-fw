@@ -75,6 +75,7 @@ class ActionsStore {
     Action<String> inputAction(CharSequence... keysToSend) {
         return actions.newAction(webElement -> {
             webElement.sendKeys(keysToSend);
+            //TODO: Добавить возможность отключения возврата введенного текста для ускорения
             return element.getActionExecutor().execute(element.getTextAction().withStrategy(ActionStrategy.SIMPLE));
         }, format("Set text '%s'", String.join("_", keysToSend)));
     }

@@ -6,6 +6,7 @@ import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.internal.BaseElement;
+import ru.mk.pump.web.elements.internal.DocParameters;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
 

@@ -3,17 +3,22 @@ package ru.mk.pump.web.elements.internal.impl;
 import org.openqa.selenium.By;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
-import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.Element;
+import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
+import ru.mk.pump.web.elements.internal.DocParameters;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
 import ru.mk.pump.web.page.api.Page;
 
+/**
+ * {@inheritDoc}
+ */
 @SuppressWarnings({"WeakerAccess", "unused"})
 @FrameworkImpl
+@DocParameters({ElementParams.DROPDOWN_EXPAND_BY, ElementParams.DROPDOWN_BEFORE_SELECT})
 class DropDownImpl extends AbstractSelectorItems implements DropDown {
 
     private static final By[] DEFAULT_EXPAND_BY = {By.xpath("//i[contains(@class,chevron)]"), By.xpath(".")};
@@ -40,7 +45,7 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
     protected void initFromParams() {
         super.initFromParams();
         expandBy = Parameters.getOrDefault(getParams(), ElementParams.DROPDOWN_EXPAND_BY, By[].class, expandBy);
-        beforeSelect = Parameters.getOrDefault(getParams(), "beforeSelect", Boolean.class, beforeSelect);
+        beforeSelect = Parameters.getOrDefault(getParams(), ElementParams.DROPDOWN_BEFORE_SELECT, Boolean.class, beforeSelect);
     }
 
     @Override
