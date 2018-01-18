@@ -123,6 +123,7 @@ public abstract class AbstractPageTest {
         private TextArea header;
 
         @FindBy(id = "regionAutocompleteId")
+        @Title(value = "Регион", desc = "Выбор региона из выпадающего списка")
         @PStrings({
             @PString(name = "testParam1", value = "paramValue1"),
             @PString(name = "testParam2", value = "paramValue2")
@@ -130,6 +131,22 @@ public abstract class AbstractPageTest {
         @PFindBys({
             @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
             @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
+            @PFindBy(name = "iddLoadBy", value = {@FindBy(tagName = "input")}),
+            @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
+        })
+        @Getter
+        private InputDropDown inputDropDownRegionsFail;
+
+        @FindBy(id = "regionAutocompleteId")
+        @Title(value = "Регион", desc = "Выбор региона из выпадающего списка")
+        @PStrings({
+            @PString(name = "testParam1", value = "paramValue1"),
+            @PString(name = "testParam2", value = "paramValue2")
+        })
+        @PFindBys({
+            @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
+            @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
+            //@PFindBy(name = "iddLoadBy", value = {@FindBy(tagName = "input")}),
             @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
         })
         @Getter

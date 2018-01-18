@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
@@ -16,13 +15,12 @@ import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.common.pageobject.Initializer;
-import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
+import ru.mk.pump.web.elements.internal.interfaces.ElementInfo;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.elements.utils.Parameters;
 import ru.mk.pump.web.page.api.Page;
 
 /**
@@ -30,14 +28,9 @@ import ru.mk.pump.web.page.api.Page;
  */
 @SuppressWarnings("unused")
 @Slf4j
-@DocParameters({ElementParams.BASE_EXTRA_BY})
 public class BaseElement extends AbstractElement<BaseElement> implements Element {
 
     private final Map<String, Parameter<?>> elementParams = Maps.newHashMap();
-
-    @Getter(AccessLevel.PROTECTED)
-    @Setter(AccessLevel.PROTECTED)
-    private By[] extraBy = new By[0];
 
     private ElementFactory selfElementFactory;
 
@@ -76,11 +69,20 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     /**
-     * init extra by field from params or null. param name is {@link ElementParams#BASE_EXTRA_BY}
+     * Init all parameters:
+     * <ul>
+     *     <li>init field like : {@code private final By[] fieldParam}</li>
+     *     <li>override this method in your subclass</li>
+     *     <li>read parameter and write to the field in method body like :
+     *     {@code fieldParam = Parameters.getOrDefault(getParams(), ElementParams.PARAMETER_NAME, By[].class, fieldParam)}</li>
+     *     <li>do not forget to call super : {@code super.initFromParams()}</li>
+     *     <li>do this in all subclass with parameters</li>
+     * </ul>
      */
     protected void initFromParams() {
-
-        extraBy = Parameters.getOrDefault(getParams(), ElementParams.BASE_EXTRA_BY, By[].class, extraBy);
+        /*
+         * init class fields fom parameter value
+         */
     }
 
     public BaseElement withVerifier(@Nullable Verifier verifier) {
@@ -115,6 +117,16 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     @Override
     public void click() {
         getActionExecutor().execute(getClickAction());
+    }
+
+    @Override
+    public ElementInfo info() {
+        return this;
+    }
+
+    @Override
+    public InternalElement advanced() {
+        return this;
     }
 
     @Override

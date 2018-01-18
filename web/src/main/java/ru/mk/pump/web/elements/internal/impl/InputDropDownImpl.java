@@ -76,10 +76,7 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     public String type(String... text) {
         final String oldItems = ((DropDownImpl) getDropDown()).getItemsTextFast();
         final String res = getInput().type(text);
-        if (loadIcon.isDefined()) {
-            getLoadIcon().isDisplayed();
-            getLoadIcon().isNotDisplayed();
-        }
+        checkLoadIconFlow(loadIcon);
         if (!isChanged(oldItems)) {
             getReporter().warn(String.format("InputDropDown items did not changed after type text '%s'", Strings.toString(text)),
                 "OLD ITEMS : " + oldItems + System.lineSeparator() + "CURRENT ITEMS : " + ((DropDownImpl) getDropDown()).getItemsTextFast()
@@ -148,20 +145,24 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
 
     }
 
-    protected Element getLoadIcon() {
-        return loadIcon.get(Element.class);
-    }
-
     protected Input getInput() {
         final Input res = input.get(Input.class);
+        //TODO::Удалить?
+        /* Безконтрольное использование параметров, которые предназначены только для главного элемента
         ((BaseElement) res).withParams(getParams());
+        */
         return res;
     }
 
     protected DropDown getDropDown() {
         final DropDown res = dropDown.get(DropDown.class);
         ((DropDownImpl) res).setStaticItems(false);
-        ((BaseElement) res).withParams(getParams()).withParams(ImmutableMap.of("beforeSelect", Parameter.of(Boolean.class, false)));
+        ((BaseElement) res)
+            //TODO::Удалить?
+            /* Безконтрольное использование параметров, которые предназначены только для главного элемента
+            .withParams(getParams())
+            */
+            .withParams(ImmutableMap.of("beforeSelect", Parameter.of(Boolean.class, false)));
         return res;
     }
 
@@ -228,10 +229,24 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
         return getStateResolver().resolve(itemsIsChangedOrEmpty(oldItems), 1000).result().isSuccess();
     }
 
+    protected void checkLoadIconFlow(Child<Element> loadIcon) {
+        //TODO:Сделать настраиваемым
+        if (loadIcon.isDefined()) {
+            final Element element = loadIcon.get(Element.class);
+            /*строгая проверка*/
+            element.advanced().getStateResolver().resolve(element.advanced().displayed(), 1).result().throwExceptionOnFail();
+            element.advanced().getStateResolver().resolve(element.advanced().notDisplayed(), 1).result().throwExceptionOnFail();
+            /*НЕ строгая проверка*/
+            /*
+            loadIcon.get(Element.class).isDisplayed(1);
+            loadIcon.get(Element.class).isNotDisplayed(1);
+            */
+        }
+    }
+
     protected State itemsIsChangedOrEmpty(String oldItems) {
         return State.of(StateType.OTHER, () -> !StringUtils.equalsIgnoreCase(((DropDownImpl) getDropDown()).getItemsTextFast(), oldItems));
     }
-
 
     private void checkItemsDisappear() {
         if (!isItemsDisappear()) {

@@ -34,7 +34,8 @@ public class SubElementHelper<T extends Element> {
     private final ElementConfig elementConfig;
 
     protected SubElementHelper(Class<T> subElementClass, BaseElement parent, ElementFactory elementFactory) {
-        this(subElementClass, parent, elementFactory, ElementConfig.of(Strings.space("sub-element of", parent.getName())));
+        this(subElementClass, parent, elementFactory,
+            ElementConfig.of(Strings.space("sub-element of", parent.getName()), Strings.space("sub-element of", parent.getDescription())));
     }
 
     protected SubElementHelper(Class<T> subElementClass, BaseElement parent, ElementFactory elementFactory, ElementConfig elementConfig) {

@@ -53,16 +53,16 @@ class ElementFactoryTest {
         final Button button = elementFactory.newElement(Button.class, by, config);
         assertThat(button).isNotNull();
         assertThat(((BaseElement) button).getParams()).isEqualTo(param);
-        assertThat(button.getName()).isEqualTo("Тестовый элемент");
-        assertThat(button.getDescription()).isEqualTo("Для юнит теста");
-        assertThat(button.getName()).isEqualTo("Тестовый элемент");
+        assertThat(button.info().getName()).isEqualTo("Тестовый элемент");
+        assertThat(button.info().getDescription()).isEqualTo("Для юнит теста");
+        assertThat(button.info().getName()).isEqualTo("Тестовый элемент");
 
         final DropDown dropDown = elementFactory.newElement(DropDown.class, by, config);
         assertThat(dropDown).isNotNull();
         assertThat(((BaseElement) dropDown).getParams()).isEqualTo(param);
-        assertThat(dropDown.getName()).isEqualTo("Тестовый элемент");
-        assertThat(dropDown.getDescription()).isEqualTo("Для юнит теста");
-        assertThat(dropDown.getName()).isEqualTo("Тестовый элемент");
+        assertThat(dropDown.info().getName()).isEqualTo("Тестовый элемент");
+        assertThat(dropDown.info().getDescription()).isEqualTo("Для юнит теста");
+        assertThat(dropDown.info().getName()).isEqualTo("Тестовый элемент");
         assertThat(dropDown).isNotNull();
     }
 
@@ -81,19 +81,19 @@ class ElementFactoryTest {
         final TextArea parent = elementFactory.newElement(TextArea.class, byParent, configParent.withIndex(1));
         assertThat(parent).isInstanceOf(TextArea.class);
         assertThat(((BaseElement) parent).getParams()).isEqualTo(param);
-        assertThat(parent.getName()).isEqualTo("Тестовый элемент");
-        assertThat(parent.getDescription()).isEqualTo("Для юнит теста");
-        assertThat(parent.getName()).isEqualTo("Тестовый элемент");
-        assertThat(parent.isList()).isTrue();
-        assertThat(parent.getIndex()).isEqualTo(1);
+        assertThat(parent.info().getName()).isEqualTo("Тестовый элемент");
+        assertThat(parent.info().getDescription()).isEqualTo("Для юнит теста");
+        assertThat(parent.info().getName()).isEqualTo("Тестовый элемент");
+        assertThat(parent.advanced().isList()).isTrue();
+        assertThat(parent.advanced().getIndex()).isEqualTo(1);
 
         final Button button = elementFactory.newElement(Button.class, byChild, parent, configChild);
         assertThat(button).isInstanceOf(Button.class);
         assertThat(((BaseElement) button).getParams()).isEqualTo(param);
-        assertThat(button.getName()).isEqualTo("Тестовый элемент");
-        assertThat(button.getDescription()).isEqualTo("Для юнит теста");
-        assertThat(button.getName()).isEqualTo("Тестовый элемент");
-        assertThat(button.isList()).isFalse();
-        assertThat(button.getIndex()).isEqualTo(-1);
+        assertThat(button.info().getName()).isEqualTo("Тестовый элемент");
+        assertThat(button.info().getDescription()).isEqualTo("Для юнит теста");
+        assertThat(button.info().getName()).isEqualTo("Тестовый элемент");
+        assertThat(button.advanced().isList()).isFalse();
+        assertThat(button.advanced().getIndex()).isEqualTo(-1);
     }
 }

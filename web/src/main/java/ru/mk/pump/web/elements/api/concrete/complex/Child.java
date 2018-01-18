@@ -48,7 +48,10 @@ public class Child<T extends Element> {
     public T find(Class<T> childClass) {
         log.trace("Child.find call : {}", childClass);
         cache = parentElement.getSubElements(childClass).find(extractBys());
+        //TODO::Удалить?
+        /* Безконтрольное использование параметров, которые предназначены только для главного элемента
         ((BaseElement) cache).withParams(parentElement.getParams());
+        */
         log.trace("Child.find return : {}", cache.getClass());
         return cache;
     }

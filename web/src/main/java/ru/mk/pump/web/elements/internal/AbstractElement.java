@@ -39,7 +39,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     private final InternalElement parentElement;
 
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private final ActionExecutor actionExecutor;
 
     @Getter
@@ -222,10 +222,13 @@ abstract class AbstractElement<CHILD> implements InternalElement {
             .withName("JS is completed");
     }
 
+    @Override
     public State notExists() {
-        return State.of(StateType.EXISTS.not(), () -> !getFinder().findFast().isSuccess(), TEAR_DOWN).withName("Not Exists in DOM");
+        return State.of(StateType.EXISTS.not(), () -> !getFinder().findFast().isSuccess(), TEAR_DOWN).withName("Not Exists in DOM")
+            .withName("Not Exists Or Not Displayed");
     }
 
+    @Override
     public SetState notDisplayed() {
         return (SetState) SetState.of(StateType.DISPLAYED.not(), notExists(), State.of(StateType.SELENIUM_DISPLAYED.not(), () -> {
             final WaitResult<WebElement> res = getFinder().findFast();
@@ -233,6 +236,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         }, TEAR_DOWN)).withName("Not Exists Or Not Displayed");
     }
 
+    @Override
     public SetState notEnabled() {
         return (SetState) SetState.of(StateType.ENABLED.not(), notExists(), State.of(StateType.SELENIUM_ENABLED.not(), () -> {
             final WaitResult<WebElement> res = getFinder().findFast();

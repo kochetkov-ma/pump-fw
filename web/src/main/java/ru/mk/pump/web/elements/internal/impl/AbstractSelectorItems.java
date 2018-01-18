@@ -32,7 +32,7 @@ import ru.mk.pump.web.page.api.Page;
  */
 @SuppressWarnings("WeakerAccess")
 @Slf4j
-@DocParameters({ElementParams.SELECTED_CONDITION, ElementParams.SELECTED_STRATEGY, ElementParams.STATIC_ITEMS})
+@DocParameters({ElementParams.SELECTED_CONDITION, ElementParams.SELECTED_STRATEGY, ElementParams.SELECTOR_ITEMS_BY, ElementParams.SELECTOR_STATIC_ITEMS})
 abstract class AbstractSelectorItems extends BaseElement implements SelectedItems {
 
     private static final String DEFAULT_SELECTED = "selected";
@@ -62,9 +62,9 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
     @Setter(AccessLevel.PROTECTED)
     private Boolean staticItems = true;
 
-    {
-        setExtraBy(DEFAULT_ITEMS_BY);
-    }
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
+    private By[] itemsBy = DEFAULT_ITEMS_BY;
 
     public AbstractSelectorItems(By avatarBy, Page page) {
         super(avatarBy, page);
@@ -83,7 +83,8 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
         super.initFromParams();
         selectedCondition = Parameters.getOrDefault(getParams(), ElementParams.SELECTED_CONDITION, Parameter::asString, selectedCondition);
         selectedStrategy = Parameters.getOrDefault(getParams(), ElementParams.SELECTED_STRATEGY, SelectedStrategy.class, selectedStrategy);
-        staticItems = Parameters.getOrDefault(getParams(), ElementParams.STATIC_ITEMS, Boolean.class, staticItems);
+        staticItems = Parameters.getOrDefault(getParams(), ElementParams.SELECTOR_STATIC_ITEMS, Boolean.class, staticItems);
+        itemsBy = Parameters.getOrDefault(getParams(), ElementParams.SELECTOR_ITEMS_BY, By[].class, itemsBy);
     }
 
     protected boolean find(Element element, @NotNull String text) {
@@ -170,9 +171,9 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
 
     public void refreshItemsCache() {
         if (itemsByCache == null) {
-            itemsCache = getSubElements(Element.class).findList(getExtraBy());
+            itemsCache = getSubElements(Element.class).findList(getItemsBy());
             if (!itemsCache.isEmpty()) {
-                itemsByCache = itemsCache.get(0).getBy();
+                itemsByCache = itemsCache.get(0).advanced().getBy();
             }
         } else {
             itemsCache = getSubElements(Element.class).findList(itemsByCache);

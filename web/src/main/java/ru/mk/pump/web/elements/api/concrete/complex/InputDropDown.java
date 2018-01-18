@@ -9,10 +9,12 @@ import ru.mk.pump.web.elements.internal.DocParameters;
     ElementParams.INPUTDROPDOWN_INPUT_BY,
     ElementParams.INPUTDROPDOWN_DROPDOWN_BY,
     ElementParams.INPUTDROPDOWN_LOAD_BY,
-    ElementParams.BASE_EXTRA_BY,
-    ElementParams.BASE_EXTRA_BY,
     ElementParams.DROPDOWN_EXPAND_BY,
-    ElementParams.DROPDOWN_BEFORE_SELECT
+    ElementParams.DROPDOWN_BEFORE_SELECT,
+    ElementParams.SELECTOR_STATIC_ITEMS,
+    ElementParams.SELECTOR_ITEMS_BY,
+    ElementParams.SELECTED_CONDITION,
+    ElementParams.SELECTED_STRATEGY
 })
 public interface InputDropDown extends Input, DropDown {
 

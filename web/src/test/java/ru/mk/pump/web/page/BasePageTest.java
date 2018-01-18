@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.internal.BaseElement;
+import ru.mk.pump.web.exceptions.ElementStateException;
 
 @Slf4j
 class BasePageTest extends AbstractPageTest {
@@ -31,11 +31,16 @@ class BasePageTest extends AbstractPageTest {
         page.initAllElements();
         page.open();
 
-        log.info(page.getPageTitle().getName());
-        log.info(page.getPageTitle().getDescription());
+        assertThat(page.getPageTitle().info().getName()).isEqualTo("Заголовок");
+        assertThat(page.getPageTitle().info().getDescription()).isEqualTo("Главный заголовок страницы");
 
         InputDropDown inputDropDown = page.getMainForm().getRegFormZones().get(2).getRegFormZoneColumns().get(1).getInputDropDownRegions();
-        log.info(Strings.toPrettyString(((BaseElement) inputDropDown).getParams()));
+        assertThat(((BaseElement) inputDropDown).getParams()).hasSize(5);
+        assertThatCode(() -> inputDropDown.typeAndSelect("Москва")).doesNotThrowAnyException();
+
+        assertThatThrownBy(
+            () -> page.getMainForm().getRegFormZones().get(2).getRegFormZoneColumns().get(1).getInputDropDownRegionsFail().typeAndSelect("Москва"))
+            .isInstanceOf(ElementStateException.class);
 
     }
 }
