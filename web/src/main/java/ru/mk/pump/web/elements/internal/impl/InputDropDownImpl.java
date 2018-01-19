@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Complex;
@@ -212,6 +213,16 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     @Override
     public List<Element> getItems() {
         return getDropDown().getItems();
+    }
+
+    @Override
+    public WaitResult<Boolean> hasItems(int count, int timeoutMs) {
+        return getDropDown().hasItems(count, timeoutMs);
+    }
+
+    @Override
+    public WaitResult<Boolean> hasItems(int count) {
+        return getDropDown().hasItems(count);
     }
 
     public boolean isItemsDisappear() {
