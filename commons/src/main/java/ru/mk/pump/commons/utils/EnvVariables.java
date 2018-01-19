@@ -6,6 +6,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "unused", "WeakerAccess"})
 @ThreadSafe
@@ -24,6 +25,7 @@ public class EnvVariables {
         cache = null;
     }
 
+    @NotNull
     public Map<String, String> all() {
         /*result for thread safe*/
         Map<String, String> result = cache;
@@ -35,19 +37,19 @@ public class EnvVariables {
         return result;
     }
 
-    public boolean has(String name) {
+    public boolean has(@NotNull String name) {
         return all().containsKey(name);
     }
 
     @NotNull
-    public String get(String name, String defaultValue) {
+    public String get(@NotNull String name, @NotNull String defaultValue) {
         final String value = all().getOrDefault(name, defaultValue);
         usedVariablesMap.put(name, value);
         return value;
     }
 
-    @NotNull
-    public String get(String name) {
+    @Nullable
+    public String get(@NotNull String name) {
         return all().get(name);
     }
 }

@@ -1,8 +1,6 @@
 package ru.mk.pump.commons.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.concurrent.Callable;
 import lombok.extern.slf4j.Slf4j;
@@ -79,7 +77,7 @@ public class WaiterTest {
         assertThat(waitResult.hasResult()).isTrue();
         assertThat(waitResult.getCause()).isNull();
         assertThat(waitResult.getResult()).isEqualTo("ok");
-        assertThat(waitResult.getElapsedTime()).isBetween(1000L, 1050L);
+        assertThat(waitResult.getElapsedTime()).isBetween(1000L, 1100L);
         assertThatCode(() -> waitResult.ifHasResult((r) -> Assertions.fail("Фэйл"))).isInstanceOf(AssertionError.class);
         waitResult.ifHasCause((ex) -> Assertions.fail("Фэйл"));
         assertThat(waitResult.getInfo()).containsOnlyKeys("timeout (sec)", "interval (ms)", "elapsed time (ms)", "last result");

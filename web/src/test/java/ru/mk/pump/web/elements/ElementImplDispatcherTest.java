@@ -1,5 +1,7 @@
 package ru.mk.pump.web.elements;
 
+import static org.assertj.core.api.Assertions.*;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import java.lang.annotation.ElementType;
@@ -7,6 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -41,16 +44,16 @@ public class ElementImplDispatcherTest {
     public void findImplementation() {
 
         ElementImpl<BaseElement> res = dispatcher.findImplementation(Input.class, Sets.newHashSet(Date.class));
-        log.info(res.toString());
+        assertThat(res).matches(i -> StringUtils.containsIgnoreCase(i.getImplementation().getSimpleName(), "DataInputImpl"));
 
         res = dispatcher.findImplementation(Button.class, Sets.newHashSet(Date.class));
-        log.info(res.toString());
+        assertThat(res).matches(i -> StringUtils.containsIgnoreCase(i.getImplementation().getSimpleName(), "ButtonImpl"));
 
         res = dispatcher.findImplementation(DropDown.class, null);
-        log.info(res.toString());
+        assertThat(res).matches(i -> StringUtils.containsIgnoreCase(i.getImplementation().getSimpleName(), "DropDownImpl"));
 
         res = dispatcher.findImplementation(Input.class, Sets.newHashSet(FrameworkImpl.class, ToTest.class));
-        log.info(res.toString());
+        assertThat(res).matches(i -> StringUtils.containsIgnoreCase(i.getImplementation().getSimpleName(), "InputImpl"));
     }
 
     @Test
@@ -59,10 +62,10 @@ public class ElementImplDispatcherTest {
         dispatcher.addImplementation(Input.class, ElementImpl.of(InputComplexImpl.class, null));
 
         ElementImpl<BaseElement> res = dispatcher.findImplementation(Image.class, null);
-        log.info(res.toString());
+        assertThat(res).matches(i -> StringUtils.containsIgnoreCase(i.getImplementation().getSimpleName(), "ImageImpl"));
 
         res = dispatcher.findImplementation(Input.class, Sets.newHashSet(ToTest.class));
-        log.info(res.toString());
+        assertThat(res).matches(i -> StringUtils.containsIgnoreCase(i.getImplementation().getSimpleName(), "InputComplexImpl"));
     }
 
     @Test

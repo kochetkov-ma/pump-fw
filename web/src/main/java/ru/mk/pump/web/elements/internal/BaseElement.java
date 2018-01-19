@@ -65,6 +65,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     public BaseElement withParams(Map<String, Parameter<?>> elementConfig) {
         elementParams.putAll(elementConfig);
         initFromParams();
+        getActionExecutor().withParameters(elementConfig);
         return this;
     }
 

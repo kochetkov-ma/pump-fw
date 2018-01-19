@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +25,23 @@ import ru.mk.pump.web.exceptions.ElementException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
+@Slf4j
 public class SubElementHelper<T extends Element> {
+
+    /**
+     * [RUS] Кол-во попыток по умолчанию. Минимальное кол-во для сохранения прозводительности
+     */
+    public static final int DEFAULT_TRY_COUNT = 2;
+
+    /**
+     * [RUS] Кол-во попыток поиска под-элементов.
+     * Как правило поиск под-элементов ведется, когда ожидается кол-во большее 0.
+     * Но наличие на странице загруженного родительского элементв не гарантирует, что под-элементы успешно загружены.
+     * Поэтому производится несколько попыток поиска не пустого списка под-элементов.
+     * Это дополнительная страховка в дополнении к проверкам загрузки страницы + не пустого списка под-элементов в реализации родительского элемента
+     */
+    @Setter
+    private int tryCount = DEFAULT_TRY_COUNT;
 
     private final Class<T> subElementClass;
 
@@ -82,7 +100,16 @@ public class SubElementHelper<T extends Element> {
     }
 
     public List<T> findList(@NotNull By... bys) {
-        return findList((els) -> !els.isEmpty(), bys);
+        int tryLocal = 0;
+        while (tryCount >= tryLocal++) {
+            List<T> res = findList((els) -> !els.isEmpty(), bys);
+            if (!res.isEmpty()) {
+                log.debug("[SUB-ELEMENTS] findList try count {}", tryLocal);
+                return res;
+            }
+        }
+        log.debug("[SUB-ELEMENTS] findList try count {}", tryLocal);
+        return Collections.emptyList();
     }
 
 
@@ -105,13 +132,20 @@ public class SubElementHelper<T extends Element> {
      * @return Полностью готовый список элементов, созданный с помощью ElementFactory.
      */
     public List<T> findListXpathAdvanced(@Nullable String xpathString, @Nullable Predicate<WebElement> webElementPredicate, @Nullable String... postfixXpaths) {
-        final Pair<Integer, By> context = findXpath(xpathString, webElementPredicate, false, postfixXpaths);
+        int tryLocal = 0;
+        Pair<Integer, By> context = findXpath(xpathString, webElementPredicate, false, postfixXpaths);
+        while (tryCount >= tryLocal++ && context.getKey() <= 0) {
+            log.trace("[SUB-ELEMENTS] findXpathAdvanced try number {}", tryLocal);
+            context = findXpath(xpathString, webElementPredicate, true, postfixXpaths);
+        }
+        log.debug("[SUB-ELEMENTS] findListXpathAdvanced try count {}", tryLocal);
         if (context.getKey() < 1) {
             return Collections.emptyList();
         }
+        final By finalBy = context.getValue();
         return IntStream.range(0, context.getKey()).boxed()
             .map(index -> {
-                final T newElement = elementFactory.newElement(subElementClass, context.getValue(), parent, elementConfig);
+                final T newElement = elementFactory.newElement(subElementClass, finalBy, parent, elementConfig);
                 ((InternalElement) newElement).setIndex(index);
                 return newElement;
             })
@@ -137,7 +171,13 @@ public class SubElementHelper<T extends Element> {
      * @return Полностью готовый элемент, созданный с помощью ElementFactory.
      */
     public T findXpathAdvanced(@Nullable String xpathString, @Nullable Predicate<WebElement> webElementPredicate, @Nullable String... postfixXpaths) {
-        final Pair<Integer, By> context = findXpath(xpathString, webElementPredicate, true, postfixXpaths);
+        int tryLocal = 0;
+        Pair<Integer, By> context = findXpath(xpathString, webElementPredicate, true, postfixXpaths);
+        while (tryCount >= tryLocal++ && context.getKey() <= 0) {
+            log.trace("[SUB-ELEMENTS] findXpathAdvanced try number {}", tryLocal);
+            context = findXpath(xpathString, webElementPredicate, true, postfixXpaths);
+        }
+        log.debug("[SUB-ELEMENTS] findXpathAdvanced try count {}", tryLocal);
         if (context.getKey() < 1) {
             throw exceptionNoExistsSub(xpathString + " " + Strings.toString(postfixXpaths));
         }
@@ -155,7 +195,9 @@ public class SubElementHelper<T extends Element> {
         byResult = By.xpath(xpathFinal);
 
         parent.getStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
+        log.debug("[SUB-ELEMENTS] Parent element is jsReady");
         parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
+        log.debug("[SUB-ELEMENTS] Parent element is exists");
         final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString))
             .getResult();
         final Iterator<String> iterator;

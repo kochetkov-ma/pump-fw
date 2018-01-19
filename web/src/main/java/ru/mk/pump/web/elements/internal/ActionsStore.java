@@ -6,6 +6,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.ClearType;
 import ru.mk.pump.web.elements.enums.FocusType;
@@ -18,7 +19,7 @@ import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
  * Исключительно для удобства
  */
 @SuppressWarnings("unused")
-class ActionsStore {
+public class ActionsStore {
 
     private final AbstractElement<?> element;
 
@@ -89,20 +90,24 @@ class ActionsStore {
 
         return actions.newAction((webElement, param) -> {
             String scrollScript = SCROLL_TOP;
-            if (param.containsKey("focusType")) {
-                final FocusType focusType = param.get("focusType").getValue(FocusType.class);
-                switch (focusType) {
-                    case BOTTOM:
-                        scrollScript = SCROLL_BOTTOM;
-                        break;
-                    case TOP:
-                        scrollScript = SCROLL_TOP;
-                        break;
-                    case CENTER:
-                        scrollScript = SCROLL_CENTER;
-                        break;
-                    default:
-                        scrollScript = SCROLL_TOP;
+            if (param.containsKey(ElementParams.FOCUS_CUSTOM_SCRIPT)) {
+                scrollScript = param.get(ElementParams.FOCUS_CUSTOM_SCRIPT).asString();
+            } else {
+                if (param.containsKey("focusType")) {
+                    final FocusType focusType = param.get("focusType").getValue(FocusType.class);
+                    switch (focusType) {
+                        case BOTTOM:
+                            scrollScript = SCROLL_BOTTOM;
+                            break;
+                        case TOP:
+                            scrollScript = SCROLL_TOP;
+                            break;
+                        case CENTER:
+                            scrollScript = SCROLL_CENTER;
+                            break;
+                        default:
+                            scrollScript = SCROLL_TOP;
+                    }
                 }
             }
             element.getBrowser().actions().executeScript(scrollScript, webElement);

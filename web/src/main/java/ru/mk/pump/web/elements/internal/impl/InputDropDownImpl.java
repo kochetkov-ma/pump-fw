@@ -30,7 +30,17 @@ import ru.mk.pump.web.page.api.Page;
 @SuppressWarnings({"WeakerAccess", "unused"})
 @Slf4j
 @FrameworkImpl
-@DocParameters({ElementParams.INPUTDROPDOWN_INPUT_BY, ElementParams.INPUTDROPDOWN_DROPDOWN_BY, ElementParams.INPUTDROPDOWN_LOAD_BY})
+@DocParameters({
+    ElementParams.INPUTDROPDOWN_INPUT_BY,
+    ElementParams.INPUTDROPDOWN_DROPDOWN_BY,
+    ElementParams.INPUTDROPDOWN_LOAD_BY,
+    ElementParams.DROPDOWN_EXPAND_BY,
+    ElementParams.DROPDOWN_BEFORE_SELECT,
+    ElementParams.SELECTOR_STATIC_ITEMS,
+    ElementParams.SELECTOR_ITEMS_BY,
+    ElementParams.SELECTED_MARK,
+    ElementParams.SELECTED_STRATEGY
+})
 class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
 
     public final static By[] DEFAULT_LOAD_ICON = {};
@@ -146,6 +156,7 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     }
 
     protected Input getInput() {
+        //noinspection UnnecessaryLocalVariable
         final Input res = input.get(Input.class);
         //TODO::Удалить?
         /* Безконтрольное использование параметров, которые предназначены только для главного элемента

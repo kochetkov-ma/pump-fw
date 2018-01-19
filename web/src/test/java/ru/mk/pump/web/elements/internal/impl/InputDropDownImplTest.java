@@ -15,8 +15,8 @@ class InputDropDownImplTest extends AbstractWebTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        createPages(browser);
-        browser.open(regPage.getUrl());
+        createPages(getBrowser());
+        getBrowser().open(regPage.getUrl());
     }
 
     @Test

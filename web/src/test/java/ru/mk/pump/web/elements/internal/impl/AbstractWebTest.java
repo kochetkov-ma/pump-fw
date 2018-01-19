@@ -1,70 +1,25 @@
 package ru.mk.pump.web.elements.internal.impl;
 
+import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
-import ru.mk.pump.commons.utils.EnvVariables;
-import ru.mk.pump.commons.utils.ProjectResources;
+import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.web.AbstractTestWithBrowser;
+import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.browsers.Browsers;
-import ru.mk.pump.web.browsers.configuration.BrowserConfig;
-import ru.mk.pump.web.browsers.configuration.BrowserType;
-import ru.mk.pump.web.browsers.configuration.Size;
+import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.Input;
-import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.api.concrete.Selector;
+import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.internal.BaseElement;
-import ru.mk.pump.web.elements.internal.ElementWaiter;
 
 @SuppressWarnings("WeakerAccess")
-public abstract class AbstractWebTest {
+abstract class AbstractWebTest extends AbstractTestWithBrowser {
 
-    private static final BrowserType BROWSER_TYPE = BrowserType.valueOf(EnvVariables.get("BROWSER", "PHANTOMJS"));
-    //private static final BrowserType BROWSER_TYPE = BrowserType.CHROME;
+    protected MainPage mainPage;
 
-    public static Browsers browsers;
-
-    public Browser browser;
-
-    public MainPage mainPage;
-
-    public RegPage regPage;
-
-    public static BrowserConfig config;
-
-    @AfterAll
-    public static void afterAll() {
-        browsers.close();
-    }
-
-    @BeforeAll
-    public static void beforeAll() {
-        config = new BrowserConfig(false, Size.of(true), BROWSER_TYPE);
-        if (BROWSER_TYPE != BrowserType.PHANTOMJS) {
-            config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
-        }
-        browsers = new Browsers();
-    }
-
-    @BeforeEach
-    public void setUp() {
-        if (!browsers.has()) {
-            browser = createBrowser();
-            browser.start();
-        } else {
-            browser = browsers.get();
-        }
-    }
-
-    @AfterEach
-    public void tearDown() {
-
-        ElementWaiter.DEFAULT_TIMEOUT_S = 10;
-    }
+    protected RegPage regPage;
 
     void createPages(Browser browser) {
         mainPage = new MainPage(browser);
@@ -75,11 +30,15 @@ public abstract class AbstractWebTest {
     @Getter
     class MainPage {
 
+        private static final String SCROLL_REACT = "var viewPortHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);"
+            + "var elementTop = arguments[0].getBoundingClientRect().top;"
+            + "document.getElementById('app').scrollBy(0, elementTop-(viewPortHeight/2));";
+
         private final BaseElement childButtonSectionFail;
 
         private final BaseElement parentDivFail;
 
-        private final String url = "https://app-digitalmortgage003.open.ru/";
+        private final String url = DMUrls.MAIN_PAGE_URL;
 
         private final BaseElement parentDiv;
 
@@ -91,12 +50,15 @@ public abstract class AbstractWebTest {
 
         private MainPage(Browser browser) {
             /*parents*/
-            parentDiv = new BaseElement(By.xpath(".//div[contains(@class,'b-calculator__rightblock')]"), browser);
+            parentDiv = new BaseElement(By.xpath(".//div[contains(@class,'b-calculator__rightblock')]"), browser)
+                .withParams(ImmutableMap.of(ElementParams.FOCUS_CUSTOM_SCRIPT, Parameter.of(SCROLL_REACT)));
             parentSection = new BaseElement(By.tagName("section"), browser).setIndex(1);
 
             /*childes*/
-            childButtonSection = new BaseElement(By.xpath(".//button[@data-aid='startRegistration']"), parentDiv);
-            childButtonDiv = new BaseElement(By.xpath(".//a[text()='Требования к заемщику']"), parentSection);
+            childButtonSection = new BaseElement(By.xpath(".//button[@data-aid='startRegistration']"), parentDiv)
+                .withParams(ImmutableMap.of(ElementParams.FOCUS_CUSTOM_SCRIPT, Parameter.of(SCROLL_REACT)));
+            childButtonDiv = new BaseElement(By.xpath(".//a[text()='Требования к заемщику']"), parentSection)
+                .withParams(ImmutableMap.of(ElementParams.FOCUS_CUSTOM_SCRIPT, Parameter.of(SCROLL_REACT)));
 
             /*failParent*/
             parentDivFail = new BaseElement(By.xpath(".//div[contains(@class,'b-calculator__rightblock1')]"), browser);
@@ -110,7 +72,7 @@ public abstract class AbstractWebTest {
     @Getter
     class RegPage {
 
-        private final String url = "https://app-digitalmortgage003.open.ru/registration";
+        private final String url = DMUrls.REG_PAGE_URL;
 
         private final BaseElement hiddenItems;
 
@@ -133,9 +95,4 @@ public abstract class AbstractWebTest {
             inputDropDownRegions = new InputDropDownImpl(By.id("regionAutocompleteId"), browser);
         }
     }
-
-    protected Browser createBrowser() {
-        return browsers.newBrowser(config);
-    }
-
 }

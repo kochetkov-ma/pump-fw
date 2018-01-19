@@ -1,6 +1,6 @@
 package ru.mk.pump.web.elements.internal.impl;
 
-import static ru.mk.pump.web.constants.ElementParams.SELECTED_CONDITION;
+import static ru.mk.pump.web.constants.ElementParams.SELECTED_MARK;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
@@ -24,14 +24,14 @@ class SelectorImplTest extends AbstractWebTest {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        createPages(browser);
-        browser.open(regPage.getUrl());
+        createPages(getBrowser());
+        getBrowser().open(regPage.getUrl());
     }
 
     @Test
     void set() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 3;
-        createPages(browser);
+        createPages(getBrowser());
 
         Assertions.assertThatThrownBy(() -> regPage.getSelectorProgram().set(Collections.singletonMap("fail", Parameter.of("Вторич"))))
             .isInstanceOf(IllegalArgumentException.class);
@@ -48,10 +48,10 @@ class SelectorImplTest extends AbstractWebTest {
     @Test
     void selectString() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 3;
-        createPages(browser);
+        createPages(getBrowser());
         ((BaseElement) regPage.getSelectorProgram())
             .withParams(
-                ImmutableMap.<String, Parameter<?>>builder().putAll(ElementParams.enumAsParam(SelectedStrategy.EQUALS)).put(SELECTED_CONDITION, Parameter.of("selected"))
+                ImmutableMap.<String, Parameter<?>>builder().putAll(ElementParams.enumAsParam(SelectedStrategy.EQUALS)).put(SELECTED_MARK, Parameter.of("selected"))
                     .build());
 
         Assertions.assertThatThrownBy(()->regPage.getSelectorProgram().select("Вторич"))
@@ -61,7 +61,7 @@ class SelectorImplTest extends AbstractWebTest {
 
         ((BaseElement) regPage.getSelectorProgram())
             .withParams(
-                ImmutableMap.<String, Parameter<?>>builder().putAll(ElementParams.enumAsParam(SelectedStrategy.CONTAINS)).put(SELECTED_CONDITION, Parameter.of("selected"))
+                ImmutableMap.<String, Parameter<?>>builder().putAll(ElementParams.enumAsParam(SelectedStrategy.CONTAINS)).put(SELECTED_MARK, Parameter.of("selected"))
                     .build());
 
         regPage.getSelectorProgram().select("Вторич");

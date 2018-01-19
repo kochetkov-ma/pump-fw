@@ -13,7 +13,7 @@ class BasePageTest extends AbstractPageTest {
 
     @Test
     void testInitAllElements() {
-        final RegPage page = new RegPage(browser);
+        final RegPage page = new RegPage(getBrowser());
         page.initAllElements();
         page.open();
 
@@ -27,7 +27,7 @@ class BasePageTest extends AbstractPageTest {
 
     @Test
     void testAnnotationInit() {
-        final RegPage page = new RegPage(browser);
+        final RegPage page = new RegPage(getBrowser());
         page.initAllElements();
         page.open();
 
@@ -41,6 +41,5 @@ class BasePageTest extends AbstractPageTest {
         assertThatThrownBy(
             () -> page.getMainForm().getRegFormZones().get(2).getRegFormZoneColumns().get(1).getInputDropDownRegionsFail().typeAndSelect("Москва"))
             .isInstanceOf(ElementStateException.class);
-
     }
 }

@@ -12,15 +12,19 @@ import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
+import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.ActionFactory;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.DocParameters;
+import ru.mk.pump.web.elements.internal.SetState;
+import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.elements.utils.Parameters;
@@ -32,7 +36,7 @@ import ru.mk.pump.web.page.api.Page;
  */
 @SuppressWarnings("WeakerAccess")
 @Slf4j
-@DocParameters({ElementParams.SELECTED_CONDITION, ElementParams.SELECTED_STRATEGY, ElementParams.SELECTOR_ITEMS_BY, ElementParams.SELECTOR_STATIC_ITEMS})
+@DocParameters({ElementParams.SELECTED_MARK, ElementParams.SELECTED_STRATEGY, ElementParams.SELECTOR_ITEMS_BY, ElementParams.SELECTOR_STATIC_ITEMS})
 abstract class AbstractSelectorItems extends BaseElement implements SelectedItems {
 
     private static final String DEFAULT_SELECTED = "selected";
@@ -81,7 +85,7 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
     @Override
     protected void initFromParams() {
         super.initFromParams();
-        selectedCondition = Parameters.getOrDefault(getParams(), ElementParams.SELECTED_CONDITION, Parameter::asString, selectedCondition);
+        selectedCondition = Parameters.getOrDefault(getParams(), ElementParams.SELECTED_MARK, Parameter::asString, selectedCondition);
         selectedStrategy = Parameters.getOrDefault(getParams(), ElementParams.SELECTED_STRATEGY, SelectedStrategy.class, selectedStrategy);
         staticItems = Parameters.getOrDefault(getParams(), ElementParams.SELECTOR_STATIC_ITEMS, Boolean.class, staticItems);
         itemsBy = Parameters.getOrDefault(getParams(), ElementParams.SELECTOR_ITEMS_BY, By[].class, itemsBy);
@@ -114,6 +118,20 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
                 String.format("FindByParameter '%s' is not instance of String.class or Integer.class", params.get(ElementParams.EDITABLE_SET)));
         }
         throw new IllegalArgumentException(String.format("Params map '%s' does not contains '%s'", Strings.toString(params), ElementParams.EDITABLE_SET));
+    }
+
+    @Override
+    public WaitResult<Boolean> hasItems(int count, int timeoutMs) {
+        final SetState state = (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.EXISTS, () -> getItems().size() >= count))
+            .withName(String.format("Items count not less '%d'", count));
+        return getStateResolver().resolve(state, timeoutMs).result();
+    }
+
+    @Override
+    public WaitResult<Boolean> hasItems(int count) {
+        final SetState state = (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.EXISTS, () -> getItems().size() >= count))
+            .withName(String.format("Items count not less '%d'", count));
+        return getStateResolver().resolve(state).result();
     }
 
     @Override
@@ -152,12 +170,16 @@ abstract class AbstractSelectorItems extends BaseElement implements SelectedItem
 
     @Override
     public List<Element> getItems() {
-        if (!staticItems || itemsCache == null) {
+        if (!staticItems || itemsCache == null || itemsCache.isEmpty()) {
             refreshItemsCache();
         }
         return itemsCache;
     }
 
+    /**
+     * [RUS] Ускоренное получение текста всех под-элементов.
+     * Ведется поиск общего родительского элемента для элементов списка и читается его полный текст
+     */
     public String getItemsTextFast() {
         log.trace("AbstractSelectorItems.getItemsTextFast call");
         final List<Element> items = getItems();

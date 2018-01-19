@@ -2,18 +2,11 @@ package ru.mk.pump.web.page;
 
 import java.util.List;
 import lombok.Getter;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
-import ru.mk.pump.commons.utils.ProjectResources;
+import ru.mk.pump.web.AbstractTestWithBrowser;
+import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.browsers.Browsers;
-import ru.mk.pump.web.browsers.configuration.BrowserConfig;
-import ru.mk.pump.web.browsers.configuration.BrowserType;
-import ru.mk.pump.web.browsers.configuration.Size;
 import ru.mk.pump.web.common.api.annotations.PFindBy;
 import ru.mk.pump.web.common.api.annotations.PFindBys;
 import ru.mk.pump.web.common.api.annotations.PString;
@@ -23,51 +16,11 @@ import ru.mk.pump.web.component.BaseComponent;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
-import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
 
-@SuppressWarnings("WeakerAccess")
-public abstract class AbstractPageTest {
-
-    //private static final BrowserType BROWSER_TYPE = BrowserType.valueOf(EnvVariables.get("BROWSER", "PHANTOMJS"));
-    private static final BrowserType BROWSER_TYPE = BrowserType.CHROME;
-
-    public static Browsers browsers;
-
-    public Browser browser;
-
-    public static BrowserConfig config;
-
-    @AfterAll
-    public static void afterAll() {
-        browsers.close();
-    }
-
-    @BeforeAll
-    public static void beforeAll() {
-        config = new BrowserConfig(false, Size.of(true), BROWSER_TYPE);
-        if (BROWSER_TYPE != BrowserType.PHANTOMJS) {
-            config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
-        }
-        browsers = new Browsers();
-    }
-
-    @BeforeEach
-    public void setUp() {
-        if (!browsers.has()) {
-            browser = createBrowser();
-            browser.start();
-        } else {
-            browser = browsers.get();
-        }
-    }
-
-    @AfterEach
-    public void tearDown() {
-        ElementWaiter.DEFAULT_TIMEOUT_S = 10;
-    }
-
+@SuppressWarnings("ALL")
+abstract class AbstractPageTest extends AbstractTestWithBrowser {
 
     @SuppressWarnings("WeakerAccess")
     @Title("Регистрация")
@@ -85,8 +38,7 @@ public abstract class AbstractPageTest {
         public RegPage(Browser browser) {
             super(browser);
             setName("Регистрация");
-            setUrl("https://app-digitalmortgage003.open.ru/registration");
-
+            setUrl(DMUrls.REG_PAGE_URL);
         }
     }
 
@@ -156,10 +108,4 @@ public abstract class AbstractPageTest {
             super(avatarBy, parentElement);
         }
     }
-
-
-    protected Browser createBrowser() {
-        return browsers.newBrowser(config);
-    }
-
 }

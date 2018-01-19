@@ -51,6 +51,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     private final Consumer<WaitResult<Boolean>> TEAR_DOWN = stateWaitResult -> getFinder().getLast()
         .ifPresent(waitResult -> stateWaitResult.withCause(waitResult.getCause()));
 
+    @Getter
     private final ActionsStore actionsStore;
 
     @Setter(AccessLevel.PROTECTED)
@@ -224,6 +225,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     @Override
     public State notExists() {
+        getFinder().clearCache();
         return State.of(StateType.EXISTS.not(), () -> !getFinder().findFast().isSuccess(), TEAR_DOWN).withName("Not Exists in DOM")
             .withName("Not Exists Or Not Displayed");
     }
@@ -246,6 +248,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     @Override
     public SetState exists() {
+        getFinder().clearCache();
         if (JS_WAIT) {
             return (SetState) SetState.of(StateType.EXISTS, jsReady(),
                 State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");

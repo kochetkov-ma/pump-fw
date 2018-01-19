@@ -3,12 +3,16 @@ package ru.mk.pump.web.elements.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
+import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
@@ -21,6 +25,9 @@ import ru.mk.pump.web.exceptions.ActionExecutingException;
 public class ActionExecutor extends ActionNotifier {
 
     private static final int MAX_TRY = 5;
+
+    @Getter
+    private final Map<String, Parameter<?>> parameters = new HashMap<>();
 
     private final List<Action> beforeActions = new ArrayList<>();
 
@@ -83,7 +90,7 @@ public class ActionExecutor extends ActionNotifier {
         } finally {
             if (!afterActionError.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_FINALLY)) {
                 tAction.setStage(ActionStage.FINALLY);
-                final ActionExecutor helperExecutor = new ActionExecutor(getActionListeners());
+                final ActionExecutor helperExecutor = new ActionExecutor(getActionListeners()).withParameters(parameters);
                 afterActionError.forEach(helperExecutor::payloadExecute);
                 notifyOnFinallyAfter(tAction);
             }
@@ -102,23 +109,28 @@ public class ActionExecutor extends ActionNotifier {
         return true;
     }
 
+    public ActionExecutor withParameters(Map<String, Parameter<?>> parameters) {
+        this.parameters.putAll(parameters);
+        return this;
+    }
+
     protected <T> T payloadExecute(Action<T> tAction) {
         T result = null;
+        tAction.withParameters(parameters);
         ActionExecutor helperExecutor;
         actionExecutionTry++;
         try {
             if (!beforeActions.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_BEFORE)) {
                 tAction.setStage(ActionStage.BEFORE);
-                helperExecutor = new ActionExecutor(getActionListeners());
+                helperExecutor = new ActionExecutor(getActionListeners()).withParameters(parameters);
                 beforeActions.forEach(helperExecutor::payloadExecute);
             }
-
             tAction.setStage(ActionStage.MAIN);
             result = tAction.get();
 
             if (!afterActions.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_AFTER)) {
                 tAction.setStage(ActionStage.AFTER);
-                helperExecutor = new ActionExecutor(getActionListeners());
+                helperExecutor = new ActionExecutor(getActionListeners()).withParameters(parameters);
                 afterActions.forEach(helperExecutor::payloadExecute);
                 notifyOnAfter(tAction);
             }

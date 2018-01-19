@@ -1,50 +1,40 @@
 package ru.mk.pump.web.browsers;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.mk.pump.web.browsers.configuration.BrowserConfig;
-import ru.mk.pump.web.browsers.configuration.BrowserType;
-import ru.mk.pump.web.browsers.configuration.Size;
-import ru.mk.pump.web.elements.internal.impl.AbstractWebTest;
+import ru.mk.pump.web.AbstractTestWithBrowser;
 
 @Slf4j
-public class BrowsersTest extends AbstractWebTest {
+public class BrowsersTest extends AbstractTestWithBrowser {
 
     @BeforeEach
     public void setUp() {
-        browsers = new Browsers();
-    }
-
-
-    @Override
-    public void tearDown() {
-        super.tearDown();
+        setBrowsers(new Browsers());
     }
 
     @Test
-    public void newBrowser() throws InterruptedException, IllegalAccessException {
+    void newBrowser() throws InterruptedException, IllegalAccessException {
         Thread threadOne = new Thread(() -> {
-            browsers.newBrowser(config);
-            browsers.newBrowser(config);
-            browsers.newBrowser(config);
-            assertThat(browsers.has()).isTrue();
-            assertThat(browsers.getBrowsers().size()).isEqualTo(3);
+            getBrowsers().newBrowser(getConfig());
+            getBrowsers().newBrowser(getConfig());
+            getBrowsers().newBrowser(getConfig());
+            assertThat(getBrowsers().has()).isTrue();
+            assertThat(getBrowsers().getBrowsers().size()).isEqualTo(3);
         }, "-1-"
         );
         threadOne.start();
 
         Thread threadTwo = new Thread(() -> {
-            browsers.newBrowser(config);
-            browsers.newBrowser(config);
-            browsers.closeCurrentThread();
-            assertThat(browsers.has()).isFalse();
-            assertThat(browsers.getBrowsers().size()).isEqualTo(2);
+            getBrowsers().newBrowser(getConfig());
+            getBrowsers().newBrowser(getConfig());
+            getBrowsers().closeCurrentThread();
+            assertThat(getBrowsers().has()).isFalse();
+            assertThat(getBrowsers().getBrowsers().size()).isEqualTo(2);
         }, "-2-"
         );
         threadTwo.start();
@@ -52,38 +42,38 @@ public class BrowsersTest extends AbstractWebTest {
         threadTwo.join();
         threadOne.join();
 
-        assertThat(browsers.getBrowsers().size()).isEqualTo(0);
-        assertThat((List) FieldUtils.readField(browsers, "internalAllBrowsers", true)).hasSize(5);
+        assertThat(getBrowsers().getBrowsers().size()).isEqualTo(0);
+        assertThat((List) FieldUtils.readField(getBrowsers(), "internalAllBrowsers", true)).hasSize(5);
     }
 
     @Test
-    public void get() {
-        browsers.newBrowser(config);
-        String one = browsers.get().getId();
+    void get() {
+        getBrowsers().newBrowser(getConfig());
+        String one = getBrowsers().get().getId();
         log.debug(one);
-        browsers.newBrowser(config);
-        String two = browsers.get().getId();
+        getBrowsers().newBrowser(getConfig());
+        String two = getBrowsers().get().getId();
         log.debug(two);
-        browsers.newBrowser(config);
-        String three = browsers.get().getId();
+        getBrowsers().newBrowser(getConfig());
+        String three = getBrowsers().get().getId();
         log.debug(three);
         assertThat(one).isNotEqualTo(two).isNotEqualTo(three);
         assertThat(two).isNotEqualTo(three);
     }
 
     @Test
-    public void has() {
+    void has() {
     }
 
     @Test
-    public void getLunchedBrowsers() {
+    void getLunchedBrowsers() {
     }
 
     @Test
-    public void close() {
+    void close() {
     }
 
     @Test
-    public void closeCurrentThread() {
+    void closeCurrentThread() {
     }
 }

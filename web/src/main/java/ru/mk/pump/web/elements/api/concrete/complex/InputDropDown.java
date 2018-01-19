@@ -13,8 +13,9 @@ import ru.mk.pump.web.elements.internal.DocParameters;
     ElementParams.DROPDOWN_BEFORE_SELECT,
     ElementParams.SELECTOR_STATIC_ITEMS,
     ElementParams.SELECTOR_ITEMS_BY,
-    ElementParams.SELECTED_CONDITION,
-    ElementParams.SELECTED_STRATEGY
+    ElementParams.SELECTED_MARK,
+    ElementParams.SELECTED_STRATEGY,
+    ElementParams.EDITABLE_SET
 })
 public interface InputDropDown extends Input, DropDown {
 

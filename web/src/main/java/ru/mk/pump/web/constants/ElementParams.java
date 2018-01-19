@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.text.WordUtils;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
+import ru.mk.pump.web.elements.enums.FocusType;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
 
 @UtilityClass
@@ -43,9 +44,10 @@ public class ElementParams {
     public static final String SELECTED_STRATEGY = "selectedStrategy";
 
     /**
-     * parameter is {@link String} contains in element class
+     * Marker in element css class when it was selected.
+     * Parameter is {@link String} in Selector
      */
-    public static final String SELECTED_CONDITION = "selectedCondition";
+    public static final String SELECTED_MARK = "selectedCondition";
 
     /**
      * parameter is {@link org.openqa.selenium.By}[] in AbstractSelectorItems (any elements with items set like DropDown or Selector)
@@ -72,10 +74,16 @@ public class ElementParams {
     //endregion
 
     /**
-     * Defined required value for set in any Editable element.
+     * Defined required value to set in any Editable element.
      * {@link ru.mk.pump.web.elements.api.part.Editable#set(Map)} parameter name
      */
     public static final String EDITABLE_SET = "setValue";
+
+    /**
+     * If standard {@link FocusType} is not correct for your JS app, you can override scroll script.
+     * Parameter is {@link String} - JS script
+     */
+    public static final String FOCUS_CUSTOM_SCRIPT = "focusCustomScript";
 
     public static <T extends Enum<T>> Map<String, Parameter<?>> enumAsParam(T enumInstance) {
         return Collections

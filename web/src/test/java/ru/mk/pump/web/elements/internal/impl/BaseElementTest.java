@@ -4,10 +4,13 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.*;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Waiter;
+import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.exceptions.ActionExecutingException;
@@ -17,19 +20,21 @@ import ru.mk.pump.web.exceptions.ElementStateException;
 @Slf4j
 public class BaseElementTest extends AbstractWebTest {
 
+
     @Override
     @BeforeEach
     public void setUp() {
         super.setUp();
-        createPages(browser);
+        createPages(getBrowser());
     }
 
     @Test
+    @Disabled
     void testGetTextSilent() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
-        createPages(browser);
+        createPages(getBrowser());
 
-        browser.open(regPage.getUrl());
+        getBrowser().open(regPage.getUrl());
 
         Assertions.assertThatThrownBy(() -> regPage.getHiddenItems().getText())
             .isInstanceOf(ActionExecutingException.class);
@@ -40,8 +45,9 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
+    @Disabled
     void testGetText() {
-        browser.open("https://app-digitalmortgage003.open.ru/");
+        getBrowser().open(DMUrls.MAIN_PAGE_URL);
 
         String res1 = mainPage.getParentDiv().getText();
         String res2 = mainPage.getParentDiv().getText();
@@ -62,9 +68,9 @@ public class BaseElementTest extends AbstractWebTest {
     @Test
     void testGetTextFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
-        createPages(browser);
+        createPages(getBrowser());
 
-        browser.open(mainPage.getUrl());
+        getBrowser().open(mainPage.getUrl());
 
         Assertions.assertThatThrownBy(() -> mainPage.getParentDivFail().getText())
             .isInstanceOf(ActionExecutingException.class)
@@ -81,23 +87,23 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
+    @Disabled
     void testClick() {
-        browser.open(mainPage.getUrl());
+        getBrowser().open(mainPage.getUrl());
         mainPage.getChildButtonSection().click();
     }
 
     @Test
+    @Disabled
     void testClickFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
-        createPages(browser);
+        createPages(getBrowser());
 
-
-        browser.open(regPage.getUrl());
+        getBrowser().open(regPage.getUrl());
 
         Assertions.assertThat(regPage.getHiddenItems().isNotEnabled()).isFalse();
 
-
-        browser.open(mainPage.getUrl());
+        getBrowser().open(mainPage.getUrl());
 
         Assertions.assertThatThrownBy(() -> mainPage.getParentDivFail().click())
             .isInstanceOf(ActionExecutingException.class)
@@ -109,8 +115,9 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
+    @Disabled
     void clear() {
-        browser.open(regPage.getUrl());
+        getBrowser().open(regPage.getUrl());
 
         log.info(regPage.getInputSurname().type("МАКС"));
         regPage.getInputSurname().clear();
@@ -118,8 +125,9 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
+    @Disabled
     void isAllState() {
-        browser.open(regPage.getUrl());
+        getBrowser().open(regPage.getUrl());
 
         Assertions.assertThat(regPage.getHiddenItems().isExists()).isTrue();
         Assertions.assertThat(regPage.getInputSurname().isDisplayed()).isTrue();
@@ -127,8 +135,9 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
+    @Disabled
     void isNotAllState() {
-        browser.open(regPage.getUrl());
+        getBrowser().open(regPage.getUrl());
 
         Assertions.assertThat(regPage.getHiddenItems().isNotDisplayed()).isTrue();
         Assertions.assertThat(regPage.getNotExists().isNotEnabled()).isTrue();
@@ -142,11 +151,12 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
+    @Disabled
     void isNotAllStateFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 3;
-        createPages(browser);
+        createPages(getBrowser());
 
-        browser.open(regPage.getUrl());
+        getBrowser().open(regPage.getUrl());
 
         Assertions.assertThat(regPage.getHiddenItems().isNotEnabled()).isFalse();
         Assertions.assertThat(regPage.getInputSurname().isNotEnabled()).isFalse();
@@ -154,11 +164,12 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
+    @Disabled
     void isAllStateFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 3;
-        createPages(browser);
+        createPages(getBrowser());
 
-        browser.open(regPage.getUrl());
+        getBrowser().open(regPage.getUrl());
 
         Assertions.assertThat(regPage.getHiddenItems().isDisplayed()).isFalse();
         Assertions.assertThat(regPage.getNotExists().isEnabled()).isFalse();
@@ -168,7 +179,7 @@ public class BaseElementTest extends AbstractWebTest {
 
     @Test
     void getSubElements() {
-        browser.open(regPage.getUrl());
+        getBrowser().open(regPage.getUrl());
 
         List<Element> elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced("//div[@class='item']",
             (el) -> el.getAttribute("class").equals("item"));
