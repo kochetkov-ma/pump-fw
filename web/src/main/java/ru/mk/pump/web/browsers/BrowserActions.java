@@ -59,4 +59,8 @@ public class BrowserActions {
         return result;
     }
 
+    public String getCurrentUrl(){
+        return driver.get().getCurrentUrl();
+    }
+
 }

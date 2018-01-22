@@ -14,7 +14,6 @@ class BasePageTest extends AbstractPageTest {
     @Test
     void testInitAllElements() {
         final RegPage page = new RegPage(getBrowser());
-        page.initAllElements();
         page.open();
 
         assertThat(page.getMainForm().getRegFormZones().get(0).getRegFormZoneColumns().get(1).getInputs().get(0).type("MAX")).isEqualTo("MAX");
@@ -28,7 +27,6 @@ class BasePageTest extends AbstractPageTest {
     @Test
     void testAnnotationInit() {
         final RegPage page = new RegPage(getBrowser());
-        page.initAllElements();
         page.open();
 
         assertThat(page.getPageTitle().info().getName()).isEqualTo("Заголовок");

@@ -1,6 +1,7 @@
 package ru.mk.pump.web.browsers;
 
 import java.io.Closeable;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
@@ -8,7 +9,7 @@ import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public interface Browser extends Closeable, StrictInfo {
+public interface Browser extends Closeable, StrictInfo, Supplier<WebDriver> {
 
     String getId();
 
@@ -16,6 +17,10 @@ public interface Browser extends Closeable, StrictInfo {
 
     @NotNull
     WebDriver getDriver();
+
+    default WebDriver get() {
+        return getDriver();
+    }
 
     BrowserConfig getConfig();
 

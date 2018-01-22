@@ -128,7 +128,7 @@ public class Waiter implements Cloneable {
             } catch (Throwable throwable) {
                 return this.<T>resultDelegate(false, elapsedTime.get()).withInfo(timeout, intervalMs).withCause(throwable);
             }
-            return this.<T>resultDelegate(false, elapsedTime.get()).withInfo(timeout, intervalMs).withResult(result);
+            return this.<T>resultDelegate(false, elapsedTime.get()).withInfo(timeout, intervalMs).withResult(result).withCause(ex);
         }
 
         if (result != null) {

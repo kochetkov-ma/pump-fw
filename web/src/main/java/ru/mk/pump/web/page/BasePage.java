@@ -5,18 +5,27 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.By;
 import ru.mk.pump.commons.interfaces.StrictInfo;
+import ru.mk.pump.commons.reporter.Reporter;
+import ru.mk.pump.commons.reporter.ReporterAllure;
+import ru.mk.pump.commons.utils.BrowserScreenshoter;
+import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.common.pageobject.Initializer;
 import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.page.api.Page;
+import ru.mk.pump.web.page.api.PageLoader;
 import ru.mk.pump.web.utils.UrlUtils;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 @ToString
 public class BasePage implements Page {
+
+    public static final By DEFAULT_BODY_BY = By.tagName("body");
 
     @Getter
     @Setter
@@ -29,6 +38,9 @@ public class BasePage implements Page {
     @Getter
     private final Browser browser;
 
+    @Setter
+    private Reporter reporter;
+
     @Getter
     @Setter
     private String name;
@@ -36,10 +48,37 @@ public class BasePage implements Page {
     @Setter
     private String url;
 
+    @Setter
     private Initializer initializer;
+
+    @Setter
+    private PageLoader pageLoader;
 
     public BasePage(@NotNull Browser browser) {
         this.browser = browser;
+        afterConstruct();
+    }
+
+    public BasePage(@NotNull Browser browser, Reporter reporter) {
+        this.browser = browser;
+        this.reporter = reporter;
+        afterConstruct();
+    }
+
+    public Reporter getReporter() {
+        if (reporter == null) {
+            reporter = new ReporterAllure(new BrowserScreenshoter(getBrowser()));
+        }
+        return reporter;
+    }
+
+    protected void afterConstruct() {
+        initAllElements();
+        getPageLoader().addAdditionalCondition(this::jsReady);
+    }
+
+    protected void afterOpen() {
+        check();
     }
 
     @Override
@@ -70,15 +109,29 @@ public class BasePage implements Page {
     @Override
     public void open() {
         getBrowser().getDriver().get(getUrl());
+        afterOpen();
+    }
+
+    protected boolean jsReady() {
+        final String js = "return document.readyState";
+        return "complete".equals(Strings.toString(getBrowser().actions().executeScript(js)));
     }
 
     @Override
     public String getTitle() {
-        return null;
+        return "Base page. Override in sub-class";
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return "Base page description. Override in sub-class";
+    }
+
+    @Override
+    public PageLoader getPageLoader() {
+        if (pageLoader == null) {
+            pageLoader = new PageLoaderPump(this, new Verifier(getReporter()));
+        }
+        return pageLoader;
     }
 }

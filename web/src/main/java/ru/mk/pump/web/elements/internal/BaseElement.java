@@ -42,20 +42,19 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     private Initializer initializer;
 
-    {
-        initLocal();
-    }
-
     public BaseElement(By avatarBy, Page page) {
         super(avatarBy, page);
+        initLocal();
     }
 
     public BaseElement(By avatarBy, InternalElement parentElement) {
         super(avatarBy, parentElement);
+        initLocal();
     }
 
     public BaseElement(By avatarBy, Browser browser) {
         super(avatarBy, browser);
+        initLocal();
     }
 
     public Map<String, Parameter<?>> getParams() {
@@ -252,7 +251,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     private void initLocal() {
-        withReporter(new ReporterAllure(new BrowserScreenshoter(getBrowser().getDriver())));
+        withReporter(new ReporterAllure(new BrowserScreenshoter(getBrowser())));
         withVerifier(new Verifier(getReporter()));
     }
 

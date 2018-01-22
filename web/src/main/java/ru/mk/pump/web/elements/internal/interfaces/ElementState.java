@@ -19,5 +19,7 @@ public interface ElementState {
 
     SetState ready();
 
+    State jsReady();
+
     SetState clearState();
 }

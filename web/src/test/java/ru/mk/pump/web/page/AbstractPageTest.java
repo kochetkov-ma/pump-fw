@@ -13,6 +13,7 @@ import ru.mk.pump.web.common.api.annotations.PString;
 import ru.mk.pump.web.common.api.annotations.PStrings;
 import ru.mk.pump.web.common.api.annotations.Title;
 import ru.mk.pump.web.component.BaseComponent;
+import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
@@ -26,7 +27,7 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
     @Title("Регистрация")
     public static class RegPage extends BasePage {
 
-        @FindBy(tagName = "h1")
+        @FindBy(tagName = "h2")
         @Title(value = "Заголовок", desc = "Главный заголовок страницы")
         @Getter
         private TextArea pageTitle;
@@ -35,10 +36,17 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
         @Getter
         private RegMainForm mainForm;
 
+        @Title("Не существующий")
+        @FindBy(className = "mainlayout11")
+        @Getter
+        private Element notExists;
+
         public RegPage(Browser browser) {
             super(browser);
             setName("Регистрация");
             setUrl(DMUrls.REG_PAGE_URL);
+            getPageLoader().addExistsElements(pageTitle);
+            getPageLoader().addDisplayedElements(pageTitle, mainForm);
         }
     }
 

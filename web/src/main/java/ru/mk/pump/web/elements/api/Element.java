@@ -4,9 +4,9 @@ import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.common.api.PageItem;
 import ru.mk.pump.web.elements.api.part.Clickable;
-import ru.mk.pump.web.elements.internal.interfaces.ElementInfo;
 import ru.mk.pump.web.elements.api.part.Text;
 import ru.mk.pump.web.elements.internal.SubElementHelper;
+import ru.mk.pump.web.elements.internal.interfaces.ElementInfo;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
 public interface Element extends PrettyPrinter, StrictInfo, Clickable, Text, PageItem {
