@@ -1,4 +1,4 @@
-package ru.mk.pump.web.elements.utils;
+package ru.mk.pump.web.utils;
 
 import java.util.Map;
 import java.util.function.Function;

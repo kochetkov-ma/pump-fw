@@ -11,9 +11,9 @@ import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.common.api.PageItem;
 import ru.mk.pump.web.elements.ElementFactory;
-import ru.mk.pump.web.elements.api.ElementConfig;
+import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.internal.BaseElement;
-import ru.mk.pump.web.elements.utils.Xpath;
+import ru.mk.pump.web.utils.Xpath;
 import ru.mk.pump.web.exceptions.ElementException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 

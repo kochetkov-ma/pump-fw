@@ -108,7 +108,7 @@ public class BasePage implements Page {
 
     @Override
     public void open() {
-        getBrowser().getDriver().get(getUrl());
+        getBrowser().open(getUrl());
         afterOpen();
     }
 

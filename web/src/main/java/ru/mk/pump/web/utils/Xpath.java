@@ -1,4 +1,4 @@
-package ru.mk.pump.web.elements.utils;
+package ru.mk.pump.web.utils;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ public class Xpath {
 
     public String fixXpath(String xpath) {
         log.debug("[XPATH] source '{}'", xpath);
-
         if (xpath == null || xpath.matches("[.]*|[/]*")) {
             return ".";
         }
@@ -27,12 +26,8 @@ public class Xpath {
         xpath = xpath.replaceAll("(/\\.){2,}", "/.");
         /*более одного './'*/
         xpath = xpath.replaceAll("(/\\.){2,}", "./");
-
-
-
         /*одинокий '/./'*/
         xpath = xpath.replaceAll("(?<![./])/\\./(?![./])", "/");
-
         /*одинокий '/.'*/
         xpath = xpath.replaceAll("(?<!/)/\\.(?!\\.)", "");
         /*одинокий './'*/
@@ -43,14 +38,12 @@ public class Xpath {
         xpath = xpath.replaceAll("(?<!/)(\\.\\.)(?!/)", "/..");
         /*точка в начале слова*/
         xpath = xpath.replaceAll("(?<=[./])\\.(?=\\w)", "./");
-
         /*одинокий слэш в самом конце*/
         xpath = xpath.replaceAll("(?<!/)/$", "");
         /*одинокие два слэша вконце*/
         xpath = xpath.replaceAll("//$", "");
         /*одинокий './'*/
         xpath = xpath.replaceAll("(?<=[\\w/])\\./(?!/)", "");
-
         /*точку вначале для конкатенации*/
         if (xpath == null || xpath.matches("[.]{3,}|[/]{3,}")) {
             return ".";
@@ -60,7 +53,6 @@ public class Xpath {
         } else if (!xpath.startsWith(".")) {
             xpath = "./" + xpath;
         }
-
         log.debug("[XPATH] result '{}'", xpath);
         return xpath;
     }

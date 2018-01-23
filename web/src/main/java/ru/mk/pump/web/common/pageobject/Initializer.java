@@ -15,7 +15,7 @@ import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementList;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.ElementConfig;
+import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.page.api.Page;
 

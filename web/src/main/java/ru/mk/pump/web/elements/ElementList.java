@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import ru.mk.pump.web.common.AbstractPageItemList;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.ElementConfig;
 import ru.mk.pump.web.elements.internal.BaseElement;
 
 @SuppressWarnings({"WeakerAccess", "unused"})

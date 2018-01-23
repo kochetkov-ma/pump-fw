@@ -1,9 +1,8 @@
-package ru.mk.pump.web.elements.api;
+package ru.mk.pump.web.elements;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;

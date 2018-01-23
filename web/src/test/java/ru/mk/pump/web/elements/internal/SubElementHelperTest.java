@@ -15,7 +15,7 @@ import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.ElementConfig;
+import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
 

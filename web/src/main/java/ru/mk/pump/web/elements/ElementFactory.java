@@ -24,7 +24,6 @@ import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.common.api.ImplDispatcher;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.ElementConfig;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
@@ -79,6 +78,15 @@ public class ElementFactory implements StrictInfo {
     }
 
     //endregion
+
+    /**
+     * Реализация элемента должна обладать всеми public конструкторами от {@link BaseElement}
+     *
+     * @param interfaceClass Интерфейс элемента на выходе
+     * @param by Локатор
+     * @param elementConfig Конфигурация элемента
+     * @return Инстанс найденной реализации элемента
+     */
     public <R extends Element> R newElement(@NotNull Class<R> interfaceClass, @NotNull By by, @NotNull ElementConfig elementConfig) {
         final ElementImpl<? extends BaseElement> elementImplClass = elementImplDispatcher.findImplementation(interfaceClass, getRequirements(elementConfig));
         try {
@@ -100,6 +108,15 @@ public class ElementFactory implements StrictInfo {
         }
     }
 
+    /**
+     * Реализация элемента должна обладать всеми public конструкторами от {@link BaseElement}
+     *
+     * @param interfaceClass Интерфейс элемента на выходе
+     * @param by Локатор
+     * @param parent Инстанс родительского элемента
+     * @param elementConfig Конфигурация элемента
+     * @return Инстанс найденной реализации элемента
+     */
     public <R extends Element> R newElement(@NotNull Class<R> interfaceClass, @NotNull By by, @NotNull Element parent,
         @NotNull ElementConfig elementConfig) {
         checkParent(parent);

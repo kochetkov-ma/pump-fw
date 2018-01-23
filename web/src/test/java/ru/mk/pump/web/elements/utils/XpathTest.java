@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import ru.mk.pump.web.utils.Xpath;
 
 @Slf4j
 class XpathTest {

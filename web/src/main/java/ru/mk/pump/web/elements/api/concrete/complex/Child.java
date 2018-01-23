@@ -10,7 +10,7 @@ import org.openqa.selenium.By;
 import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.BaseElement;
-import ru.mk.pump.web.elements.utils.Parameters;
+import ru.mk.pump.web.utils.Parameters;
 
 @SuppressWarnings("WeakerAccess")
 @ToString(exclude = {"parentElement", "cache"})

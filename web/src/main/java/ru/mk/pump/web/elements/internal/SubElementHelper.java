@@ -18,9 +18,9 @@ import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.ElementConfig;
+import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.elements.utils.Xpath;
+import ru.mk.pump.web.utils.Xpath;
 import ru.mk.pump.web.exceptions.ElementException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
 

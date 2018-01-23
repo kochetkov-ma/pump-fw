@@ -12,7 +12,6 @@ import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.elements.api.ElementConfig;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.TextArea;

@@ -9,7 +9,7 @@ import ru.mk.pump.web.common.AbstractPageItemList;
 import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.ElementConfig;
+import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.internal.BaseElement;
 
 @SuppressWarnings({"WeakerAccess", "unused"})

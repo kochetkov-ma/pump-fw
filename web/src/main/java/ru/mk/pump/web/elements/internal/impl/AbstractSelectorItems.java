@@ -27,7 +27,7 @@ import ru.mk.pump.web.elements.internal.SetState;
 import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.elements.utils.Parameters;
+import ru.mk.pump.web.utils.Parameters;
 import ru.mk.pump.web.exceptions.SubElementsNotFoundException;
 import ru.mk.pump.web.page.api.Page;
 
