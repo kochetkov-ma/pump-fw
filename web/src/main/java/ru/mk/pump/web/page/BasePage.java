@@ -8,8 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.reporter.ReporterAllure;
-import ru.mk.pump.commons.utils.BrowserScreenshoter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
@@ -20,6 +18,7 @@ import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.page.api.Page;
 import ru.mk.pump.web.page.api.PageLoader;
 import ru.mk.pump.web.utils.UrlUtils;
+import ru.mk.pump.web.utils.WebReporter;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString
@@ -67,7 +66,7 @@ public class BasePage implements Page {
 
     public Reporter getReporter() {
         if (reporter == null) {
-            reporter = new ReporterAllure(new BrowserScreenshoter(getBrowser()));
+            reporter = WebReporter.getReporter();
         }
         return reporter;
     }

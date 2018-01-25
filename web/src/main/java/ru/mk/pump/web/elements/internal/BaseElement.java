@@ -22,6 +22,7 @@ import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.ElementInfo;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
+import ru.mk.pump.web.utils.WebReporter;
 
 /**
  * PUBLIC BASE IMPLEMENTATION InternalElement interface
@@ -251,7 +252,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     private void initLocal() {
-        withReporter(new ReporterAllure(new BrowserScreenshoter(getBrowser())));
+        withReporter(WebReporter.getReporter());
         withVerifier(new Verifier(getReporter()));
     }
 

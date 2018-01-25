@@ -94,11 +94,7 @@ public class WaitResult<T> implements StrictInfo {
 
     public WaitResult<T> throwExceptionOnFail(@NotNull Function<WaitResult<T>, ? extends RuntimeException> newExceptionWithWaiterInfo) {
         if (!isSuccess()) {
-            final RuntimeException ex = newExceptionWithWaiterInfo.apply(this);
-            if (ex.getCause() == null && getCause() != null){
-                ex.initCause(getCause());
-            }
-            throw ex;
+            throw newExceptionWithWaiterInfo.apply(this);
         }
         return this;
     }

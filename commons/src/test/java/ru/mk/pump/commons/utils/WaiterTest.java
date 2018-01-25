@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.concurrent.Callable;
 import lombok.extern.slf4j.Slf4j;
+import org.awaitility.core.ConditionTimeoutException;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,11 +16,7 @@ import ru.mk.pump.commons.exception.VerifyError;
 
 
 @Slf4j
-public class WaiterTest {
-
-    private Callable<Boolean> callableFalse;
-
-    private Callable<Boolean> callableTrue;
+class WaiterTest {
 
     private Callable<String> callableString;
 
@@ -28,15 +25,7 @@ public class WaiterTest {
     private Callable<Boolean> callableWithAssert;
 
     @BeforeEach
-    public void setUp() throws Exception {
-        callableFalse = () -> {
-            Waiter.sleep(100);
-            return false;
-        };
-        callableTrue = () -> {
-            Waiter.sleep(100);
-            return true;
-        };
+    void setUp() {
         callableString = () -> {
             Waiter.sleep(100);
             return "ok";
@@ -54,7 +43,7 @@ public class WaiterTest {
     }
 
     @Test
-    public void testWaitResultPass() {
+    void testWaitResultPass() {
         final WaitResult<String> waitResult = new Waiter().wait(1, 0, callableString, null);
         assertThat(waitResult.isSuccess()).isTrue();
         assertThat(waitResult.hasCause()).isFalse();
@@ -70,23 +59,24 @@ public class WaiterTest {
     }
 
     @Test
-    public void testWaitResultFail() {
+    void testWaitResultFail() {
         final WaitResult<String> waitResult = new Waiter().wait(1, 0, callableString, Matchers.equalTo("fail"));
         assertThat(waitResult.isSuccess()).isFalse();
-        assertThat(waitResult.hasCause()).isFalse();
+        assertThat(waitResult.hasCause()).isTrue();
         assertThat(waitResult.hasResult()).isTrue();
-        assertThat(waitResult.getCause()).isNull();
+        assertThat(waitResult.getCause()).isInstanceOf(ConditionTimeoutException.class);
         assertThat(waitResult.getResult()).isEqualTo("ok");
         assertThat(waitResult.getElapsedTime()).isBetween(1000L, 1100L);
         assertThatCode(() -> waitResult.ifHasResult((r) -> Assertions.fail("Фэйл"))).isInstanceOf(AssertionError.class);
-        waitResult.ifHasCause((ex) -> Assertions.fail("Фэйл"));
-        assertThat(waitResult.getInfo()).containsOnlyKeys("timeout (sec)", "interval (ms)", "elapsed time (ms)", "last result");
+        assertThat(waitResult.getInfo()).containsOnlyKeys("cause", "timeout (sec)", "interval (ms)", "elapsed time (ms)", "last result");
         assertThatThrownBy(waitResult::throwExceptionOnFail).isInstanceOf(TimeoutException.class);
-        assertThatThrownBy(() -> waitResult.throwExceptionOnFail(r -> new ExecutionException(r.getResult()))).isInstanceOf(ExecutionException.class);
+        assertThatThrownBy(() -> waitResult.throwExceptionOnFail(r -> new ExecutionException(r.getResult(), r.getCause())))
+            .isInstanceOf(ExecutionException.class)
+            .hasCauseInstanceOf(ConditionTimeoutException.class);
     }
 
     @Test
-    public void testWaitResultFailEx() {
+    void testWaitResultFailEx() {
         final WaitResult<?> waitResult = new Waiter().waitIgnoreExceptions(1, 0, callableWithEx);
         assertThat(waitResult.isSuccess()).isFalse();
         assertThat(waitResult.hasCause()).isTrue();
@@ -102,13 +92,13 @@ public class WaiterTest {
     }
 
     @Test
-    public void waitIgnoreExceptions() {
+    void waitIgnoreExceptions() {
         assertThatThrownBy(() -> new Waiter().waitIgnoreExceptions(1, 0, callableWithAssert)).isInstanceOf(VerifyError.class);
         assertThatCode(() -> new Waiter().waitIgnoreExceptions(1, 0, callableWithEx)).doesNotThrowAnyException();
     }
 
     @Test
-    public void testWait() {
+    void testWait() {
         assertThat(new Waiter().withReThrow(false).wait(1, 0, callableWithEx).getCause()).isInstanceOf(RuntimeException.class);
         assertThatThrownBy(() -> new Waiter().withReThrow(true).wait(1, 0, callableWithEx)).isInstanceOf(RuntimeException.class);
         assertThatThrownBy(() -> new Waiter().wait(1, 0, callableWithAssert)).isInstanceOf(VerifyError.class);

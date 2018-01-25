@@ -2,22 +2,23 @@ group = "ru.mk.pump"
 version = "1.0"
 ext {
     versions = [
-            aspectj     : "1.8.10",
-            annotations : "15.0",
-            lombok      : "latest.release",
-            apache      : "latest.release",
-            guava       : "latest.release",
-            reflections : "latest.release",
-            logger      : "latest.release",
-            junit       : "4.12",
-            jackson     : "2.9.0.pr4",
-            selenium    : "3.7.0",
-            allure      : "latest.release",
-            assertj     : "3.8.0",
-            allureJunit4: "latest.release",
-            junit5      : "latest.release",
-            mockito     : "2.+",
-            trove       : "3.+"
+            aspectj      : "1.8.10",
+            allure_gradle: "2.5",
+            annotations  : "15.0",
+            lombok       : "latest.release",
+            apache       : "latest.release",
+            guava        : "latest.release",
+            reflections  : "latest.release",
+            logger       : "latest.release",
+            junit        : "4.12",
+            jackson      : "2.9.0.pr4",
+            selenium     : "3.7.0",
+            allure       : "latest.release",
+            assertj      : "3.8.0",
+            allureJunit4 : "latest.release",
+            junit5       : "latest.release",
+            mockito      : "2.+",
+            trove        : "3.+"
     ]
 }
 
@@ -30,9 +31,14 @@ task info {
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:+'
+        classpath 'io.qameta.allure:allure-gradle:2.4'
     }
 }
 
@@ -52,6 +58,8 @@ task clean(group: "build") {
         println "dir clean finish : ${rootDir}/allure-results"
     }
 }
+
+
 
 subprojects {
     apply plugin: 'java'
@@ -79,11 +87,16 @@ subprojects {
     }
 
     repositories {
+        jcenter()
         mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
         compile(
+                "org.aspectj:aspectjweaver:1.8.13",
                 "org.jetbrains:annotations:$versions.annotations",
                 "org.projectlombok:lombok:$versions.lombok",
                 "org.apache.httpcomponents:httpclient:$versions.apache",
@@ -97,8 +110,8 @@ subprojects {
                 "ch.qos.logback:logback-core:$versions.logger",
                 "org.seleniumhq.selenium:selenium-java:$versions.selenium",
                 "io.qameta.allure:allure-java-commons:$versions.allure",
-                "net.sf.trove4j:trove4j:$versions.trove"
-
+                "net.sf.trove4j:trove4j:$versions.trove",
+                "io.qameta.allure:allure-gradle:$versions.allure_gradle"
         )
 
         testCompileOnly('org.apiguardian:apiguardian-api:+')
@@ -108,7 +121,9 @@ subprojects {
         testCompile(
                 "org.junit.jupiter:junit-jupiter-api:$versions.junit5",
                 "org.assertj:assertj-core:$versions.assertj",
-                "org.mockito:mockito-core:$versions.mockito"
+                "org.mockito:mockito-core:$versions.mockito",
+                "io.qameta.allure:allure-junit5:latest.release",
+                "io.qameta.allure:allure-gradle:$versions.allure_gradle"
         )
     }
 }

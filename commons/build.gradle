@@ -1,5 +1,3 @@
-apply plugin: 'java'
-
 ext {
     awaitilityVersion = '3.0.0'
 }
@@ -14,8 +12,20 @@ test {
     System.setProperty("allure.results.directory", "$buildDir/allure-result")
 }
 
-dependencies {
-    
-    compile "org.awaitility:awaitility:$awaitilityVersion"
+apply plugin: 'io.qameta.allure'
+
+allure {
+    version = '2.4.1'
+    resultsDir = project.file('allure-results')
+    aspectjweaver = true
+    aspectjVersion = versions.aspectj
+
+    useJUnit5 {
+        version = versions.junit5
+    }
 }
 
+dependencies {
+
+    compile "org.awaitility:awaitility:$awaitilityVersion"
+}

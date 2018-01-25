@@ -42,6 +42,14 @@ public class Browsers implements AutoCloseable {
         }
     }
 
+    public Browser addBrowser(Browser browser){
+        checkClosed();
+        internalAllBrowsers.add(browser);
+        currentBrowser.set(browser);
+        browserHistory.get().add(Info.of(browser.getId(), browser));
+        return currentBrowser.get();
+    }
+
     public Browser newBrowser(BrowserConfig browserConfig) {
         checkClosed();
         final Browser newBrowser = new AbstractBrowser(Browsers.getBuilder(browserConfig), UUID.randomUUID().toString()) {

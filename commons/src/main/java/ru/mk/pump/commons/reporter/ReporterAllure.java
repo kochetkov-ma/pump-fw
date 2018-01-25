@@ -7,8 +7,10 @@ import io.qameta.allure.model.Status;
 import io.qameta.allure.model.StepResult;
 import io.qameta.allure.model.TestResult;
 import java.io.ByteArrayInputStream;
+import java.util.Deque;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +30,10 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     private ThreadLocal<String> currentTestUuid = new InheritableThreadLocal<>();
 
+    private ThreadLocal<Deque<String>> blockUuidQueue = ThreadLocal.withInitial(ConcurrentLinkedDeque::new);
+
     @Getter
     private AttachmentsFactory attachmentsFactory;
-
-    private String currentContainerUuid;
 
     public ReporterAllure(Screenshoter screenshoter) {
 
@@ -51,7 +53,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     }
 
     @Override
-    public void startTest(String title, String description) {
+    public void testStart(String title, String description) {
         currentTestUuid.set(UUID.randomUUID().toString());
         final TestResult testResult = new TestResult()
             .withDescription(description)
@@ -62,7 +64,8 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     }
 
     @Override
-    public void stopTest() {
+    public void testStop() {
+        blockStopAll();
         if (!Strings.isEmpty(currentTestUuid.get())) {
             Allure.getLifecycle().updateTestCase(currentTestUuid.get(), tc -> tc.setStatus(Status.PASSED));
             Allure.getLifecycle().stopTestCase(currentTestUuid.get());
@@ -78,6 +81,35 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     @Override
     public void info(String title, String description) {
         step(Type.INFO, title, description, new Info(null, null));
+    }
+
+    @Override
+    public void blockStart(String title, String description) {
+        final String uuid = UUID.randomUUID().toString();
+        final StepResult stepResult = new StepResult()
+            .withDescription(description)
+            .withName(title);
+        Allure.getLifecycle().startStep(uuid, stepResult);
+        blockUuidQueue.get().add(uuid);
+    }
+
+    @Override
+    public void blockStop() {
+        if (!blockUuidQueue.get().isEmpty()) {
+            blockStop(blockUuidQueue.get().pop());
+        }
+    }
+
+    private void blockStop(String uuid) {
+        Allure.getLifecycle().updateStep(uuid, block -> block.withStatus(Status.PASSED));
+        Allure.getLifecycle().stopStep(uuid);
+    }
+
+    @Override
+    public void blockStopAll() {
+        while (!blockUuidQueue.get().isEmpty()) {
+            blockStop(blockUuidQueue.get().pop());
+        }
     }
 
     @Override
@@ -142,7 +174,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     @Override
     public void close() {
-        //stopTest();
+        //testStop();
     }
 
     public enum Type {

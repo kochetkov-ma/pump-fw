@@ -1,33 +1,45 @@
 package ru.mk.pump.commons.reporter;
 
 import io.qameta.allure.Step;
-import org.junit.jupiter.api.AfterEach;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.reporter.ReporterAllure.Type;
 import ru.mk.pump.commons.utils.DesktopScreenshoter;
+import ru.mk.pump.commons.utils.Strings;
 
-public class ReporterTest {
+@Slf4j
+class ReporterTest {
 
     private Reporter reporter;
 
     @BeforeEach
-    public void before() {
+    void before() {
         this.reporter = new ReporterAllure(new DesktopScreenshoter(), Type.ALL);
     }
 
-    @AfterEach
-    public void tearDown() throws Exception {
-
-    }
-
     @Test
-    public void testReporter() {
-        stepToTest();
-        reporter.startTest("Тестовый тест", "Сбор данных");
+    void testReporter() {
+        reporter.testStart("Тестовый тест", "Сбор данных");
         reporter.info("Новый тест", "Описание");
-        reporter.stopTest();
+        stepToTest();
+        reporter.blockStart("Главный блок", "Описание блока");
+        reporter.blockStart("Зависимый блок", "Описание зависимого блока");
+        reporter.info("Шаг1", Strings.empty());
+        reporter.info("Шаг2", Strings.empty());
+        reporter.blockStart("Зависимый блок", "Описание зависимого блока");
+        reporter.info("Шаг3", Strings.empty());
+        reporter.info("Шаг4", Strings.empty());
+        reporter.blockStop();
+        reporter.info("Шаг5", Strings.empty());
+        reporter.blockStop();
+        reporter.info("Шаг6", Strings.empty());
+        reporter.blockStop();
+        reporter.info("Шаг7", Strings.empty());
+        reporter.blockStop();
+        reporter.info("Шаг8", Strings.empty());
+        reporter.testStop();
     }
 
     @Step("Annotation test step")

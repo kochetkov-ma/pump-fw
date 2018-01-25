@@ -21,11 +21,17 @@ import ru.mk.pump.commons.constants.StringConstants;
 @UtilityClass
 public class Strings {
 
-    public static String LITE_NORMALIZE = "[\\n\\t]";
+    public static final String EMPTY = "";
 
-    public static String NORMALIZE = "[-+.^:(),\\s\\n\\t]";
+    public static final String LITE_NORMALIZE = "[\\n\\t]";
 
-    public static String WIN_FILE_NORMALIZE = "[\\\\/:*?<>|]";
+    public static final String NORMALIZE = "[-+.^:(),\\s\\n\\t]";
+
+    public static final String WIN_FILE_NORMALIZE = "[\\\\/:*?<>|]";
+
+    public String empty(){
+        return EMPTY;
+    }
 
     public String space(int count) {
         final StringBuilder stringBuilder = new StringBuilder();

@@ -2,7 +2,6 @@ package ru.mk.pump.web.browsers;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
@@ -58,7 +57,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
 
     @Override
     public Browser start() {
-        if (isClosed()){
+        if (isClosed()) {
             throw new BrowserException("Cannot start browser. Browser has been already closed and this instance of Browser cannot start", this);
         }
         if (!isStarted()) {

@@ -5,9 +5,9 @@ import lombok.NonNull;
 @SuppressWarnings("unused")
 public interface Reporter {
 
-    void startTest(String title, String description);
+    void testStart(String title, String description);
 
-    void stopTest();
+    void testStop();
 
     /**
      * @param attachment {@link #attachments()}
@@ -15,6 +15,12 @@ public interface Reporter {
     void info(String title, String description, Attachment attachment);
 
     void info(String title, String description);
+
+    void blockStart(String title, String description);
+
+    void blockStop();
+
+    void blockStopAll();
 
     void warn(String title, String description, Attachment attachment);
 
