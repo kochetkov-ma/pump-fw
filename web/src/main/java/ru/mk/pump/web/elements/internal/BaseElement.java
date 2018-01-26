@@ -9,8 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.reporter.ReporterAllure;
-import ru.mk.pump.commons.utils.BrowserScreenshoter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;

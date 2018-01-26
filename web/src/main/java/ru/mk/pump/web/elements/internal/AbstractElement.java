@@ -17,6 +17,7 @@ import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
+import ru.mk.pump.web.elements.api.listeners.StateListener;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
@@ -125,6 +126,10 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     public AbstractElement addActionListener(List<ActionListener> actionListener) {
         actionListener.forEach(actionExecutor::addListener);
+        return this;
+    }
+    public AbstractElement addStateListener(List<StateListener> stateListener) {
+        stateListener.forEach(stateResolver::addListener);
         return this;
     }
     //endregion

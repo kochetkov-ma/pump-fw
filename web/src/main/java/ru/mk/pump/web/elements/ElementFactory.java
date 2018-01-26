@@ -25,6 +25,7 @@ import ru.mk.pump.web.common.api.ImplDispatcher;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
+import ru.mk.pump.web.elements.api.listeners.StateListener;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFactoryException;
@@ -46,6 +47,8 @@ public class ElementFactory implements StrictInfo {
     private Set<Class<? extends Annotation>> requirements = Sets.newHashSet();
 
     private List<ActionListener> actionListeners = Lists.newArrayList();
+
+    private List<StateListener> stateListeners = Lists.newArrayList();
 
     //region constructors
     public ElementFactory(@NotNull ImplDispatcher elementImplDispatcher, @NotNull Page page) {
@@ -77,6 +80,15 @@ public class ElementFactory implements StrictInfo {
         return this;
     }
 
+    public ElementFactory addStateListener(@NotNull StateListener stateListener) {
+        this.stateListeners.add(stateListener);
+        return this;
+    }
+
+    public ElementFactory withStateListener(@NotNull Collection<StateListener> stateListeners) {
+        this.stateListeners.addAll(stateListeners);
+        return this;
+    }
     //endregion
 
     /**
@@ -148,6 +160,7 @@ public class ElementFactory implements StrictInfo {
             res.put("requirements", Strings.toPrettyString(requirements));
         }
         res.put("actionListeners", String.valueOf(actionListeners.size()));
+        res.put("stateListeners", String.valueOf(stateListeners.size()));
         res.put("impl dispatcher", Strings.toPrettyString(elementImplDispatcher.getInfo()));
         return res;
     }
@@ -172,6 +185,7 @@ public class ElementFactory implements StrictInfo {
             .withReporter(elementConfig.getReporter())
             .withVerifier(elementConfig.getVerifier())
             .addActionListener(actionListeners);
+        element.addStateListener(stateListeners);
         if (elementConfig.getIndex() != -1) {
             element.setIndex(elementConfig.getIndex());
         }
