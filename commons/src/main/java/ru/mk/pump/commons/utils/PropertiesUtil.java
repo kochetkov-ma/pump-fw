@@ -1,5 +1,7 @@
 package ru.mk.pump.commons.utils;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import lombok.experimental.UtilityClass;
 import ru.mk.pump.commons.exception.UtilException;
 
@@ -17,6 +19,16 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class PropertiesUtil {
 
+    public Properties load(InputStream inputStream, Charset charset) {
+        final Properties result = new Properties();
+        try (Reader reader = new InputStreamReader(inputStream, charset)) {
+            result.load(reader);
+        } catch (IOException ex) {
+            throw new UtilException("Error loading properties from input stream", ex);
+        }
+        return result;
+    }
+
     public Properties load(Path propertiesPath, Charset charset) {
         final Properties result = new Properties();
         try (Reader reader = Files.newBufferedReader(propertiesPath, charset)) {
@@ -25,6 +37,10 @@ public class PropertiesUtil {
             throw new UtilException("Error loading properties " + propertiesPath, ex);
         }
         return result;
+    }
+
+    public Map<String, String> loadMap(InputStream inputStream, Charset charset) {
+        return propertiesToMap(load(inputStream, charset));
     }
 
     public Map<String, String> loadMap(Path propertiesPath, Charset charset) {

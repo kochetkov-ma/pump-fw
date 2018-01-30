@@ -39,7 +39,7 @@ public class ConfigurationsLoaderTest {
         final Stand stand = new Stand();
         /*rewrite object*/
         configurationsLoader.toObject(stand, "main");
-
+        assertThat(stand.getEnumProperty()).isEqualTo(En.ONE);
         assertThat(stand.getCommon()).isEqualTo("common");
         assertThat(stand.getExtra()).isEqualTo("from_env");
         assertThat(stand.getUrl()).isEqualTo("yandex.ru");

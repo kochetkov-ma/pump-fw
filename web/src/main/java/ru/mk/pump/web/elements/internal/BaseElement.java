@@ -41,6 +41,8 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     private Initializer initializer;
 
+    private BaseElementHelper helper;
+
     public BaseElement(By avatarBy, Page page) {
         super(avatarBy, page);
         initLocal();
@@ -252,6 +254,10 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     private void initLocal() {
         withReporter(WebReporter.getReporter());
         withVerifier(new Verifier(getReporter()));
+        /*helper instance init*/
+        this.helper = new BaseElementHelper(this);
+        /*helper features init*/
+        helper.addWindowSizeChecker();
     }
 
     protected ElementFactory getSubElementFactory() {
@@ -264,4 +270,6 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         }
         return selfElementFactory;
     }
+
+
 }

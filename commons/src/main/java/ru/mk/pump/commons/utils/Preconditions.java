@@ -3,7 +3,9 @@ package ru.mk.pump.commons.utils;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -25,6 +27,12 @@ public class Preconditions {
     public void checkNotEmpty(@Nullable Collection collection) {
         if (collection == null || collection.isEmpty()) {
             throw new IllegalArgumentException(String.format("Checked collection '%s' is empty", Strings.toString(collection)));
+        }
+    }
+
+    public void checkObjectNotNull(@Nullable Object object, @NotNull Class aClass) {
+        if (Objects.isNull(object)) {
+            throw new IllegalArgumentException(String.format("Checked object '%s' is null", aClass.getCanonicalName()));
         }
     }
 

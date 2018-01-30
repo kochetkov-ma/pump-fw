@@ -1,21 +1,23 @@
 package ru.mk.pump.commons.utils;
 
+import static java.lang.String.format;
+
 import com.google.common.io.Files;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.exception.UtilException;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.lang.String.format;
 
 /**
  * @author kochetkovma
@@ -24,6 +26,19 @@ import static java.lang.String.format;
 @UtilityClass
 @Slf4j
 public class FileUtils {
+
+    public boolean isExistsAndValid(@Nullable String candidatePath) {
+        if (Strings.isBlank(candidatePath)) {
+            return false;
+        }
+        Path path;
+        try {
+            path = Paths.get(candidatePath);
+        } catch (InvalidPathException e) {
+            return false;
+        }
+        return java.nio.file.Files.exists(path);
+    }
 
     public boolean isEmpty(@NotNull Path path) {
         try {
@@ -103,7 +118,7 @@ public class FileUtils {
         }
         try {
             return java.nio.file.Files.find(sourceDir, depth, (path, attr) -> attr.isDirectory() && path.getFileName().toString().startsWith(dirName))
-                    .findFirst().orElseThrow(() -> new UtilException(format("Cannot find dir '%s' in dir '%s'", dirName, sourceDir)));
+                .findFirst().orElseThrow(() -> new UtilException(format("Cannot find dir '%s' in dir '%s'", dirName, sourceDir)));
         } catch (IOException e) {
             throw new UtilException(format("Cannot find dir '%s' in dir '%s'", dirName, sourceDir), e);
         }
@@ -118,7 +133,7 @@ public class FileUtils {
         }
         try {
             return java.nio.file.Files.find(sourceDir, depth, (path, attr) -> attr.isRegularFile() && path.getFileName().toString().startsWith(fileName))
-                    .collect(Collectors.toList());
+                .collect(Collectors.toList());
         } catch (IOException e) {
             throw new UtilException(format("Cannot find files '%s' in dir '%s'", fileName, sourceDir), e);
         }

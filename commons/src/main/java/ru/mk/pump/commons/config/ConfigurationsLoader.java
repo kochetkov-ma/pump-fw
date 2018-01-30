@@ -5,9 +5,11 @@ import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELI
 import com.google.common.collect.Maps;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -29,7 +31,9 @@ public class ConfigurationsLoader {
     public static final int HISTORY_SIZE = 100;
 
     //region FIELDS
-    private final Path propertiesConfigurationPath;
+    private InputStream inputStreamProperties;
+
+    private Path propertiesConfigurationPath;
 
     private final boolean discoverInEnv;
 
@@ -41,6 +45,15 @@ public class ConfigurationsLoader {
     //endregion
 
     //region CONSTRUCTORS
+    public ConfigurationsLoader(@NotNull InputStream inputStreamProperties, boolean discoverInEnv) {
+        this.inputStreamProperties = inputStreamProperties;
+        this.discoverInEnv = discoverInEnv;
+    }
+
+    public ConfigurationsLoader(@NotNull InputStream inputStreamProperties) {
+        this(inputStreamProperties, true);
+    }
+
     public ConfigurationsLoader(@NotNull Path propertiesConfigurationPath) {
         this(propertiesConfigurationPath, true);
     }
@@ -63,7 +76,11 @@ public class ConfigurationsLoader {
 
     public ConfigurationsLoader load() {
         history.clear();
-        configMap = PropertiesUtil.loadMap(propertiesConfigurationPath, MainConstants.FILE_ENCODING);
+        if (Objects.nonNull(propertiesConfigurationPath)) {
+            configMap = PropertiesUtil.loadMap(propertiesConfigurationPath, MainConstants.FILE_ENCODING);
+        } else {
+            configMap = PropertiesUtil.loadMap(inputStreamProperties, MainConstants.FILE_ENCODING);
+        }
         return this;
     }
 
@@ -142,7 +159,7 @@ public class ConfigurationsLoader {
         Object result;
         String path;
         String finalPath = "";
-        if (!ClassUtils.isPrimitiveOrWrapper(field.getType()) && !field.getType().isAssignableFrom(String.class)) {
+        if (!ClassUtils.isPrimitiveOrWrapper(field.getType()) && !field.getType().isAssignableFrom(String.class) && !field.getType().isEnum()) {
             try {
                 path = getPrefixOrNull(field, prefix);
                 result = mapToObject(field.getType(), path);

@@ -3,6 +3,7 @@ package ru.mk.pump.web.browsers;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -24,6 +25,10 @@ public class BrowserActions {
 
     public Object executeScript(String script) {
         return ((JavascriptExecutor) driver.get()).executeScript(script);
+    }
+
+    public Dimension getSize() {
+        return driver.get().manage().window().getSize();
     }
 
     public String getText(WebElement element) {

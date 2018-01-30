@@ -16,4 +16,5 @@ public class Two {
 
     @Property(value = "two")
     private String two;
+
 }
