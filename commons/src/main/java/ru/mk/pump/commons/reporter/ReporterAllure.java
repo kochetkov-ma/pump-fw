@@ -1,6 +1,8 @@
 package ru.mk.pump.commons.reporter;
 
 
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
+
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Parameter;
 import io.qameta.allure.model.Status;
@@ -13,7 +15,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Strings;
@@ -22,21 +26,36 @@ import ru.mk.pump.commons.utils.Strings;
 @Slf4j
 public class ReporterAllure implements Reporter, AutoCloseable {
 
-    public static final String DEFAULT_RESULT_DIR = "";
+    /**
+     * For your information.
+     * This path cannot be changed after initialisation Allure Lifecycle in any places of program, not only {@link ReporterAllure} such as AllureJunitAdapter or other
+     */
+    public static final String SYSTEM_ALLURE_RESULT_PATH = "allure.results.directory";
 
     private static final String LOG_PREFIX = "[REPORTER] STEP";
 
     private final Type minimumLevelForDuplicateInSlf4;
 
+    @Setter
+    private Type autoScreenLevel = Type.OFF;
+
+    @Setter
+    private Type postingLevel = Type.INFO;
+
     private ThreadLocal<String> currentTestUuid = new InheritableThreadLocal<>();
 
     private ThreadLocal<Deque<String>> blockUuidQueue = ThreadLocal.withInitial(ConcurrentLinkedDeque::new);
+
+    private static String now() {
+        return org.joda.time.Instant.now().toString(new DateTimeFormatterBuilder()
+            .appendPattern("dd-MM-yy HH:mm:ss:SSSS")
+            .toFormatter());
+    }
 
     @Getter
     private AttachmentsFactory attachmentsFactory;
 
     public ReporterAllure(Screenshoter screenshoter) {
-
         this.attachmentsFactory = new AttachmentsFactory(screenshoter);
         this.minimumLevelForDuplicateInSlf4 = Type.INFO;
     }
@@ -118,6 +137,16 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     }
 
     @Override
+    public void warn(String title, String description, Attachment attachment, Throwable throwable) {
+        step(Type.WARNING, title, Strings.concat(LINE, description, Strings.toString(throwable)), new Info(attachment, null));
+    }
+
+    @Override
+    public void warn(String title, String description, Throwable throwable) {
+        step(Type.WARNING, title, Strings.concat(LINE, description, Strings.toString(throwable)), new Info(null, null));
+    }
+
+    @Override
     public void warn(String title, String description) {
         step(Type.WARNING, title, description, new Info(null, null));
     }
@@ -178,7 +207,14 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     }
 
     public enum Type {
-        ALL("", 0), INFO("", 2), WARNING("[WARN] ", 3), ERROR("[ERROR] ", 4), ATTACHMENT("[ATTACHMENT] ", 0), PASS("[PASS] ", 1), FAIL("[FAIL] ", 4);
+        OFF("", Integer.MAX_VALUE),
+        ALL("", 0),
+        INFO("", 2),
+        WARNING("[WARN] ", 3),
+        ERROR("[ERROR] ", 4),
+        ATTACHMENT("[ATTACHMENT] ", 0),
+        PASS("[PASS] ", 1),
+        FAIL("[FAIL] ", 4);
 
         @Getter
         private final String value;
@@ -228,11 +264,16 @@ public class ReporterAllure implements Reporter, AutoCloseable {
      * @param description need to be title + lineSeparator + description for full information
      */
     private void step(Type level, String title, String description, Info info) {
+        if (postingLevel.getPriority() > level.getPriority()) {
+            log.debug(Strings.space(LOG_PREFIX, "skip this message with level=", level.name(), "minimal level=", postingLevel.name()));
+            return;
+        }
         final String stepUuid = UUID.randomUUID().toString();
         final StepResult stepResult = new StepResult()
             .withName(level.getValue() + title)
             .withStatus(Status.PASSED)
-            .withParameters(new Parameter().withName("status").withValue(level.name()));
+            .withParameters(new Parameter().withName("status").withValue(level.name()),
+                new Parameter().withName("time").withValue(now()));
 
         Allure.getLifecycle().startStep(stepUuid, stepResult);
         if (Objects.nonNull(description)) {
@@ -251,10 +292,13 @@ public class ReporterAllure implements Reporter, AutoCloseable {
             } else if (level.getPriority() > 3) {
                 log.error(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title), description, info.toString()));
             }
-
         }
         if (info.attachment() != null) {
             attach(info.attachment());
+        }
+        if (!AttachmentsFactory.isScreen(info.attachment) && autoScreenLevel.getPriority() <= level.getPriority()) {
+            log.debug(Strings.space(LOG_PREFIX, "auto attach screen with level=", level.name(), "minimal auto-screen level=", autoScreenLevel.name()));
+            attach(getAttachmentsFactory().screen(String.format("auto screen on '%s'", level)));
         }
         if (info.throwable() != null) {
             if (info.throwable() instanceof AssertionError) {

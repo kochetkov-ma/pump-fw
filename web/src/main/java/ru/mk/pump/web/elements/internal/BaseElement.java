@@ -217,27 +217,6 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
             .addBefore(getFocusAction());
     }
 
-    /* for test */
-    /*
-    @Override
-    protected StateResolver newDelegateStateResolver() {
-
-        return (StateResolver) super.newDelegateStateResolver().addListener(new StateListener() {
-            @Override
-            public void onBefore(State state) {
-                log.info("BEFORE STATE");
-                log.info(Strings.toPrettyString(state.getInfo()));
-            }
-
-            @Override
-            public void onFinish(State state) {
-                log.info("FINISH STATE");
-                log.info(Strings.toPrettyString(state.getInfo()));
-            }
-        });
-    }
-    */
-
     @Override
     public BaseElement setIndex(int index) {
         super.setIndex(index);
@@ -253,11 +232,13 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     private void initLocal() {
         withReporter(WebReporter.getReporter());
-        withVerifier(new Verifier(getReporter()));
+        withVerifier(WebReporter.getVerifier());
         /*helper instance init*/
         this.helper = new BaseElementHelper(this);
         /*helper features init*/
-        helper.addWindowSizeChecker();
+        helper.windowSizeCheckerEnable();
+        helper.stateReportingEnable();
+        helper.actionsReportingEnable();
     }
 
     protected ElementFactory getSubElementFactory() {

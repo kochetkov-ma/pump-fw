@@ -16,19 +16,23 @@ abstract class ActionNotifier extends AbstractNotifier<Action, ActionEvent, Acti
         super(actionListeners);
     }
 
-    protected void notifyOnAfter(Action action) {
-        notify(event(action, ActionEvent.AFTER));
+    protected void notifyOnAfterActionFail(Action action) {
+        notify(event(action, ActionEvent.AFTER_ACTION_FAIL));
     }
 
     protected void notifyOnFail(Action action, Throwable throwable) {
         notify(event(action, ActionEvent.FAIL), throwable);
     }
 
-    protected void notifyOnFinallyAfter(Action action) {
-        notify(event(action, ActionEvent.FINALLY_AFTER));
+    protected void notifyOnFinallyStateCheck(Action action) {
+        notify(event(action, ActionEvent.FINALLY_STATE_CHECK));
     }
 
     protected void notifyOnSuccess(Action action, Object result) {
         notify(event(action, ActionEvent.SUCCESS), result);
+    }
+
+    protected void notifyOnBeforeSuccess(Action action) {
+        notify(event(action, ActionEvent.BEFORE_ACTION_SUCCESS));
     }
 }

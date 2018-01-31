@@ -3,6 +3,8 @@ package ru.mk.pump.commons.reporter;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.constants.MainConstants;
 import ru.mk.pump.commons.utils.FileUtils;
 
@@ -41,7 +43,8 @@ public class AttachmentsFactory {
     }
 
     public Attachment screen(@NonNull String attachmentName, @NonNull Supplier<byte[]> bytes) {
-        return new Attachment().withName(attachmentName).withSourceByte(bytes).withType(IMAGE)
+        return new Attachment().withName(attachmentName).withSourceByte(bytes)
+                .withType(IMAGE)
                 .withExtension(SCREEN_FORMAT);
     }
 
@@ -49,5 +52,12 @@ public class AttachmentsFactory {
         return new Attachment().withName(attachmentName).withSourceByte(() -> screenshoter.getScreen().orElse(new byte[0]))
                 .withExtension("png")
                 .withType(IMAGE);
+    }
+
+    public static boolean isScreen(@Nullable Attachment attachment){
+        if (attachment == null){
+            return false;
+        }
+        return StringUtils.containsIgnoreCase(attachment.getType(), "image");
     }
 }

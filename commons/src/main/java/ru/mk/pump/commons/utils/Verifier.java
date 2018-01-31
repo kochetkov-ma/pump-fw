@@ -1,5 +1,12 @@
 package ru.mk.pump.commons.utils;
 
+import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,16 +16,16 @@ import ru.mk.pump.commons.exception.VerifyError;
 import ru.mk.pump.commons.interfaces.Collator;
 import ru.mk.pump.commons.reporter.Reporter;
 
-import java.util.*;
-
-import static java.lang.String.format;
-
 @SuppressWarnings("ALL")
 public class Verifier {
 
     private final Reporter reporter;
 
     private AssertionError lastError = null;
+
+    private boolean postPassedScreen = false;
+
+    private boolean postPassedCheck = false;
 
     private boolean failOnError = true;
 
@@ -29,12 +36,22 @@ public class Verifier {
         this.reporter = reporter;
     }
 
-    public Verifier withFailOnError(boolean failOnError) {
+    public Verifier setPostPassedScreen(boolean postPassedScreen) {
+        this.postPassedScreen = postPassedScreen;
+        return this;
+    }
+
+    public Verifier setPostPassedCheck(boolean postPassedCheck) {
+        this.postPassedCheck = postPassedCheck;
+        return this;
+    }
+
+    public Verifier setFailOnError(boolean failOnError) {
         failOnError = failOnError;
         return this;
     }
 
-    public Verifier withNeedTrim(boolean needTrim) {
+    public Verifier setNeedTrim(boolean needTrim) {
         this.needTrim = needTrim;
         return this;
     }
@@ -98,8 +115,8 @@ public class Verifier {
     public void equals(String description, @NotNull Object expected, @NotNull Object actual) {
         String message = "";
         final String extraMessage =
-                "Ожидаемое значение : " + expected.toString() + System.lineSeparator() + "Актуальное значение : " + actual.toString() + System.lineSeparator()
-                        + message;
+            "Ожидаемое значение : " + expected.toString() + System.lineSeparator() + "Актуальное значение : " + actual.toString() + System.lineSeparator()
+                + message;
         message = "Объекты совпадают. Тип объектов : " + expected.getClass().getSimpleName() + " " + actual.getClass().getSimpleName();
         check(Objects.equals(expected, actual), description, message);
     }
@@ -107,8 +124,8 @@ public class Verifier {
     public void notEquals(String description, @NotNull Object expected, @NotNull Object actual) {
         String message = "";
         final String extraMessage =
-                "Ожидаемое значение : " + expected.toString() + System.lineSeparator() + "Актуальное значение : " + actual.toString() + System.lineSeparator()
-                        + message;
+            "Ожидаемое значение : " + expected.toString() + System.lineSeparator() + "Актуальное значение : " + actual.toString() + System.lineSeparator()
+                + message;
         message = "Объекты НЕ совпадают. Тип объектов : " + expected.getClass().getSimpleName() + " " + actual.getClass().getSimpleName();
         check(!Objects.equals(expected, actual), description, extraMessage);
     }
@@ -147,7 +164,7 @@ public class Verifier {
      * @param comporatorToCompareItems {@link ru.mk.pump.commons.utils.Collators}
      */
     public <T> void listEquals(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems,
-                               @Nullable Comparator<T> tComparatorToSortActual) {
+        @Nullable Comparator<T> tComparatorToSortActual) {
         actual = sortIfNeed(actual, tComparatorToSortActual);
         checkSize(description, null, expected, actual, false);
         final String message = format("Ожидаемый список '%s' равен актуальному списку '%s'", expected, actual);
@@ -155,12 +172,12 @@ public class Verifier {
             final T actualItem = actual.get(index);
             final T expectedItem = expected.get(index);
             check(comporatorToCompareItems.collate(expectedItem, actualItem), description, message,
-                    Strings.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(index)));
+                Strings.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(index)));
         }
     }
 
     public <T> void listStrictContains(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems,
-                                       @Nullable Comparator<T> tComparatorToSortActual) {
+        @Nullable Comparator<T> tComparatorToSortActual) {
         actual = sortIfNeed(actual, tComparatorToSortActual);
 
         checkSize(description, null, expected, actual, true);
@@ -174,19 +191,19 @@ public class Verifier {
         final String message = format("Ожидаемый список '%s' строго (с учетом позиции элементов) содержится в списке '%s'", expected, actual);
 
         check(actualStartIndex != -1, description, message,
-                "Найдено вхождение первого элемента ожидаемого списка в актуальном списке");
+            "Найдено вхождение первого элемента ожидаемого списка в актуальном списке");
 
         final List<T> actualListToCompare = actual.subList(actualStartIndex, actual.size());
 
         checkSize(Strings.space(description,
-                ". Сравнение части актуального списка начиная с позиции совпадения " + actualStartIndex + " с первым элементов ожидаемого списка"), message,
-                expected, actualListToCompare, true);
+            ". Сравнение части актуального списка начиная с позиции совпадения " + actualStartIndex + " с первым элементов ожидаемого списка"), message,
+            expected, actualListToCompare, true);
 
         for (int index = 0; index < expected.size(); index++) {
             final T actualItem = actualListToCompare.get(index);
             final T expectedItem = expected.get(index);
             check(comporatorToCompareItems.collate(expectedItem, actualItem), description, message,
-                    Strings.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(index)));
+                Strings.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(index)));
         }
 
     }
@@ -197,10 +214,10 @@ public class Verifier {
         for (int index = 0; index < expected.size(); index++) {
             final T expectedItem = expected.get(index);
             check(actual.stream().anyMatch(actualItem -> comporatorToCompareItems.collate(expectedItem, actualItem)), description, message,
-                    Strings
-                            .space(comporatorToCompareItems.info(expectedItem), "содержится в списке (представлен без обработки элементов)",
-                                    StringConstants.AP + actual.toString() + StringConstants.AP, ", index",
-                                    String.valueOf(index)));
+                Strings
+                    .space(comporatorToCompareItems.info(expectedItem), "содержится в списке (представлен без обработки элементов)",
+                        StringConstants.AP + actual.toString() + StringConstants.AP, ", index",
+                        String.valueOf(index)));
         }
     }
 
@@ -212,7 +229,8 @@ public class Verifier {
         return listToSort;
     }
 
-    private <T> void checkSize(String description, @Nullable String additionalMessage, @NotNull List<T> expected, @NotNull List<T> actual, boolean isActualMoreExpected) {
+    private <T> void checkSize(String description, @Nullable String additionalMessage, @NotNull List<T> expected, @NotNull List<T> actual,
+        boolean isActualMoreExpected) {
         if (isActualMoreExpected) {
             final String message = format("Размер ожидаемого списка '%s' равен или меньше размера актуального списка '%s'", expected, actual);
             check(actual.size() >= expected.size(), description, additionalMessage, message);
@@ -231,7 +249,13 @@ public class Verifier {
             message = checkDescription;
         }
         if (isTrue) {
-            reporter.pass(checkDescription, extraMessage);
+            if (postPassedCheck) {
+                if (postPassedScreen) {
+                    reporter.pass(checkDescription, extraMessage, reporter.attachments().screen("Screen on pass"));
+                } else {
+                    reporter.pass(checkDescription, extraMessage);
+                }
+            }
             return;
         } else {
             try {

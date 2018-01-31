@@ -4,6 +4,17 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
+allure {
+    version = '2.4.1'
+    resultsDir = project.file('allure-results')
+    aspectjweaver = true
+    aspectjVersion = versions.aspectj
+
+    useJUnit5 {
+        version = versions.junit5
+    }
+}
+
 dependencies {
     compile 'com.github.detro:ghostdriver:2.1.0'
     compile project(':commons')

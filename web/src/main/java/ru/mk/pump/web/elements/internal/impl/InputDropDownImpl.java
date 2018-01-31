@@ -149,8 +149,8 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     @Override
     public Map<String, String> getInfo() {
         final Map<String, String> res = super.getInfo();
-        res.put("drop down", Strings.toPrettyString(getDropDown().getInfo(), "drop down".length()));
-        res.put("input", Strings.toPrettyString(getInput().getInfo(), "input".length()));
+        res.put("drop down", Strings.toString(dropDown));
+        res.put("input",  Strings.toString(input));
         res.put("load icon", Strings.toString(loadIcon));
         return res;
 

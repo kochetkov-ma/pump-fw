@@ -92,7 +92,7 @@ public class ActionExecutor extends ActionNotifier {
                 tAction.setStage(ActionStage.FINALLY);
                 final ActionExecutor helperExecutor = new ActionExecutor(getActionListeners()).withParameters(parameters);
                 afterActionError.forEach(helperExecutor::payloadExecute);
-                notifyOnFinallyAfter(tAction);
+                notifyOnFinallyStateCheck(tAction);
             }
             actionExecutionTry = 0;
         }
@@ -124,6 +124,7 @@ public class ActionExecutor extends ActionNotifier {
                 tAction.setStage(ActionStage.BEFORE);
                 helperExecutor = new ActionExecutor(getActionListeners()).withParameters(parameters);
                 beforeActions.forEach(helperExecutor::payloadExecute);
+                notifyOnBeforeSuccess(tAction);
             }
             tAction.setStage(ActionStage.MAIN);
             result = tAction.get();
@@ -132,7 +133,6 @@ public class ActionExecutor extends ActionNotifier {
                 tAction.setStage(ActionStage.AFTER);
                 helperExecutor = new ActionExecutor(getActionListeners()).withParameters(parameters);
                 afterActions.forEach(helperExecutor::payloadExecute);
-                notifyOnAfter(tAction);
             }
 
             tAction.setStage(ActionStage.COMPLETED);
@@ -144,6 +144,7 @@ public class ActionExecutor extends ActionNotifier {
 
             if (tAction.getStage() == ActionStage.AFTER) {
                 log.error("Error when execute after actions", throwable);
+                notifyOnAfterActionFail(tAction);
                 tAction.setStage(ActionStage.COMPLETED);
             } else {
                 notifyOnFail(tAction, throwable);

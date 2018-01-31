@@ -5,11 +5,13 @@ import static java.lang.String.format;
 import java.util.concurrent.Callable;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.BrowserException;
 import ru.mk.pump.web.exceptions.ElementStateException;
+
 
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused"})
 @Slf4j
@@ -47,7 +49,7 @@ public class StateResolver extends StateNotifier {
 
     @SuppressWarnings("unchecked")
     public SetState resolve(SetState state) {
-        notifyOnBefore(state);
+        notifyOnBefore(Pair.of(state, internalElement));
         final long timeout = waiter().getTimeoutS() * 1000;
         long syncTimeLeft = timeout;
         WaitResult<Boolean> result = WaitResult.trueResult(0, waiter().getTimeoutS());
@@ -63,7 +65,7 @@ public class StateResolver extends StateNotifier {
                 if (syncTimeLeft <= 0 || !result.isSuccess()) {
                     state.setResult(WaitResult.falseResult(timeout - syncTimeLeft, waiter().getTimeoutS(), result.getCause())
                         .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult)));
-                    notifyOnFinish(state);
+                    notifyOnFinish(Pair.of(state, internalElement));
                     return state;
                 }
             }
@@ -71,12 +73,12 @@ public class StateResolver extends StateNotifier {
             if (!result.isSuccess()) {
                 state.setResult(WaitResult.falseResult(result.getElapsedTime(), waiter().getTimeoutS(), result.getCause())
                     .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult)));
-                notifyOnFinish(state);
+                notifyOnFinish(Pair.of(state, internalElement));
                 return state;
             }
         }
         state.setResult(WaitResult.trueResult(timeout - syncTimeLeft, waiter().getTimeoutS()));
-        notifyOnFinish(state);
+        notifyOnFinish(Pair.of(state, internalElement));
         return state;
 
     }

@@ -21,15 +21,15 @@ public class History<T> {
     private final Queue<Info<T>> history;
 
     @Getter
-    private final int maxSize;
+    private final int capacity;
 
-    private History(EvictingQueue<Info<T>> history, int maxSize) {
-        this.maxSize = maxSize;
+    private History(EvictingQueue<Info<T>> history, int capacity) {
+        this.capacity = capacity;
         this.history = history;
     }
 
-    public History(int maxSize) {
-        this(EvictingQueue.create(maxSize), maxSize);
+    public History(int capacity) {
+        this(EvictingQueue.create(capacity), capacity);
     }
 
     public Queue<Info<T>> getAll() {
@@ -75,8 +75,7 @@ public class History<T> {
     @Getter
     public static class Info<T> {
 
-        @Setter
-        private static boolean considerCreateDate = true;
+        private static ThreadLocal<Boolean> considerCreateDate = InheritableThreadLocal.withInitial(() -> true);
 
         private final String id;
 
@@ -98,11 +97,15 @@ public class History<T> {
             return new Info<>(UUID.randomUUID().toString(), payload);
         }
 
+        public static void setConsiderCreateDate(boolean considerCreateDate) {
+            Info.considerCreateDate.set(considerCreateDate);
+        }
+
         //region EQUALS
         @Override
         public int hashCode() {
             int result = id != null ? id.hashCode() : 0;
-            if (considerCreateDate) {
+            if (considerCreateDate.get()) {
                 result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
             }
             return result;
@@ -119,7 +122,7 @@ public class History<T> {
 
             Info<?> info = (Info<?>) o;
 
-            return (id != null ? id.equals(info.id) : info.id == null) && (!considerCreateDate || (createDate != null ? createDate.equals(info.createDate)
+            return (id != null ? id.equals(info.id) : info.id == null) && (!considerCreateDate.get() || (createDate != null ? createDate.equals(info.createDate)
                 : info.createDate == null));
         }
 
@@ -137,9 +140,9 @@ public class History<T> {
     @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public History<T> clone() {
-        final EvictingQueue<Info<T>> result = EvictingQueue.create(maxSize);
+        final EvictingQueue<Info<T>> result = EvictingQueue.create(capacity);
         result.addAll(history);
-        return new History<>(result, maxSize);
+        return new History<>(result, capacity);
     }
 
 

@@ -22,6 +22,13 @@ public interface Reporter {
 
     void blockStopAll();
 
+    /**
+     * @param attachment {@link #attachments()}
+     */
+    void warn(String title, String description, Attachment attachment, Throwable throwable);
+
+    void warn(String title, String description, Throwable throwable);
+
     void warn(String title, String description, Attachment attachment);
 
     void warn(String title, String description);

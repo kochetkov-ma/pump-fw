@@ -58,7 +58,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     @Setter(AccessLevel.PROTECTED)
     protected boolean xpathAutoFix = true;
 
-    private String elementName = "empty (strongly recommend to add)";
+    private String elementName;
 
     @Getter
     private String elementDescription = "empty (recommend to add)";
@@ -99,6 +99,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         this.stateResolver = newDelegateStateResolver();
         this.actionsStore = new ActionsStore(this, newDelegateActionFactory());
         this.actionExecutor = newDelegateActionExecutor(stateResolver);
+        this.elementName = getBy().toString();
     }
 
     //endregion
@@ -156,6 +157,12 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     @Override
     public By getBy() {
         return avatarBy;
+    }
+
+    @Override
+    public String fullByAsString() {
+        //TODO::Сделать конкатинацию By от всех родителей и заменить везде, где логируется By
+        return Strings.toString(getBy());
     }
 
     @Override

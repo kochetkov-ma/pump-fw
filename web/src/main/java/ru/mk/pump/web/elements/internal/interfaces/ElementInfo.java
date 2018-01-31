@@ -20,4 +20,9 @@ public interface ElementInfo {
      * @return element locator
      */
     By getBy();
+
+    /**
+     * @return full By with parents as String
+     */
+    String fullByAsString();
 }

@@ -122,9 +122,10 @@ public class ConfigurationHolder {
     //endregion
 
     private static Configuration getDefaultConfiguration() {
-        return new Configuration()
-            .withApplicationName("undefined")
-            .withWindowSizeOffset(0);
+        Configuration config = new Configuration();
+        config.setApplicationName("undefined");
+        config.getElement().setWindowWidthOffset(0);
+        return config;
     }
 
     private static void throwException(String type, String path, String scope) {

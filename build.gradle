@@ -18,7 +18,8 @@ ext {
             allureJunit4 : "latest.release",
             junit5       : "latest.release",
             mockito      : "2.+",
-            trove        : "3.+"
+            trove        : "3.+",
+            joda_time    : "latest.release"
     ]
 }
 
@@ -59,12 +60,12 @@ task clean(group: "build") {
     }
 }
 
-
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'org.junit.platform.gradle.plugin'
+    apply plugin: 'io.qameta.allure'
+
     version = rootProject.version
     compileJava.options.encoding = "UTF-8"
 
@@ -96,6 +97,7 @@ subprojects {
 
     dependencies {
         compile(
+                "joda-time:joda-time:$versions.joda_time",
                 "org.aspectj:aspectjweaver:1.8.13",
                 "org.jetbrains:annotations:$versions.annotations",
                 "org.projectlombok:lombok:$versions.lombok",

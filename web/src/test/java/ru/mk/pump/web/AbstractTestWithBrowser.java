@@ -1,13 +1,13 @@
 package ru.mk.pump.web;
 
 import com.google.common.base.Enums;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import ru.mk.pump.commons.reporter.ReporterAllure;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.web.browsers.Browser;

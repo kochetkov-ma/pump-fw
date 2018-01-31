@@ -1,5 +1,7 @@
 package ru.mk.pump.web.page;
 
+import static java.lang.String.format;
+
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,13 +18,14 @@ import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.page.api.Page;
+import ru.mk.pump.web.page.api.PageListener;
 import ru.mk.pump.web.page.api.PageLoader;
 import ru.mk.pump.web.utils.UrlUtils;
 import ru.mk.pump.web.utils.WebReporter;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-@ToString
-public class BasePage implements Page {
+@ToString(exclude = {"browser", "reporter", "initializer", "pageLoader"})
+public class BasePage extends PageNotifier implements Page {
 
     public static final By DEFAULT_BODY_BY = By.tagName("body");
 
@@ -54,11 +57,13 @@ public class BasePage implements Page {
     private PageLoader pageLoader;
 
     public BasePage(@NotNull Browser browser) {
+        super();
         this.browser = browser;
         afterConstruct();
     }
 
     public BasePage(@NotNull Browser browser, Reporter reporter) {
+        super();
         this.browser = browser;
         this.reporter = reporter;
         afterConstruct();
@@ -74,6 +79,7 @@ public class BasePage implements Page {
     protected void afterConstruct() {
         initAllElements();
         getPageLoader().addAdditionalCondition(this::jsReady);
+        addListener(newDefaultListener());
     }
 
     protected void afterOpen() {
@@ -107,8 +113,15 @@ public class BasePage implements Page {
 
     @Override
     public void open() {
-        getBrowser().open(getUrl());
-        afterOpen();
+        notifyOnBeforeLoad(this);
+        try {
+            getBrowser().open(getUrl());
+            afterOpen();
+        } catch (Throwable throwable) {
+            notifyOnLoadFail(this, throwable);
+            throw throwable;
+        }
+        notifyOnLoadSuccess(this);
     }
 
     protected boolean jsReady() {
@@ -129,8 +142,31 @@ public class BasePage implements Page {
     @Override
     public PageLoader getPageLoader() {
         if (pageLoader == null) {
-            pageLoader = new PageLoaderPump(this, new Verifier(getReporter()));
+            if (WebReporter.getReporter() == getReporter()) {
+                pageLoader = new PageLoaderPump(this, WebReporter.getVerifier());
+            } else {
+                pageLoader = new PageLoaderPump(this, new Verifier(getReporter()));
+            }
         }
         return pageLoader;
+    }
+
+    private PageListener newDefaultListener() {
+        return new PageListener() {
+            @Override
+            public void onLoadSuccess(Page page) {
+                getReporter().info(format("Page '%s' load success", name), page.toString());
+            }
+
+            @Override
+            public void onLoadFail(Page page, Throwable fromArgsOrNull) {
+                getReporter().warn(format("Page '%s' load failed", name), page.toString(), fromArgsOrNull);
+            }
+
+            @Override
+            public void onBeforeLoad(Page page) {
+                getReporter().info(format("Page '%s' is opening", name), page.toString());
+            }
+        };
     }
 }

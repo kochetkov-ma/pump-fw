@@ -96,8 +96,8 @@ public class HistoryTest {
     public void getMaxSize() {
         final History<String> newHistory = history.clone();
 
-        assertThat(history.getMaxSize()).isEqualTo(3);
-        assertThat(newHistory.getMaxSize()).isEqualTo(3);
+        assertThat(history.getCapacity()).isEqualTo(3);
+        assertThat(newHistory.getCapacity()).isEqualTo(3);
     }
 
     @Test
