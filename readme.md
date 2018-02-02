@@ -57,13 +57,13 @@
 - ru.mk.pump.web.common.api.ImplDispatcher - Диспетчер реализаций элементов. Загрущает и хранит интефрйсы и их реализации. 
 Поддерживате возможность добавления пользовательских реализаций
 
-####Для настройки элементов используются параметры вида Map<String, Parameter<?>>
+#### Для настройки элементов используются параметры вида Map<String, Parameter<?>>
 - В паттерне Page Object для передачи параметров в элемент необходимо воспользоваться аннотациями из пакета ru.mk.pump.web.common.api.annotations
 - либо методом ru.mk.pump.web.elements.internal.BaseElement.withParams
 - элемент сам выбирает поддерживаемые параметры и записывает их в свои поля для дальнейшего использования
 - параметры описаны в ru.mk.pump.web.constants.ElementParams и в java-doc если присутствует аннотация ru.mk.pump.web.elements.internal.DocParameters
 
-####Для настройки элементов используются параметры вида Map<String, Parameter<?>>
+#### Для настройки элементов используются параметры вида Map<String, Parameter<?>>
 
 # Ожидает реализации
 - менеджер страниц
@@ -74,7 +74,7 @@
 - поддержка сборки под Windows и Linux без установленных браузеров Chrome и PhantomJS (для юнит-тестов)
 
 # Quick Start
-####Добавить в зависимости
+#### Добавить в зависимости
 maven
 ```java
 не реализовано
@@ -85,7 +85,7 @@ gradle
 не реализовано
 ```
 
-####Создать класс Страницы Web Приложения унаследованный от ru.mk.pump.web.page.BasePage  
+#### Создать класс Страницы Web Приложения унаследованный от ru.mk.pump.web.page.BasePage  
 ```java
     /**
      * Страница наследуется от {@link BasePage}.
@@ -224,25 +224,25 @@ gradle
     }
 ```
 
-####Создать браузер
+#### Создать браузер
 ```java
 Browsers browsers = new Browsers();
 BrowserConfig config = new BrowserConfig(false, Size.of(true), BrowserType.CHROME);
 Browser browser = browsers.newBrowser(config);
 ```
 
-####Создать страницу
+#### Создать страницу
 ```java
 RegPage page = new RegPage(browser);
 ```
 
-####Запустить браузер и открыть страницу
+#### Запустить браузер и открыть страницу
 ```java
 browser.start();
 page.open();
 ```
 
-####Взаимодействие с элементом
+#### Взаимодействие с элементом
 ```java
 /*Получить элемент Поле ввода*/
 Input input = page.getMainForm().getRegFormZones().get(0).getRegFormZoneColumns().get(1).getInputs().get(2);
