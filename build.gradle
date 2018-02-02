@@ -1,4 +1,4 @@
-group='ru.mk.pump'
+group='ru.iopump'
 
 ext {
     versions = [
