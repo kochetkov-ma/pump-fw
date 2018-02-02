@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.config.ConfigurationsLoader;
 import ru.mk.pump.commons.utils.EnvVariables;
@@ -25,6 +26,7 @@ class ConfigurationHolderTest {
 
     @Test
     void get() throws InterruptedException {
+        ConfigurationHolder.cleanup();
         Thread thread1 = new Thread(() -> ConfigurationHolderTest.instance1 = ConfigurationHolder.get());
         Thread thread2 = new Thread(() -> ConfigurationHolderTest.instance2 = ConfigurationHolder.get());
         thread1.run();
@@ -101,11 +103,17 @@ class ConfigurationHolderTest {
         ConfigurationHolder.initDefault();
         assertThat(ConfigurationHolder.get().getApplicationName()).isEqualTo("undefined");
         assertThat(ConfigurationHolder.get().getElement().getWindowWidthOffset()).isEqualTo(0);
+    }
 
+    @AfterEach
+    void clear(){
+        System.clearProperty("pump.configuration.path");
+        EnvVariables.reloadCache();
     }
 
     @Test
     void getLoader() throws InterruptedException {
+        ConfigurationHolder.cleanup();
         Thread thread1 = new Thread(() -> {
             ConfigurationHolder.initDefault();
             loader1 = ConfigurationHolder.getLoader();

@@ -15,13 +15,14 @@ import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
+import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.utils.WebReporter;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractTestWithBrowser {
 
-    private static final BrowserType DEFAULT_BROWSER_TYPE = BrowserType.CHROME;
+    private static final BrowserType DEFAULT_BROWSER_TYPE = ConfigurationHolder.get().getBrowser();
 
     @Getter
     @Setter
@@ -36,6 +37,7 @@ public abstract class AbstractTestWithBrowser {
     private Browser browser;
 
     public static BrowserType getTestBrowserType() {
+
         return Enums.getIfPresent(BrowserType.class, EnvVariables.get("TEST_BROWSER_TYPE", DEFAULT_BROWSER_TYPE.name())).or(DEFAULT_BROWSER_TYPE);
     }
 

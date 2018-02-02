@@ -8,7 +8,7 @@ import lombok.ToString;
 @Data
 public class Stand {
 
-    @Property(value = "enum")
+    @Property(value = "enum", required = false)
     private En enumProperty;
 
     @Property("two")

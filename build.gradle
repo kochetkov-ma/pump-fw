@@ -1,5 +1,5 @@
-group = "ru.mk.pump"
-version = "1.0"
+group='ru.mk.pump'
+
 ext {
     versions = [
             aspectj      : "1.8.10",
@@ -23,9 +23,15 @@ ext {
     ]
 }
 
+apply plugin: 'idea'
+
 task info {
     doLast {
-        println "Фреймворк автоматизации тестирования web на основе Selenium WebDriver"
+        println 'Information'
+        println project.name
+        println project.description
+        println project.version
+        println project.group
     }
 }
 
@@ -38,8 +44,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:+'
-        classpath 'io.qameta.allure:allure-gradle:2.4'
+        classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:latest.release'
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:latest.release'
+        classpath 'io.qameta.allure:allure-gradle:latest.release'
     }
 }
 
@@ -61,12 +68,17 @@ task clean(group: "build") {
 }
 
 subprojects {
+
+    project.version = rootProject.version
+    project.group = rootProject.group
+
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: 'io.qameta.allure'
+    apply plugin: 'maven-publish'
+    apply plugin: 'maven-publish-auth'
 
-    version = rootProject.version
     compileJava.options.encoding = "UTF-8"
 
     /*sub projects full clean*/
@@ -128,4 +140,39 @@ subprojects {
                 "io.qameta.allure:allure-gradle:$versions.allure_gradle"
         )
     }
+
+    javadoc {
+        failOnError = false
+    }
+
+    task sourceJar(type: Jar) {
+        classifier 'sources'
+        from sourceSets.main.allJava
+    }
+
+    task projectJavadoc(type: Jar, dependsOn: 'javadoc') {
+        from javadoc.destinationDir
+        classifier = 'javadoc'
+    }
+
+    publishing {
+        publications {
+            eachProject(MavenPublication) {
+                from components.java
+                artifact tasks.sourceJar
+                artifact tasks.projectJavadoc
+            }
+        }
+        repositories {
+            maven {
+                name "open-nexus"
+                if(project.version.endsWith('-SNAPSHOT')) {
+                    url "http://rumskapt527.open.ru:8081/content/repositories/automatization_snapshots/"
+                } else {
+                    url "http://rumskapt527.open.ru:8081/content/repositories/automatization_releases/"
+                }
+            }
+        }
+    }
 }
+

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import ru.mk.pump.commons.config.Property;
+import ru.mk.pump.web.browsers.configuration.BrowserType;
 
 @Getter
 @Setter
@@ -15,6 +16,9 @@ public class Configuration {
     @Property("application.name")
     private String applicationName;
 
+    @Property("browser")
+    private BrowserType browser;
+
     @Property("reporting")
     private ReportingConfiguration reporting = new ReportingConfiguration();
 
@@ -22,8 +26,8 @@ public class Configuration {
     private VerifyConfiguration verify = new VerifyConfiguration();
 
     @Property("element")
-    private ElementConfiguration element  = new ElementConfiguration();
+    private ElementConfiguration element = new ElementConfiguration();
 
     @Property("page")
-    private PageConfiguration page  = new PageConfiguration();
+    private PageConfiguration page = new PageConfiguration();
 }

@@ -24,8 +24,8 @@ public class ConfigurationsLoaderTest {
         assertThat(configurationsLoader.getMap()).isEmpty();
         configurationsLoader.load();
         log.debug(Strings.toPrettyString(configurationsLoader.getMap()));
-        assertThat(configurationsLoader.getMap()).hasSize(9)
-            .containsOnlyKeys("main.reporting", "two.one", "main.url", "common", "second.count", "second.url", "main.count", "two.two", "second.reporting");
+        assertThat(configurationsLoader.getMap()).hasSize(10)
+            .containsOnlyKeys("main.reporting", "two.one", "main.url", "common", "second.count", "second.url", "main.count", "two.two", "second.reporting", "enum");
 
     }
 

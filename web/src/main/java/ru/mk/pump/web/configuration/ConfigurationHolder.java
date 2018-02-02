@@ -38,6 +38,11 @@ public class ConfigurationHolder {
         this.configuration = configuration;
     }
 
+    static void cleanup(){
+        INSTANCE = null;
+        loader = null;
+    }
+
     public static Configuration get() {
         //noinspection UnusedAssignment
         ConfigurationHolder r = INSTANCE;
