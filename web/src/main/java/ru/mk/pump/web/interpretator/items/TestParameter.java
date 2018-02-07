@@ -12,7 +12,7 @@ public final class TestParameter<T> extends AbstractItem<T> {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("source", this.value())
+            .add("source", this.getSource())
             .toString();
     }
 }

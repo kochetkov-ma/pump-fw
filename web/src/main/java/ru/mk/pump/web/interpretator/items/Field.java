@@ -25,7 +25,7 @@ public final class Field extends AbstractItem<String> {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("source", this.value())
+            .add("source", this.getSource())
             .add("index", index)
             .toString();
     }

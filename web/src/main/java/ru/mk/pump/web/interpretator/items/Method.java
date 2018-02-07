@@ -38,7 +38,7 @@ public final class Method extends AbstractItem<String> {
         return MoreObjects.toStringHelper(this)
             .add("nonArg", nonArg)
             .add("args", args)
-            .add("source", this.value())
+            .add("source", this.getSource())
             .toString();
     }
 }

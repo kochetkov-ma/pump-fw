@@ -30,7 +30,7 @@ public final class Pumpkin {
 
         Map<String, Object> vars = ImmutableMap.of("var1", 1);
         //String exp = "methodOne().fieldOne[1].methodTwo(arg1,arg2)";
-        String exp = "methodOne()().fieldOne[1].methodTwo(${var1},$groovy{new Date()}).fieldTwo";
+        String exp = "methodOne().fieldOne[1].methodTwo(${var1},$groovy{new Date()}).fieldTwo";
         //String exp = "$groovy{new Date()}";
         //String exp = "${var1}";
         //String exp = "${var1}.$groovy{new Date()}";
@@ -185,11 +185,11 @@ public final class Pumpkin {
     }
 
     private Method toMethod(Item item) {
-        return new Method((String) item.value());
+        return new Method((String) item.getSource());
     }
 
     private Field toField(Item item) {
-        return new Field((String) item.value());
+        return new Field((String) item.getSource());
     }
 
     private PumpException exception(String error, Accumulator accumulator) {
