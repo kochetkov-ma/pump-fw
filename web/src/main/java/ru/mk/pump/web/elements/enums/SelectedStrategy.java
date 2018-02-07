@@ -3,8 +3,8 @@ package ru.mk.pump.web.elements.enums;
 import ru.mk.pump.web.constants.ElementParams;
 
 /**
- * Element Parameter enum {@link ElementParams}
- * For using as Element Parameter do this {@link ElementParams#enumAsParam(Enum)}
+ * PElement Parameter enum {@link ElementParams}
+ * For using as PElement Parameter do this {@link ElementParams#enumAsParam(Enum)}
  */
 public enum SelectedStrategy {
     /**

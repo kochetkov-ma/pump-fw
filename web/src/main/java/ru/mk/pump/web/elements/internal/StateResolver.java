@@ -104,7 +104,7 @@ public class StateResolver extends StateNotifier {
     }
 
     protected PumpException newResolvedException(State state, WaitResult<Boolean> waitResult) {
-        return new ElementStateException(format("Element was not became to expected state '%s' in timeout '%s' sec", state.name(), waiter().getTimeoutS()),
+        return new ElementStateException(format("PElement was not became to expected state '%s' in timeout '%s' sec", state.name(), waiter().getTimeoutS()),
             waitResult.getCause())
             .withTargetState(state)
             .withElement(internalElement);

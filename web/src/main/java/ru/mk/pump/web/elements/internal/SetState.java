@@ -49,7 +49,7 @@ public class SetState extends State {
 
     public static SetState of(@NotNull StateType stateType, @NotNull State... states) {
         if (states.length == 0) {
-            throw new IllegalArgumentException("States varargs cannot be empty or null");
+            throw new IllegalArgumentException("States varargs cannot be nonArg or null");
         }
         final Set<State> and = Sets.newLinkedHashSet();
         final Set<State> or = Sets.newLinkedHashSet();

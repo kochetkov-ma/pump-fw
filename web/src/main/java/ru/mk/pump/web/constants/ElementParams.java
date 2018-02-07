@@ -50,7 +50,7 @@ public class ElementParams {
     public static final String SELECTED_MARK = "selectedCondition";
 
     /**
-     * parameter is {@link org.openqa.selenium.By}[] in AbstractSelectorItems (any elements with items set like DropDown or Selector)
+     * parameter is {@link org.openqa.selenium.By}[] in AbstractSelectorItems (any rules with items set like DropDown or Selector)
      */
     public static final String SELECTOR_ITEMS_BY = "sItemsBy";
 

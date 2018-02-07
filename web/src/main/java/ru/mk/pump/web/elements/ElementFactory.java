@@ -21,7 +21,7 @@ import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.common.api.ImplDispatcher;
+import ru.mk.pump.web.common.api.PageItemImplDispatcher;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
@@ -39,7 +39,7 @@ public class ElementFactory implements StrictInfo {
     private final Page page;
 
     @Getter
-    private final ImplDispatcher elementImplDispatcher;
+    private final PageItemImplDispatcher elementImplDispatcher;
 
     @Getter
     private final Browser browser;
@@ -51,13 +51,13 @@ public class ElementFactory implements StrictInfo {
     private List<StateListener> stateListeners = Lists.newArrayList();
 
     //region constructors
-    public ElementFactory(@NotNull ImplDispatcher elementImplDispatcher, @NotNull Page page) {
+    public ElementFactory(@NotNull PageItemImplDispatcher elementImplDispatcher, @NotNull Page page) {
         this.elementImplDispatcher = elementImplDispatcher;
         this.page = page;
         this.browser = page.getBrowser();
     }
 
-    public ElementFactory(@NotNull ImplDispatcher elementImplDispatcher, @NotNull Browser browser) {
+    public ElementFactory(@NotNull PageItemImplDispatcher elementImplDispatcher, @NotNull Browser browser) {
         this.elementImplDispatcher = elementImplDispatcher;
         this.browser = browser;
         this.page = null;

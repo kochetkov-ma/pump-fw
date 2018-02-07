@@ -98,6 +98,6 @@ public class PageLoaderPump implements PageLoader {
 
     @Override
     public void checkUrl() {
-        checker.contains("Page URL contains text", getPage().getUrl(), getPage().getBrowser().actions().getCurrentUrl());
+        checker.contains("PPage URL contains text", getPage().getUrl(), getPage().getBrowser().actions().getCurrentUrl());
     }
 }

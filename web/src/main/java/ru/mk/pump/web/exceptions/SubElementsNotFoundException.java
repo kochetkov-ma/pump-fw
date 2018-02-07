@@ -7,7 +7,7 @@ import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class SubElementsNotFoundException extends ElementException {
 
-    private static final String TITLE = "Cannot find expected sub elements by conditions : '%s'";
+    private static final String TITLE = "Cannot find expected sub rules by conditions : '%s'";
 
     public SubElementsNotFoundException(String conditions) {
         super(new PumpMessage(String.format(TITLE, conditions)));

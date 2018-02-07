@@ -61,7 +61,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     private String elementName;
 
     @Getter
-    private String elementDescription = "empty (recommend to add)";
+    private String elementDescription = "nonArg (recommend to add)";
 
     private final Page page;
 
@@ -297,7 +297,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         return (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.OTHER, () -> {
             final WaitResult<WebElement> res = getFinder().findFast();
             return res.isSuccess() && Strings.isEmpty(getBrowser().actions().getText(res.getResult()));
-        }, TEAR_DOWN)).withName("Text of the element became an empty");
+        }, TEAR_DOWN)).withName("Text of the element became an nonArg");
     }
 
 

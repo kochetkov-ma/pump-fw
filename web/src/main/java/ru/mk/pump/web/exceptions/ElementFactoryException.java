@@ -31,7 +31,7 @@ public class ElementFactoryException extends AbstractWebException {
 
     public ElementFactoryException withTargetFactory(ElementFactory elementFactory) {
         addTarget(FACTORY, elementFactory);
-        addTarget(DISPATCHER, elementFactory);
+        addTarget(DISPATCHER, elementFactory.getElementImplDispatcher());
         withBrowser(elementFactory.getBrowser());
         withPage(elementFactory.getPage());
 
@@ -45,7 +45,7 @@ public class ElementFactoryException extends AbstractWebException {
 
     ElementFactoryException withFactory(ElementFactory elementFactory) {
         addEnv(FACTORY, elementFactory);
-        addEnv(DISPATCHER, elementFactory);
+        addEnv(DISPATCHER, elementFactory.getElementImplDispatcher());
         withBrowser(elementFactory.getBrowser());
         withPage(elementFactory.getPage());
         return this;

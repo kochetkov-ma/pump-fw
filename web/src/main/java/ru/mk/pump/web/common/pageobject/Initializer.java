@@ -20,7 +20,7 @@ import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.page.api.Page;
 
 /**
- * [RUS] Инициализация полей компонента (Page Object).
+ * [RUS] Инициализация полей компонента (PPage Object).
  * <p>Алгоритм инициализации</p>
  * <ul>
  *     <li>корневой компонент запускает инициализацию своих полей посредством {@link org.openqa.selenium.support.PageFactory}. Корневым компонентом может быть как страница, так и компонент</li>
@@ -79,9 +79,9 @@ public class Initializer implements FieldDecorator {
      */
     @Override
     public Object decorate(@NotNull ClassLoader loader, @NotNull Field field) {
-        final PumpAnnotations pumpAnnotations = new PumpAnnotations(field);
-        final ElementConfig elementConfig = annotationsToElementConfig(pumpAnnotations);
-        final By elementBy = pumpAnnotations.buildBy();
+        final PumpElementAnnotations pumpElementAnnotations = new PumpElementAnnotations(field);
+        final ElementConfig elementConfig = annotationsToElementConfig(pumpElementAnnotations);
+        final By elementBy = pumpElementAnnotations.buildBy();
 
         if (isSingleComponent(field)) {
             final Element element;
@@ -125,12 +125,12 @@ public class Initializer implements FieldDecorator {
 
     /**
      * Convert field annotation to {@link ElementConfig} for using in {@link ElementFactory}
-     * @param pumpAnnotations filed wrapper for extract elements parameters
+     * @param pumpElementAnnotations filed wrapper for extract rules parameters
      */
-    protected ElementConfig annotationsToElementConfig(@NotNull PumpAnnotations pumpAnnotations) {
-        return ElementConfig.of(pumpAnnotations.getName(), pumpAnnotations.getDescription())
-            .withParameters(pumpAnnotations.buildParameters())
-            .withRequirements(pumpAnnotations.getRequirements());
+    protected ElementConfig annotationsToElementConfig(@NotNull PumpElementAnnotations pumpElementAnnotations) {
+        return ElementConfig.of(pumpElementAnnotations.getName(), pumpElementAnnotations.getDescription())
+            .withParameters(pumpElementAnnotations.buildParameters())
+            .withRequirements(pumpElementAnnotations.getRequirements());
     }
 
     //region PRIVATE

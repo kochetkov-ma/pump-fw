@@ -3,7 +3,7 @@ package ru.mk.pump.web.elements.internal.interfaces;
 public interface Enumerated {
 
     /**
-     * @return <b>true</b> - this element is one of elements list with the same locator / <b>false</b> - single element
+     * @return <b>true</b> - this element is one of rules list with the same locator / <b>false</b> - single element
      */
     boolean isList();
 

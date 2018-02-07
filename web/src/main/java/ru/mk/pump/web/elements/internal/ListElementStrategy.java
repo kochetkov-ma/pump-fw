@@ -23,7 +23,7 @@ class ListElementStrategy extends FindStrategy {
     @Override
     public WebElement findSelf() {
         if (!getTarget().isList()) {
-            throw new ElementFinderException(String.format("Selected find strategy '%s' don't work with no list elements", getClass().getSimpleName()))
+            throw new ElementFinderException(String.format("Selected find strategy '%s' don't work with no list rules", getClass().getSimpleName()))
                 .withTargetElement(getTarget());
         }
         if (isRoot()) {

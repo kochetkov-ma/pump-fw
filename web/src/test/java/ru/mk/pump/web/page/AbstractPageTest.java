@@ -7,13 +7,13 @@ import org.openqa.selenium.support.FindBy;
 import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.api.annotations.PFindBy;
 import ru.mk.pump.web.common.api.annotations.PFindBys;
+import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.common.api.annotations.PString;
 import ru.mk.pump.web.common.api.annotations.PStrings;
-import ru.mk.pump.web.common.api.annotations.Title;
 import ru.mk.pump.web.component.BaseComponent;
-import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
@@ -28,41 +28,41 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
      * Все приватные поля - это элементы либо компоненты
      */
     @SuppressWarnings("WeakerAccess")
-    @Title(value = "Регистрация", desc = "Страница регистрации Цифровая Ипотека")
+    @PPage(value = "Регистрация", desc = "Страница регистрации Цифровая Ипотека")
     static class RegPage extends BasePage {
 
         /**
          * Элемент TextArea.
          * Стандартная аннотация FindBy.
-         * Аннотация {@link Title} определяет заголовок (имя) элемента и описание.
+         * Аннотация {@link PElement} определяет заголовок (имя) элемента и описание.
          */
         @FindBy(tagName = "h2")
-        @Title(value = "Заголовок", desc = "Главный заголовок страницы")
+        @PElement(value = "Заголовок", desc = "Главный заголовок страницы")
         @Getter
         private TextArea pageTitle;
 
         /**
          * Элемент наследник BaseComponent. Это отдельный класс - кусок страницы, который объединяет несколько элементов.
-         * Для него доступны все методы {@link Element}
+         * Для него доступны все методы {@link ru.mk.pump.web.elements.api.Element}
          * Стандартная аннотация FindBy.
-         * Аннотация {@link Title} определяет заголовок (имя) элемента (компонента) и описание.
+         * Аннотация {@link PElement} определяет заголовок (имя) элемента (компонента) и описание.
          */
-        @Title("Форма")
+        @PElement("Форма")
         @FindBy(className = "mainlayout")
         @Getter
         private RegMainForm mainForm;
 
         /**
-         * Элемент общего интерфейса Element. Когда не важен конкретный класс элемента.
+         * Элемент общего интерфейса PElement. Когда не важен конкретный класс элемента.
          * Стандартная аннотация FindBy.
-         * Аннотация {@link Title} определяет заголовок (имя) элемента и описание.
+         * Аннотация {@link PElement} определяет заголовок (имя) элемента и описание.
          * Этот элемент не существует на реальной странице, но удачно будет инициализирован.
          * Ошибок не возникнет до взаимодействия.
          */
-        @Title("Не существующий")
+        @PElement("Не существующий")
         @FindBy(className = "mainlayout11")
         @Getter
-        private Element notExists;
+        private ru.mk.pump.web.elements.api.Element notExists;
 
         /**
          * Конcтруктор страницы. PUBLIC. Все конструкторы страниц, компонентов и элементов - PUBLIC!!!
@@ -79,7 +79,7 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
         /**
          * Класс компонента. Наследуется от {@link BaseComponent} - это часть страницы. Объекдиняет несколько элементов.
          * В данном случае это форма с множеством полей ввода и кнопок. Но описано только несколько.
-         * Аннотация {@link Title} читается не из класса компонента, а из поля, в котором он объявлен на странице!
+         * Аннотация {@link PElement} читается не из класса компонента, а из поля, в котором он объявлен на странице!
          * Не забываем про static для внутренних классов!
          */
         static class RegMainForm extends BaseComponent {
@@ -134,7 +134,7 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
             private TextArea header;
 
             @FindBy(id = "regionAutocompleteId")
-            @Title(value = "Регион", desc = "Выбор региона из выпадающего списка")
+            @PElement(value = "Регион", desc = "Выбор региона из выпадающего списка")
             @PStrings({
                 @PString(name = "testParam1", value = "paramValue1"),
                 @PString(name = "testParam2", value = "paramValue2")
@@ -150,7 +150,7 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
             private InputDropDown inputDropDownRegionsFail;
 
             @FindBy(id = "regionAutocompleteId")
-            @Title(value = "Регион", desc = "Выбор региона из выпадающего списка")
+            @PElement(value = "Регион", desc = "Выбор региона из выпадающего списка")
             /*аннотация для определяния нескольких СТРОКОВЫХ параметров элемента*/
             @PStrings({
                 /*один СТРОКОВЫЙ параметр*/

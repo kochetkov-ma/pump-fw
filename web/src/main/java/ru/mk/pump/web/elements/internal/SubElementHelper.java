@@ -165,7 +165,7 @@ public class SubElementHelper<T extends Element> {
      * </ul>
      *
      * @param xpathString главный xpath. Если по нему однозначно найден элемент, который соответствует предикату, то дополнительные postfixXpaths не будут задействованы
-     * @param webElementPredicate предикат, которому должен соответствовать ПЕРВЫЙ элемент, найденный по вариантам xpath (т.е. используется не test(elements.get(0)))
+     * @param webElementPredicate предикат, которому должен соответствовать ПЕРВЫЙ элемент, найденный по вариантам xpath (т.е. используется не test(rules.get(0)))
      * @param postfixXpaths массив дополнительных xpath, которые соединяются с основным xpathString
      * @throws ElementException если не найдено элемента, соответствующего условию
      * @return Полностью готовый элемент, созданный с помощью ElementFactory.
@@ -224,14 +224,14 @@ public class SubElementHelper<T extends Element> {
 
     private ElementException exceptionNoExists(WaitResult<?> res, String byString) {
         return new ElementFinderNotFoundException(
-            String.format("Cannot find sub elements '%s' by '%s' because parent is not exists", subElementClass.getSimpleName(), logPath(byString)),
+            String.format("Cannot find sub rules '%s' by '%s' because parent is not exists", subElementClass.getSimpleName(), logPath(byString)),
             res.getCause())
             .withTargetElement(parent);
     }
 
     private ElementException exceptionNoExistsSub(String byString) {
         return new ElementFinderNotFoundException(
-            String.format("Cannot find any sub elements '%s' by '%s' ", subElementClass.getSimpleName(), logPath(byString)))
+            String.format("Cannot find any sub rules '%s' by '%s' ", subElementClass.getSimpleName(), logPath(byString)))
             .withTargetElement(parent);
     }
 

@@ -12,13 +12,13 @@ import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.support.pagefactory.Annotations;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.common.api.ParameterTransformer;
-import ru.mk.pump.web.common.api.annotations.Title;
+import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.elements.api.annotations.Requirements;
 
 @Slf4j
-class PumpAnnotations extends Annotations {
+class PumpElementAnnotations extends Annotations {
 
-    PumpAnnotations(Field field) {
+    PumpElementAnnotations(Field field) {
         super(field);
     }
 
@@ -48,15 +48,15 @@ class PumpAnnotations extends Annotations {
     }
 
     @NotNull String getName() {
-        if (getField().isAnnotationPresent(Title.class)){
-            return getField().getAnnotation(Title.class).value();
+        if (getField().isAnnotationPresent(PElement.class)){
+            return getField().getAnnotation(PElement.class).value();
         }
         return "";
     }
 
     @NotNull String getDescription() {
-        if (getField().isAnnotationPresent(Title.class)){
-            return getField().getAnnotation(Title.class).desc();
+        if (getField().isAnnotationPresent(PElement.class)){
+            return getField().getAnnotation(PElement.class).desc();
         }
         return "";
     }

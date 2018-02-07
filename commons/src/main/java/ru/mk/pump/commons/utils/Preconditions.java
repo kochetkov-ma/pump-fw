@@ -14,19 +14,19 @@ public class Preconditions {
 
     public void checkNotEmpty(@Nullable Object[] array) {
         if (array == null || array.length == 0) {
-            throw new IllegalArgumentException(String.format("Checked array '%s' is empty", Strings.toString(array)));
+            throw new IllegalArgumentException(String.format("Checked array '%s' is nonArg", Strings.toString(array)));
         }
     }
 
     public void checkNotEmpty(@Nullable Map map) {
         if (map == null || map.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Checked map '%s' is empty", Strings.toString(map)));
+            throw new IllegalArgumentException(String.format("Checked map '%s' is nonArg", Strings.toString(map)));
         }
     }
 
     public void checkNotEmpty(@Nullable Collection collection) {
         if (collection == null || collection.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Checked collection '%s' is empty", Strings.toString(collection)));
+            throw new IllegalArgumentException(String.format("Checked collection '%s' is nonArg", Strings.toString(collection)));
         }
     }
 

@@ -260,8 +260,8 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
             element.advanced().getStateResolver().resolve(element.advanced().notDisplayed(), 1).result().throwExceptionOnFail();
             /*НЕ строгая проверка*/
             /*
-            loadIcon.get(Element.class).isDisplayed(1);
-            loadIcon.get(Element.class).isNotDisplayed(1);
+            loadIcon.get(PElement.class).isDisplayed(1);
+            loadIcon.get(PElement.class).isNotDisplayed(1);
             */
         }
     }

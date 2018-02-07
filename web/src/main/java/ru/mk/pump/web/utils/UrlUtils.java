@@ -29,7 +29,7 @@ public class UrlUtils {
     private static final String PROTOCOL_DELIMITER = "://";
 
     /**
-     * Default protocol. Insert when checking URL protocol is empty in {@link #fixUrl(String)}
+     * Default protocol. Insert when checking URL protocol is nonArg in {@link #fixUrl(String)}
      */
     public static String PROTOCOL = "https";
 

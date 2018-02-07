@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class StringConstants {
 
+    public static final String UNDEFINED = "undefined";
+
     public static final String DOT = ".";
 
     public static final String SPACE = " ";

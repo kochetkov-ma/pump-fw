@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
+import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
@@ -46,6 +47,10 @@ public class BasePage extends PageNotifier implements Page {
     @Getter
     @Setter
     private String name;
+
+    @Setter
+    @Getter
+    private String description = StringConstants.UNDEFINED;
 
     @Setter
     private String url;
@@ -131,12 +136,7 @@ public class BasePage extends PageNotifier implements Page {
 
     @Override
     public String getTitle() {
-        return "Base page. Override in sub-class";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Base page description. Override in sub-class";
+        return StringConstants.UNDEFINED;
     }
 
     @Override
@@ -155,17 +155,17 @@ public class BasePage extends PageNotifier implements Page {
         return new PageListener() {
             @Override
             public void onLoadSuccess(Page page) {
-                getReporter().info(format("Page '%s' load success", name), page.toString());
+                getReporter().info(format("PPage '%s' load success", name), page.toString());
             }
 
             @Override
             public void onLoadFail(Page page, Throwable fromArgsOrNull) {
-                getReporter().warn(format("Page '%s' load failed", name), page.toString(), fromArgsOrNull);
+                getReporter().warn(format("PPage '%s' load failed", name), page.toString(), fromArgsOrNull);
             }
 
             @Override
             public void onBeforeLoad(Page page) {
-                getReporter().info(format("Page '%s' is opening", name), page.toString());
+                getReporter().info(format("PPage '%s' is opening", name), page.toString());
             }
         };
     }

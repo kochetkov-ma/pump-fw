@@ -17,6 +17,7 @@ allure {
 
 dependencies {
     compile 'com.github.detro:ghostdriver:2.1.0'
+
     compile project(':commons')
 }
 

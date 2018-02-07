@@ -26,7 +26,7 @@ import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.ReflectionUtils;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.common.api.ImplDispatcher;
+import ru.mk.pump.web.common.api.PageItemImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.annotations.Requirements;
@@ -36,13 +36,13 @@ import ru.mk.pump.web.exceptions.ElementDiscoveryException;
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @ToString(of = {"DEFAULT_ANNOTATION_IMPL", "DEFAULT_PACKAGE_IMPL", "DEFAULT_PACKAGE_INTERFACE", "interfaceToImplMap"})
 @Slf4j
-public class ElementImplDispatcher implements ImplDispatcher {
+public class ElementImplDispatcher implements PageItemImplDispatcher {
 
     private final static Class<? extends Annotation> DEFAULT_ANNOTATION_IMPL = FrameworkImpl.class;
 
-    private final static String[] DEFAULT_PACKAGE_IMPL = new String[]{"ru.mk.pump.web.elements.internal.impl"};
+    private final static String[] DEFAULT_PACKAGE_IMPL = new String[]{"ru.mk.pump.web.rules.internal.impl"};
 
-    private final static String[] DEFAULT_PACKAGE_INTERFACE = new String[]{"ru.mk.pump.web.elements.api.concrete"};
+    private final static String[] DEFAULT_PACKAGE_INTERFACE = new String[]{"ru.mk.pump.web.rules.api.concrete"};
 
     private final SetMultimap<Class<? extends Element>, ElementImpl<? extends BaseElement>> interfaceToImplMap;
 

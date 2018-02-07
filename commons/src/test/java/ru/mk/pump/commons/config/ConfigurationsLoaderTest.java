@@ -35,7 +35,7 @@ public class ConfigurationsLoaderTest {
         System.setProperty("common.extra", "from_env");
         final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
         configurationsLoader.load();
-        /*create empty object*/
+        /*create nonArg object*/
         final Stand stand = new Stand();
         /*rewrite object*/
         configurationsLoader.toObject(stand, "main");

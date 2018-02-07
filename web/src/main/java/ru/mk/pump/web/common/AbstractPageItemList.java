@@ -88,7 +88,7 @@ public abstract class AbstractPageItemList<T extends PageItem> extends AbstractL
     //region PRIVATE
     private ElementException exceptionNoExists(WaitResult<?> res, String byString) {
         return new ElementFinderNotFoundException(
-            String.format("Cannot find sub elements '%s' by '%s' because parent is not exists", itemsClass.getSimpleName(), logPath(byString)),
+            String.format("Cannot find sub rules '%s' by '%s' because parent is not exists", itemsClass.getSimpleName(), logPath(byString)),
             res.getCause())
             .withTargetElement(parent);
     }

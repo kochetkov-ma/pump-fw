@@ -201,7 +201,7 @@ public class ConfigurationsLoader {
                 throw new UtilException(String.format("Cannot find required property '%s' of field '%s' of object '%s' in file, in system env and default",
                     path, field.getType().getSimpleName(), object.getClass().getSimpleName()));
             } else {
-                log.debug("Resolving is empty result for not required property {} {}", field.toString(), annotation.toString());
+                log.debug("Resolving is nonArg result for not required property {} {}", field.toString(), annotation.toString());
                 return;
             }
         }

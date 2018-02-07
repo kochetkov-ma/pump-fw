@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.support.PageFactory;
 import ru.mk.pump.commons.interfaces.StrictInfo;
-import ru.mk.pump.web.common.api.ImplDispatcher;
+import ru.mk.pump.web.common.api.PageItemImplDispatcher;
 import ru.mk.pump.web.common.pageobject.Initializer;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
 import ru.mk.pump.web.elements.api.Element;
@@ -23,8 +23,8 @@ public interface Component {
         PageFactory.initElements(getInitializer().withClassFilter(initClass), this);
     }
 
-    static ImplDispatcher getImplDispatcher() {
-        return new ImplDispatcher() {
+    static PageItemImplDispatcher getImplDispatcher() {
+        return new PageItemImplDispatcher() {
             @Override
             public <R extends BaseElement> ElementImpl<R> findImplementation(@NotNull Class<? extends Element> elementInterface,
                 @Nullable Set<Class<? extends Annotation>> requirements) {

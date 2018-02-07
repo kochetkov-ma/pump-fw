@@ -29,7 +29,7 @@ public class Strings {
 
     public static final String WIN_FILE_NORMALIZE = "[\\\\/:*?<>|]";
 
-    public String empty(){
+    public String empty() {
         return EMPTY;
     }
 
@@ -69,6 +69,17 @@ public class Strings {
 
     public String toPrettyString(@Nullable Collection<?> collection) {
         return toPrettyString(collection, 0);
+    }
+
+    public String toPrettyString(@Nullable Object[] array) {
+        return toPrettyString(array, 0);
+    }
+
+    public String toPrettyString(@Nullable Object[] array, int offset) {
+        if (array == null) {
+            return "null";
+        }
+        return toPrettyString(Arrays.asList(array));
     }
 
     public String toPrettyString(@Nullable Collection<?> collection, int offset) {
@@ -147,8 +158,8 @@ public class Strings {
     }
 
     /**
-     * Check null or empty
-     * @return true if null or empty
+     * Check null or nonArg
+     * @return true if null or nonArg
      */
     public boolean isEmpty(@Nullable String value) {
         return StringUtils.isEmpty(value);
@@ -156,7 +167,7 @@ public class Strings {
 
     /**
      * Check null or blank or only whitespace
-     * @return true if null or empty or only whitespace
+     * @return true if null or nonArg or only whitespace
      */
     public boolean isBlank(@Nullable String value) {
         return StringUtils.isBlank(value);

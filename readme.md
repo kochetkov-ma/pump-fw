@@ -54,7 +54,7 @@
 ###### ru.mk.pump.web.common - поддержка page object
 - Initializer - реализация org.openqa.selenium.support.pagefactory.FieldDecorator для иницализации элементов страницы. Без использования java.lang.reflect.Proxy (это плюс)
 - api.annotations - аннотации для полей с элементами на странице, в том числе аналоги FindBy и FindBys
-- ru.mk.pump.web.common.api.ImplDispatcher - Диспетчер реализаций элементов. Загрущает и хранит интефрйсы и их реализации. 
+- ru.mk.pump.web.common.api.PageItemImplDispatcher - Диспетчер реализаций элементов. Загрущает и хранит интефрйсы и их реализации. 
 Поддерживате возможность добавления пользовательских реализаций
 
 #### Для настройки элементов используются параметры вида Map<String, Parameter<?>>
