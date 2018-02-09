@@ -10,5 +10,11 @@ public interface StrictInfo {
             .put("type", type);
     }
 
+    static ImmutableMap.Builder<String, String> infoFromSuper(StrictInfo thisInstance, Map<String,String> superInfo) {
+        return ImmutableMap.<String, String>builder()
+            .putAll(superInfo)
+            .put("type", thisInstance.getClass().getSimpleName());
+    }
+
     Map<String, String> getInfo();
 }

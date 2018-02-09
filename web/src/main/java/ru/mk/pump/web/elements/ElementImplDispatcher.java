@@ -40,9 +40,9 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
 
     private final static Class<? extends Annotation> DEFAULT_ANNOTATION_IMPL = FrameworkImpl.class;
 
-    private final static String[] DEFAULT_PACKAGE_IMPL = new String[]{"ru.mk.pump.web.rules.internal.impl"};
+    private final static String[] DEFAULT_PACKAGE_IMPL = new String[]{"ru.mk.pump.web.elements.internal.impl"};
 
-    private final static String[] DEFAULT_PACKAGE_INTERFACE = new String[]{"ru.mk.pump.web.rules.api.concrete"};
+    private final static String[] DEFAULT_PACKAGE_INTERFACE = new String[]{"ru.mk.pump.web.elements.api.concrete"};
 
     private final SetMultimap<Class<? extends Element>, ElementImpl<? extends BaseElement>> interfaceToImplMap;
 

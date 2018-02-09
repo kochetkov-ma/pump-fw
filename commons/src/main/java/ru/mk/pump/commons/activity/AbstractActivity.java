@@ -67,7 +67,7 @@ public abstract class AbstractActivity extends Observable implements Activity {
     @Override
     public Activity activate() {
         setChanged();
-        notifyObservers(NamedEvent.of("activate"));
+        notifyObservers(ActivityEvent.ACTIVATE.event());
         activated = true;
         return this;
     }
@@ -76,7 +76,7 @@ public abstract class AbstractActivity extends Observable implements Activity {
     public Activity disable() {
         if (isActive()) {
             setChanged();
-            notifyObservers(NamedEvent.of("disable"));
+            notifyObservers(ActivityEvent.DISABLE.event());
             activated = false;
         }
         return this;
@@ -86,7 +86,7 @@ public abstract class AbstractActivity extends Observable implements Activity {
     public void close() {
         if (!isClosed()) {
             setChanged();
-            notifyObservers(NamedEvent.of("close"));
+            notifyObservers(ActivityEvent.CLOSE.event());
             activated = false;
             closed = true;
         }

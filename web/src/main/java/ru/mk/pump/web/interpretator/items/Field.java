@@ -1,9 +1,11 @@
 package ru.mk.pump.web.interpretator.items;
 
 import com.google.common.base.MoreObjects;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @SuppressWarnings("unused")
+@EqualsAndHashCode
 public final class Field extends AbstractItem<String> {
 
     @Getter

@@ -7,13 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.support.PageFactory;
 import ru.mk.pump.commons.interfaces.StrictInfo;
+import ru.mk.pump.web.common.api.PageItem;
 import ru.mk.pump.web.common.api.PageItemImplDispatcher;
 import ru.mk.pump.web.common.pageobject.Initializer;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.BaseElement;
 
-public interface Component {
+public interface Component extends PageItem{
 
     default void initAllElements() {
         PageFactory.initElements(getInitializer(), this);

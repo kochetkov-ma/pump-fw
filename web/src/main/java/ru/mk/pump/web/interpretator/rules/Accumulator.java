@@ -29,6 +29,9 @@ public final class Accumulator {
             result.append(walker.next());
             return true;
         }
+        if (result.length() == 0){
+            walker.next();
+        }
         return false;
     }
 

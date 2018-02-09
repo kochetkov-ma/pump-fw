@@ -1,8 +1,10 @@
 package ru.mk.pump.web.interpretator.items;
 
 import com.google.common.base.MoreObjects;
+import lombok.EqualsAndHashCode;
 
 @SuppressWarnings("unused")
+@EqualsAndHashCode
 public final class TestParameter<T> extends AbstractItem<T> {
 
     public TestParameter(T source) {

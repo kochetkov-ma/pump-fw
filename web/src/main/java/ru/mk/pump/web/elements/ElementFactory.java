@@ -180,8 +180,8 @@ public class ElementFactory implements StrictInfo {
     private <R extends BaseElement> R fillElement(R element, ElementConfig elementConfig) {
         element.setSelfFactory(this)
             .withParams(elementConfig.getParameters())
-            .withName(elementConfig.getName())
-            .withDescription(elementConfig.getDescription())
+            .setName(elementConfig.getName())
+            .setDescription(elementConfig.getDescription())
             .withReporter(elementConfig.getReporter())
             .withVerifier(elementConfig.getVerifier())
             .addActionListener(actionListeners);

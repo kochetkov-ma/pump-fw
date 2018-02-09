@@ -1,6 +1,7 @@
 package ru.mk.pump.web.utils;
 
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.concurrent.ThreadSafe;
@@ -29,6 +30,11 @@ public class WebReporter {
     private Reporter reporter;
 
     private Verifier verifier;
+
+    static {
+        /*fake init without screens*/
+        newInstancesAndSave(Optional::empty, get(ConfigurationHolder.get().getReporting().getPostLogbackLevel(), Type.ALL));
+    }
 
     /**
      * Init {@link Screenshoter} and {@link Type} before using

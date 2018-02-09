@@ -24,12 +24,12 @@ final class TestVarArgument extends ArgumentRule<Object> {
     }
 
     @Override
-    public boolean parseEnd(String left, String right) {
-        return super.parseEnd(left, right) || left.endsWith("}");
+    public boolean parseEndOr(String left, String right) {
+        return left.endsWith("}");
     }
 
     @Override
-    public Object toValue(String string) {
+    public Object value(String string) {
         Matcher matcher = Pattern.compile(PumpkinConstants.TEST_VAR_PATTERN).matcher(string);
         if (matcher.find()) {
             return testVars.get(matcher.group(1));

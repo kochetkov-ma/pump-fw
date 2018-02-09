@@ -12,17 +12,12 @@ final class TitleRule extends AbstractRule<String> {
     }
 
     @Override
-    public boolean parseEnd(String left, String right) {
-        return super.parseEnd(left, right) || !right.matches(PumpkinConstants.TITLE_PATTERN);
+    public boolean parseEndOr(String left, String right) {
+        return !right.matches(PumpkinConstants.TITLE_PATTERN);
     }
 
     @Override
-    public String[] getEscapes() {
-        return new String[0];
-    }
-
-    @Override
-    public String toValue(String string) {
+    public String value(String string) {
         return string;
     }
 }

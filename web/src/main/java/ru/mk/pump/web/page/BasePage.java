@@ -155,17 +155,17 @@ public class BasePage extends PageNotifier implements Page {
         return new PageListener() {
             @Override
             public void onLoadSuccess(Page page) {
-                getReporter().info(format("PPage '%s' load success", name), page.toString());
+                getReporter().info(format("Page '%s' load success", name), page.toString());
             }
 
             @Override
             public void onLoadFail(Page page, Throwable fromArgsOrNull) {
-                getReporter().warn(format("PPage '%s' load failed", name), page.toString(), fromArgsOrNull);
+                getReporter().warn(format("Page '%s' load failed", name), page.toString(), fromArgsOrNull);
             }
 
             @Override
             public void onBeforeLoad(Page page) {
-                getReporter().info(format("PPage '%s' is opening", name), page.toString());
+                getReporter().info(format("Page '%s' is opening", name), page.toString());
             }
         };
     }

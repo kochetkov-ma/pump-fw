@@ -2,10 +2,11 @@ package ru.mk.pump.web.page.api;
 
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.common.api.WebObject;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.component.api.Component;
 
-public interface Page extends StrictInfo, Component, AppResource {
+public interface Page extends WebObject,StrictInfo, Component, AppResource {
 
     void open();
 

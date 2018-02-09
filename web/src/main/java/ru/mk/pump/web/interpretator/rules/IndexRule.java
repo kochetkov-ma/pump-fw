@@ -12,17 +12,12 @@ final class IndexRule extends AbstractRule<Integer> {
     }
 
     @Override
-    public boolean parseEnd(String left, String right) {
-        return super.parseEnd(left, right) || right.startsWith("]");
+    public boolean parseEndOr(String left, String right) {
+        return right.startsWith("]");
     }
 
     @Override
-    public String[] getEscapes() {
-        return new String[0];
-    }
-
-    @Override
-    public Integer toValue(String string) {
+    public Integer value(String string) {
         return Integer.valueOf(string);
     }
 

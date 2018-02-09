@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @SuppressWarnings("UnusedReturnValue")
-public interface ActivityManager extends Observer {
+public interface ActivityManager {
 
     /**
      * add and activate

@@ -3,15 +3,12 @@ package ru.mk.pump.web.interpretator.items;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import java.util.List;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
 
 @SuppressWarnings("unused")
+@EqualsAndHashCode
 public final class Method extends AbstractItem<String> {
-
-    @Getter
-    @Setter
-    private boolean nonArg;
 
     @Setter
     private List<Object> args = Lists.newArrayList();
@@ -36,7 +33,6 @@ public final class Method extends AbstractItem<String> {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("nonArg", nonArg)
             .add("args", args)
             .add("source", this.getSource())
             .toString();

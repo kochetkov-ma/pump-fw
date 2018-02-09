@@ -9,13 +9,13 @@ final class StringArgumentRule extends ArgumentRule<String> {
 
     @Nullable
     @Override
-    public String toValue(String string) {
+    public String value(String string) {
         return string;
     }
 
     @Override
-    public boolean parseEnd(String left, String right) {
-        return super.parseEnd(left, right) || right.startsWith(")") || right.startsWith(",");
+    public boolean parseEndOr(String left, String right) {
+        return right.startsWith(")") || right.startsWith(",");
     }
 
     @Override

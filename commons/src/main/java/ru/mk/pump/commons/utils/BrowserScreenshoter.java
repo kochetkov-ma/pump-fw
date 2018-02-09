@@ -25,8 +25,8 @@ public class BrowserScreenshoter implements Screenshoter {
             final Optional<byte[]> res = Optional.of(((TakesScreenshot) driverSupplier.get()).getScreenshotAs(OutputType.BYTES));
             log.info("WebDriver screen shoot is success");
             return res;
-        } catch (UnreachableBrowserException ex) {
-            log.error("Error when WebDriver taking screen", ex);
+        } catch (Exception ex) {
+            log.error("Error when WebDriver taking screen. Cause is '{}'", ex.getLocalizedMessage());
             return Optional.of(new byte[0]);
         }
     }

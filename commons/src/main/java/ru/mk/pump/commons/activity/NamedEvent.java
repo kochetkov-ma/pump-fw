@@ -2,10 +2,13 @@ package ru.mk.pump.commons.activity;
 
 import com.google.common.collect.Maps;
 import java.util.Map;
+import lombok.ToString;
 
+@SuppressWarnings("unused")
+@ToString
 public final class NamedEvent implements Event {
 
-    final Map<String, Parameter<?>> parameterMap = Maps.newHashMap();
+    private final Map<String, Parameter<?>> parameterMap = Maps.newHashMap();
 
     private final String name;
 
@@ -17,7 +20,7 @@ public final class NamedEvent implements Event {
         return new NamedEvent(name);
     }
 
-    public NamedEvent withParam(String name, Parameter param) {
+    public NamedEvent addParam(String name, Parameter<?> param) {
         parameterMap.put(name, param);
         return this;
     }

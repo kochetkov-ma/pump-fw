@@ -13,13 +13,13 @@ final class EmptyArgumentRule extends ArgumentRule<String> {
     }
 
     @Override
-    public boolean parseEnd(String left, String right) {
-        return super.parseEnd(left, right) || left.endsWith(")") || left.endsWith(",");
+    public boolean parseEndOr(String left, String right) {
+        return left.endsWith(")") || left.endsWith(",");
     }
 
     @Nullable
     @Override
-    public String toValue(String string) {
+    public String value(String string) {
         return null;
     }
 }

@@ -1,6 +1,5 @@
 package ru.mk.pump.web.interpretator.rules;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Queues;
 import java.util.Deque;
@@ -14,41 +13,17 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
+import ru.mk.pump.commons.utils.Groovy;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.interpretator.items.Field;
 import ru.mk.pump.web.interpretator.items.Item;
 import ru.mk.pump.web.interpretator.items.Method;
 import ru.mk.pump.web.interpretator.items.TestParameter;
-import ru.mk.pump.commons.utils.Groovy;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @ToString
 @Slf4j
 public final class Pumpkin {
-
-    public static void main(String[] args) {
-
-        Map<String, Object> vars = ImmutableMap.of("var1", 1);
-        //String exp = "methodOne().fieldOne[1].methodTwo(arg1,arg2)";
-        String exp = "methodOne().fieldOne[1].methodTwo(${var1},$groovy{new Date()}).fieldTwo";
-        //String exp = "$groovy{new Date()}";
-        //String exp = "${var1}";
-        //String exp = "${var1}.$groovy{new Date()}";
-
-        Pumpkin pumpkin = new Pumpkin(vars);
-        Queue<Item> res;
-        res = pumpkin.generateItems(exp);
-        log.info(res.toString());
-
-        //res = pumpkin.generateItems(expHard);
-        //log.info(res.toString());
-
-        // res = pumpkin.generateItems(singleGroovy);
-        // log.info(res.toString());
-
-        // res = pumpkin.generateItems(singleVar);
-        // log.info(res.toString());
-    }
 
     private final Set<Rule> rules;
 
@@ -101,14 +76,14 @@ public final class Pumpkin {
     ///////////
 
     private void handle(Accumulator accumulator) {
-        if (needParameterItem(accumulator)) {
-            currentItem = newParameter(accumulator);
-            itemsCache.add(currentItem);
-        } else if (needNewItem(accumulator)) {
+        if (needNewItem(accumulator)) {
             currentItem = newItem(accumulator);
             itemsCache.add(currentItem);
         } else if (needModifyItem(accumulator)) {
             currentItem = modifyCurrentItem(accumulator);
+        } else if (needParameterItem(accumulator)) {
+            currentItem = newParameter(accumulator);
+            itemsCache.add(currentItem);
         } else {
             throw exception("Unexpected rule", accumulator);
         }
@@ -153,21 +128,21 @@ public final class Pumpkin {
         if (accumulator.getRule() instanceof ArgumentRule) {
             if (currentItem instanceof Field) {
                 mutateCurrent(toMethod(currentItem));
-            } else if (((Method) currentItem).isNonArg()) {
+            } else if (!((Method) currentItem).hasArgs()) {
                 throw exception("New argument in non arguments method", accumulator);
             }
-            if (accumulator.getRule() instanceof EmptyArgumentRule) {
-                ((Method) currentItem).setNonArg(true);
-            } else {
+            if (!(accumulator.getRule() instanceof EmptyArgumentRule)) {
                 ((Method) currentItem).addArg(accumulator.getRule().toValue(accumulator.getResult()));
             }
             return currentItem;
         } else if (accumulator.getRule() instanceof IndexRule) {
             if (currentItem instanceof Method) {
+                //noinspection ConstantConditions
                 mutateCurrent(toField(currentItem).setIndex(((IndexRule) accumulator.getRule()).toValue(accumulator.getResult())));
             } else if (((Field) currentItem).hasIndex()) {
                 throw exception("Double index in a field", accumulator);
             }
+            //noinspection ConstantConditions
             int res = ((IndexRule) accumulator.getRule()).toValue(accumulator.getResult());
             if (res < 0) {
                 throw exception("Incorrect index", accumulator);

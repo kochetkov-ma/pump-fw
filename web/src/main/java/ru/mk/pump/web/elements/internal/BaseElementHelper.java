@@ -133,10 +133,10 @@ class BaseElementHelper {
                         WebElement avatar = baseElement.getFinder().findFast().throwExceptionOnFail().getResult();
                         int elementWidthPosition = avatar.getLocation().getX() + avatar.getSize().getWidth();
                         baseElement.getVerifier().checkTrue(
-                            (String.format("PElement size fit the window size. Window width : '%s'. PElement position : '%s'", winWidth, elementWidthPosition)),
+                            (String.format("Element size fit the window size. Window width : '%s'. Element position : '%s'", winWidth, elementWidthPosition)),
                             winWidth >= (elementWidthPosition - fwConfig.getElement().getWindowWidthOffset()));
                     } catch (Exception ex) {
-                        log.error("Cannot check element position in window. PElement is '%s'", baseElement.toString());
+                        log.error("Cannot check element position in window. Element is '%s'", baseElement.toString());
                     }
                 }
             }

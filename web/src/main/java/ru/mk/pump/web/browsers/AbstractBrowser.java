@@ -2,19 +2,26 @@ package ru.mk.pump.web.browsers;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Observer;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import ru.mk.pump.commons.activity.AbstractActivity;
 import ru.mk.pump.commons.activity.Activity;
+import ru.mk.pump.commons.activity.ActivityListener;
+import ru.mk.pump.commons.activity.NamedEvent;
+import ru.mk.pump.commons.exception.PumpMessage;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.exceptions.BrowserException;
+import ru.mk.pump.web.utils.WebReporter;
 
 /**
  * Created by kochetkov-ma on 5/31/17.
  */
+@SuppressWarnings("WeakerAccess")
 @ToString(of = {"id", "config"}, callSuper = true)
 public abstract class AbstractBrowser extends AbstractActivity implements Browser {
 
@@ -46,7 +53,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
         this.actions = new BrowserActions(this::getDriver);
         this.logs = new LogManager();
         this.windows = new WindowManager(this);
-
+        addObserver(getDefaultListener());
     }
     //endregion
 
@@ -134,7 +141,6 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
 
     @Override
     public void close() {
-
         if (driver != null && !isClosed()) {
             if (isStarted()) {
                 forkCloseByBrowserType();
@@ -162,5 +168,30 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
         } else {
             driver.quit();
         }
+    }
+
+    protected Observer getDefaultListener() {
+        return new ActivityListener() {
+            @Override
+            public void onClose(NamedEvent namedEvent, Activity activity) {
+                report(namedEvent, activity);
+            }
+
+            @Override
+            public void onActivate(NamedEvent namedEvent, Activity activity) {
+                report(namedEvent, activity);
+            }
+
+            @Override
+            public void onDisable(NamedEvent namedEvent, Activity activity) {
+                report(namedEvent, activity);
+            }
+
+            private void report(NamedEvent namedEvent, Activity activity) {
+                final PumpMessage msg = new PumpMessage(Strings.toString(namedEvent))
+                    .addExtraInfo(((AbstractBrowser) activity));
+                WebReporter.getReporter().info("Browser has been " + namedEvent.getName(), msg.toPrettyString());
+            }
+        };
     }
 }

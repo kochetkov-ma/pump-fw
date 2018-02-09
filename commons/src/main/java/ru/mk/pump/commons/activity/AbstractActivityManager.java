@@ -16,12 +16,6 @@ import org.jetbrains.annotations.NotNull;
 @Slf4j
 public abstract class AbstractActivityManager implements ActivityManager, ActivityListener {
 
-    public static final String CLOSE_EVENT_NAME = "close";
-
-    public static final String ACTIVATE_EVENT_NAME = "activate";
-
-    public static final String DISABLE_EVENT_NAME = "disable";
-
     private final Map<String, Activity> activityMap;
 
     private Activity activeCache = null;
@@ -174,22 +168,6 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
             if (inActiveCache(activity.getUUID())) {
                 prevCache = activity;
                 activeCache = null;
-            }
-        }
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        if (arg instanceof NamedEvent && o instanceof Activity) {
-            final NamedEvent namedEvent = (NamedEvent) arg;
-            final Activity activity = (Activity) o;
-
-            if (CLOSE_EVENT_NAME.equals(namedEvent.getName())) {
-                onClose(namedEvent, activity);
-            } else if (ACTIVATE_EVENT_NAME.equals(namedEvent.getName())) {
-                onActivate(namedEvent, activity);
-            } else if (DISABLE_EVENT_NAME.equals(namedEvent.getName())) {
-                onDisable(namedEvent, activity);
             }
         }
     }

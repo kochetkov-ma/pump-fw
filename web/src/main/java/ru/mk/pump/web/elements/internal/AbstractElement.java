@@ -135,14 +135,14 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     }
     //endregion
 
-    public CHILD withName(String elementName) {
+    public CHILD setName(String elementName) {
         if (!Strings.isEmpty(elementName)) {
             this.elementName = elementName;
         }
         return (CHILD) this;
     }
 
-    public CHILD withDescription(String elementDescription) {
+    public CHILD setDescription(String elementDescription) {
         if (!Strings.isEmpty(elementDescription)) {
             this.elementDescription = elementDescription;
         }

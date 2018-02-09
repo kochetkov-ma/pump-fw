@@ -6,6 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import ru.mk.pump.commons.activity.AbstractActivity;
 import ru.mk.pump.commons.activity.Activity;
+import ru.mk.pump.commons.activity.ActivityListener;
+import ru.mk.pump.commons.activity.NamedEvent;
+import ru.mk.pump.commons.exception.PumpMessage;
+import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.web.utils.WebReporter;
 
 @Slf4j
 @ToString(callSuper = true)
@@ -16,6 +21,7 @@ public final class Window extends AbstractActivity {
     private Window(Observer observer, String uuid, WebDriver driver) {
         super(observer, uuid);
         this.driver = driver;
+        addObserver(getDefaultListener());
     }
 
     public static Window of(Observer observer, WebDriver driver, String windowDriverUuid) {
@@ -36,6 +42,31 @@ public final class Window extends AbstractActivity {
         driver.close();
         super.close();
 
+    }
+
+    private Observer getDefaultListener() {
+        return new ActivityListener() {
+            @Override
+            public void onClose(NamedEvent namedEvent, Activity activity) {
+                report(namedEvent, activity);
+            }
+
+            @Override
+            public void onActivate(NamedEvent namedEvent, Activity activity) {
+                report(namedEvent, activity);
+            }
+
+            @Override
+            public void onDisable(NamedEvent namedEvent, Activity activity) {
+                report(namedEvent, activity);
+            }
+
+            private void report(NamedEvent namedEvent, Activity activity) {
+                final PumpMessage msg = new PumpMessage(Strings.toString(namedEvent))
+                    .withDesc(activity.toString());
+                WebReporter.getReporter().info("Window has been " + namedEvent.getName(), msg.toPrettyString());
+            }
+        };
     }
 
 }

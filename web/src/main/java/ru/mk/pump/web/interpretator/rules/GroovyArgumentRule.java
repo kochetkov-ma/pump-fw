@@ -5,8 +5,8 @@ import static ru.mk.pump.web.interpretator.PumpkinConstants.GROOVY_PATTERN;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.ToString;
-import ru.mk.pump.web.interpretator.PumpkinConstants;
 import ru.mk.pump.commons.utils.Groovy;
+import ru.mk.pump.web.interpretator.PumpkinConstants;
 
 @SuppressWarnings("WeakerAccess")
 @ToString(exclude = "groovy")
@@ -25,12 +25,12 @@ final class GroovyArgumentRule extends ArgumentRule<Object> {
     }
 
     @Override
-    public boolean parseEnd(String left, String right) {
-        return super.parseEnd(left, right) || left.endsWith("}");
+    public boolean parseEndOr(String left, String right) {
+        return left.endsWith("}");
     }
 
     @Override
-    public Object toValue(String string) {
+    public Object value(String string) {
         Matcher matcher = Pattern.compile(PumpkinConstants.GROOVY_PATTERN).matcher(string);
         if (matcher.find()) {
             return groovy.evalGroovy(matcher.group(1));
