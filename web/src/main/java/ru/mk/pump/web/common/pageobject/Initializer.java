@@ -128,7 +128,7 @@ public class Initializer implements FieldDecorator {
      * @param pumpElementAnnotations filed wrapper for extract rules parameters
      */
     protected ElementConfig annotationsToElementConfig(@NotNull PumpElementAnnotations pumpElementAnnotations) {
-        return ElementConfig.of(pumpElementAnnotations.getName(), pumpElementAnnotations.getDescription())
+        return ElementConfig.of(pumpElementAnnotations.getElementName(), pumpElementAnnotations.getElementDescription())
             .withParameters(pumpElementAnnotations.buildParameters())
             .withRequirements(pumpElementAnnotations.getRequirements());
     }

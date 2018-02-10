@@ -93,7 +93,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return this;
     }
 
-    public BaseElement withReporter(@Nullable Reporter reporter) {
+    public BaseElement setReporter(@Nullable Reporter reporter) {
         if (reporter != null) {
             this.reporter = reporter;
         }
@@ -231,7 +231,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     private void initLocal() {
-        withReporter(WebReporter.getReporter());
+        setReporter(WebReporter.getReporter());
         withVerifier(WebReporter.getVerifier());
         /*helper instance init*/
         this.helper = new BaseElementHelper(this);

@@ -14,6 +14,7 @@ import ru.mk.pump.commons.config.ConfigurationsLoader;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.FileUtils;
 import ru.mk.pump.commons.utils.Preconditions;
+import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.exceptions.ConfigurationException;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -110,7 +111,7 @@ public class ConfigurationHolder {
             try {
                 initSystemEnv(DEFAULT_SYSTEM_ENV_NAME);
             } catch (Exception ex) {
-                log.warn("[PUMP-CONFIG] Cannot find any resources. Cause is '{}'", ex.getLocalizedMessage());
+                log.error("[PUMP-CONFIG] Cannot load any resources. Cause is '{}'", ex.getLocalizedMessage());
                 log.info("[PUMP-CONFIG] Try to load from default Configuration class");
                 init(getDefaultConfiguration());
             }
@@ -118,7 +119,7 @@ public class ConfigurationHolder {
             try {
                 init(DEFAULT_CLASSPATH_RESOURCE);
             } catch (Exception ex) {
-                log.warn("[PUMP-CONFIG] Cannot find any resources. Cause is '{}'", ex.getLocalizedMessage());
+                log.error("[PUMP-CONFIG] Cannot load any resources. Cause is '{}'", ex.getLocalizedMessage());
                 log.info("[PUMP-CONFIG] Try to load from default Configuration class");
                 init(getDefaultConfiguration());
             }
@@ -128,6 +129,7 @@ public class ConfigurationHolder {
 
     private static Configuration getDefaultConfiguration() {
         Configuration config = new Configuration();
+        config.setBrowser(BrowserType.CHROME);
         config.setApplicationName("undefined");
         config.getElement().setWindowWidthOffset(0);
         return config;

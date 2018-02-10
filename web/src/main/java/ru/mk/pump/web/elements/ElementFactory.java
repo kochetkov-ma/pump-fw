@@ -182,7 +182,7 @@ public class ElementFactory implements StrictInfo {
             .withParams(elementConfig.getParameters())
             .setName(elementConfig.getName())
             .setDescription(elementConfig.getDescription())
-            .withReporter(elementConfig.getReporter())
+            .setReporter(elementConfig.getReporter())
             .withVerifier(elementConfig.getVerifier())
             .addActionListener(actionListeners);
         element.addStateListener(stateListeners);

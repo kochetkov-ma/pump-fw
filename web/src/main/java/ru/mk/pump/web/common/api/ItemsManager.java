@@ -12,7 +12,7 @@ public interface ItemsManager<T> extends StrictInfo {
     T getCurrent();
 
     @NotNull
-    List<T> getCurrentList();
+    List<? extends T> getCurrentList();
 
     @NotNull
     T getOne(String name);
@@ -21,10 +21,10 @@ public interface ItemsManager<T> extends StrictInfo {
     List<T> getList(String name);
 
     @NotNull
-    <V extends T> T getOneByClass(String name, Class<V> itemClass);
+    <V extends T> V getOneByClass(String name, Class<V> itemClass);
 
     @NotNull
-    <V extends T> List<T> getListByClass(String name, Class<V> itemClass);
+    <V extends T> List<V> getListByClass(String name, Class<V> itemClass);
 
     @NotNull <V extends T> Set<Class<V>> find(@NotNull String name, @NotNull Class<V> itemClass);
 }

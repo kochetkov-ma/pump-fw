@@ -1,14 +1,6 @@
 package ru.mk.pump.commons.utils;
 
 
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -16,6 +8,16 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.constants.StringConstants;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @UtilityClass
@@ -159,14 +161,22 @@ public class Strings {
 
     /**
      * Check null or nonArg
+     *
      * @return true if null or nonArg
      */
     public boolean isEmpty(@Nullable String value) {
         return StringUtils.isEmpty(value);
     }
 
+    public void ifNotEmptyOrBlank(@Nullable String value, Consumer<String> consumer) {
+        if (!isBlank(value)) {
+            consumer.accept(value);
+        }
+    }
+
     /**
      * Check null or blank or only whitespace
+     *
      * @return true if null or nonArg or only whitespace
      */
     public boolean isBlank(@Nullable String value) {

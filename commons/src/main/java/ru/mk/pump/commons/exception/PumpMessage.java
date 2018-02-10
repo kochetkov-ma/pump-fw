@@ -1,15 +1,7 @@
 package ru.mk.pump.commons.exception;
 
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import lombok.Getter;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +10,11 @@ import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
+
+import java.util.*;
+
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class PumpMessage implements PrettyPrinter {
@@ -83,25 +80,41 @@ public class PumpMessage implements PrettyPrinter {
         this(title, null, null, null);
     }
 
+    public static PumpMessage of(String title, String desc, StrictInfo strictInfo) {
+        return new PumpMessage(title, desc, strictInfo.getInfo());
+    }
+
+    public static PumpMessage of(StrictInfo strictInfo) {
+        return new PumpMessage(Strings.empty(), null, strictInfo.getInfo());
+    }
+
+    public static PumpMessage of(String title, StrictInfo strictInfo) {
+        return new PumpMessage(title, null, strictInfo.getInfo());
+    }
+
+    public static PumpMessage of(String title, Map<String, String> mapInfo) {
+        return new PumpMessage(title, null, mapInfo);
+    }
+
     @Override
     public String toPrettyString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(Strings.concat(StringConstants.DOT_SPACE, preTitleMessage, title)).append(LINE);
         if (!description.isEmpty()) {
             sb.append("[Description]")
-                .append(StringConstants.LINE)
-                .append(Strings.toPrettyString(Arrays.asList(description.split(LINE)), OFFSET))
-                .append(StringConstants.LINE);
+                    .append(StringConstants.LINE)
+                    .append(Strings.toPrettyString(Arrays.asList(description.split(LINE)), OFFSET))
+                    .append(StringConstants.LINE);
         }
         if (!extraInformation.isEmpty()) {
             sb.append("[Additional information]")
-                .append(StringConstants.LINE)
-                .append(Strings.toPrettyString(extraInformation, OFFSET)).append(LINE);
+                    .append(StringConstants.LINE)
+                    .append(Strings.toPrettyString(extraInformation, OFFSET)).append(LINE);
         }
         if (!envInformation.isEmpty()) {
             sb.append("[Environment information]")
-                .append(StringConstants.LINE)
-                .append(Strings.toPrettyString(envInformation, OFFSET)).append(LINE);
+                    .append(StringConstants.LINE)
+                    .append(Strings.toPrettyString(envInformation, OFFSET)).append(LINE);
         }
         return Strings.trimEnd(sb.toString());
     }
@@ -171,11 +184,11 @@ public class PumpMessage implements PrettyPrinter {
     @Override
     public String toString() {
         return "PumpMessage{" +
-            "title='" + title + '\'' +
-            ", description='" + description + '\'' +
-            ", envInformation=" + envInformation +
-            ", extraInformation=" + extraInformation +
-            '}';
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", envInformation=" + envInformation +
+                ", extraInformation=" + extraInformation +
+                '}';
     }
 
     //region PRIVATE
@@ -190,7 +203,7 @@ public class PumpMessage implements PrettyPrinter {
         final List<String> valueLines = Arrays.asList(value.split(LINE));
         if (valueLines.size() > 1) {
             final ImmutableList.Builder<String> builder = ImmutableList.<String>builder()
-                .add(key + KEY_VALUE_PRETTY_DELIMITER + valueLines.get(0));
+                    .add(key + KEY_VALUE_PRETTY_DELIMITER + valueLines.get(0));
             valueLines.subList(1, valueLines.size()).forEach(i -> builder.add(keySize(key) + i));
             return builder.build();
         } else {

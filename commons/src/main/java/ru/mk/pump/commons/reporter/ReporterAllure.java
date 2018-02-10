@@ -1,29 +1,32 @@
 package ru.mk.pump.commons.reporter;
 
 
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
-
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Parameter;
 import io.qameta.allure.model.Status;
 import io.qameta.allure.model.StepResult;
 import io.qameta.allure.model.TestResult;
-import java.io.ByteArrayInputStream;
-import java.util.Deque;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Strings;
 
+import java.io.ByteArrayInputStream;
+import java.util.Deque;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedDeque;
+
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
+
 @SuppressWarnings("unused")
 @Slf4j
+@ToString(exclude = {"currentTestUuid", "blockUuidQueue"})
 public class ReporterAllure implements Reporter, AutoCloseable {
 
     /**
@@ -48,8 +51,8 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     private static String now() {
         return org.joda.time.Instant.now().toString(new DateTimeFormatterBuilder()
-            .appendPattern("dd-MM-yy HH:mm:ss:SSSS")
-            .toFormatter());
+                .appendPattern("dd-MM-yy HH:mm:ss:SSSS")
+                .toFormatter());
     }
 
     @Getter
@@ -75,9 +78,9 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     public void testStart(String title, String description) {
         currentTestUuid.set(UUID.randomUUID().toString());
         final TestResult testResult = new TestResult()
-            .withDescription(description)
-            .withName(title)
-            .withUuid(currentTestUuid.get());
+                .withDescription(description)
+                .withName(title)
+                .withUuid(currentTestUuid.get());
         Allure.getLifecycle().scheduleTestCase(testResult);
         Allure.getLifecycle().startTestCase(currentTestUuid.get());
     }
@@ -106,8 +109,8 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     public void blockStart(String title, String description) {
         final String uuid = UUID.randomUUID().toString();
         final StepResult stepResult = new StepResult()
-            .withDescription(description)
-            .withName(title);
+                .withDescription(description)
+                .withName(title);
         Allure.getLifecycle().startStep(uuid, stepResult);
         blockUuidQueue.get().add(uuid);
     }
@@ -175,7 +178,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     public void attach(Attachment attachment) {
         if (attachment.getSourceByte() != null) {
             Allure.addAttachment(attachment.getName(), attachment.getType(), new ByteArrayInputStream(attachment.getSourceByte().get()),
-                attachment.getExtension());
+                    attachment.getExtension());
         } else {
             Allure.addAttachment(attachment.getName(), attachment.getType(), attachment.getSource(), attachment.getExtension());
         }
@@ -253,14 +256,14 @@ public class ReporterAllure implements Reporter, AutoCloseable {
         @Override
         public String toString() {
             return Strings
-                .space(I, attachment != null ? "Attachment exists" : null,
-                    throwable != null ? "Throwable class " + throwable.getClass().getSimpleName() : null);
+                    .space(I, attachment != null ? "Attachment exists" : null,
+                            throwable != null ? "Throwable class " + throwable.getClass().getSimpleName() : null);
         }
     }
 
     /**
-     * @param level step level
-     * @param title step title
+     * @param level       step level
+     * @param title       step title
      * @param description need to be title + lineSeparator + description for full information
      */
     private void step(Type level, String title, String description, Info info) {
@@ -270,10 +273,10 @@ public class ReporterAllure implements Reporter, AutoCloseable {
         }
         final String stepUuid = UUID.randomUUID().toString();
         final StepResult stepResult = new StepResult()
-            .withName(level.getValue() + title)
-            .withStatus(Status.PASSED)
-            .withParameters(new Parameter().withName("status").withValue(level.name()),
-                new Parameter().withName("time").withValue(now()));
+                .withName(level.getValue() + title)
+                .withStatus(Status.PASSED)
+                .withParameters(new Parameter().withName("status").withValue(level.name()),
+                        new Parameter().withName("time").withValue(now()));
 
         Allure.getLifecycle().startStep(stepUuid, stepResult);
         if (Objects.nonNull(description)) {
@@ -307,9 +310,9 @@ public class ReporterAllure implements Reporter, AutoCloseable {
                 throw (AssertionError) info.throwable();
             } else {
                 final PumpMessage exceptionMessage = new PumpMessage(title, description)
-                    .addExtraInfo("Status", level.name())
-                    .addExtraInfo("Attachment",
-                        info.attachment() != null ? Strings.space(info.attachment().getName(), info.attachment().getType()) : null);
+                        .addExtraInfo("Status", level.name())
+                        .addExtraInfo("Attachment",
+                                info.attachment() != null ? Strings.space(info.attachment().getName(), info.attachment().getType()) : null);
                 Allure.getLifecycle().updateStep(stepUuid, res -> res.setStatus(Status.BROKEN));
                 Allure.getLifecycle().stopStep(stepUuid);
                 throw new ExecutionException(exceptionMessage, info.throwable());

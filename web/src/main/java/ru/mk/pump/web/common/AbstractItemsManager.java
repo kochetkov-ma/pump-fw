@@ -1,10 +1,5 @@
 package ru.mk.pump.web.common;
 
-import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +14,14 @@ import ru.mk.pump.web.common.api.WebObject;
 import ru.mk.pump.web.exceptions.ItemManagerException;
 import ru.mk.pump.web.utils.WebReporter;
 
+import java.lang.reflect.Constructor;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @SuppressWarnings({"WeakerAccess", "unused"})
-@ToString
+@ToString(exclude = {"browser", "reporter"})
 abstract public class AbstractItemsManager<T extends WebObject> implements ItemsManager<T> {
 
     private final String[] packages;
@@ -38,7 +39,7 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     private T current;
 
     @Getter
-    private List<T> currentList;
+    private List<? extends T> currentList;
 
     //region CONSTRUCTORS
     public AbstractItemsManager(Browser browser, Reporter reporter, String... packagesName) {
@@ -70,51 +71,52 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     @Override
     public <V extends T> Set<Class<V>> find(@NotNull String itemName, @NotNull Class<V> itemClass) {
         //noinspection unchecked
-        Set<Class<V>> result = itemsSet.stream()
-            .filter(itemClass::isAssignableFrom)
-            .filter(i -> findFilter(i.getName(), i))
-            .map(i -> (Class<V>) i)
-            .collect(Collectors.toSet());
-        if (result.isEmpty()) {
-            throw new ItemManagerException(String.format("Cannot find any item with name '%s' and class '%s'", itemName, itemClass.getCanonicalName()))
-                .withManager(this);
-        } else {
-            return result;
-        }
+        return itemsSet.stream()
+                .filter(itemClass::isAssignableFrom)
+                .filter(i -> findFilter(itemName, i))
+                .map(i -> (Class<V>) i)
+                .collect(Collectors.toSet());
     }
 
     @NotNull
     @Override
-    public <V extends T> T getOneByClass(String name, Class<V> itemSubClass) {
-        if (current.getName().equals(name)) {
-            return current;
+    public <V extends T> V getOneByClass(String name, Class<V> itemSubClass) {
+        if (current != null && current.getName().equals(name) && current.getClass().isAssignableFrom(itemSubClass)) {
+            //noinspection unchecked
+            return (V) current;
         }
         Set<Class<V>> items = find(name, itemSubClass);
+        if (items.isEmpty()) {
+            throw new ItemManagerException(String.format("Cannot find any item with name '%s' and class '%s'", name, itemSubClass.getCanonicalName()))
+                    .withManager(this);
+        }
         current = newItem(items.iterator().next());
-        return current;
+        //noinspection unchecked
+        return (V) current;
     }
 
     @NotNull
     @Override
-    public <V extends T> List<T> getListByClass(String name, Class<V> itemSubClass) {
+    public <V extends T> List<V> getListByClass(String name, Class<V> itemSubClass) {
         Set<Class<V>> items = find(name, itemSubClass);
         currentList = items.stream().map(this::newItem).collect(Collectors.toList());
-        return currentList;
+        //noinspection unchecked
+        return (List<V>) currentList;
     }
 
     protected T newItem(Class<? extends T> itemClass) {
         try {
             final Constructor<? extends T> constructor = findConstructor(itemClass);
             constructor.setAccessible(true);
-            T result = newInstance(constructor);
+            T result = newInstance(constructor, itemClass);
             return afterItemCreate(result);
         } catch (ReflectiveOperationException | ClassCastException ex) {
             throw new ItemManagerException(String.format("Error when try to create item with class '%s'", getItemClass().getCanonicalName()), ex)
-                .withManager(this);
+                    .withManager(this);
         }
     }
 
-    abstract protected T newInstance(Constructor<? extends T> constructor) throws ReflectiveOperationException;
+    abstract protected T newInstance(Constructor<? extends T> constructor, Class<? extends T> itemClass) throws ReflectiveOperationException;
 
     abstract protected Constructor<? extends T> findConstructor(Class<? extends T> itemClass) throws ReflectiveOperationException;
 
@@ -132,12 +134,12 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("Items Manager")
-            .put("browser", Strings.toString(browser))
-            .put("current item", Strings.toString(current))
-            .put("current list", Strings.toPrettyString(currentList, "current list".length()))
-            .put("reporter", Strings.toString(reporter))
-            .put("loaded items", Strings.toPrettyString(itemsSet, "loaded items".length()))
-            .put("packages", Strings.toPrettyString(packages, "packages".length()))
-            .build();
+                .put("browser", Strings.toString(browser))
+                .put("current item", Strings.toString(current))
+                .put("current list", Strings.toPrettyString(currentList))
+                .put("reporter", Strings.toString(reporter))
+                .put("loaded items", Strings.toPrettyString(itemsSet))
+                .put("packages", Strings.toPrettyString(packages))
+                .build();
     }
 }
