@@ -28,6 +28,7 @@ import ru.mk.pump.commons.utils.ReflectionUtils;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.common.api.PageItemImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
+import ru.mk.pump.web.elements.api.annotations.CustomImpl;
 import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
 import ru.mk.pump.web.elements.api.annotations.Requirements;
 import ru.mk.pump.web.elements.internal.BaseElement;
@@ -39,6 +40,8 @@ import ru.mk.pump.web.exceptions.ElementDiscoveryException;
 public class ElementImplDispatcher implements PageItemImplDispatcher {
 
     private final static Class<? extends Annotation> DEFAULT_ANNOTATION_IMPL = FrameworkImpl.class;
+
+    private final static Class<? extends Annotation> DEFAULT_ANNOTATION_CUSTOM = CustomImpl.class;
 
     private final static String[] DEFAULT_PACKAGE_IMPL = new String[]{"ru.mk.pump.web.elements.internal.impl"};
 
@@ -170,7 +173,12 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
         }
         if (!expectedImpl.isPresent()) {
             expectedImpl = implementations.stream()
-                .filter(item -> item.getImplementation().isAnnotationPresent(FrameworkImpl.class))
+                    .filter(item -> item.getImplementation().isAnnotationPresent(DEFAULT_ANNOTATION_CUSTOM))
+                    .min(Comparator.comparingInt(e -> e.getImplementation().getAnnotations().length));
+        }
+        if (!expectedImpl.isPresent()) {
+            expectedImpl = implementations.stream()
+                .filter(item -> item.getImplementation().isAnnotationPresent(DEFAULT_ANNOTATION_IMPL))
                 .min(Comparator.comparingInt(e -> e.getImplementation().getAnnotations().length));
         }
         //TODO::may be ClassCastException

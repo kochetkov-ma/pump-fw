@@ -22,7 +22,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "unused"})
 @Slf4j
 class ComponentStaticManagerTest extends AbstractTestWithBrowser {
 
@@ -34,6 +34,7 @@ class ComponentStaticManagerTest extends AbstractTestWithBrowser {
         createBrowser();
         this.manager = new ComponentStaticManager(getBrowser(), getClass().getPackage().getName());
     }
+
 
     @PComponent(value = "AOneComponent", desc = "Annotation description")
     @FindBy(id = "component_one")
@@ -225,10 +226,10 @@ class ComponentStaticManagerTest extends AbstractTestWithBrowser {
         res = manager.getListByClass("OneComponent", OneComponent.class);
         assertThat(res).hasSize(1);
 
-        res = manager.getListByClass("InnerComponent",  BaseComponent.class);
+        res = manager.getListByClass("InnerComponent", BaseComponent.class);
         assertThat(res).hasSize(1);
 
-        res = manager.getListByClass("AInnerComponent",  BaseComponent.class);
+        res = manager.getListByClass("AInnerComponent", BaseComponent.class);
         assertThat(res).hasSize(2);
     }
 
@@ -253,7 +254,7 @@ class ComponentStaticManagerTest extends AbstractTestWithBrowser {
         manager.getListByClass("AInnerComponent", BaseComponent.class);
         assertThat(manager.getCurrentList()).hasSize(2);
 
-        manager.getListByClass("InnerComponent",  BaseComponent.class);
+        manager.getListByClass("InnerComponent", BaseComponent.class);
         assertThat(manager.getCurrentList()).hasSize(1);
     }
 }
