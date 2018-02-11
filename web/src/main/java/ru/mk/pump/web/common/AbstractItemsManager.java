@@ -1,5 +1,6 @@
 package ru.mk.pump.web.common;
 
+import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
@@ -18,10 +19,12 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString(exclude = {"browser", "reporter"})
+//TODO : Продумать возможность выбора из нескольких вариантов странцы (мобильная и полная)
 abstract public class AbstractItemsManager<T extends WebObject> implements ItemsManager<T> {
 
     private final String[] packages;
@@ -40,6 +43,7 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
 
     @Getter
     private List<? extends T> currentList;
+    private Set<BiPredicate<AbstractItemsManager<T>, Class<? extends T>>> predicateSet = Sets.newHashSet();
 
     //region CONSTRUCTORS
     public AbstractItemsManager(Browser browser, Reporter reporter, String... packagesName) {
@@ -74,8 +78,23 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
         return itemsSet.stream()
                 .filter(itemClass::isAssignableFrom)
                 .filter(i -> findFilter(itemName, i))
+                .filter(i -> predicateSet.stream().allMatch(p -> p.test(this, i)))
                 .map(i -> (Class<V>) i)
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * [RUS] Дополнительный фильтр для страниц. Например, если есть две версии одной страницы под разные браузеры или стенды.
+     * Можно добавить к каждому классу страницы дополнительную аннотацию, а этим методом добавить правило проверки в зависимости от конфигурации
+     */
+    public AbstractItemsManager<T> addExtraFilter(BiPredicate<AbstractItemsManager<T>, Class<? extends T>> predicate) {
+        this.predicateSet.add(predicate);
+        return this;
+    }
+
+    public AbstractItemsManager<T> clearExtraFilter() {
+        this.predicateSet.clear();
+        return this;
     }
 
     @NotNull

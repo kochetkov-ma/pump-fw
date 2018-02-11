@@ -1,18 +1,13 @@
 package ru.mk.pump.web.page;
 
-import java.util.List;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.common.api.annotations.PElement;
-import ru.mk.pump.web.common.api.annotations.PFindBy;
-import ru.mk.pump.web.common.api.annotations.PFindBys;
-import ru.mk.pump.web.common.api.annotations.PPage;
-import ru.mk.pump.web.common.api.annotations.PString;
-import ru.mk.pump.web.common.api.annotations.PStrings;
+import ru.mk.pump.web.common.api.annotations.*;
 import ru.mk.pump.web.component.BaseComponent;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
@@ -20,15 +15,57 @@ import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
 
+import java.util.List;
+
 @SuppressWarnings("ALL")
 abstract class AbstractPageTest extends AbstractTestWithBrowser {
+
+
+
+    @PPage(value = "Главная страница", desc = "Главная страница", baseUrl = "https://ipotekaonline.open.ru")
+    @Alternative
+    static class MainPageOther extends BasePage {
+
+        @FindBy(tagName = "h2")
+        @PElement(value = "Заголовок", desc = "Главный заголовок страницы")
+        @Getter
+        private TextArea pageTitle;
+
+        public MainPageOther(@NotNull Browser browser) {
+            super(browser);
+        }
+
+        @Override
+        public String getTitle() {
+            return pageTitle.getTextHidden();
+        }
+    }
+
+    @PPage(value = "Главная страница", desc = "Главная страница", baseUrl = "https://ipotekaonline.open.ru")
+    static class MainPage extends BasePage {
+
+        @FindBy(tagName = "h2")
+        @PElement(value = "Заголовок", desc = "Главный заголовок страницы")
+        @Getter
+        private TextArea pageTitle;
+
+        public MainPage(@NotNull Browser browser) {
+            super(browser);
+        }
+
+        @Override
+        public String getTitle() {
+            return pageTitle.getTextHidden();
+        }
+    }
+
 
     /**
      * Страница наследуется от {@link BasePage}.
      * Все приватные поля - это элементы либо компоненты
      */
     @SuppressWarnings("WeakerAccess")
-    @PPage(value = "Регистрация", desc = "Страница регистрации Цифровая Ипотека")
+    @PPage(value = "Регистрация", resource = "resource", desc = "Страница регистрации Цифровая Ипотека")
     static class RegPage extends BasePage {
 
         /**
@@ -66,6 +103,7 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
 
         /**
          * Конcтруктор страницы. PUBLIC. Все конструкторы страниц, компонентов и элементов - PUBLIC!!!
+         *
          * @param browser Браузер
          */
         public RegPage(Browser browser) {
@@ -136,15 +174,15 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
             @FindBy(id = "regionAutocompleteId")
             @PElement(value = "Регион", desc = "Выбор региона из выпадающего списка")
             @PStrings({
-                @PString(name = "testParam1", value = "paramValue1"),
-                @PString(name = "testParam2", value = "paramValue2")
+                    @PString(name = "testParam1", value = "paramValue1"),
+                    @PString(name = "testParam2", value = "paramValue2")
             })
 
             @PFindBys({
-                @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
-                @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
-                @PFindBy(name = "iddLoadBy", value = {@FindBy(tagName = "input")}),
-                @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
+                    @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
+                    @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
+                    @PFindBy(name = "iddLoadBy", value = {@FindBy(tagName = "input")}),
+                    @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
             })
             @Getter
             private InputDropDown inputDropDownRegionsFail;
@@ -153,16 +191,16 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
             @PElement(value = "Регион", desc = "Выбор региона из выпадающего списка")
             /*аннотация для определяния нескольких СТРОКОВЫХ параметров элемента*/
             @PStrings({
-                /*один СТРОКОВЫЙ параметр*/
-                @PString(name = "testParam1", value = "paramValue1"),
-                @PString(name = "testParam2", value = "paramValue2")
+                    /*один СТРОКОВЫЙ параметр*/
+                    @PString(name = "testParam1", value = "paramValue1"),
+                    @PString(name = "testParam2", value = "paramValue2")
             })
             /*аннотация для определяния нескольких параметров элемента типа Локатор*/
             @PFindBys({
-                /*один параметр Локатор*/
-                @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
-                @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
-                @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
+                    /*один параметр Локатор*/
+                    @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
+                    @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
+                    @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
             })
             @Getter
             private InputDropDown inputDropDownRegions;

@@ -1,6 +1,7 @@
 package ru.mk.pump.web.page;
 
 import lombok.ToString;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
@@ -14,7 +15,7 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-@ToString
+@ToString(callSuper = true)
 public class PageManager extends AbstractItemsManager<BasePage> {
 
     private final PageLoader pageLoader;
@@ -32,12 +33,21 @@ public class PageManager extends AbstractItemsManager<BasePage> {
 
     @Override
     protected BasePage newInstance(Constructor<? extends BasePage> constructor, Class<? extends BasePage> itemClass) throws ReflectiveOperationException {
-        return constructor.newInstance(getBrowser(), getReporter());
+        if (constructor.getParameterCount() == 2) {
+            return constructor.newInstance(getBrowser(), getReporter());
+        } else {
+            return constructor.newInstance(getBrowser());
+        }
     }
 
     @Override
     protected Constructor<? extends BasePage> findConstructor(Class<? extends BasePage> itemClass) throws ReflectiveOperationException {
-        return itemClass.getConstructor(Browser.class, Reporter.class);
+        Constructor<? extends BasePage> res = ConstructorUtils.getAccessibleConstructor(itemClass, Browser.class, Reporter.class);
+        if (res == null) {
+            return itemClass.getConstructor(Browser.class);
+        } else {
+            return res;
+        }
     }
 
     @Override
@@ -50,8 +60,8 @@ public class PageManager extends AbstractItemsManager<BasePage> {
     @Override
     protected boolean findFilter(String pageName, Class<? extends BasePage> itemClass) {
         PumpElementAnnotations annotations = new PumpElementAnnotations(itemClass);
-        return annotations.getPageName().equalsIgnoreCase(pageName) || itemClass
-                .getSimpleName().equals(pageName);
+        return annotations.getPageName().equalsIgnoreCase(pageName)
+                || itemClass.getSimpleName().equals(pageName);
     }
 
     @Override
