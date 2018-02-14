@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Groovy;
@@ -24,6 +25,8 @@ import ru.mk.pump.web.interpretator.items.TestParameter;
 @ToString
 @Slf4j
 public final class Pumpkin {
+
+    private Groovy groovy;
 
     private final Set<Rule> rules;
 
@@ -39,6 +42,8 @@ public final class Pumpkin {
     @Getter(AccessLevel.PROTECTED)
     private PumpkinParser parser;
 
+    private Map<String, Object> testVars;
+
     //region CONSTRUCTORS
     public Pumpkin(Map<String, Object> testVars) {
         this(testVars, Groovy.of());
@@ -51,11 +56,13 @@ public final class Pumpkin {
     }
 
     public Pumpkin(Map<String, Object> testVars, Groovy groovy, Set<Rule> rules) {
+        this.groovy = groovy;
         this.rules = rules;
+        this.testVars = testVars;
     }
     //endregion
 
-    public Queue<Item> generateItems(String expression) {
+    public Queue<Item> generateItems(@NotNull String expression) {
         this.currentExpression = expression;
         this.currentItem = null;
         this.itemsCache = Queues.newArrayDeque();

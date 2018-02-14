@@ -1,21 +1,42 @@
 package ru.mk.pump.commons.interfaces;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
+import java.util.HashMap;
 import java.util.Map;
 
 public interface StrictInfo {
 
-    static ImmutableMap.Builder<String, String> infoBuilder(String type) {
-        return ImmutableMap.<String, String>builder()
-                .put("type", type);
+    class StringMapBuilder {
+
+        private final Map<String, String> map;
+
+        private StringMapBuilder() {
+            this.map = new HashMap<>();
+        }
+
+        public Map<String, String> build() {
+            return map;
+        }
+
+        public StringMapBuilder put(String key, String value) {
+            map.put(key, value);
+            return this;
+        }
+
+        public StringMapBuilder putAll(Map<String, String> stringMap) {
+            map.putAll(stringMap);
+            return this;
+        }
     }
 
-    static ImmutableMap.Builder<String, String> infoFromSuper(StrictInfo thisInstance, Map<String, String> superInfo) {
-        Map<String, String> res = Maps.newHashMap(superInfo);
-        res.put("type", thisInstance.getClass().getSimpleName());
-        return ImmutableMap.<String, String>builder().putAll(res);
+    static StringMapBuilder infoBuilder(String type) {
+        return new StringMapBuilder()
+            .put("type", type);
+    }
+
+    static StringMapBuilder infoFromSuper(StrictInfo thisInstance, Map<String, String> superInfo) {
+        return new StringMapBuilder()
+            .putAll(superInfo)
+            .put("type", thisInstance.getClass().getSimpleName());
 
     }
 

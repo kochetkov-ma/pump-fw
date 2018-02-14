@@ -10,7 +10,7 @@ import ru.mk.pump.commons.interfaces.StrictInfo;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @Slf4j
-abstract class AbstractPumpException extends RuntimeException {
+public abstract class AbstractPumpException extends RuntimeException {
 
     @Getter(AccessLevel.PROTECTED)
     private final Map<String, StrictInfo> env = Maps.newHashMap();
@@ -40,14 +40,14 @@ abstract class AbstractPumpException extends RuntimeException {
         return sourceMessage.toPrettyString();
     }
 
-    protected AbstractPumpException addEnv(String name, StrictInfo info) {
+    public AbstractPumpException addEnv(String name, StrictInfo info) {
         if (canAddEnv(name, getCause())) {
             env.put(name, info);
         }
         return this;
     }
 
-    protected AbstractPumpException addTarget(String name, StrictInfo info) {
+    public AbstractPumpException addTarget(String name, StrictInfo info) {
 
         if (canAddTarget(name, getCause())) {
             target.put(name, info);

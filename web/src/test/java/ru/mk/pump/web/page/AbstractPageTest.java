@@ -1,5 +1,6 @@
 package ru.mk.pump.web.page;
 
+import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
@@ -18,13 +19,13 @@ import ru.mk.pump.web.page.api.Page;
 import java.util.List;
 
 @SuppressWarnings("ALL")
-abstract class AbstractPageTest extends AbstractTestWithBrowser {
+public abstract class AbstractPageTest extends AbstractTestWithBrowser {
 
 
 
     @PPage(value = "Главная страница", desc = "Главная страница", baseUrl = "https://ipotekaonline.open.ru")
     @Alternative
-    static class MainPageOther extends BasePage {
+    public static class MainPageOther extends BasePage {
 
         @FindBy(tagName = "h2")
         @PElement(value = "Заголовок", desc = "Главный заголовок страницы")
@@ -42,7 +43,7 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
     }
 
     @PPage(value = "Главная страница", desc = "Главная страница", baseUrl = "https://ipotekaonline.open.ru")
-    static class MainPage extends BasePage {
+    public static class MainPage extends BasePage {
 
         @FindBy(tagName = "h2")
         @PElement(value = "Заголовок", desc = "Главный заголовок страницы")
@@ -66,7 +67,7 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
      */
     @SuppressWarnings("WeakerAccess")
     @PPage(value = "Регистрация", resource = "resource", desc = "Страница регистрации Цифровая Ипотека")
-    static class RegPage extends BasePage {
+    public static class RegPage extends BasePage {
 
         /**
          * Элемент TextArea.
@@ -84,7 +85,7 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
          * Стандартная аннотация FindBy.
          * Аннотация {@link PElement} определяет заголовок (имя) элемента (компонента) и описание.
          */
-        @PElement("Форма")
+        @PComponent("Форма")
         @FindBy(className = "mainlayout")
         @Getter
         private RegMainForm mainForm;
@@ -120,11 +121,12 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
          * Аннотация {@link PElement} читается не из класса компонента, а из поля, в котором он объявлен на странице!
          * Не забываем про static для внутренних классов!
          */
-        static class RegMainForm extends BaseComponent {
+        public static class RegMainForm extends BaseComponent {
 
             /**
              * Список компонентов - это несколько зон в главной форме
              */
+            @PComponent("Зона")
             @FindBy(xpath = "//div[@class='squished row form-group']")
             @Getter
             private List<RegFormZone> regFormZones;
@@ -138,11 +140,12 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
          * Класс компонента. Наследуется от {@link BaseComponent} - это часть страницы. Объекдиняет несколько элементов.
          * В данном случае это одна из зон основной формы
          */
-        static class RegFormZone extends BaseComponent {
+        public static class RegFormZone extends BaseComponent {
 
             /**
              * Список компонентов - это несколько колонок в каждой зоне основной формы
              */
+            @PComponent("Колонка")
             @FindBy(xpath = "//div[contains(@class, 'column')]")
             @Getter
             private List<RegFormZoneColumn> regFormZoneColumns;
@@ -160,6 +163,7 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
             /**
              * Список элементов
              */
+            @PElement("Поле")
             @FindBy(tagName = "input")
             @Getter
             private List<Input> inputs;
@@ -207,6 +211,11 @@ abstract class AbstractPageTest extends AbstractTestWithBrowser {
 
             public RegFormZoneColumn(By avatarBy, InternalElement parentElement) {
                 super(avatarBy, parentElement);
+            }
+
+            @PAction("Метод")
+            List<String> getStaticListOfString(String var, int number, boolean bool){
+                return ImmutableList.of("Строка_1", "Строка_2");
             }
         }
     }

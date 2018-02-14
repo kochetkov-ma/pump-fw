@@ -30,6 +30,12 @@ public class Preconditions {
         }
     }
 
+    public void checkObjectNotNull(@Nullable Object object, @NotNull Class aClass, String msg) {
+        if (Objects.isNull(object)) {
+            throw new IllegalArgumentException(String.format(Strings.concat(".", msg, "Checked object '%s' is null"), aClass.getCanonicalName()));
+        }
+    }
+
     public void checkObjectNotNull(@Nullable Object object, @NotNull Class aClass) {
         if (Objects.isNull(object)) {
             throw new IllegalArgumentException(String.format("Checked object '%s' is null", aClass.getCanonicalName()));

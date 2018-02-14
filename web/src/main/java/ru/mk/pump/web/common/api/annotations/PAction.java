@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @SuppressWarnings("ALL")
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ElementType.METHOD})
 public @interface PAction {
 
     String value() default "";
