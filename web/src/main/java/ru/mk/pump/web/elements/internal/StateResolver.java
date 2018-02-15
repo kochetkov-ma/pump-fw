@@ -50,9 +50,9 @@ public class StateResolver extends StateNotifier {
     @SuppressWarnings("unchecked")
     public SetState resolve(SetState state) {
         notifyOnBefore(Pair.of(state, internalElement));
-        final long timeout = waiter().getTimeoutS() * 1000;
+        final long timeout = waiter().getTimeout() * 1000;
         long syncTimeLeft = timeout;
-        WaitResult<Boolean> result = WaitResult.trueResult(0, waiter().getTimeoutS());
+        WaitResult<Boolean> result = WaitResult.trueResult(0, waiter().getTimeout());
         if (state.getStateOr() != null && !state.getStateOr().get().isEmpty()) {
             result = resolveOr(state.getStateOr()).result();
             syncTimeLeft = syncTimeLeft - result.getElapsedTime();
@@ -63,7 +63,7 @@ public class StateResolver extends StateNotifier {
                 result = item.result();
                 syncTimeLeft = syncTimeLeft - result.getElapsedTime();
                 if (syncTimeLeft <= 0 || !result.isSuccess()) {
-                    state.setResult(WaitResult.falseResult(timeout - syncTimeLeft, waiter().getTimeoutS(), result.getCause())
+                    state.setResult(WaitResult.falseResult(timeout - syncTimeLeft, waiter().getTimeout(), result.getCause())
                         .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult)));
                     notifyOnFinish(Pair.of(state, internalElement));
                     return state;
@@ -71,13 +71,13 @@ public class StateResolver extends StateNotifier {
             }
         } else {
             if (!result.isSuccess()) {
-                state.setResult(WaitResult.falseResult(result.getElapsedTime(), waiter().getTimeoutS(), result.getCause())
+                state.setResult(WaitResult.falseResult(result.getElapsedTime(), waiter().getTimeout(), result.getCause())
                     .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult)));
                 notifyOnFinish(Pair.of(state, internalElement));
                 return state;
             }
         }
-        state.setResult(WaitResult.trueResult(timeout - syncTimeLeft, waiter().getTimeoutS()));
+        state.setResult(WaitResult.trueResult(timeout - syncTimeLeft, waiter().getTimeout()));
         notifyOnFinish(Pair.of(state, internalElement));
         return state;
 
@@ -104,7 +104,7 @@ public class StateResolver extends StateNotifier {
     }
 
     protected PumpException newResolvedException(State state, WaitResult<Boolean> waitResult) {
-        return new ElementStateException(format("PElement was not became to expected state '%s' in timeout '%s' sec", state.name(), waiter().getTimeoutS()),
+        return new ElementStateException(format("PElement was not became to expected state '%s' in timeout '%s' sec", state.name(), waiter().getTimeout()),
             waitResult.getCause())
             .withTargetState(state)
             .withElement(internalElement);

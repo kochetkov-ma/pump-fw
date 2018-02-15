@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.interfaces.StrictInfo;
@@ -51,13 +51,13 @@ public class ElementFactory implements StrictInfo {
     private List<StateListener> stateListeners = Lists.newArrayList();
 
     //region constructors
-    public ElementFactory(@NotNull PageItemImplDispatcher elementImplDispatcher, @NotNull Page page) {
+    public ElementFactory(@NonNull PageItemImplDispatcher elementImplDispatcher, @NonNull Page page) {
         this.elementImplDispatcher = elementImplDispatcher;
         this.page = page;
         this.browser = page.getBrowser();
     }
 
-    public ElementFactory(@NotNull PageItemImplDispatcher elementImplDispatcher, @NotNull Browser browser) {
+    public ElementFactory(@NonNull PageItemImplDispatcher elementImplDispatcher, @NonNull Browser browser) {
         this.elementImplDispatcher = elementImplDispatcher;
         this.browser = browser;
         this.page = null;
@@ -65,27 +65,27 @@ public class ElementFactory implements StrictInfo {
     //endregion
 
     //region type
-    public ElementFactory withMainRequirements(@NotNull Class<? extends Annotation>[] requirements) {
+    public ElementFactory addMainRequirements(@NonNull Class<? extends Annotation>[] requirements) {
         this.requirements.addAll(Arrays.asList(requirements));
         return this;
     }
 
-    public ElementFactory addActionListener(@NotNull ActionListener actionListener) {
+    public ElementFactory addActionListener(@NonNull ActionListener actionListener) {
         this.actionListeners.add(actionListener);
         return this;
     }
 
-    public ElementFactory withActionListener(@NotNull Collection<ActionListener> actionListener) {
+    public ElementFactory withActionListener(@NonNull Collection<ActionListener> actionListener) {
         this.actionListeners.addAll(actionListener);
         return this;
     }
 
-    public ElementFactory addStateListener(@NotNull StateListener stateListener) {
+    public ElementFactory addStateListener(@NonNull StateListener stateListener) {
         this.stateListeners.add(stateListener);
         return this;
     }
 
-    public ElementFactory withStateListener(@NotNull Collection<StateListener> stateListeners) {
+    public ElementFactory withStateListener(@NonNull Collection<StateListener> stateListeners) {
         this.stateListeners.addAll(stateListeners);
         return this;
     }
@@ -99,7 +99,7 @@ public class ElementFactory implements StrictInfo {
      * @param elementConfig Конфигурация элемента
      * @return Инстанс найденной реализации элемента
      */
-    public <R extends Element> R newElement(@NotNull Class<R> interfaceClass, @NotNull By by, @NotNull ElementConfig elementConfig) {
+    public <R extends Element> R newElement(@NonNull Class<R> interfaceClass, @NonNull By by, @NonNull ElementConfig elementConfig) {
         final ElementImpl<? extends BaseElement> elementImplClass = elementImplDispatcher.findImplementation(interfaceClass, getRequirements(elementConfig));
         try {
             if (page == null) {
@@ -129,8 +129,8 @@ public class ElementFactory implements StrictInfo {
      * @param elementConfig Конфигурация элемента
      * @return Инстанс найденной реализации элемента
      */
-    public <R extends Element> R newElement(@NotNull Class<R> interfaceClass, @NotNull By by, @NotNull Element parent,
-        @NotNull ElementConfig elementConfig) {
+    public <R extends Element> R newElement(@NonNull Class<R> interfaceClass, @NonNull By by, @NonNull Element parent,
+        @NonNull ElementConfig elementConfig) {
         checkParent(parent);
         final ElementImpl<? extends BaseElement> elementImplClass = elementImplDispatcher.findImplementation(interfaceClass, getRequirements(elementConfig));
         try {

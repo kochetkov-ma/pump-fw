@@ -61,7 +61,7 @@ class WebItemsControllerTest extends AbstractTestWithBrowser {
         assertThat((controller.initComponent("OneComponent"))).isInstanceOf(OneComponent.class);
 
         assertThatThrownBy(() -> controller.initComponent("")).isInstanceOf(ItemManagerException.class);
-        assertThatThrownBy(() -> controller.initComponent(null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> controller.initComponent(null)).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> controller.initComponent("not_exists")).isInstanceOf(ItemManagerException.class);
     }
 
@@ -73,7 +73,7 @@ class WebItemsControllerTest extends AbstractTestWithBrowser {
         assertThat(controller.initPage("Регистрация")).isInstanceOfAny(RegPage.class);
 
         assertThatThrownBy(() -> controller.initPage("")).isInstanceOfAny(ItemManagerException.class);
-        assertThatThrownBy(() -> controller.initPage(null)).isInstanceOfAny(IllegalArgumentException.class);
+        assertThatThrownBy(() -> controller.initPage(null)).isInstanceOfAny(NullPointerException.class);
         assertThatThrownBy(() -> controller.initPage("RegMainForm")).isInstanceOfAny(ItemManagerException.class);
 
     }

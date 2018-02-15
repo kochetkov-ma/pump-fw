@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Strings;
@@ -22,8 +22,8 @@ import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.utils.Xpath;
 import ru.mk.pump.web.page.api.Page;
+import ru.mk.pump.web.utils.Xpath;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue", "unchecked"})
 abstract class AbstractElement<CHILD> implements InternalElement {
@@ -80,7 +80,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         this(avatarBy, null, browser, null);
     }
 
-    private AbstractElement(@NotNull By avatarBy, @Nullable InternalElement parentElement, @Nullable Browser browser, @Nullable Page page) {
+    private AbstractElement(@NonNull By avatarBy, @Nullable InternalElement parentElement, @Nullable Browser browser, @Nullable Page page) {
         this.avatarBy = xpathAutoFix ? Xpath.fixIfXpath(avatarBy) : avatarBy;
         this.parentElement = parentElement;
         if (parentElement != null) {

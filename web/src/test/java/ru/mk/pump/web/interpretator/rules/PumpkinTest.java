@@ -77,8 +77,9 @@ class PumpkinTest {
         res = pumpkin.generateItems(sourceExp);
         assertThat(res).containsExactly(new TestParameter<>(1));
 
-        sourceExp = "$groovy{new Date()}";
+        sourceExp = "$groovy{new Date().getDay()}";
         res = pumpkin.generateItems(sourceExp);
+        log.info("{}", res);
         assertThat(res).containsExactly(new TestParameter<>(new Date().getDay()));
 
         sourceExp = "${}";
@@ -109,6 +110,7 @@ class PumpkinTest {
     void getCurrentItem() {
         sourceExp = "поле1.поле2";
         pumpkin.generateItems(sourceExp);
+        log.info("{}", pumpkin);
         assertThat(pumpkin.getCurrentItem()).isEqualTo(new Field("поле2"));
     }
 

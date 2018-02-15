@@ -8,8 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.config.ConfigurationsLoader;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.FileUtils;
@@ -70,12 +70,12 @@ public class ConfigurationHolder {
         init(loader.toObject(Configuration.class));
     }
 
-    public static void init(@NotNull InputStream inputStream) {
+    public static void init(@NonNull InputStream inputStream) {
         log.info("[PUMP-CONFIG] Try to load from configuration InputStream");
         init(new ConfigurationsLoader(inputStream));
     }
 
-    public static void init(@NotNull String resourcePath) {
+    public static void init(@NonNull String resourcePath) {
         log.info("[PUMP-CONFIG] Try to load classpath configuration from '{}'", resourcePath);
         if (FileUtils.isExistsAndValid(resourcePath)) {
             //noinspection ConstantConditions
@@ -85,7 +85,7 @@ public class ConfigurationHolder {
         }
     }
 
-    public static void init(@NotNull Path path) {
+    public static void init(@NonNull Path path) {
         log.info("[PUMP-CONFIG] Try to load file system path configuration from '{}'", path);
         if (Files.notExists(path)) {
             throwException("path", path.toString(), "file system");

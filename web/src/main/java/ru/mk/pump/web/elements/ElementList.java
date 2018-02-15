@@ -1,8 +1,8 @@
 package ru.mk.pump.web.elements;
 
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import ru.mk.pump.web.common.AbstractPageItemList;
 import ru.mk.pump.web.elements.api.Element;
@@ -12,12 +12,12 @@ import ru.mk.pump.web.elements.internal.BaseElement;
 @ToString
 public class ElementList<T extends Element> extends AbstractPageItemList<T> {
 
-    public ElementList(@NotNull Class<T> itemsClass, @NotNull By listBy, @NotNull ElementFactory elementFactory, @NotNull ElementConfig elementConfig) {
+    public ElementList(@NonNull Class<T> itemsClass, @NonNull By listBy, @NonNull ElementFactory elementFactory, @NonNull ElementConfig elementConfig) {
         super(itemsClass, listBy, elementFactory, elementConfig);
     }
 
-    public ElementList(@NotNull Class<T> itemsClass, @NotNull By listBy, @Nullable BaseElement parent, @NotNull ElementFactory elementFactory,
-        @NotNull ElementConfig elementConfig) {
+    public ElementList(@NonNull Class<T> itemsClass, @NonNull By listBy, @Nullable BaseElement parent, @NonNull ElementFactory elementFactory,
+        @NonNull ElementConfig elementConfig) {
         super(itemsClass, listBy, parent, elementFactory, elementConfig);
     }
 

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.exception.TimeoutException;
 import ru.mk.pump.commons.interfaces.StrictInfo;
@@ -78,28 +78,28 @@ public class WaitResult<T> implements StrictInfo {
         return cause != null;
     }
 
-    public WaitResult<T> ifHasResult(@NotNull Consumer<T> consumer) {
+    public WaitResult<T> ifHasResult(@NonNull Consumer<T> consumer) {
         if (hasResult()) {
             consumer.accept(result);
         }
         return this;
     }
 
-    public WaitResult<T> ifHasCause(@NotNull Consumer<Throwable> consumer) {
+    public WaitResult<T> ifHasCause(@NonNull Consumer<Throwable> consumer) {
         if (hasCause()) {
             consumer.accept(cause);
         }
         return this;
     }
 
-    public WaitResult<T> throwExceptionOnFail(@NotNull Function<WaitResult<T>, ? extends RuntimeException> newExceptionWithWaiterInfo) {
+    public WaitResult<T> throwExceptionOnFail(@NonNull Function<WaitResult<T>, ? extends RuntimeException> newExceptionWithWaiterInfo) {
         if (!isSuccess()) {
             throw newExceptionWithWaiterInfo.apply(this);
         }
         return this;
     }
 
-    public WaitResult<T> withExceptionOnFail(@NotNull Function<WaitResult<T>, ? extends RuntimeException> newExceptionWithWaiterInfo) {
+    public WaitResult<T> withExceptionOnFail(@NonNull Function<WaitResult<T>, ? extends RuntimeException> newExceptionWithWaiterInfo) {
         this.exceptionOnFail = newExceptionWithWaiterInfo;
         return this;
     }

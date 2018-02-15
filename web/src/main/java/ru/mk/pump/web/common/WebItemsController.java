@@ -8,15 +8,16 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.BiFunction;
+import javax.annotation.Nullable;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.interfaces.StrictInfo;
+import ru.mk.pump.commons.utils.Objects;
 import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.common.api.ItemsManager;
@@ -66,8 +67,8 @@ public class WebItemsController implements StrictInfo {
 
     private String lastPumpkinExpression;
 
-    public WebItemsController(@NotNull ItemsManager<BasePage> pageManager, @NotNull ItemsManager<BaseComponent> componentManager, @NotNull Pumpkin pumpkin,
-        @NotNull TestVars testVars) {
+    public WebItemsController(@NonNull ItemsManager<BasePage> pageManager, @NonNull ItemsManager<BaseComponent> componentManager, @NonNull Pumpkin pumpkin,
+        @NonNull TestVars testVars) {
         this.pageManager = pageManager;
         this.componentManager = componentManager;
         this.pumpkin = pumpkin;
@@ -75,13 +76,13 @@ public class WebItemsController implements StrictInfo {
         resultHandlerChain.add(DEFAULT_HANDLER);
     }
 
-    public WebItemsController(@NotNull ItemsManager<BasePage> pageManager, @NotNull ItemsManager<BaseComponent> componentManager,
-        @NotNull TestVars testVars) {
+    public WebItemsController(@NonNull ItemsManager<BasePage> pageManager, @NonNull ItemsManager<BaseComponent> componentManager,
+        @NonNull TestVars testVars) {
         this(pageManager, componentManager, new Pumpkin(testVars.asMap()), testVars);
     }
 
-    @NotNull
-    public Component initComponent(@NotNull String pumpkinExpression) {
+    @NonNull
+    public Component initComponent(@NonNull String pumpkinExpression) {
         Queue<Item> res = pumpkin.generateItems(pumpkinExpression);
         if (res.isEmpty()) {
             throw new IllegalArgumentException(String.format("Error pumpkin expression '%s' to creating Component", pumpkinExpression));
@@ -90,8 +91,8 @@ public class WebItemsController implements StrictInfo {
         return componentManager.getOne(cast(res.poll().getSource(), String.class));
     }
 
-    @NotNull
-    public Page initPage(@NotNull String pumpkinExpression) {
+    @NonNull
+    public Page initPage(@NonNull String pumpkinExpression) {
         Queue<Item> res = pumpkin.generateItems(pumpkinExpression);
         if (res.isEmpty()) {
             throw new IllegalArgumentException(String.format("Error pumpkin expression '%s' to creating Component", pumpkinExpression));
@@ -101,11 +102,11 @@ public class WebItemsController implements StrictInfo {
     }
 
     @Nullable
-    public Object execute(@NotNull String pumpkinExpression) {
+    public Object execute(@NonNull String pumpkinExpression) {
         return execute(null, pumpkinExpression);
     }
 
-    public Object executeOnCurrentPage(@NotNull String pumpkinExpression) {
+    public Object executeOnCurrentPage(@NonNull String pumpkinExpression) {
         if (pageManager.getCurrent() == null) {
             throw new ExecutionException("Current page is undefined. Please, initPage before using")
                 .addTarget("controller", this);
@@ -113,7 +114,7 @@ public class WebItemsController implements StrictInfo {
         return execute(pageManager.getCurrent(), pumpkinExpression);
     }
 
-    public Object executeOnCurrentComponent(@NotNull String pumpkinExpression) {
+    public Object executeOnCurrentComponent(@NonNull String pumpkinExpression) {
         if (componentManager.getCurrent() == null) {
             throw new ExecutionException("Current component is undefined. Please, initComponent before using")
                 .addTarget("controller", this);
@@ -123,7 +124,7 @@ public class WebItemsController implements StrictInfo {
 
 
     @Nullable
-    public Object execute(@Nullable Object targetObject, @NotNull String pumpkinExpression) {
+    public Object execute(@Nullable Object targetObject, @NonNull String pumpkinExpression) {
         this.lastPumpkinExpression = pumpkinExpression;
         Queue<Item> items = pumpkin.generateItems(pumpkinExpression);
         log.info("[CONTROLLER] Executing has started. Items are '{}'", items);
@@ -319,16 +320,7 @@ public class WebItemsController implements StrictInfo {
     //endregion
 
     @Nullable
-    public static <T> T cast(@Nullable Object object, @NotNull Class<T> expectedClass) {
-        if (object == null) {
-            return null;
-        }
-        if (expectedClass.isAssignableFrom(object.getClass())) {
-            //noinspection unchecked
-            return (T) object;
-        } else {
-            throw new IllegalArgumentException(
-                String.format("Object '%s' is not assignable from expected class '%s'", Strings.toString(object), expectedClass.getCanonicalName()));
-        }
+    public static <T> T cast(@Nullable Object object, @NonNull Class<T> expectedClass) {
+        return Objects.cast(object, expectedClass);
     }
 }

@@ -1,7 +1,6 @@
 package ru.mk.pump.commons.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.exception.UtilException;

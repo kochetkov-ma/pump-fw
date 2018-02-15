@@ -3,19 +3,23 @@ package ru.mk.pump.web.common.pageobject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import javax.annotation.Nullable;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
+import lombok.Setter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.pagefactory.FieldDecorator;
+import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.utils.ReflectionUtils;
 import ru.mk.pump.web.component.ComponentList;
 import ru.mk.pump.web.component.api.Component;
+import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementList;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.page.api.Page;
 
@@ -51,16 +55,38 @@ public class Initializer implements FieldDecorator {
     private Class<? extends Element> initClass;
 
     /**
+     * [RUS]
+     * Установить карту параметров элементов для их реализаций.
+     * Это замена аннотаций. Например, чтобы установить тип фокуса для элементов типа ButtonImpl:
+     * <pre>
+     * {@code
+     * setElementsImplParametersStore(
+     *      ImmutableMap.of(ButtonImpl.class,
+     *      ImmutableMap.of("focusType", FocusType.BOTTOM))
+     * );
+     * }
+     * </pre>
+     * <ul>
+     *     <li>В качестве ключа указывается конечный класс реализации и проверяется <b>равенство</b> классов </li>
+     *     <li>В качестве значения укзывается карта параметров</li>
+     *     <li>Параметры из аннотаций перезаписывают одинаковые параметры из этого хранилища</li>
+     * </ul>
+     */
+    @Setter
+    @Getter
+    private Map<Class<? extends BaseElement>, Map<String, Parameter<?>>> elementsImplParametersStore;
+
+    /**
      * Details in the type description {@link Initializer}
      */
-    public Initializer(@NotNull ElementFactory elementFactory, @NotNull ElementFactory componentFactory) {
+    public Initializer(@NonNull ElementFactory elementFactory, @NonNull ElementFactory componentFactory) {
         this(elementFactory, componentFactory, null);
     }
 
     /**
      * Details in the type description {@link Initializer}
      */
-    public Initializer(@NotNull ElementFactory elementFactory, @NotNull ElementFactory componentFactory, @Nullable BaseElement parent) {
+    public Initializer(@NonNull ElementFactory elementFactory, @NonNull ElementFactory componentFactory, @Nullable BaseElement parent) {
         this.elementFactory = elementFactory;
         this.componentFactory = componentFactory;
         this.parent = parent;
@@ -78,7 +104,7 @@ public class Initializer implements FieldDecorator {
      * Details in the type description {@link Initializer}
      */
     @Override
-    public Object decorate(@NotNull ClassLoader loader, @NotNull Field field) {
+    public Object decorate(@NonNull ClassLoader loader, @NonNull Field field) {
         final PumpElementAnnotations pumpElementAnnotations = new PumpElementAnnotations(field);
         final ElementConfig elementConfig = annotationsToElementConfig(pumpElementAnnotations);
         final By elementBy = pumpElementAnnotations.buildBy();
@@ -127,10 +153,21 @@ public class Initializer implements FieldDecorator {
      * Convert field annotation to {@link ElementConfig} for using in {@link ElementFactory}
      * @param pumpElementAnnotations filed wrapper for extract rules parameters
      */
-    protected ElementConfig annotationsToElementConfig(@NotNull PumpElementAnnotations pumpElementAnnotations) {
+    protected ElementConfig annotationsToElementConfig(@NonNull PumpElementAnnotations pumpElementAnnotations) {
         return ElementConfig.of(pumpElementAnnotations.getElementName(), pumpElementAnnotations.getElementDescription())
+            .withParameters(getParameterIfCan(pumpElementAnnotations))
             .withParameters(pumpElementAnnotations.buildParameters())
             .withRequirements(pumpElementAnnotations.getRequirements());
+    }
+
+    private Map<String, Parameter<?>> getParameterIfCan(@NonNull PumpElementAnnotations pumpElementAnnotations) {
+        if (pumpElementAnnotations.getAnnotatedElement() instanceof BaseElement) {
+            //noinspection SuspiciousMethodCalls
+            return getElementsImplParametersStore().getOrDefault(pumpElementAnnotations.getAnnotatedElement().getClass(), Collections.emptyMap());
+        } else {
+            return Collections.emptyMap();
+        }
+
     }
 
     //region PRIVATE

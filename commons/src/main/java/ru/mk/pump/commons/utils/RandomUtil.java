@@ -1,13 +1,11 @@
 package ru.mk.pump.commons.utils;
 
+import javax.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.exception.UtilException;
-
-import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
 @UtilityClass

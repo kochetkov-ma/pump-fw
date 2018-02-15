@@ -1,8 +1,6 @@
 package ru.mk.pump.web.exceptions;
 
 import ru.mk.pump.commons.exception.PumpMessage;
-import ru.mk.pump.web.elements.internal.interfaces.Action;
-import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class SubElementsNotFoundException extends ElementException {

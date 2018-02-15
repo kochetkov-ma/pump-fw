@@ -1,15 +1,15 @@
 package ru.mk.pump.web.component;
 
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import ru.mk.pump.web.common.AbstractPageItemList;
 import ru.mk.pump.web.component.api.Component;
+import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.internal.BaseElement;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -19,12 +19,12 @@ public class ComponentList<T extends Component & Element> extends AbstractPageIt
 
     private Class<? extends Element> initClass;
 
-    public ComponentList(@NotNull Class<T> itemsClass, @NotNull By listBy, @NotNull ElementFactory componentFactory, @NotNull ElementConfig elementConfig) {
+    public ComponentList(@NonNull Class<T> itemsClass, @NonNull By listBy, @NonNull ElementFactory componentFactory, @NonNull ElementConfig elementConfig) {
         super(itemsClass, listBy, componentFactory, elementConfig);
     }
 
-    public ComponentList(@NotNull Class<T> itemsClass, @NotNull By listBy, @Nullable BaseElement parent, @NotNull ElementFactory componentFactory,
-        @NotNull ElementConfig elementConfig) {
+    public ComponentList(@NonNull Class<T> itemsClass, @NonNull By listBy, @Nullable BaseElement parent, @NonNull ElementFactory componentFactory,
+        @NonNull ElementConfig elementConfig) {
         super(itemsClass, listBy, parent, componentFactory, elementConfig);
     }
 

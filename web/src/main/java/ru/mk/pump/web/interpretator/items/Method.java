@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Setter;
 
 @SuppressWarnings("unused")
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public final class Method extends AbstractItem<String> {
 
     @Setter

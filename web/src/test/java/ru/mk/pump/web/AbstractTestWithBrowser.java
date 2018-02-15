@@ -7,7 +7,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import ru.mk.pump.commons.reporter.ReporterAllure;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.web.browsers.Browser;

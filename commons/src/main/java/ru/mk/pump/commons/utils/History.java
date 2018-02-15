@@ -10,9 +10,8 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NonNull;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("UnusedReturnValue")
 @ToString
@@ -49,19 +48,19 @@ public class History<T> {
         history.clear();
     }
 
-    public List<Info<T>> findAfter(@NotNull LocalDateTime dateTime) {
+    public List<Info<T>> findAfter(@NonNull LocalDateTime dateTime) {
         return history.stream().filter(item -> item.getCreateDate().isAfter(dateTime)).collect(Collectors.toList());
     }
 
-    public List<Info<T>> findBefore(@NotNull LocalDateTime dateTime) {
+    public List<Info<T>> findBefore(@NonNull LocalDateTime dateTime) {
         return history.stream().filter(item -> item.getCreateDate().isBefore(dateTime)).collect(Collectors.toList());
     }
 
-    public List<Info<T>> findById(@NotNull String id) {
+    public List<Info<T>> findById(@NonNull String id) {
         return history.stream().filter(item -> id.equals(item.getId())).collect(Collectors.toList());
     }
 
-    public Optional<Info<T>> findLastById(@NotNull String id) {
+    public Optional<Info<T>> findLastById(@NonNull String id) {
         return history.stream().filter(item -> id.equals(item.getId())).reduce((first, second) -> second);
     }
 

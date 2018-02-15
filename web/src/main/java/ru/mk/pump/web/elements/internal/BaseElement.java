@@ -2,10 +2,10 @@ package ru.mk.pump.web.elements.internal;
 
 import com.google.common.collect.Maps;
 import java.util.Map;
+import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.reporter.Reporter;

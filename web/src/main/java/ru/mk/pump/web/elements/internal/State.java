@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.enums.StateType;
@@ -27,28 +27,28 @@ public class State implements StrictInfo{
 
     private Consumer<WaitResult<Boolean>> tearDown;
 
-    protected State(@NotNull StateType stateType, @NotNull Set<Callable<Boolean>> payload, @Nullable Consumer<WaitResult<Boolean>> tearDown) {
+    protected State(@NonNull StateType stateType, @NonNull Set<Callable<Boolean>> payload, @Nullable Consumer<WaitResult<Boolean>> tearDown) {
         this.payload.addAll(payload);
         this.stateType = stateType;
         this.name = stateType.toString();
         this.tearDown = tearDown;
     }
 
-    public static State of(@NotNull StateType stateType, @NotNull Set<Callable<Boolean>> payload) {
+    public static State of(@NonNull StateType stateType, @NonNull Set<Callable<Boolean>> payload) {
         return new State(stateType, payload, null);
     }
 
     @SuppressWarnings("unchecked")
-    public static State of(@NotNull StateType stateType, @NotNull Callable<Boolean> payload) {
+    public static State of(@NonNull StateType stateType, @NonNull Callable<Boolean> payload) {
         return new State(stateType, Sets.newHashSet(payload), null);
     }
 
     @SuppressWarnings("unchecked")
-    public static State of(@NotNull StateType stateType, @NotNull Callable<Boolean> payload, Consumer<WaitResult<Boolean>> tearDown) {
+    public static State of(@NonNull StateType stateType, @NonNull Callable<Boolean> payload, Consumer<WaitResult<Boolean>> tearDown) {
         return new State(stateType, Sets.newHashSet(payload), tearDown);
     }
 
-    @NotNull
+    @NonNull
     public Set<Callable<Boolean>> get() {
         return payload;
     }

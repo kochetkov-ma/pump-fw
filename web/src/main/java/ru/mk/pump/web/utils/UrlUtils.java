@@ -7,12 +7,12 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.StrBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.commons.utils.Strings;
 
@@ -44,7 +44,7 @@ public class UrlUtils {
      * @param path часть пути через '/' (имя ресурса)
      * @throws IllegalArgumentException Если URL после всех постановок и обработок не соответсвует формату либо не найден парметр с указанным номером
      */
-    public String concatWithPath(@NotNull String baseUrl, @Nullable String... path) {
+    public String concatWithPath(@NonNull String baseUrl, @Nullable String... path) {
         Preconditions.checkStringNotBlank(baseUrl);
         final String res;
         if (hasPathParam(baseUrl)) {

@@ -1,5 +1,7 @@
 package ru.mk.pump.web.page;
 
+import java.lang.reflect.Constructor;
+import java.util.Map;
 import lombok.ToString;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import ru.mk.pump.commons.interfaces.StrictInfo;
@@ -10,9 +12,6 @@ import ru.mk.pump.web.common.AbstractItemsManager;
 import ru.mk.pump.web.common.pageobject.PumpElementAnnotations;
 import ru.mk.pump.web.page.api.PageLoader;
 import ru.mk.pump.web.utils.WebReporter;
-
-import java.lang.reflect.Constructor;
-import java.util.Map;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString(callSuper = true)

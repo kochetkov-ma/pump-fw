@@ -6,10 +6,10 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Verifier;
@@ -41,22 +41,22 @@ public class ElementConfig {
         return new ElementConfig().withName(name).withDescription(description);
     }
 
-    public ElementConfig withRequirements(@NotNull Collection<Class<? extends Annotation>> requirements) {
+    public ElementConfig withRequirements(@NonNull Collection<Class<? extends Annotation>> requirements) {
         this.requirements.addAll(requirements);
         return this;
     }
 
-    public ElementConfig addRequirement(@NotNull Class<? extends Annotation> requirement) {
+    public ElementConfig addRequirement(@NonNull Class<? extends Annotation> requirement) {
         this.requirements.add(requirement);
         return this;
     }
 
-    public ElementConfig withParameters(@NotNull Map<String, Parameter<?>> parameters) {
+    public ElementConfig withParameters(@NonNull Map<String, Parameter<?>> parameters) {
         this.parameters.putAll(parameters);
         return this;
     }
 
-    public ElementConfig addParameter(@NotNull String key, Parameter value) {
+    public ElementConfig addParameter(@NonNull String key, Parameter value) {
         this.parameters.put(key, value);
         return this;
     }

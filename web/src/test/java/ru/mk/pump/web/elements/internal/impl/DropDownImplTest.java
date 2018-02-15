@@ -29,6 +29,7 @@ class DropDownImplTest extends AbstractWebTest {
 
     @Test
     void items() {
+        getBrowser().open(regPage.getUrl());
         Assertions.assertThat(regPage.getDropDownRegions().getItems()).hasSize(20);
     }
 

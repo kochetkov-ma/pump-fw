@@ -10,8 +10,8 @@ import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
 import ru.mk.pump.web.elements.internal.DocParameters;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.utils.Parameters;
 import ru.mk.pump.web.page.api.Page;
+import ru.mk.pump.web.utils.Parameters;
 
 /**
  * {@inheritDoc}

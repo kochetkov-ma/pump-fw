@@ -1,13 +1,18 @@
 package ru.mk.pump.web.common.pageobject;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.support.*;
-import org.openqa.selenium.support.pagefactory.AbstractAnnotations;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.AbstractFindByBuilder;
+import org.openqa.selenium.support.ByIdOrName;
+import org.openqa.selenium.support.CacheLookup;
+import org.openqa.selenium.support.FindAll;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.FindBys;
+import org.openqa.selenium.support.PageFactoryFinder;
+import org.openqa.selenium.support.pagefactory.AbstractAnnotations;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Annotations extends AbstractAnnotations {

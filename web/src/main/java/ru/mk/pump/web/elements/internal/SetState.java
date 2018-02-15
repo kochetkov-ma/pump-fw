@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.NonNull;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
@@ -21,14 +21,13 @@ import ru.mk.pump.web.elements.enums.StateType;
 public class SetState extends State {
 
     @Getter
-    @NotNull
+    @NonNull
     private final Set<State> stateSet = Sets.newLinkedHashSet();
 
     @Getter
-    @Nullable
     private final State stateOr;
 
-    private SetState(@NotNull StateType stateType, @NotNull Set<State> states, @Nullable Set<State> statesOr,
+    private SetState(@NonNull StateType stateType, @NonNull Set<State> states, @Nullable Set<State> statesOr,
         @Nullable Consumer<WaitResult<Boolean>> tearDown) {
         super(stateType, Collections.emptySet(), tearDown);
         states.forEach(i -> {
@@ -47,7 +46,7 @@ public class SetState extends State {
         }
     }
 
-    public static SetState of(@NotNull StateType stateType, @NotNull State... states) {
+    public static SetState of(@NonNull StateType stateType, @NonNull State... states) {
         if (states.length == 0) {
             throw new IllegalArgumentException("States varargs cannot be nonArg or null");
         }

@@ -4,9 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.utils.Strings;
 
@@ -25,42 +25,42 @@ public final class TestVars implements PrettyPrinter {
         this(Maps.newHashMap());
     }
 
-    @NotNull
-    public static TestVars of(@NotNull String key, @Nullable Object value) {
+    @NonNull
+    public static TestVars of(@NonNull String key, @Nullable Object value) {
         return new TestVars().put(key, value);
     }
 
-    @NotNull
-    public static TestVars of(@NotNull Map<String, Object> sourceMap) {
+    @NonNull
+    public static TestVars of(@NonNull Map<String, Object> sourceMap) {
         return new TestVars(sourceMap);
     }
 
-    @NotNull
+    @NonNull
     public static TestVars of() {
         return new TestVars();
     }
 
-    @NotNull
-    public TestVars put(@NotNull String key, @Nullable Object value) {
+    @NonNull
+    public TestVars put(@NonNull String key, @Nullable Object value) {
         sourceMap.put(key, value);
         return this;
     }
 
     @Nullable
-    public Object get(@NotNull String key) {
+    public Object get(@NonNull String key) {
         return sourceMap.get(key);
     }
 
     @Nullable
-    public Object get(@NotNull String key, @Nullable String defaultValue) {
+    public Object get(@NonNull String key, @Nullable String defaultValue) {
         return sourceMap.getOrDefault(key, defaultValue);
     }
 
-    public boolean has(@NotNull String key) {
+    public boolean has(@NonNull String key) {
         return sourceMap.containsKey(key);
     }
 
-    @NotNull
+    @NonNull
     public Map<String, Object> asMap() {
         return ImmutableMap.copyOf(sourceMap);
     }

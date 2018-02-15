@@ -133,7 +133,7 @@ public class ComponentStaticManagerTest extends AbstractTestWithBrowser {
         BaseComponent result;
         result = manager.getOne("AInnerComponent");
         log.info(Strings.toString(result));
-        assertThat(result).isInstanceOf(OneComponent.InnerComponent.class);
+        assertThat(result).isInstanceOfAny(OneComponent.InnerComponent.class, OneComponent.InnerOtherComponent.class);
 
         result = manager.getOne("InnerComponent");
         log.info(Strings.toString(result));

@@ -2,7 +2,6 @@ package ru.mk.pump.web.exceptions;
 
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.web.common.api.ItemsManager;
-import ru.mk.pump.web.page.PageManager;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ItemManagerException extends AbstractWebException {

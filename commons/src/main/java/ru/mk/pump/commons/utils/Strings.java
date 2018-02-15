@@ -13,12 +13,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.exception.UtilException;
 
@@ -106,7 +106,7 @@ public class Strings {
         return trimEnd(sb.toString());
     }
 
-    public boolean match(@NotNull String regEx, String actual) {
+    public boolean match(@NonNull String regEx, String actual) {
         return actual != null && actual.matches(regEx);
     }
 
@@ -186,7 +186,7 @@ public class Strings {
         return StringUtils.isBlank(value);
     }
 
-    public <T> T toObject(@NotNull String string, @NotNull Class<T> targetType) {
+    public <T> T toObject(@NonNull String string, @NonNull Class<T> targetType) {
         Preconditions.checkNotNull(string);
         Preconditions.checkNotNull(targetType);
 

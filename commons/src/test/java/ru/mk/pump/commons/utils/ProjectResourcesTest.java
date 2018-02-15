@@ -1,6 +1,6 @@
 package ru.mk.pump.commons.utils;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -13,21 +13,21 @@ import ru.mk.pump.commons.exception.UtilException;
 public class ProjectResourcesTest {
 
     @Test
-    public void getBuildDir() throws Exception {
+    public void getBuildDir() {
         final Path result = ProjectResources.getBuildDir(ProjectResourcesTest.class);
         log.info(result.toString());
         Assertions.assertNotNull(result);
     }
 
     @Test
-    public void getResourcesDir() throws Exception {
+    public void getResourcesDir() {
         final Path result = ProjectResources.getResourcesDir();
         log.info(result.toString());
         Assertions.assertNotNull(result);
     }
 
     @Test
-    public void getResourcesFile() throws Exception {
+    public void getResourcesFile() {
         final Path result = ProjectResources.findResource("logback.xml");
         log.info(result.toString());
         Assertions.assertNotNull(result);
@@ -35,14 +35,14 @@ public class ProjectResourcesTest {
     }
 
     @Test
-    public void getResourcesFiles() throws Exception {
+    public void getResourcesFiles() {
         final List<Path> result = ProjectResources.findResourceFiles("classes", "R", 10);
         log.info(result.toString());
         Assertions.assertNotNull(result);
     }
 
     @Test
-    public void getBuildFiles() throws Exception {
+    public void getBuildFiles() {
         final Path result = ProjectResources.findFileInBuildDir(ProjectResourcesTest.class, "logback.xml");
         log.info(result.toString());
         Assertions.assertNotNull(result);

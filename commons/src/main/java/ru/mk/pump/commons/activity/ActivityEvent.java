@@ -1,6 +1,6 @@
 package ru.mk.pump.commons.activity;
 
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 public enum ActivityEvent {
     CLOSE(NamedEvent.of("closed")),

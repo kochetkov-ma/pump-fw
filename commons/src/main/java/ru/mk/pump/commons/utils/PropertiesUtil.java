@@ -1,11 +1,8 @@
 package ru.mk.pump.commons.utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import lombok.experimental.UtilityClass;
-import ru.mk.pump.commons.exception.UtilException;
-
-import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -14,6 +11,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
+import ru.mk.pump.commons.exception.UtilException;
 
 @SuppressWarnings("WeakerAccess")
 @UtilityClass

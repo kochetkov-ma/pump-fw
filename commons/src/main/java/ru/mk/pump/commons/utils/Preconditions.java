@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @UtilityClass
@@ -30,13 +30,13 @@ public class Preconditions {
         }
     }
 
-    public void checkObjectNotNull(@Nullable Object object, @NotNull Class aClass, String msg) {
+    public void checkObjectNotNull(@Nullable Object object, @NonNull Class aClass, String msg) {
         if (Objects.isNull(object)) {
             throw new IllegalArgumentException(String.format(Strings.concat(".", msg, "Checked object '%s' is null"), aClass.getCanonicalName()));
         }
     }
 
-    public void checkObjectNotNull(@Nullable Object object, @NotNull Class aClass) {
+    public void checkObjectNotNull(@Nullable Object object, @NonNull Class aClass) {
         if (Objects.isNull(object)) {
             throw new IllegalArgumentException(String.format("Checked object '%s' is null", aClass.getCanonicalName()));
         }
@@ -55,7 +55,7 @@ public class Preconditions {
                     .format("Requested index '%d' is out of actual list size '%d'. List description : '%s'", listSize, candidateIndex, listDescriptionOrName));
             } else {
                 throw new IllegalArgumentException(String
-                    .format("Requested index '%d' is out of actual list size '%d'", listSize, candidateIndex));
+                    .format("Requested index '%d' is out of actual list size '%d'", candidateIndex, listSize));
             }
         }
     }

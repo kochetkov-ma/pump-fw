@@ -10,11 +10,11 @@ import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.constants.MainConstants;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.exception.UtilException;
@@ -45,27 +45,27 @@ public class ConfigurationsLoader {
     //endregion
 
     //region CONSTRUCTORS
-    public ConfigurationsLoader(@NotNull InputStream inputStreamProperties, boolean discoverInEnv) {
+    public ConfigurationsLoader(@NonNull InputStream inputStreamProperties, boolean discoverInEnv) {
         this.inputStreamProperties = inputStreamProperties;
         this.discoverInEnv = discoverInEnv;
     }
 
-    public ConfigurationsLoader(@NotNull InputStream inputStreamProperties) {
+    public ConfigurationsLoader(@NonNull InputStream inputStreamProperties) {
         this(inputStreamProperties, true);
     }
 
-    public ConfigurationsLoader(@NotNull Path propertiesConfigurationPath) {
+    public ConfigurationsLoader(@NonNull Path propertiesConfigurationPath) {
         this(propertiesConfigurationPath, true);
     }
 
-    public ConfigurationsLoader(@NotNull Path propertiesConfigurationPath, boolean discoverInEnv) {
+    public ConfigurationsLoader(@NonNull Path propertiesConfigurationPath, boolean discoverInEnv) {
 
         this.propertiesConfigurationPath = propertiesConfigurationPath;
         this.discoverInEnv = discoverInEnv;
     }
     //endregion
 
-    public static String getHistoryId(@NotNull Class mappableClass, @Nullable String prefix) {
+    public static String getHistoryId(@NonNull Class mappableClass, @Nullable String prefix) {
         return Strings.concat("_", mappableClass.getSimpleName(), prefix);
     }
 
@@ -88,15 +88,15 @@ public class ConfigurationsLoader {
         return configMap;
     }
 
-    public <T> T toObject(@NotNull T mappableObject) {
+    public <T> T toObject(@NonNull T mappableObject) {
         return toObject(mappableObject, getPrefixOrNull(mappableObject.getClass()));
     }
 
-    public <T> T toObject(@NotNull Class<T> mappableClass) {
+    public <T> T toObject(@NonNull Class<T> mappableClass) {
         return toObject(mappableClass, getPrefixOrNull(mappableClass));
     }
 
-    public <T> T toObject(@NotNull T mappableObject, @Nullable String prefix) {
+    public <T> T toObject(@NonNull T mappableObject, @Nullable String prefix) {
         try {
             return resolvedAnnotatedFields(mappableObject, getMap(), prefix);
         } finally {
@@ -106,7 +106,7 @@ public class ConfigurationsLoader {
         }
     }
 
-    public <T> T toObject(@NotNull Class<T> mappableClass, @Nullable String prefix) {
+    public <T> T toObject(@NonNull Class<T> mappableClass, @Nullable String prefix) {
         try {
             return mapToObject(mappableClass, prefix);
         } finally {
@@ -123,7 +123,7 @@ public class ConfigurationsLoader {
         return Strings.trim(cache.toString());
     }
 
-    private <T> T mapToObject(@NotNull Class<T> mappableClass, @Nullable String prefix) {
+    private <T> T mapToObject(@NonNull Class<T> mappableClass, @Nullable String prefix) {
         try {
             return resolvedAnnotatedFields(mappableClass.newInstance(), getMap(), prefix);
         } catch (InstantiationException | IllegalAccessException e) {

@@ -1,4 +1,3 @@
-apply plugin: 'java'
 
 repositories {
     maven { url 'https://jitpack.io' }

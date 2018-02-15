@@ -4,9 +4,9 @@ import static java.lang.String.format;
 
 import java.util.Map;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.interfaces.StrictInfo;
@@ -61,13 +61,13 @@ public class BasePage extends PageNotifier implements Page {
     @Setter
     private PageLoader pageLoader;
 
-    public BasePage(@NotNull Browser browser) {
+    public BasePage(@NonNull Browser browser) {
         super();
         this.browser = browser;
         afterConstruct();
     }
 
-    public BasePage(@NotNull Browser browser, Reporter reporter) {
+    public BasePage(@NonNull Browser browser, Reporter reporter) {
         super();
         this.browser = browser;
         this.reporter = reporter;

@@ -2,7 +2,7 @@ package ru.mk.pump.commons.exception;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
-import org.assertj.core.api.Assertions;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 

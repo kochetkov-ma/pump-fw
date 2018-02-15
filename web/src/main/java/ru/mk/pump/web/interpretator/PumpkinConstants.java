@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class PumpkinConstants {
 
-    public static final String TITLE_PATTERN = "^[a-zA-ZА-Яа-я_ ].*";
+    public static final String TITLE_PATTERN = "^[0-9a-zA-ZА-Яа-я_ ].*";
 
     public static final String GROOVY_PATTERN = "^\\$groovy\\{(.*)}.*";
 

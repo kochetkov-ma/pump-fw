@@ -1,7 +1,6 @@
 package ru.mk.pump.commons.utils;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 import com.google.common.collect.Lists;
 import java.util.Comparator;

@@ -7,9 +7,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.exception.UtilException;
 
 /**
@@ -20,7 +20,7 @@ import ru.mk.pump.commons.exception.UtilException;
 @Slf4j
 public final class ProjectResources {
 
-    public Path getBuildDir(@NotNull Class relatedClass) {
+    public Path getBuildDir(@NonNull Class relatedClass) {
         try {
             return moveToBuildRoot(Paths.get(relatedClass.getProtectionDomain().getCodeSource().getLocation().toURI()));
         } catch (URISyntaxException e) {
@@ -46,7 +46,7 @@ public final class ProjectResources {
 
     }
 
-    @NotNull
+    @NonNull
     public Path getResourcesDir() {
         final URL url = ProjectResources.class.getClassLoader().getResource("");
         if (url == null) {
@@ -59,21 +59,21 @@ public final class ProjectResources {
         }
     }
 
-    public List<Path> findResourceFiles(@NotNull String dirName, @NotNull String fileName, int depth) {
+    public List<Path> findResourceFiles(@NonNull String dirName, @NonNull String fileName, int depth) {
         return FileUtils.findFiles(FileUtils.findDir(getResourcesDir(), dirName, depth), fileName, depth);
     }
 
-    public Path findResource(@NotNull String fileName) {
+    public Path findResource(@NonNull String fileName) {
         return findResourceFiles("", fileName, 5).stream().findFirst()
             .orElseThrow(() -> new UtilException(format("Cannot find resource file '%s'", fileName)));
     }
 
-    public Path findResourceFile(@NotNull String dirName, @NotNull String fileName) {
+    public Path findResourceFile(@NonNull String dirName, @NonNull String fileName) {
         return findResourceFiles(dirName, fileName, 1).stream().findFirst()
             .orElseThrow(() -> new UtilException(format("Cannot find resource files '%s' in dir '%s'", fileName, dirName)));
     }
 
-    public static Path findFileInBuildDir(@NotNull Class relatedClass, @NotNull String fileName) {
+    public static Path findFileInBuildDir(@NonNull Class relatedClass, @NonNull String fileName) {
         return FileUtils.findFiles(getBuildDir(relatedClass), fileName, 5).stream().findFirst()
             .orElseThrow(() -> new UtilException(format("Cannot find resource files '%s' in build dir", fileName)));
     }

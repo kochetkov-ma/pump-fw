@@ -4,12 +4,10 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.*;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
@@ -29,7 +27,6 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
-    @Disabled
     void testGetTextSilent() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
         createPages(getBrowser());
@@ -45,7 +42,6 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
-    @Disabled
     void testGetText() {
         getBrowser().open(DMUrls.MAIN_PAGE_URL);
 
@@ -87,14 +83,12 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
-    @Disabled
     void testClick() {
         getBrowser().open(mainPage.getUrl());
         mainPage.getChildButtonSection().click();
     }
 
     @Test
-    @Disabled
     void testClickFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 1;
         createPages(getBrowser());
@@ -115,7 +109,6 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
-    @Disabled
     void clear() {
         getBrowser().open(regPage.getUrl());
 
@@ -125,7 +118,6 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
-    @Disabled
     void isAllState() {
         getBrowser().open(regPage.getUrl());
 
@@ -135,7 +127,6 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
-    @Disabled
     void isNotAllState() {
         getBrowser().open(regPage.getUrl());
 
@@ -151,7 +142,6 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
-    @Disabled
     void isNotAllStateFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 3;
         createPages(getBrowser());
@@ -164,7 +154,6 @@ public class BaseElementTest extends AbstractWebTest {
     }
 
     @Test
-    @Disabled
     void isAllStateFail() {
         ElementWaiter.DEFAULT_TIMEOUT_S = 3;
         createPages(getBrowser());

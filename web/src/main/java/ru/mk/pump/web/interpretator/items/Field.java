@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @SuppressWarnings("unused")
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public final class Field extends AbstractItem<String> {
 
     @Getter

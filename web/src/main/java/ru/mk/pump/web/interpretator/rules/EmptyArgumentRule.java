@@ -1,7 +1,7 @@
 package ru.mk.pump.web.interpretator.rules;
 
+import javax.annotation.Nullable;
 import lombok.ToString;
-import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
 @ToString

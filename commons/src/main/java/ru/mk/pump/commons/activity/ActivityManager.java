@@ -1,9 +1,7 @@
 package ru.mk.pump.commons.activity;
 
 import java.util.List;
-import java.util.Observer;
 import java.util.Optional;
-import java.util.UUID;
 
 @SuppressWarnings("UnusedReturnValue")
 public interface ActivityManager {

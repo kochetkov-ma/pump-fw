@@ -27,7 +27,7 @@ public interface PageListener extends Listener<Page, PageEvent> {
 
     void onBeforeLoad(Page page);
 
-    public enum PageEvent {
-        BEFORE_LOAD, LOAD_FAIL, LOAD_SUCCESS;
+    enum PageEvent {
+        BEFORE_LOAD, LOAD_FAIL, LOAD_SUCCESS
     }
 }

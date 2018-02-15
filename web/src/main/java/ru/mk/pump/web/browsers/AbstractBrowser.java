@@ -3,8 +3,8 @@ package ru.mk.pump.web.browsers;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Observer;
+import lombok.NonNull;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import ru.mk.pump.commons.activity.AbstractActivity;
@@ -44,7 +44,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
     private WebDriver driver = null;
 
     //region INIT
-    AbstractBrowser(@NotNull DriverBuilder builder, @NotNull String uuid) {
+    AbstractBrowser(@NonNull DriverBuilder builder, @NonNull String uuid) {
         super(uuid);
         this.builder = builder;
         this.config = builder.getConfig();
@@ -77,7 +77,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
         return this;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public WebDriver getDriver() {
         if (driver == null) {

@@ -1,10 +1,11 @@
 group='ru.iopump'
 
+
 ext {
     versions = [
             aspectj      : "1.8.10",
             allure_gradle: "2.5",
-            annotations  : "15.0",
+            annotations  : "3.0.2",
             lombok       : "latest.release",
             apache       : "latest.release",
             guava        : "latest.release",
@@ -79,7 +80,11 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'maven-publish-auth'
 
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
     compileJava.options.encoding = "UTF-8"
+    compileTestJava.options.encoding = "UTF-8"
 
     /*sub projects full clean*/
     clean.doFirst {
@@ -111,7 +116,7 @@ subprojects {
         compile(
                 "joda-time:joda-time:$versions.joda_time",
                 "org.aspectj:aspectjweaver:1.8.13",
-                "org.jetbrains:annotations:$versions.annotations",
+                "com.google.code.findbugs:jsr305:$versions.annotations",
                 "org.projectlombok:lombok:$versions.lombok",
                 "org.apache.httpcomponents:httpclient:$versions.apache",
                 "org.reflections:reflections:$versions.reflections",

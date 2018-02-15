@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.exception.PumpMessage;
@@ -59,15 +59,15 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
     }
 
     @Override
-    public <R extends BaseElement> ElementImpl<R> findImplementation(@NotNull Class<? extends Element> elementInterface,
+    public <R extends BaseElement> ElementImpl<R> findImplementation(@NonNull Class<? extends Element> elementInterface,
         @Nullable Set<Class<? extends Annotation>> requirements) {
         final ElementImpl<R> result = findByElementConfig(elementInterface, requirements);
         log.debug("[ElementImplDispatcher] find implementation for interface '{}' is '{}'", elementInterface, result);
         return result;
     }
 
-    public <T extends Element, V extends BaseElement> ElementImplDispatcher addImplementation(@NotNull Class<T> elementInterface,
-        @NotNull ElementImpl<V> elementImplementation) {
+    public <T extends Element, V extends BaseElement> ElementImplDispatcher addImplementation(@NonNull Class<T> elementInterface,
+        @NonNull ElementImpl<V> elementImplementation) {
         interfaceToImplMap.put(elementInterface, elementImplementation);
         return null;
     }
@@ -76,7 +76,7 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
         return interfaceToImplMap;
     }
 
-    public <T extends BaseElement> long addParams(@NotNull Class<T> elementImpl, @NotNull Map<String, Parameter<?>> parameters) {
+    public <T extends BaseElement> long addParams(@NonNull Class<T> elementImpl, @NonNull Map<String, Parameter<?>> parameters) {
         return getAll().values().stream()
             .filter(impl -> elementImpl.isAssignableFrom(impl.getImplementation()))
             .map(impl -> impl.setParameters(parameters))
@@ -117,12 +117,12 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
 
         private Map<String, Parameter<?>> parameters;
 
-        private ElementImpl(@NotNull Class<T> implementation, @Nullable Map<String, Parameter<?>> parameters) {
+        private ElementImpl(@NonNull Class<T> implementation, @Nullable Map<String, Parameter<?>> parameters) {
             this.implementation = implementation;
             this.parameters = parameters;
         }
 
-        public static <T extends BaseElement> ElementImpl<T> of(@NotNull Class<T> implementation, @Nullable Map<String, Parameter<?>> parameters) {
+        public static <T extends BaseElement> ElementImpl<T> of(@NonNull Class<T> implementation, @Nullable Map<String, Parameter<?>> parameters) {
             return new ElementImpl<>(implementation, parameters);
         }
 

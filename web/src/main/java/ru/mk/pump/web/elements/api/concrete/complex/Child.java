@@ -1,11 +1,11 @@
 package ru.mk.pump.web.elements.api.concrete.complex;
 
+import javax.annotation.Nullable;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.web.elements.api.Element;
@@ -26,7 +26,7 @@ public class Child<T extends Element> {
 
     private T cache;
 
-    public Child(@NotNull String parameterName, @NotNull BaseElement parentElement) {
+    public Child(@NonNull String parameterName, @NonNull BaseElement parentElement) {
         Preconditions.checkStringNotBlank(parameterName);
         this.parameterName = parameterName;
         this.parentElement = parentElement;

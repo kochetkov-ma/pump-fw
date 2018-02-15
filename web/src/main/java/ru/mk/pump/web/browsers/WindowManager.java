@@ -1,8 +1,8 @@
 package ru.mk.pump.web.browsers;
 
 import java.util.Set;
+import javax.annotation.Nullable;
 import lombok.Setter;
-import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.Dimension;
 import ru.mk.pump.commons.activity.AbstractActivityManager;
 import ru.mk.pump.commons.activity.Activity;

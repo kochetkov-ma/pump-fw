@@ -43,8 +43,8 @@ public class ActionsStore {
     Action clear() {
         return actions.newAction((webElement, param) -> {
             final ClearType clearType;
-            if (param.containsKey("clearType")) {
-                clearType = param.get("clearType").getValue(ClearType.class);
+            if (param.containsKey(ElementParams.CLEAR_TYPE)) {
+                clearType = param.get(ElementParams.CLEAR_TYPE).getValue(ClearType.class);
             } else {
                 clearType = ClearType.ADVANCED;
             }
@@ -93,8 +93,8 @@ public class ActionsStore {
             if (param.containsKey(ElementParams.FOCUS_CUSTOM_SCRIPT)) {
                 scrollScript = param.get(ElementParams.FOCUS_CUSTOM_SCRIPT).asString();
             } else {
-                if (param.containsKey("focusType")) {
-                    final FocusType focusType = param.get("focusType").getValue(FocusType.class);
+                if (param.containsKey(ElementParams.FOCUS_TYPE)) {
+                    final FocusType focusType = param.get(ElementParams.FOCUS_TYPE).getValue(FocusType.class);
                     switch (focusType) {
                         case BOTTOM:
                             scrollScript = SCROLL_BOTTOM;

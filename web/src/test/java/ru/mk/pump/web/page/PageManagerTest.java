@@ -1,5 +1,7 @@
 package ru.mk.pump.web.page;
 
+import static org.assertj.core.api.Assertions.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,9 +9,6 @@ import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.common.api.annotations.Alternative;
 import ru.mk.pump.web.exceptions.ItemManagerException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("ConstantConditions")
 @Slf4j
@@ -26,7 +25,7 @@ class PageManagerTest extends AbstractTestWithBrowser {
 
     @Test
     void getOne() {
-        assertThat(manager.getOne("Главная страница")).isInstanceOf(AbstractPageTest.MainPage.class);
+        assertThat(manager.getOne("Главная страница")).isInstanceOfAny(AbstractPageTest.MainPage.class,AbstractPageTest.MainPageOther.class);
         assertThat(manager.getOne("MainPage")).isInstanceOf(AbstractPageTest.MainPage.class);
 
         assertThat(manager.getList("Регистрация")).hasOnlyElementsOfTypes(AbstractPageTest.RegPage.class);

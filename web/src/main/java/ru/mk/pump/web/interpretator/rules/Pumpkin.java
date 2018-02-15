@@ -9,9 +9,9 @@ import java.util.Queue;
 import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Groovy;
@@ -62,7 +62,7 @@ public final class Pumpkin {
     }
     //endregion
 
-    public Queue<Item> generateItems(@NotNull String expression) {
+    public Queue<Item> generateItems(@NonNull String expression) {
         this.currentExpression = expression;
         this.currentItem = null;
         this.itemsCache = Queues.newArrayDeque();

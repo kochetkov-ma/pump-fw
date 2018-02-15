@@ -4,8 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
 
 @UtilityClass
 public class ReflectionUtils {
@@ -21,7 +21,7 @@ public class ReflectionUtils {
      * @param sourceSuperclassOrInterface superclass or interface in {@code checkedClass} signature
      * @param checkedClass the {@code Class} object to be checked
      */
-    public boolean hasInterfaceOrSuperclass(@NotNull Class<?> sourceSuperclassOrInterface, @NotNull Class<?> checkedClass) {
+    public boolean hasInterfaceOrSuperclass(@NonNull Class<?> sourceSuperclassOrInterface, @NonNull Class<?> checkedClass) {
         return checkedClass.getSuperclass() == sourceSuperclassOrInterface || Arrays.stream(checkedClass.getInterfaces())
             .anyMatch(cls -> cls == sourceSuperclassOrInterface);
     }

@@ -1,17 +1,16 @@
 package ru.mk.pump.commons.reporter;
 
 
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.Nullable;
-import ru.mk.pump.commons.constants.MainConstants;
-import ru.mk.pump.commons.utils.FileUtils;
+import static ru.mk.pump.commons.constants.MainConstants.SCREEN_FORMAT;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;
-
-import static ru.mk.pump.commons.constants.MainConstants.SCREEN_FORMAT;
+import javax.annotation.Nullable;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import ru.mk.pump.commons.constants.MainConstants;
+import ru.mk.pump.commons.utils.FileUtils;
 
 
 @SuppressWarnings({"unused", "WeakerAccess"})

@@ -1,8 +1,8 @@
 package ru.mk.pump.web.browsers;
 
 import java.util.function.Supplier;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -14,7 +14,7 @@ public class BrowserActions {
 
     private final Supplier<WebDriver> driver;
 
-    BrowserActions(@NotNull Supplier<WebDriver> driverSupplier) {
+    BrowserActions(@NonNull Supplier<WebDriver> driverSupplier) {
 
         this.driver = driverSupplier;
     }

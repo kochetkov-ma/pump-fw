@@ -1,9 +1,15 @@
 package ru.mk.pump.web.common;
 
 import com.google.common.collect.Sets;
+import java.lang.reflect.Constructor;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
@@ -14,13 +20,6 @@ import ru.mk.pump.web.common.api.ItemsManager;
 import ru.mk.pump.web.common.api.WebObject;
 import ru.mk.pump.web.exceptions.ItemManagerException;
 import ru.mk.pump.web.utils.WebReporter;
-
-import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString(exclude = {"browser", "reporter"})
@@ -59,21 +58,21 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     }
     //endregion
 
-    @NotNull
+    @NonNull
     @Override
     public T getOne(String name) {
         return getOneByClass(name, getItemClass());
     }
 
-    @NotNull
+    @NonNull
     @Override
     public List<T> getList(String name) {
         return getListByClass(name, getItemClass());
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public <V extends T> Set<Class<V>> find(@NotNull String itemName, @NotNull Class<V> itemClass) {
+    public <V extends T> Set<Class<V>> find(@NonNull String itemName, @NonNull Class<V> itemClass) {
         //noinspection unchecked
         return itemsSet.stream()
                 .filter(itemClass::isAssignableFrom)
@@ -97,7 +96,7 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
         return this;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public <V extends T> V getOneByClass(String name, Class<V> itemSubClass) {
         if (current != null && current.getName().equals(name) && current.getClass().isAssignableFrom(itemSubClass)) {
@@ -114,7 +113,7 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
         return (V) current;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public <V extends T> List<V> getListByClass(String name, Class<V> itemSubClass) {
         Set<Class<V>> items = find(name, itemSubClass);

@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.exception.VerifyError;
@@ -112,7 +112,7 @@ public class Verifier {
         check(!StringUtils.equals(expected, actual), description, message);
     }
 
-    public void equals(String description, @NotNull Object expected, @NotNull Object actual) {
+    public void equals(String description, @NonNull Object expected, @NonNull Object actual) {
         String message = "";
         final String extraMessage =
             "Ожидаемое значение : " + expected.toString() + System.lineSeparator() + "Актуальное значение : " + actual.toString() + System.lineSeparator()
@@ -121,7 +121,7 @@ public class Verifier {
         check(Objects.equals(expected, actual), description, message);
     }
 
-    public void notEquals(String description, @NotNull Object expected, @NotNull Object actual) {
+    public void notEquals(String description, @NonNull Object expected, @NonNull Object actual) {
         String message = "";
         final String extraMessage =
             "Ожидаемое значение : " + expected.toString() + System.lineSeparator() + "Актуальное значение : " + actual.toString() + System.lineSeparator()
@@ -140,7 +140,7 @@ public class Verifier {
         check(isTrue, description, message);
     }
 
-    public void noExceptions(String description, @NotNull Runnable runnable) {
+    public void noExceptions(String description, @NonNull Runnable runnable) {
         final String message = "Ожидается выполнение без Исключений";
         try {
             runnable.run();
@@ -163,7 +163,7 @@ public class Verifier {
     /**
      * @param comporatorToCompareItems {@link ru.mk.pump.commons.utils.Collators}
      */
-    public <T> void listEquals(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems,
+    public <T> void listEquals(String description, @NonNull List<T> expected, @NonNull List<T> actual, @NonNull Collator<T> comporatorToCompareItems,
         @Nullable Comparator<T> tComparatorToSortActual) {
         actual = sortIfNeed(actual, tComparatorToSortActual);
         checkSize(description, null, expected, actual, false);
@@ -176,7 +176,7 @@ public class Verifier {
         }
     }
 
-    public <T> void listStrictContains(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems,
+    public <T> void listStrictContains(String description, @NonNull List<T> expected, @NonNull List<T> actual, @NonNull Collator<T> comporatorToCompareItems,
         @Nullable Comparator<T> tComparatorToSortActual) {
         actual = sortIfNeed(actual, tComparatorToSortActual);
 
@@ -208,7 +208,7 @@ public class Verifier {
 
     }
 
-    public <T> void listContains(String description, @NotNull List<T> expected, @NotNull List<T> actual, @NotNull Collator<T> comporatorToCompareItems) {
+    public <T> void listContains(String description, @NonNull List<T> expected, @NonNull List<T> actual, @NonNull Collator<T> comporatorToCompareItems) {
         checkSize(description, null, expected, actual, true);
         final String message = format("Ожидаемый список '%s' не строго (без учета позиции элементов) содержится в списке '%s'", expected, actual);
         for (int index = 0; index < expected.size(); index++) {
@@ -221,7 +221,7 @@ public class Verifier {
         }
     }
 
-    private <T> List<T> sortIfNeed(@NotNull List<T> listToSort, @Nullable Comparator<T> tComparator) {
+    private <T> List<T> sortIfNeed(@NonNull List<T> listToSort, @Nullable Comparator<T> tComparator) {
         listToSort = new ArrayList<>(listToSort);
         if (tComparator != null) {
             Collections.sort(listToSort, tComparator);
@@ -229,7 +229,7 @@ public class Verifier {
         return listToSort;
     }
 
-    private <T> void checkSize(String description, @Nullable String additionalMessage, @NotNull List<T> expected, @NotNull List<T> actual,
+    private <T> void checkSize(String description, @Nullable String additionalMessage, @NonNull List<T> expected, @NonNull List<T> actual,
         boolean isActualMoreExpected) {
         if (isActualMoreExpected) {
             final String message = format("Размер ожидаемого списка '%s' равен или меньше размера актуального списка '%s'", expected, actual);

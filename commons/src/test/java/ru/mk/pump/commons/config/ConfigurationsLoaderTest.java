@@ -1,6 +1,6 @@
 package ru.mk.pump.commons.config;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;

@@ -2,7 +2,7 @@ package ru.mk.pump.web.browsers;
 
 import java.io.Closeable;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import ru.mk.pump.commons.interfaces.StrictInfo;
@@ -15,7 +15,7 @@ public interface Browser extends Closeable, StrictInfo, Supplier<WebDriver> {
 
     Browser start();
 
-    @NotNull
+    @NonNull
     WebDriver getDriver();
 
     default WebDriver get() {

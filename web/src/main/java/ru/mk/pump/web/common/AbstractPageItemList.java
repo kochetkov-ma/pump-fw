@@ -3,19 +3,19 @@ package ru.mk.pump.web.common;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import java.util.AbstractList;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.common.api.PageItem;
-import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementConfig;
+import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.internal.BaseElement;
-import ru.mk.pump.web.utils.Xpath;
 import ru.mk.pump.web.exceptions.ElementException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
+import ru.mk.pump.web.utils.Xpath;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString
@@ -33,13 +33,13 @@ public abstract class AbstractPageItemList<T extends PageItem> extends AbstractL
 
     protected final ElementConfig elementConfig;
 
-    public AbstractPageItemList(@NotNull Class<T> itemsClass, @NotNull By listBy, @NotNull ElementFactory elementFactory,
-        @NotNull ElementConfig itemFactory) {
+    public AbstractPageItemList(@NonNull Class<T> itemsClass, @NonNull By listBy, @NonNull ElementFactory elementFactory,
+        @NonNull ElementConfig itemFactory) {
         this(itemsClass, listBy, null, elementFactory, itemFactory);
     }
 
-    public AbstractPageItemList(@NotNull Class<T> itemsClass, @NotNull By listBy, @Nullable BaseElement parent, @NotNull ElementFactory itemFactory,
-        @NotNull ElementConfig elementConfig) {
+    public AbstractPageItemList(@NonNull Class<T> itemsClass, @NonNull By listBy, @Nullable BaseElement parent, @NonNull ElementFactory itemFactory,
+        @NonNull ElementConfig elementConfig) {
         super();
         this.itemsClass = itemsClass;
         this.listBy = Xpath.fixIfXpath(listBy);

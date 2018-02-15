@@ -10,13 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.exception.UtilException;
 
 /**
@@ -40,7 +39,7 @@ public class FileUtils {
         return java.nio.file.Files.exists(path);
     }
 
-    public boolean isEmpty(@NotNull Path path) {
+    public boolean isEmpty(@NonNull Path path) {
         try {
             return java.nio.file.Files.size(path) == 0;
         } catch (IOException e) {
@@ -48,7 +47,7 @@ public class FileUtils {
         }
     }
 
-    public Path createIfNotExists(@NotNull Path path) {
+    public Path createIfNotExists(@NonNull Path path) {
         if (java.nio.file.Files.notExists(path)) {
             try {
                 java.nio.file.Files.createDirectories(path);
@@ -59,15 +58,15 @@ public class FileUtils {
         return path;
     }
 
-    public void appendToFile(@NotNull Path path, String string, @NotNull Charset encoding) throws IOException {
+    public void appendToFile(@NonNull Path path, String string, @NonNull Charset encoding) throws IOException {
         org.apache.commons.io.FileUtils.writeStringToFile(path.toFile(), string, encoding.toString(), true);
     }
 
-    public void toFile(@NotNull Path path, String String, @NotNull Charset encoding) throws IOException {
+    public void toFile(@NonNull Path path, String String, @NonNull Charset encoding) throws IOException {
         org.apache.commons.io.FileUtils.writeStringToFile(path.toFile(), String, encoding.toString());
     }
 
-    public String toString(@NotNull Path filePath, @NotNull Charset encoding) {
+    public String toString(@NonNull Path filePath, @NonNull Charset encoding) {
         try {
             return org.apache.commons.io.FileUtils.readFileToString(filePath.toFile(), encoding);
         } catch (IOException e) {
@@ -75,11 +74,11 @@ public class FileUtils {
         }
     }
 
-    public String getExtension(@NotNull Path path) {
+    public String getExtension(@NonNull Path path) {
         return Files.getFileExtension(path.getFileName().toString());
     }
 
-    public List<Path> getFileList(@NotNull Path dirPath, boolean onlyFile) throws IOException {
+    public List<Path> getFileList(@NonNull Path dirPath, boolean onlyFile) throws IOException {
         final List<Path> result = new ArrayList<>();
         try (Stream<Path> paths = java.nio.file.Files.walk(dirPath)) {
             paths.forEach(filePath -> {
@@ -109,7 +108,7 @@ public class FileUtils {
         return org.apache.commons.io.FileUtils.sizeOfDirectory(dirPath.toFile()) / 1024 / 1024;
     }
 
-    public Path findDir(@NotNull Path sourceDir, @NotNull String dirName, int depth) {
+    public Path findDir(@NonNull Path sourceDir, @NonNull String dirName, int depth) {
         if (depth < 1) {
             depth = 1;
         }
@@ -124,7 +123,7 @@ public class FileUtils {
         }
     }
 
-    public List<Path> findFiles(@NotNull Path sourceDir, @NotNull String fileName, int depth) {
+    public List<Path> findFiles(@NonNull Path sourceDir, @NonNull String fileName, int depth) {
         if (depth < 1) {
             depth = 1;
         }
@@ -139,7 +138,7 @@ public class FileUtils {
         }
     }
 
-    public Path resolveDir(@NotNull Path sourceDir, @Nullable String targetDir) {
+    public Path resolveDir(@NonNull Path sourceDir, @Nullable String targetDir) {
         if (targetDir == null || targetDir.isEmpty()) {
             return sourceDir;
         }

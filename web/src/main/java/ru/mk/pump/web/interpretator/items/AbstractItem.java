@@ -1,9 +1,10 @@
 package ru.mk.pump.web.interpretator.items;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 @SuppressWarnings("unused")
+@EqualsAndHashCode
 abstract class AbstractItem<T> implements Item<T> {
 
     @Getter

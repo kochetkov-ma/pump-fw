@@ -3,7 +3,7 @@ package ru.mk.pump.web.interpretator.rules;
 import static ru.mk.pump.web.interpretator.PumpkinConstants.ESC_CHAR;
 
 import java.util.Arrays;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import ru.mk.pump.commons.utils.Strings;
 
 abstract class AbstractRule<T> implements Rule<T> {

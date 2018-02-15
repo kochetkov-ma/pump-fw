@@ -1,8 +1,7 @@
 package ru.mk.pump.commons.reporter;
 
-import lombok.Getter;
-
 import java.util.function.Supplier;
+import lombok.Getter;
 
 @SuppressWarnings("WeakerAccess")
 @Getter

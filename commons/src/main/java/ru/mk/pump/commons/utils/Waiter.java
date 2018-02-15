@@ -7,14 +7,14 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsAnything;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @Slf4j
 @SuppressWarnings({"unchecked", "UnusedReturnValue", "unused", "WeakerAccess"})
@@ -70,7 +70,7 @@ public class Waiter implements Cloneable {
     /**
      * Priority is greater than {@link #withIgnoreExceptions(Class)}
      */
-    public Waiter withNotIgnoreExceptions(@NotNull Class<? extends Throwable> notIgnoringThrowable) {
+    public Waiter withNotIgnoreExceptions(@NonNull Class<? extends Throwable> notIgnoringThrowable) {
         notIgnoringException.add(notIgnoringThrowable);
         return this;
     }
@@ -88,16 +88,16 @@ public class Waiter implements Cloneable {
     /**
      * Priority is less than {@link #withNotIgnoreExceptions(Class)})
      */
-    public Waiter withIgnoreExceptions(@NotNull Class<? extends Throwable> ignoringThrowable) {
+    public Waiter withIgnoreExceptions(@NonNull Class<? extends Throwable> ignoringThrowable) {
         ignoringException.add(ignoringThrowable);
         return this;
     }
 
-    public WaitResult wait(int timeout, int intervalMs, @NotNull Callable<Boolean> successCondition) {
+    public WaitResult wait(int timeout, int intervalMs, @NonNull Callable<Boolean> successCondition) {
         return wait(timeout, intervalMs, successCondition, Matchers.is(true));
     }
 
-    public WaitResult<Boolean> waitIgnoreExceptions(int timeout, int intervalMs, @NotNull Callable<Boolean> successCondition) {
+    public WaitResult<Boolean> waitIgnoreExceptions(int timeout, int intervalMs, @NonNull Callable<Boolean> successCondition) {
         final Waiter clone = this.clone();
         clone.notIgnoringException.addAll(Arrays.asList(DEFAULT_NOT_IGNORED_THROWABLE));
         clone.ignoringException.clear();
@@ -105,7 +105,7 @@ public class Waiter implements Cloneable {
         return clone.wait(timeout, intervalMs, successCondition);
     }
 
-    public <T> WaitResult<T> wait(int timeout, int intervalMs, @NotNull Callable<T> action, @Nullable Matcher<T> matcher) {
+    public <T> WaitResult<T> wait(int timeout, int intervalMs, @NonNull Callable<T> action, @Nullable Matcher<T> matcher) {
 
         if (matcher == null) {
             matcher = new IsAnything();
@@ -138,7 +138,7 @@ public class Waiter implements Cloneable {
         }
     }
 
-    public <T> WaitResult<T> waitIgnoreExceptions(int timeout, int intervalMs, @NotNull Callable<T> action, @Nullable Matcher<T> matcher) {
+    public <T> WaitResult<T> waitIgnoreExceptions(int timeout, int intervalMs, @NonNull Callable<T> action, @Nullable Matcher<T> matcher) {
         final Waiter clone = this.clone();
         clone.notIgnoringException.addAll(Arrays.asList(DEFAULT_NOT_IGNORED_THROWABLE));
         clone.ignoringException.clear();

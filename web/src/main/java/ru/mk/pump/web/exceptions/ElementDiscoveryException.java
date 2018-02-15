@@ -3,7 +3,6 @@ package ru.mk.pump.web.exceptions;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
-import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
 @SuppressWarnings("unused")
 public class ElementDiscoveryException extends PumpException {

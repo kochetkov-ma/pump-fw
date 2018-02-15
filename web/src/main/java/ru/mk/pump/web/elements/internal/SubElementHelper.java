@@ -7,22 +7,22 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
+import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.utils.Xpath;
 import ru.mk.pump.web.exceptions.ElementException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
+import ru.mk.pump.web.utils.Xpath;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Slf4j
@@ -67,7 +67,7 @@ public class SubElementHelper<T extends Element> {
         return new SubElementHelper<>(subElementClass, parent, elementFactory, elementConfig);
     }
 
-    public T find(@NotNull By... bys) {
+    public T find(@NonNull By... bys) {
         final List<T> list = findList(bys);
         if (list.isEmpty()) {
             throw exceptionNoExistsSub(Arrays.toString(bys));
@@ -76,7 +76,7 @@ public class SubElementHelper<T extends Element> {
 
     }
 
-    public List<T> findList(@NotNull Predicate<List<WebElement>> webElementListPredicate, @NotNull By... bys) {
+    public List<T> findList(@NonNull Predicate<List<WebElement>> webElementListPredicate, @NonNull By... bys) {
         if (bys.length == 0) {
             return Collections.emptyList();
         }
@@ -99,7 +99,7 @@ public class SubElementHelper<T extends Element> {
         return Collections.emptyList();
     }
 
-    public List<T> findList(@NotNull By... bys) {
+    public List<T> findList(@NonNull By... bys) {
         int tryLocal = 0;
         while (tryCount >= tryLocal++) {
             List<T> res = findList((els) -> !els.isEmpty(), bys);

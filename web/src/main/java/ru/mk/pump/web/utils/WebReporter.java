@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.concurrent.ThreadSafe;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.reporter.ReporterAllure;
@@ -39,7 +39,7 @@ public class WebReporter {
     /**
      * Init {@link Screenshoter} and {@link Type} before using
      */
-    public void init(@NotNull Screenshoter screenshoter, @NotNull Type loggerDuplicateLevel) {
+    public void init(@NonNull Screenshoter screenshoter, @NonNull Type loggerDuplicateLevel) {
         newInstancesAndSave(screenshoter, loggerDuplicateLevel);
     }
 
@@ -47,7 +47,7 @@ public class WebReporter {
      * Init web driver before start using.
      * And create default {@link Screenshoter} and {@link Type}
      */
-    public void init(@NotNull Supplier<WebDriver> driver) {
+    public void init(@NonNull Supplier<WebDriver> driver) {
         newInstancesAndSave(DEFAULT_SCREEN.apply(driver), get(ConfigurationHolder.get().getReporting().getPostLogbackLevel(), Type.ALL));
     }
 
@@ -98,4 +98,3 @@ public class WebReporter {
         }
     }
 }
-

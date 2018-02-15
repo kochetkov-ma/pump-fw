@@ -1,10 +1,9 @@
 package ru.mk.pump.web.common.pageobject;
 
 import com.google.common.collect.ImmutableMap;
-import ru.mk.pump.commons.activity.Parameter;
-
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.common.api.ParameterTransformer;
 
 public abstract class SingleParameterTransformer<T, A extends Annotation> implements ParameterTransformer<T,A> {

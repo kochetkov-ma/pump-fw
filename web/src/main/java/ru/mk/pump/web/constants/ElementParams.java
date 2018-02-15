@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.text.WordUtils;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
+import ru.mk.pump.web.elements.enums.ClearType;
 import ru.mk.pump.web.elements.enums.FocusType;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
 
@@ -79,11 +80,25 @@ public class ElementParams {
      */
     public static final String EDITABLE_SET = "setValue";
 
+
+    //region common ELEMENT
     /**
+     * Parameter is {@link String} in Element.
      * If standard {@link FocusType} is not correct for your JS app, you can override scroll script.
      * Parameter is {@link String} - JS script
      */
     public static final String FOCUS_CUSTOM_SCRIPT = "focusCustomScript";
+
+    /**
+     * Parameter is {@link FocusType} in Element.
+     */
+    public static final String FOCUS_TYPE = "focusType";
+
+    /**
+     * Parameter is {@link ClearType} in Element.
+     */
+    public static final String CLEAR_TYPE = "clearType";
+    //endregion
 
     public static <T extends Enum<T>> Map<String, Parameter<?>> enumAsParam(T enumInstance) {
         return Collections

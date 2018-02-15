@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Optional;
 import java.util.Set;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("WeakerAccess")
 @Slf4j
@@ -135,7 +135,7 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
     }
 
     @Override
-    public Optional<Activity> get(@NotNull String uuid) {
+    public Optional<Activity> get(@NonNull String uuid) {
         if (inCache(uuid)) {
             return Optional.of(cache);
         } else {
@@ -177,7 +177,7 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
     }
 
     //region PRIVATE M
-    private Optional<Activity> getAndCache(@NotNull String uuid) {
+    private Optional<Activity> getAndCache(@NonNull String uuid) {
         return Optional.ofNullable(activityMap.computeIfPresent(uuid, (key, value) -> {
             cache = value;
             return value;

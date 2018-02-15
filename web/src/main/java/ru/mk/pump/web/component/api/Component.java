@@ -3,8 +3,8 @@ package ru.mk.pump.web.component.api;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
+import lombok.NonNull;
 import org.openqa.selenium.support.PageFactory;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.common.api.PageItem;
@@ -27,9 +27,10 @@ public interface Component extends PageItem{
     static PageItemImplDispatcher getImplDispatcher() {
         return new PageItemImplDispatcher() {
             @Override
-            public <R extends BaseElement> ElementImpl<R> findImplementation(@NotNull Class<? extends Element> elementInterface,
+            public <R extends BaseElement> ElementImpl<R> findImplementation(@NonNull Class<? extends Element> elementInterface,
                 @Nullable Set<Class<? extends Annotation>> requirements) {
                 try {
+                    //noinspection unchecked
                     return ElementImpl.of((Class<R>) elementInterface, null);
                 } catch (ClassCastException ex) {
                     throw new InternalError("Error in Component Dispatcher", ex);

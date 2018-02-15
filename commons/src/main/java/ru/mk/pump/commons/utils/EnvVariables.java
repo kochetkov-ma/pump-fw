@@ -2,11 +2,11 @@ package ru.mk.pump.commons.utils;
 
 import com.google.common.collect.Maps;
 import java.util.Map;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "unused", "WeakerAccess"})
 @ThreadSafe
@@ -25,7 +25,7 @@ public class EnvVariables {
         cache = null;
     }
 
-    @NotNull
+    @NonNull
     public Map<String, String> all() {
         /*result for thread safe*/
         Map<String, String> result = cache;
@@ -37,19 +37,19 @@ public class EnvVariables {
         return result;
     }
 
-    public boolean has(@NotNull String name) {
+    public boolean has(@NonNull String name) {
         return all().containsKey(name);
     }
 
-    @NotNull
-    public String get(@NotNull String name, @NotNull String defaultValue) {
+    @NonNull
+    public String get(@NonNull String name, @NonNull String defaultValue) {
         final String value = all().getOrDefault(name, defaultValue);
         usedVariablesMap.put(name, value);
         return value;
     }
 
     @Nullable
-    public String get(@NotNull String name) {
+    public String get(@NonNull String name) {
         return all().get(name);
     }
 }

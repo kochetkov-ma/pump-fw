@@ -1,22 +1,29 @@
 package ru.mk.pump.web.page;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.common.api.annotations.*;
+import ru.mk.pump.web.common.api.annotations.Alternative;
+import ru.mk.pump.web.common.api.annotations.PAction;
+import ru.mk.pump.web.common.api.annotations.PComponent;
+import ru.mk.pump.web.common.api.annotations.PElement;
+import ru.mk.pump.web.common.api.annotations.PFindBy;
+import ru.mk.pump.web.common.api.annotations.PFindBys;
+import ru.mk.pump.web.common.api.annotations.PPage;
+import ru.mk.pump.web.common.api.annotations.PString;
+import ru.mk.pump.web.common.api.annotations.PStrings;
 import ru.mk.pump.web.component.BaseComponent;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
-
-import java.util.List;
 
 @SuppressWarnings("ALL")
 public abstract class AbstractPageTest extends AbstractTestWithBrowser {
@@ -32,7 +39,7 @@ public abstract class AbstractPageTest extends AbstractTestWithBrowser {
         @Getter
         private TextArea pageTitle;
 
-        public MainPageOther(@NotNull Browser browser) {
+        public MainPageOther(@NonNull Browser browser) {
             super(browser);
         }
 
@@ -50,7 +57,7 @@ public abstract class AbstractPageTest extends AbstractTestWithBrowser {
         @Getter
         private TextArea pageTitle;
 
-        public MainPage(@NotNull Browser browser) {
+        public MainPage(@NonNull Browser browser) {
             super(browser);
         }
 

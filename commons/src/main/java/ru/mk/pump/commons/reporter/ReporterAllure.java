@@ -1,11 +1,18 @@
 package ru.mk.pump.commons.reporter;
 
 
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
+
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Parameter;
 import io.qameta.allure.model.Status;
 import io.qameta.allure.model.StepResult;
 import io.qameta.allure.model.TestResult;
+import java.io.ByteArrayInputStream;
+import java.util.Deque;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,14 +22,6 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Strings;
-
-import java.io.ByteArrayInputStream;
-import java.util.Deque;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedDeque;
-
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 @SuppressWarnings("unused")
 @Slf4j

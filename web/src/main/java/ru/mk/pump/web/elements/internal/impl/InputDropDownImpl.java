@@ -24,9 +24,9 @@ import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.DocParameters;
 import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.utils.Parameters;
 import ru.mk.pump.web.exceptions.ElementException;
 import ru.mk.pump.web.page.api.Page;
+import ru.mk.pump.web.utils.Parameters;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @Slf4j
@@ -150,7 +150,7 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     public Map<String, String> getInfo() {
         final Map<String, String> res = super.getInfo();
         res.put("drop down", Strings.toString(dropDown));
-        res.put("input",  Strings.toString(input));
+        res.put("input", Strings.toString(input));
         res.put("load icon", Strings.toString(loadIcon));
         return res;
 
@@ -223,6 +223,16 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     @Override
     public WaitResult<Boolean> hasItems(int count) {
         return getDropDown().hasItems(count);
+    }
+
+    @Override
+    public boolean isNotEnoughChanging(int timeoutMs) {
+        return getDropDown().isNotEnoughChanging(timeoutMs);
+    }
+
+    @Override
+    public boolean isNotEnoughChanging(int timeoutMs, int delayMs) {
+        return getDropDown().isNotEnoughChanging(timeoutMs, delayMs);
     }
 
     public boolean isItemsDisappear() {

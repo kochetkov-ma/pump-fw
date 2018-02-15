@@ -1,20 +1,22 @@
 package ru.mk.pump.commons.exception;
 
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
-
-import java.util.*;
-
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class PumpMessage implements PrettyPrinter {
@@ -166,12 +168,12 @@ public class PumpMessage implements PrettyPrinter {
         return this;
     }
 
-    public PumpMessage addEnvInfo(@NotNull String envInformationKey, @Nullable String envInformationValue) {
+    public PumpMessage addEnvInfo(@NonNull String envInformationKey, @Nullable String envInformationValue) {
         this.envInformation.addAll(line(envInformationKey, envInformationValue));
         return this;
     }
 
-    public PumpMessage addExtraInfo(@NotNull String extraInformationKey, @Nullable String extraInformationValue) {
+    public PumpMessage addExtraInfo(@NonNull String extraInformationKey, @Nullable String extraInformationValue) {
         this.extraInformation.addAll(line(extraInformationKey, extraInformationValue));
         return this;
     }

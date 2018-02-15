@@ -1,7 +1,6 @@
 package ru.mk.pump.web.interpretator.rules;
 
-import org.jetbrains.annotations.Nullable;
-import ru.mk.pump.commons.utils.Strings;
+import javax.annotation.Nullable;
 
 @SuppressWarnings("unused")
 public interface Rule<T> {
