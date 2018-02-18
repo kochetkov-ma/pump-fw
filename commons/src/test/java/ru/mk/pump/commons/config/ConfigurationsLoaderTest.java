@@ -1,13 +1,14 @@
 package ru.mk.pump.commons.config;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.commons.utils.Strings;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class ConfigurationsLoaderTest {
@@ -25,7 +26,7 @@ public class ConfigurationsLoaderTest {
         configurationsLoader.load();
         log.debug(Strings.toPrettyString(configurationsLoader.getMap()));
         assertThat(configurationsLoader.getMap()).hasSize(10)
-            .containsOnlyKeys("main.reporting", "two.one", "main.url", "common", "second.count", "second.url", "main.count", "two.two", "second.reporting", "enum");
+                .containsOnlyKeys("main.reporting", "two.one", "main.url", "common", "second.count", "second.url", "main.count", "two.two", "second.reporting", "enum");
 
     }
 

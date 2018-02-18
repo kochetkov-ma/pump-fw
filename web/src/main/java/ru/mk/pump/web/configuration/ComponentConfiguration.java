@@ -7,8 +7,8 @@ import ru.mk.pump.commons.config.Property;
 @SuppressWarnings("WeakerAccess")
 @Data
 @NoArgsConstructor
-public class PageConfiguration {
+public class ComponentConfiguration {
 
-    @Property(value = "page.packages", required = false)
+    @Property(value = "component.packages", required = false)
     private String[] packages;
 }

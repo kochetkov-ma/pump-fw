@@ -30,4 +30,7 @@ public class Configuration {
 
     @Property("page")
     private PageConfiguration page = new PageConfiguration();
+
+    @Property("component")
+    private ComponentConfiguration component = new ComponentConfiguration();
 }

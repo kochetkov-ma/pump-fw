@@ -20,7 +20,7 @@ class PageManagerTest extends AbstractTestWithBrowser {
     @Override
     public void setUp() {
         createBrowser();
-        this.manager = new PageManager(getBrowser(), AbstractPageTest.class.getPackage().getName());
+        this.manager = new PageManager(getBrowsers(), AbstractPageTest.class.getPackage().getName());
     }
 
     @Test
@@ -32,6 +32,16 @@ class PageManagerTest extends AbstractTestWithBrowser {
         assertThat(manager.getList("RegPage")).hasOnlyElementsOfTypes(AbstractPageTest.RegPage.class);
 
         assertThatThrownBy(() -> manager.getOne("Главная страница_")).isInstanceOf(ItemManagerException.class);
+    }
+
+    @Test
+    void emptyPackageOrNull() {
+        this.manager = new PageManager(getBrowsers());
+        assertThat(manager.getItemsSet()).isEmpty();
+        assertThatThrownBy(() -> manager.getOne("Главная страница")).isInstanceOf(ItemManagerException.class);
+        this.manager = new PageManager(getBrowsers(), null);
+        assertThat(manager.getItemsSet()).isEmpty();
+        assertThatThrownBy(() -> manager.getOne("Главная страница")).isInstanceOf(ItemManagerException.class);
     }
 
     @Test

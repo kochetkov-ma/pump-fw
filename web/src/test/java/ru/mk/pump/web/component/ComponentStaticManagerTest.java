@@ -33,7 +33,7 @@ public class ComponentStaticManagerTest extends AbstractTestWithBrowser {
     @Override
     public void setUp() {
         createBrowser();
-        this.manager = new ComponentStaticManager(getBrowser(), getClass().getPackage().getName());
+        this.manager = new ComponentStaticManager(getBrowsers(), getClass().getPackage().getName());
     }
 
 

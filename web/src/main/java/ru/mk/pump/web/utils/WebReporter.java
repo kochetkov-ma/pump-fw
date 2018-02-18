@@ -1,10 +1,6 @@
 package ru.mk.pump.web.utils;
 
 import com.google.common.base.Preconditions;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import javax.annotation.concurrent.ThreadSafe;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.openqa.selenium.WebDriver;
@@ -15,6 +11,11 @@ import ru.mk.pump.commons.reporter.Screenshoter;
 import ru.mk.pump.commons.utils.BrowserScreenshoter;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * {@link Reporter} and {@link Verifier} singleton.

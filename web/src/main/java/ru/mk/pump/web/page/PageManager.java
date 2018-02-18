@@ -1,17 +1,18 @@
 package ru.mk.pump.web.page;
 
-import java.lang.reflect.Constructor;
-import java.util.Map;
 import lombok.ToString;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.AbstractItemsManager;
 import ru.mk.pump.web.common.pageobject.PumpElementAnnotations;
 import ru.mk.pump.web.page.api.PageLoader;
 import ru.mk.pump.web.utils.WebReporter;
+
+import java.lang.reflect.Constructor;
+import java.util.Map;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString(callSuper = true)
@@ -20,30 +21,30 @@ public class PageManager extends AbstractItemsManager<BasePage> {
     private final PageLoader pageLoader;
 
     //region CONSTRUCTORS
-    public PageManager(Browser browser, Reporter reporter, PageLoader pageLoader, String... packagesName) {
-        super(browser, reporter, packagesName);
+    public PageManager(Browsers browsers, Reporter reporter, PageLoader pageLoader, String... packagesName) {
+        super(browsers, reporter, packagesName);
         this.pageLoader = pageLoader;
     }
 
-    public PageManager(Browser browser, String... packagesName) {
-        this(browser, WebReporter.getReporter(), null, packagesName);
+    public PageManager(Browsers browsers, String... packagesName) {
+        this(browsers, WebReporter.getReporter(), null, packagesName);
     }
     //endregion
 
     @Override
     protected BasePage newInstance(Constructor<? extends BasePage> constructor, Class<? extends BasePage> itemClass) throws ReflectiveOperationException {
         if (constructor.getParameterCount() == 2) {
-            return constructor.newInstance(getBrowser(), getReporter());
+            return constructor.newInstance(getBrowsers().get(), getReporter());
         } else {
-            return constructor.newInstance(getBrowser());
+            return constructor.newInstance(getBrowsers().get());
         }
     }
 
     @Override
     protected Constructor<? extends BasePage> findConstructor(Class<? extends BasePage> itemClass) throws ReflectiveOperationException {
-        Constructor<? extends BasePage> res = ConstructorUtils.getAccessibleConstructor(itemClass, Browser.class, Reporter.class);
+        Constructor<? extends BasePage> res = ConstructorUtils.getAccessibleConstructor(itemClass, Browsers.class, Reporter.class);
         if (res == null) {
-            return itemClass.getConstructor(Browser.class);
+            return itemClass.getConstructor(Browsers.class);
         } else {
             return res;
         }

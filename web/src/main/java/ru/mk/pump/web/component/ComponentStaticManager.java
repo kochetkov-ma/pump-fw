@@ -1,41 +1,42 @@
 package ru.mk.pump.web.component;
 
-import java.lang.reflect.Constructor;
-import java.util.Map;
 import lombok.ToString;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.AbstractItemsManager;
 import ru.mk.pump.web.common.api.annotations.PComponent;
 import ru.mk.pump.web.common.pageobject.PumpElementAnnotations;
 import ru.mk.pump.web.utils.WebReporter;
+
+import java.lang.reflect.Constructor;
+import java.util.Map;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString(callSuper = true)
 public class ComponentStaticManager extends AbstractItemsManager<BaseComponent> {
 
     //region CONSTRUCTORS
-    public ComponentStaticManager(Browser browser, Reporter reporter, String... packagesName) {
-        super(browser, reporter, packagesName);
+    public ComponentStaticManager(Browsers browsers, Reporter reporter, String... packagesName) {
+        super(browsers, reporter, packagesName);
     }
 
-    public ComponentStaticManager(Browser browser, String... packagesName) {
-        this(browser, WebReporter.getReporter(), packagesName);
+    public ComponentStaticManager(Browsers browsers, String... packagesName) {
+        this(browsers, WebReporter.getReporter(), packagesName);
     }
     //endregion
 
     @Override
     protected BaseComponent newInstance(Constructor<? extends BaseComponent> constructor, Class<? extends BaseComponent> itemClass) throws ReflectiveOperationException {
         PumpElementAnnotations pumpElementAnnotations = new PumpElementAnnotations(itemClass);
-        return constructor.newInstance(pumpElementAnnotations.buildBy(), getBrowser());
+        return constructor.newInstance(pumpElementAnnotations.buildBy(), getBrowsers().get());
     }
 
     @Override
     protected Constructor<? extends BaseComponent> findConstructor(Class<? extends BaseComponent> itemClass) throws ReflectiveOperationException {
-        return itemClass.getConstructor(By.class, Browser.class);
+        return itemClass.getConstructor(By.class, Browsers.class);
     }
 
     @Override

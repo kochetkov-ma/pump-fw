@@ -58,4 +58,10 @@ public class ElementConfiguration {
      */
     @Property(value = "element.state.timeout", defaultValue = "30")
     private int stateTimeout;
+
+    @Property(value = "element.packages.impl", required = false)
+    private String[] packagesImpl;
+
+    @Property(value = "element.packages.interface", required = false)
+    private String[] packagesInterface;
 }

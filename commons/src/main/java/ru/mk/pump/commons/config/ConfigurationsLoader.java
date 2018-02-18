@@ -1,16 +1,6 @@
 package ru.mk.pump.commons.config;
 
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
-
 import com.google.common.collect.Maps;
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Objects;
-import javax.annotation.Nullable;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
@@ -23,6 +13,15 @@ import ru.mk.pump.commons.utils.History;
 import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.PropertiesUtil;
 import ru.mk.pump.commons.utils.Strings;
+
+import javax.annotation.Nullable;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Objects;
+
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
 
 @SuppressWarnings({"UnusedReturnValue", "WeakerAccess", "unused"})
 @Slf4j
@@ -151,7 +150,7 @@ public class ConfigurationsLoader {
 
     private <T> T resolvedAnnotatedFields(T object, Map<String, String> configMap, String prefix) {
         FieldUtils.getAllFieldsList(object.getClass()).forEach(field ->
-            resolvedField(object, field, configMap, prefix));
+                resolvedField(object, field, configMap, prefix));
         return object;
     }
 
@@ -159,7 +158,7 @@ public class ConfigurationsLoader {
         Object result;
         String path;
         String finalPath = "";
-        if (!ClassUtils.isPrimitiveOrWrapper(field.getType()) && !field.getType().isAssignableFrom(String.class) && !field.getType().isEnum()) {
+        if (!ClassUtils.isPrimitiveOrWrapper(field.getType()) && !field.getType().isAssignableFrom(String.class) && !field.getType().isEnum() && !field.getType().isArray()) {
             try {
                 path = getPrefixOrNull(field, prefix);
                 result = mapToObject(field.getType(), path);
@@ -178,28 +177,22 @@ public class ConfigurationsLoader {
             final String pathAndPrefix = (prefix != null && !prefix.isEmpty() ? prefix + "." : "") + annotation.value();
             final String defaultValue = annotation.defaultValue();
             final boolean isRequired = annotation.required();
-            final PropertyEditor editor = PropertyEditorManager.findEditor(field.getType());
-
             log.debug("Resolving field {}. Annotation {}", field.toString(), annotation.toString());
             if (discoverInEnv && EnvVariables.has(path)) {
-                editor.setAsText(EnvVariables.get(path));
                 finalPath = "environment var - " + path;
-                result = editor.getValue();
+                result = Strings.toObject(EnvVariables.get(path), field.getType());
             } else if (configMap.containsKey(pathAndPrefix)) {
-                editor.setAsText(configMap.get(pathAndPrefix));
                 finalPath = "property - " + pathAndPrefix;
-                result = editor.getValue();
+                result = Strings.toObject(configMap.get(pathAndPrefix), field.getType());
             } else if (configMap.containsKey(path)) {
-                editor.setAsText(configMap.get(path));
                 finalPath = "property - " + path;
-                result = editor.getValue();
+                result = Strings.toObject(configMap.get(path), field.getType());
             } else if (!defaultValue.isEmpty()) {
-                editor.setAsText(defaultValue);
                 finalPath = "default value";
-                result = editor.getValue();
+                result = Strings.toObject(defaultValue, field.getType());
             } else if (isRequired) {
                 throw new UtilException(String.format("Cannot find required property '%s' of field '%s' of object '%s' in file, in system env and default",
-                    path, field.getType().getSimpleName(), object.getClass().getSimpleName()));
+                        path, field.getType().getSimpleName(), object.getClass().getSimpleName()));
             } else {
                 log.debug("Resolving is nonArg result for not required property {} {}", field.toString(), annotation.toString());
                 return;
@@ -213,7 +206,7 @@ public class ConfigurationsLoader {
             log.debug("Resolving is success. Field {} is {}", field.toString(), result.toString());
         } catch (IllegalAccessException ex) {
             throw new UtilException(String.format("Error writing value '%s' required property '%s' to field '%s' of object '%s'",
-                result.toString(), path, field.getType().getSimpleName(), object.getClass().getSimpleName()), ex);
+                    result.toString(), path, field.getType().getSimpleName(), object.getClass().getSimpleName()), ex);
         }
     }
     //endregion

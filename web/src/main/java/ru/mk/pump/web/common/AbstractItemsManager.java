@@ -1,28 +1,30 @@
 package ru.mk.pump.web.common;
 
 import com.google.common.collect.Sets;
-import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
+import org.apache.commons.lang3.ArrayUtils;
 import org.reflections.Reflections;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.api.ItemsManager;
 import ru.mk.pump.web.common.api.WebObject;
 import ru.mk.pump.web.exceptions.ItemManagerException;
 import ru.mk.pump.web.utils.WebReporter;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
-@ToString(exclude = {"browser", "reporter"})
+import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+
+@SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
+@ToString(exclude = {"browsers", "reporter"})
 //TODO : Продумать возможность выбора из нескольких вариантов странцы (мобильная и полная)
 abstract public class AbstractItemsManager<T extends WebObject> implements ItemsManager<T> {
 
@@ -32,7 +34,7 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     private final Set<Class<? extends T>> itemsSet;
 
     @Getter
-    private final Browser browser;
+    private final Browsers browsers;
 
     @Getter
     private final Reporter reporter;
@@ -45,16 +47,15 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     private Set<BiPredicate<AbstractItemsManager<T>, Class<? extends T>>> predicateSet = Sets.newHashSet();
 
     //region CONSTRUCTORS
-    public AbstractItemsManager(Browser browser, Reporter reporter, String... packagesName) {
-        Preconditions.checkNotEmpty(packagesName);
-        this.browser = browser;
+    public AbstractItemsManager(Browsers browsers, Reporter reporter, String... packagesName) {
+        this.browsers = browsers;
         this.reporter = reporter;
         this.packages = packagesName;
         itemsSet = loadItemsClasses(packagesName);
     }
 
-    public AbstractItemsManager(Browser browser, String... packagesName) {
-        this(browser, WebReporter.getReporter(), packagesName);
+    public AbstractItemsManager(Browsers browsers, String... packagesName) {
+        this(browsers, WebReporter.getReporter(), packagesName);
     }
     //endregion
 
@@ -145,6 +146,9 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     abstract protected Class<T> getItemClass();
 
     private Set<Class<? extends T>> loadItemsClasses(String... packagesName) {
+        if (ArrayUtils.isEmpty(packagesName)) {
+            return Collections.emptySet();
+        }
         final Reflections reflections = new Reflections((Object[]) packagesName);
         return reflections.getSubTypesOf(getItemClass());
     }
@@ -152,7 +156,7 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("Items Manager")
-                .put("browser", Strings.toString(browser))
+                .put("browsers", Strings.toString(browsers))
                 .put("current item", Strings.toString(current))
                 .put("current list", Strings.toPrettyString(currentList))
                 .put("reporter", Strings.toString(reporter))

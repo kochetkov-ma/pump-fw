@@ -1,32 +1,19 @@
 package ru.mk.pump.web.elements;
 
-import static java.lang.String.format;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.reflections.Reflections;
 import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.ReflectionUtils;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.common.api.PageItemImplDispatcher;
+import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.annotations.CustomImpl;
 import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
@@ -34,8 +21,15 @@ import ru.mk.pump.web.elements.api.annotations.Requirements;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.exceptions.ElementDiscoveryException;
 
+import javax.annotation.Nullable;
+import java.lang.annotation.Annotation;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
+
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
-@ToString(of = {"DEFAULT_ANNOTATION_IMPL", "DEFAULT_PACKAGE_IMPL", "DEFAULT_PACKAGE_INTERFACE", "interfaceToImplMap"})
+@ToString(of = {"DEFAULT_ANNOTATION_IMPL", "DEFAULT_PACKAGE_IMPL", "customPackagesImpl", "DEFAULT_PACKAGE_INTERFACE", "customPackagesInterface", "interfaceToImplMap"})
 @Slf4j
 public class ElementImplDispatcher implements PageItemImplDispatcher {
 
@@ -46,6 +40,11 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
     private final static String[] DEFAULT_PACKAGE_IMPL = new String[]{"ru.mk.pump.web.elements.internal.impl"};
 
     private final static String[] DEFAULT_PACKAGE_INTERFACE = new String[]{"ru.mk.pump.web.elements.api.concrete"};
+
+    @Setter
+    public static String[] customPackagesImpl = ConfigurationHolder.get().getElement().getPackagesImpl();
+    @Setter
+    public static String[] customPackagesInterface = ConfigurationHolder.get().getElement().getPackagesImpl();
 
     private final SetMultimap<Class<? extends Element>, ElementImpl<? extends BaseElement>> interfaceToImplMap;
 
@@ -60,14 +59,14 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
 
     @Override
     public <R extends BaseElement> ElementImpl<R> findImplementation(@NonNull Class<? extends Element> elementInterface,
-        @Nullable Set<Class<? extends Annotation>> requirements) {
+                                                                     @Nullable Set<Class<? extends Annotation>> requirements) {
         final ElementImpl<R> result = findByElementConfig(elementInterface, requirements);
         log.debug("[ElementImplDispatcher] find implementation for interface '{}' is '{}'", elementInterface, result);
         return result;
     }
 
     public <T extends Element, V extends BaseElement> ElementImplDispatcher addImplementation(@NonNull Class<T> elementInterface,
-        @NonNull ElementImpl<V> elementImplementation) {
+                                                                                              @NonNull ElementImpl<V> elementImplementation) {
         interfaceToImplMap.put(elementInterface, elementImplementation);
         return null;
     }
@@ -78,30 +77,30 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
 
     public <T extends BaseElement> long addParams(@NonNull Class<T> elementImpl, @NonNull Map<String, Parameter<?>> parameters) {
         return getAll().values().stream()
-            .filter(impl -> elementImpl.isAssignableFrom(impl.getImplementation()))
-            .map(impl -> impl.setParameters(parameters))
-            .count();
+                .filter(impl -> elementImpl.isAssignableFrom(impl.getImplementation()))
+                .map(impl -> impl.setParameters(parameters))
+                .count();
     }
 
     @Override
     public Map<String, String> getInfo() {
         final LinkedHashMap<String, String> res = Maps.newLinkedHashMap();
-        res.put("DEFAULT_PACKAGE_INTERFACE", Arrays.toString(DEFAULT_PACKAGE_INTERFACE));
-        res.put("DEFAULT_PACKAGE_IMPL", Arrays.toString(DEFAULT_PACKAGE_IMPL));
+        res.put("PACKAGE_INTERFACE", Arrays.toString(ArrayUtils.addAll(DEFAULT_PACKAGE_INTERFACE, customPackagesInterface)));
+        res.put("PACKAGE_IMPL", Arrays.toString(ArrayUtils.addAll(DEFAULT_PACKAGE_IMPL, customPackagesImpl)));
         res.put("DEFAULT_ANNOTATION_IMPL", DEFAULT_ANNOTATION_IMPL.getSimpleName());
         interfaceToImplMap.asMap()
-            .forEach((key, value) -> res.put(key.getSimpleName(), Strings.toPrettyString(value)));
+                .forEach((key, value) -> res.put(key.getSimpleName(), Strings.toPrettyString(value)));
         return res;
     }
 
     protected void loadDefault() {
-        final Reflections reflectionsImpl = new Reflections((Object[]) DEFAULT_PACKAGE_IMPL);
-        final Reflections reflectionsInterface = new Reflections((Object[]) DEFAULT_PACKAGE_INTERFACE);
-        for (Class<? extends Element> aClass : reflectionsInterface.getSubTypesOf(Element.class)) {
+        final Reflections reflectionsImpl = new Reflections((Object[]) ArrayUtils.addAll(DEFAULT_PACKAGE_IMPL, customPackagesImpl));
+        final Reflections reflectionsInterface = new Reflections((Object[]) ArrayUtils.addAll(DEFAULT_PACKAGE_INTERFACE, customPackagesInterface));
+        for (Class<? extends Element> aClass : reflectionsInterface.getSubTypesOf(Element.class).stream().filter(Class::isInterface).collect(Collectors.toList())) {
             interfaceToImplMap.putAll(aClass, reflectionsImpl.getSubTypesOf(BaseElement.class).stream()
-                .filter(cls -> ReflectionUtils.hasInterfaceOrSuperclass(aClass, cls))
-                .map(item -> ElementImpl.of(item, null))
-                .collect(Collectors.toList())
+                    .filter(cls -> ReflectionUtils.hasInterfaceOrSuperclass(aClass, cls))
+                    .map(item -> ElementImpl.of(item, null))
+                    .collect(Collectors.toList())
             );
         }
         addImplementation(Element.class, ElementImpl.of(BaseElement.class, null));
@@ -145,28 +144,28 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
 
     @SuppressWarnings("unchecked")
     private <T extends Element, R extends BaseElement> ElementImpl<R> findByElementConfig(Class<T> elementInterface,
-        @Nullable Set<Class<? extends Annotation>> requirements) {
+                                                                                          @Nullable Set<Class<? extends Annotation>> requirements) {
         if (!interfaceToImplMap.containsKey(elementInterface)) {
             throw new ElementDiscoveryException(
-                new PumpMessage(format("Interface '%s' do not exists in ElementImplDispatcher. You have to add this using #addImplementation",
-                    elementInterface.getSimpleName()))
-                    .addEnvInfo(this));
+                    new PumpMessage(format("Interface '%s' do not exists in ElementImplDispatcher. You have to add this using #addImplementation",
+                            elementInterface.getSimpleName()))
+                            .addEnvInfo(this));
         }
         final Collection<ElementImpl<? extends BaseElement>> implementations = interfaceToImplMap.get(elementInterface);
         if (implementations.isEmpty()) {
             throw new ElementDiscoveryException(
-                new PumpMessage(
-                    format("Interface '%s' do not have any implementations  in ElementImplDispatcher. You have to add using #addImplementation",
-                        elementInterface.getSimpleName()))
-                    .addEnvInfo(this));
+                    new PumpMessage(
+                            format("Interface '%s' do not have any implementations  in ElementImplDispatcher. You have to add using #addImplementation",
+                                    elementInterface.getSimpleName()))
+                            .addEnvInfo(this));
         }
         Optional<ElementImpl<? extends BaseElement>> expectedImpl = Optional.empty();
         if (requirements != null && !requirements.isEmpty()) {
             expectedImpl = implementations.stream()
-                .filter(item -> requirements.stream()
-                    .filter(a -> a.isAnnotationPresent(Requirements.class))
-                    .allMatch(an -> item.getImplementation().isAnnotationPresent(an)))
-                .min(Comparator.comparingInt(e -> e.getImplementation().getAnnotations().length));
+                    .filter(item -> requirements.stream()
+                            .filter(a -> a.isAnnotationPresent(Requirements.class))
+                            .allMatch(an -> item.getImplementation().isAnnotationPresent(an)))
+                    .min(Comparator.comparingInt(e -> e.getImplementation().getAnnotations().length));
             if (!expectedImpl.isPresent()) {
                 log.warn("[ElementImplDispatcher] Cannot find implementation with all of this annotations '{}'", requirements);
             }
@@ -178,8 +177,8 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
         }
         if (!expectedImpl.isPresent()) {
             expectedImpl = implementations.stream()
-                .filter(item -> item.getImplementation().isAnnotationPresent(DEFAULT_ANNOTATION_IMPL))
-                .min(Comparator.comparingInt(e -> e.getImplementation().getAnnotations().length));
+                    .filter(item -> item.getImplementation().isAnnotationPresent(DEFAULT_ANNOTATION_IMPL))
+                    .min(Comparator.comparingInt(e -> e.getImplementation().getAnnotations().length));
         }
         //TODO::may be ClassCastException
         if (expectedImpl.isPresent()) {

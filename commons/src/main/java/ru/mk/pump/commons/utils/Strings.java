@@ -1,30 +1,46 @@
 package ru.mk.pump.commons.utils;
 
 
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
-
 import com.google.common.base.Preconditions;
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import javax.annotation.Nullable;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.beans.propertyeditors.*;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.exception.UtilException;
+
+import javax.annotation.Nullable;
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @UtilityClass
 public class Strings {
+
+    static {
+        PropertyEditorManager.registerEditor(String[].class, StringArrayPropertyEditor.class);
+        PropertyEditorManager.registerEditor(char[].class, CharArrayPropertyEditor.class);
+        PropertyEditorManager.registerEditor(Class[].class, ClassArrayEditor.class);
+        PropertyEditorManager.registerEditor(Class.class, ClassEditor.class);
+        PropertyEditorManager.registerEditor(File.class, FileEditor.class);
+        PropertyEditorManager.registerEditor(Path.class, PathEditor.class);
+        PropertyEditorManager.registerEditor(UUID.class, UUIDEditor.class);
+        PropertyEditorManager.registerEditor(URL.class, URLEditor.class);
+        PropertyEditorManager.registerEditor(URI.class, URIEditor.class);
+    }
 
     public static final String EMPTY = "";
 
@@ -189,12 +205,12 @@ public class Strings {
     public <T> T toObject(@NonNull String string, @NonNull Class<T> targetType) {
         Preconditions.checkNotNull(string);
         Preconditions.checkNotNull(targetType);
-
         final PropertyEditor editor = PropertyEditorManager.findEditor(targetType);
         if (editor == null) {
             throw new UtilException(String.format("Cannot find PropertyEditor of '%s'", targetType));
         }
         editor.setAsText(string);
+        //noinspection unchecked
         return (T) editor.getValue();
     }
 }

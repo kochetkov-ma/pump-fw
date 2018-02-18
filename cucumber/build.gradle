@@ -1,0 +1,25 @@
+allure {
+    version = '2.4.1'
+    resultsDir = project.file('allure-results')
+    aspectjweaver = true
+    aspectjVersion = versions.aspectj
+
+    useJUnit5 {
+        version = versions.junit5
+    }
+}
+
+ext {
+    cucumberVersion = '2.3.1'
+}
+
+dependencies {
+    compile "io.cucumber:cucumber-java8:$cucumberVersion"
+    testCompile "io.cucumber:cucumber-junit:$cucumberVersion"
+    testCompile "io.qameta.allure:allure-cucumber2-jvm:latest.release"
+    testCompile "junit:junit:4.12"
+
+    compile project(':web')
+    compile project(':commons')
+}
+

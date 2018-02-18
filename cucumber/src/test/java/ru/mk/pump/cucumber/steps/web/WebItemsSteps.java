@@ -7,7 +7,9 @@ import ru.mk.pump.web.common.WebItemsController;
 import ru.mk.pump.web.page.PageManager;
 
 @Slf4j
-public class WebItemsActionSteps {
+public class WebItemsSteps {
+
+
 
     @Given("^Page - open '(.+)'$")
     public void openPage(String parameterExpression){
