@@ -14,6 +14,7 @@ import ru.mk.pump.commons.config.ConfigurationsLoader;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.FileUtils;
 import ru.mk.pump.commons.utils.Preconditions;
+import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.exceptions.ConfigurationException;
 
@@ -39,7 +40,7 @@ public class ConfigurationHolder {
         this.configuration = configuration;
     }
 
-    static void cleanup(){
+    static void cleanup() {
         INSTANCE = null;
         loader = null;
     }
@@ -129,7 +130,7 @@ public class ConfigurationHolder {
 
     private static Configuration getDefaultConfiguration() {
         Configuration config = new Configuration();
-        config.setBrowser(BrowserType.CHROME);
+        config.setBrowserConfig(BrowserConfig.of(BrowserType.CHROME));
         config.setApplicationName("undefined");
         config.getElement().setWindowWidthOffset(0);
         return config;

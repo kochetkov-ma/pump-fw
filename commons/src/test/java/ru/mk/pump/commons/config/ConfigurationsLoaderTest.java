@@ -1,37 +1,37 @@
 package ru.mk.pump.commons.config;
 
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.commons.utils.Strings;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @Slf4j
-public class ConfigurationsLoaderTest {
+class ConfigurationsLoaderTest {
 
     @Test
-    public void testLoad() {
+    void testLoad() {
         final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
         configurationsLoader.load();
     }
 
     @Test
-    public void testGetMap() {
+    void testGetMap() {
         final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
         assertThat(configurationsLoader.getMap()).isEmpty();
         configurationsLoader.load();
         log.debug(Strings.toPrettyString(configurationsLoader.getMap()));
         assertThat(configurationsLoader.getMap()).hasSize(10)
-                .containsOnlyKeys("main.reporting", "two.one", "main.url", "common", "second.count", "second.url", "main.count", "two.two", "second.reporting", "enum");
+            .containsOnlyKeys("main.reporting", "two.one", "main.url", "common", "second.count", "second.url", "main.count", "two.two", "second.reporting",
+                "enum");
 
     }
 
     @Test
-    public void testMapToObject() {
+    void testMapToObject() {
         /*to test load from ENV or SYSTEM VARS*/
         System.setProperty("common.extra", "from_env");
         final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
@@ -51,7 +51,7 @@ public class ConfigurationsLoaderTest {
     }
 
     @Test
-    public void testMapToClass() {
+    void testMapToClass() {
         /*expected*/
         final Stand one = new Stand();
         one.setCommon("commonStand");
@@ -84,7 +84,7 @@ public class ConfigurationsLoaderTest {
     }
 
     @Test
-    public void testHistory() {
+    void testHistory() {
         System.setProperty("common.extra", "from_env");
         final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stands.properties"), true);
         configurationsLoader.load();

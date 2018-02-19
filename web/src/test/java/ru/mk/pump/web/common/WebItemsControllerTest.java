@@ -42,7 +42,7 @@ class WebItemsControllerTest extends AbstractTestWithBrowser {
         createBrowser();
         ComponentStaticManager cManager = new ComponentStaticManager(getBrowsers(), ComponentStaticManagerTest.class.getPackage().getName());
         PageManager pManager = new PageManager(getBrowsers(), AbstractPageTest.class.getPackage().getName());
-        this.controller = new WebItemsController(pManager, cManager, TestVars.of("test_var", "value"));
+        this.controller = new WebItemsController(pManager, cManager, TestVars.of("test_var", "prefix"));
 
     }
 

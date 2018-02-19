@@ -158,7 +158,7 @@ public class ConfigurationsLoader {
         Object result;
         String path;
         String finalPath = "";
-        if (!ClassUtils.isPrimitiveOrWrapper(field.getType()) && !field.getType().isAssignableFrom(String.class) && !field.getType().isEnum() && !field.getType().isArray()) {
+        if (field.isAnnotationPresent(Property.class) && !ClassUtils.isPrimitiveOrWrapper(field.getType()) && !field.getType().isAssignableFrom(String.class) && !field.getType().isEnum() && !field.getType().isArray()) {
             try {
                 path = getPrefixOrNull(field, prefix);
                 result = mapToObject(field.getType(), path);

@@ -21,7 +21,7 @@ import ru.mk.pump.web.utils.WebReporter;
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractTestWithBrowser {
 
-    private static final BrowserType DEFAULT_BROWSER_TYPE = ConfigurationHolder.get().getBrowser();
+    private static final BrowserType DEFAULT_BROWSER_TYPE = ConfigurationHolder.get().getBrowserConfig().getType();
 
     @Getter
     @Setter
@@ -47,7 +47,7 @@ public abstract class AbstractTestWithBrowser {
 
     @BeforeAll
     public static void beforeAll() {
-        config = new BrowserConfig(false, Size.of(true), getTestBrowserType());
+        config = BrowserConfig.of(Size.of(true), getTestBrowserType());
         browsers = new Browsers();
         if (getTestBrowserType() == BrowserType.CHROME) {
             config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());

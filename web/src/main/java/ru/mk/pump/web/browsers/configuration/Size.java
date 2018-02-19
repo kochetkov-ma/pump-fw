@@ -1,7 +1,9 @@
 package ru.mk.pump.web.browsers.configuration;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.openqa.selenium.Dimension;
+import ru.mk.pump.commons.config.Property;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.constants.WebConstants;
 
@@ -14,22 +16,27 @@ import ru.mk.pump.web.constants.WebConstants;
  *  <li>if type X and Y then use there
  * </ul>
  */
+@NoArgsConstructor
 public final class Size {
 
     @Getter
-    private final String deviceName;
+    @Property(value = "device", required = false)
+    private String deviceName;
 
     @Getter
-    private final boolean defaultSize;
+    private boolean defaultSize;
 
     @Getter
-    private final boolean fullScreen;
+    @Property(value = "fullscreen", required = false)
+    private boolean fullScreen;
 
     @Getter
-    private final int x;
+    @Property(value = "x", required = false)
+    private int x;
 
     @Getter
-    private final int y;
+    @Property(value = "y", required = false)
+    private int y;
 
     private Size(int x, int y, boolean fullScreen, String deviceName) {
         this.x = x;

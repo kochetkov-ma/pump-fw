@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import ru.mk.pump.commons.config.Property;
-import ru.mk.pump.web.browsers.configuration.BrowserType;
+import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 
 @Getter
 @Setter
@@ -17,7 +17,7 @@ public class Configuration {
     private String applicationName;
 
     @Property("browser")
-    private BrowserType browser;
+    private BrowserConfig browserConfig;
 
     @Property("reporting")
     private ReportingConfiguration reporting = new ReportingConfiguration();
