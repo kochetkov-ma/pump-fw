@@ -17,6 +17,11 @@ final class EmptyArgumentRule extends ArgumentRule<String> {
         return left.endsWith(")") || left.endsWith(",");
     }
 
+    @Override
+    public int minSize() {
+        return 0;
+    }
+
     @Nullable
     @Override
     public String value(String string) {

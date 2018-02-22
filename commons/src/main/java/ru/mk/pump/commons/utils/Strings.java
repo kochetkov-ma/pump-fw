@@ -1,30 +1,40 @@
 package ru.mk.pump.commons.utils;
 
 
-import com.google.common.base.Preconditions;
-import lombok.NonNull;
-import lombok.experimental.UtilityClass;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.beans.propertyeditors.*;
-import ru.mk.pump.commons.constants.StringConstants;
-import ru.mk.pump.commons.exception.UtilException;
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
-import javax.annotation.Nullable;
+import com.google.common.base.Preconditions;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
+import javax.annotation.Nullable;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.beans.propertyeditors.CharArrayPropertyEditor;
+import org.springframework.beans.propertyeditors.ClassArrayEditor;
+import org.springframework.beans.propertyeditors.ClassEditor;
+import org.springframework.beans.propertyeditors.FileEditor;
+import org.springframework.beans.propertyeditors.PathEditor;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
+import org.springframework.beans.propertyeditors.URIEditor;
+import org.springframework.beans.propertyeditors.URLEditor;
+import org.springframework.beans.propertyeditors.UUIDEditor;
+import ru.mk.pump.commons.constants.StringConstants;
+import ru.mk.pump.commons.exception.UtilException;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @UtilityClass
@@ -42,8 +52,6 @@ public class Strings {
         PropertyEditorManager.registerEditor(URI.class, URIEditor.class);
     }
 
-    public static final String EMPTY = "";
-
     public static final String LITE_NORMALIZE = "[\\n\\t]";
 
     public static final String NORMALIZE = "[-+.^:(),\\s\\n\\t]";
@@ -51,7 +59,11 @@ public class Strings {
     public static final String WIN_FILE_NORMALIZE = "[\\\\/:*?<>|]";
 
     public String empty() {
-        return EMPTY;
+        return StringConstants.EMPTY;
+    }
+
+    public String line() {
+        return StringConstants.LINE;
     }
 
     public String space(int count) {

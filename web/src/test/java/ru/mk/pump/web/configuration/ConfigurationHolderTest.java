@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.config.ConfigurationsLoader;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.ProjectResources;
-import ru.mk.pump.web.exceptions.ConfigurationException;
+import ru.mk.pump.commons.exception.ConfigurationException;
 
 @Slf4j
 class ConfigurationHolderTest {
@@ -19,10 +19,6 @@ class ConfigurationHolderTest {
     private static Configuration instance1;
 
     private static Configuration instance2;
-
-    private static ConfigurationsLoader loader1;
-
-    private static ConfigurationsLoader loader2;
 
     @Test
     void get() throws InterruptedException {
@@ -47,16 +43,6 @@ class ConfigurationHolderTest {
     }
 
     @Test
-    void init1() {
-        Configuration conf = new Configuration();
-        conf.setApplicationName("test");
-        conf.getElement().setWindowWidthOffset(10);
-        ConfigurationHolder.init(conf);
-        assertThat(ConfigurationHolder.get().getApplicationName()).isEqualTo("test");
-        assertThat(ConfigurationHolder.get().getElement().getWindowWidthOffset()).isEqualTo(10);
-    }
-
-    @Test
     void init2() {
         ConfigurationHolder.init(ProjectResources.findResource("pump.properties"));
         assertThat(ConfigurationHolder.get().getApplicationName()).isEqualTo("testing application");
@@ -65,6 +51,8 @@ class ConfigurationHolderTest {
             .isInstanceOf(ConfigurationException.class);
         assertThatThrownBy(() -> ConfigurationHolder.init(Paths.get("C:/no")))
             .isInstanceOf(ConfigurationException.class);
+        assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().getX()).isEqualTo(-1);
+        assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().getY()).isEqualTo(-1);
     }
 
     @Test
@@ -79,6 +67,20 @@ class ConfigurationHolderTest {
         ConfigurationHolder.init(new ConfigurationsLoader(ProjectResources.findResource("pump.properties")));
         assertThat(ConfigurationHolder.get().getApplicationName()).isEqualTo("testing application");
         assertThat(ConfigurationHolder.get().getElement().getWindowWidthOffset()).isEqualTo(0);
+    }
+
+    @Test
+    void init5() {
+        ConfigurationHolder.init(ProjectResources.findResource("pump-test.properties"));
+        assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice()).isNotNull();
+        assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().isFullScreen()).isTrue();
+        assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().getX()).isEqualTo(0);
+        assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().getY()).isEqualTo(0);
+        assertThat(ConfigurationHolder.get().getElement().getWindowWidthOffset()).isEqualTo(0);
+        assertThatThrownBy(() -> ConfigurationHolder.init(Paths.get("C:no")))
+            .isInstanceOf(ConfigurationException.class);
+        assertThatThrownBy(() -> ConfigurationHolder.init(Paths.get("C:/no")))
+            .isInstanceOf(ConfigurationException.class);
     }
 
     @Test
@@ -106,30 +108,8 @@ class ConfigurationHolderTest {
     }
 
     @AfterEach
-    void clear(){
+    void clear() {
         System.clearProperty("pump.configuration.path");
         EnvVariables.reloadCache();
-    }
-
-    @Test
-    void getLoader() throws InterruptedException {
-        ConfigurationHolder.cleanup();
-        Thread thread1 = new Thread(() -> {
-            ConfigurationHolder.initDefault();
-            loader1 = ConfigurationHolder.getLoader();
-        });
-        Thread thread2 = new Thread(() -> {
-            ConfigurationHolder.initDefault();
-            loader2 = ConfigurationHolder.getLoader();
-        });
-        thread1.run();
-        thread2.run();
-        thread1.join();
-        thread2.join();
-        assertThat(loader1).isNotEqualTo(loader2);
-        log.info(loader1.getHistory().toString());
-        log.info(loader2.getHistory().toString());
-        assertThat(loader1.getHistory().size()).isEqualTo(1);
-        assertThat(loader2.getHistory().size()).isEqualTo(1);
     }
 }

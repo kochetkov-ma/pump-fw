@@ -1,16 +1,18 @@
 package ru.mk.pump.web.browsers.builders;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Objects;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import ru.mk.pump.commons.utils.FileUtils;
+import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 
+@SuppressWarnings("WeakerAccess")
 public class BuilderHelper {
 
     private final BrowserConfig browserConfig;
@@ -20,9 +22,21 @@ public class BuilderHelper {
     }
 
     public void prepareLocalDriverPath() {
-        if (!Strings.isEmpty(browserConfig.getWebDriverPath())) {
-            if (Objects.nonNull(browserConfig.getWebDriverPath()) && Files.exists(Paths.get(browserConfig.getWebDriverPath()))) {
-                System.setProperty("webdriver." + browserConfig.getType().getDriverName() + ".driver", browserConfig.getWebDriverPath());
+        final String path = getPath();
+        if (!Strings.isEmpty(path)) {
+            System.setProperty("webdriver." + browserConfig.getType().getDriverName() + ".driver", path);
+        }
+    }
+
+    private String getPath() {
+        if (FileUtils.isExistsAndValid(browserConfig.getWebDriverPath())) {
+            return browserConfig.getWebDriverPath();
+        } else {
+            final List<Path> pathList = ProjectResources.findResourceList(browserConfig.getType().getDriverName());
+            if (!pathList.isEmpty()) {
+                return pathList.get(0).toString();
+            } else {
+                return Strings.empty();
             }
         }
     }

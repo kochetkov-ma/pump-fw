@@ -61,6 +61,10 @@ public final class Pumpkin {
         this.testVars = testVars;
     }
     //endregion
+    public static Pumpkin newParamParser(Map<String, Object> testVars) {
+        Groovy groovy = Groovy.of();
+        return new Pumpkin(testVars, groovy, ImmutableSet.of(new TestVarArgument(testVars), new GroovyArgumentRule(groovy), new StringRule()));
+    }
 
     public Queue<Item> generateItems(@NonNull String expression) {
         this.currentExpression = expression;
@@ -101,7 +105,7 @@ public final class Pumpkin {
     }
 
     private boolean needParameterItem(Accumulator accumulator) {
-        return accumulator.getRule() instanceof GroovyArgumentRule || accumulator.getRule() instanceof TestVarArgument;
+        return accumulator.getRule() instanceof SeparateValue;
     }
 
     private boolean needModifyItem(Accumulator accumulator) {
@@ -110,7 +114,7 @@ public final class Pumpkin {
     }
 
     private Item newParameter(Accumulator accumulator) {
-        if (accumulator.getRule() instanceof GroovyArgumentRule || accumulator.getRule() instanceof TestVarArgument) {
+        if (accumulator.getRule() instanceof SeparateValue) {
             return new TestParameter<>(accumulator.getRule().toValue(accumulator.getResult()));
         } else {
             throw exception("Unexpected rule", accumulator);

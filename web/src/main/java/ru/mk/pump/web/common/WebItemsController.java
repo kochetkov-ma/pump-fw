@@ -122,7 +122,6 @@ public class WebItemsController implements StrictInfo {
         return execute(componentManager.getCurrent(), pumpkinExpression);
     }
 
-
     @Nullable
     public Object execute(@Nullable Object targetObject, @NonNull String pumpkinExpression) {
         this.lastPumpkinExpression = pumpkinExpression;

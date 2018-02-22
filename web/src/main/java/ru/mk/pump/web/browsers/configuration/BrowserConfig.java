@@ -32,7 +32,7 @@ public class BrowserConfig {
     private String downloadDirPath;
 
     @Property(value = "size", required = false)
-    private Size sizeOrDevice;
+    private Size sizeOrDevice = Size.of(true);
 
     @Property("type")
     private BrowserType type;

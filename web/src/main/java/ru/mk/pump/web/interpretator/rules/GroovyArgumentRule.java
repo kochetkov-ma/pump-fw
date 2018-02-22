@@ -1,7 +1,5 @@
 package ru.mk.pump.web.interpretator.rules;
 
-import static ru.mk.pump.web.interpretator.PumpkinConstants.GROOVY_PATTERN;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.ToString;
@@ -10,7 +8,9 @@ import ru.mk.pump.web.interpretator.PumpkinConstants;
 
 @SuppressWarnings("WeakerAccess")
 @ToString(exclude = "groovy")
-final class GroovyArgumentRule extends ArgumentRule<Object> {
+final class GroovyArgumentRule extends ArgumentRule<Object> implements SeparateValue {
+
+    private final static String GROOVY_PATTERN = "^\\$?groovy\\{(.*)}$";
 
     private final Groovy groovy;
 
@@ -21,7 +21,7 @@ final class GroovyArgumentRule extends ArgumentRule<Object> {
 
     @Override
     public boolean parseStart(String left, String right) {
-        return right.matches(GROOVY_PATTERN);
+        return right.matches(PumpkinConstants.GROOVY_PATTERN);
     }
 
     @Override
@@ -31,7 +31,7 @@ final class GroovyArgumentRule extends ArgumentRule<Object> {
 
     @Override
     public Object value(String string) {
-        Matcher matcher = Pattern.compile(PumpkinConstants.GROOVY_PATTERN).matcher(string);
+        Matcher matcher = Pattern.compile(GROOVY_PATTERN).matcher(string);
         if (matcher.find()) {
             return groovy.evalGroovy(matcher.group(1));
         }

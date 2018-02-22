@@ -135,4 +135,19 @@ class PumpkinTest {
         log.info(pumpkin.toString());
         assertThat(pumpkin.toString()).isNotEmpty();
     }
+
+    @Test
+    void testNewParamParser() {
+        Pumpkin pumpkin = Pumpkin.newParamParser(vars);
+        assertThat(pumpkin.generateItems("1,2,3${var_1}$groovy{new Date().getDay()}"))
+            .containsExactly(new TestParameter<>("1,2,3"),
+                new TestParameter<>(1),
+                new TestParameter<>(new Date().getDay())
+            );
+        assertThat(pumpkin.generateItems("1,2,3AAA")).containsExactly(new TestParameter<>("1,2,3AAA"));
+
+
+
+    }
+
 }

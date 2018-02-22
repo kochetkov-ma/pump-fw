@@ -1,7 +1,5 @@
 package ru.mk.pump.web.interpretator.rules;
 
-import static ru.mk.pump.web.interpretator.PumpkinConstants.TEST_VAR_PATTERN;
-
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,7 +8,9 @@ import ru.mk.pump.web.interpretator.PumpkinConstants;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @ToString
-final class TestVarArgument extends ArgumentRule<Object> {
+final class TestVarArgument extends ArgumentRule<Object> implements SeparateValue {
+
+    private static final String TEST_VAR_PATTERN = "^\\$?\\{(.*)}$";
 
     private final Map<String, Object> testVars;
 
@@ -20,7 +20,7 @@ final class TestVarArgument extends ArgumentRule<Object> {
 
     @Override
     public boolean parseStart(String left, String right) {
-        return right.matches(TEST_VAR_PATTERN);
+        return right.matches(PumpkinConstants.TEST_VAR_PATTERN);
     }
 
     @Override
@@ -30,7 +30,7 @@ final class TestVarArgument extends ArgumentRule<Object> {
 
     @Override
     public Object value(String string) {
-        Matcher matcher = Pattern.compile(PumpkinConstants.TEST_VAR_PATTERN).matcher(string);
+        Matcher matcher = Pattern.compile(TEST_VAR_PATTERN).matcher(string);
         if (matcher.find()) {
             return testVars.get(matcher.group(1));
         }

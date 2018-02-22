@@ -18,6 +18,11 @@ abstract class AbstractRule<T> implements Rule<T> {
 
     abstract protected T value(String string);
 
+    @Override
+    public int minSize() {
+        return 1;
+    }
+
     @Nullable
     @Override
     public final T toValue(String string) {

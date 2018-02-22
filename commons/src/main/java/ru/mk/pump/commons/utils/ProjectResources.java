@@ -63,6 +63,10 @@ public final class ProjectResources {
         return FileUtils.findFiles(FileUtils.findDir(getResourcesDir(), dirName, depth), fileName, depth);
     }
 
+    public List<Path> findResourceList(@NonNull String fileName) {
+        return findResourceFiles("", fileName, 5);
+    }
+
     public Path findResource(@NonNull String fileName) {
         return findResourceFiles("", fileName, 5).stream().findFirst()
             .orElseThrow(() -> new UtilException(format("Cannot find resource file '%s'", fileName)));

@@ -14,6 +14,11 @@ final class StringArgumentRule extends ArgumentRule<String> {
     }
 
     @Override
+    public int minSize() {
+        return 0;
+    }
+
+    @Override
     public boolean parseEndOr(String left, String right) {
         return right.startsWith(")") || right.startsWith(",");
     }

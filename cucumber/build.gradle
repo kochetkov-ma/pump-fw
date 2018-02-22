@@ -15,9 +15,10 @@ ext {
 
 dependencies {
     compile "io.cucumber:cucumber-java8:$cucumberVersion"
+    compile "junit:junit:4.12"
     testCompile "io.cucumber:cucumber-junit:$cucumberVersion"
     testCompile "io.qameta.allure:allure-cucumber2-jvm:latest.release"
-    testCompile "junit:junit:4.12"
+
 
     compile project(':web')
     compile project(':commons')

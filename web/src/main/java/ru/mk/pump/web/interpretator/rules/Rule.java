@@ -9,6 +9,8 @@ public interface Rule<T> {
 
     boolean parseEnd(String left, String right);
 
+    int minSize();
+
     String[] getEscapes();
 
     @Nullable

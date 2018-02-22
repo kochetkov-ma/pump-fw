@@ -25,7 +25,7 @@ public final class Accumulator {
     }
 
     public boolean next() {
-        if (!rule.parseEnd(walker.getLeft(), walker.getRight())) {
+        if (!rule.parseEnd(walker.getLeft(), walker.getRight()) || result.length() < rule.minSize()) {
             result.append(walker.next());
             return true;
         }

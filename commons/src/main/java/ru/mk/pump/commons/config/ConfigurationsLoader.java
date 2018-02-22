@@ -1,6 +1,14 @@
 package ru.mk.pump.commons.config;
 
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
+
 import com.google.common.collect.Maps;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Objects;
+import javax.annotation.Nullable;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
@@ -13,15 +21,6 @@ import ru.mk.pump.commons.utils.History;
 import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.PropertiesUtil;
 import ru.mk.pump.commons.utils.Strings;
-
-import javax.annotation.Nullable;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Objects;
-
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
 
 @SuppressWarnings({"UnusedReturnValue", "WeakerAccess", "unused"})
 @Slf4j
@@ -150,21 +149,42 @@ public class ConfigurationsLoader {
 
     private <T> T resolvedAnnotatedFields(T object, Map<String, String> configMap, String prefix) {
         FieldUtils.getAllFieldsList(object.getClass()).forEach(field ->
-                resolvedField(object, field, configMap, prefix));
+            resolvedField(object, field, configMap, prefix));
         return object;
+    }
+
+    private Object instancedFiled(Object object, Field field) {
+        Object fieldValue = null;
+        try {
+            fieldValue = FieldUtils.readField(field, object, true);
+        } catch (IllegalAccessException ignore) {
+        }
+        if (fieldValue == null) {
+            try {
+                return field.getType().newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new UtilException(String.format("Cannot create instance '%s'. Need no args public constructor", field.getClass().getSimpleName()), e);
+            }
+        } else {
+            return fieldValue;
+        }
     }
 
     private void resolvedField(Object object, Field field, Map<String, String> configMap, String prefix) {
         Object result;
         String path;
         String finalPath = "";
-        if (field.isAnnotationPresent(Property.class) && !ClassUtils.isPrimitiveOrWrapper(field.getType()) && !field.getType().isAssignableFrom(String.class) && !field.getType().isEnum() && !field.getType().isArray()) {
+        if (field.isAnnotationPresent(Property.class)
+            && !ClassUtils.isPrimitiveOrWrapper(field.getType())
+            && !field.getType().isAssignableFrom(String.class)
+            && !field.getType().isEnum()
+            && !field.getType().isArray()) {
             try {
                 path = getPrefixOrNull(field, prefix);
-                result = mapToObject(field.getType(), path);
+                result = resolvedAnnotatedFields(instancedFiled(object, field), getMap(), path);
             } catch (UtilException ex) {
                 path = getPrefixOrNull(field);
-                result = mapToObject(field.getType(), path);
+                result = resolvedAnnotatedFields(instancedFiled(object, field), getMap(), path);
             }
         } else {
             if (!field.isAnnotationPresent(Property.class)) {
@@ -192,7 +212,7 @@ public class ConfigurationsLoader {
                 result = Strings.toObject(defaultValue, field.getType());
             } else if (isRequired) {
                 throw new UtilException(String.format("Cannot find required property '%s' of field '%s' of object '%s' in file, in system env and default",
-                        path, field.getType().getSimpleName(), object.getClass().getSimpleName()));
+                    path, field.getType().getSimpleName(), object.getClass().getSimpleName()));
             } else {
                 log.debug("Resolving is nonArg result for not required property {} {}", field.toString(), annotation.toString());
                 return;
@@ -206,7 +226,7 @@ public class ConfigurationsLoader {
             log.debug("Resolving is success. Field {} is {}", field.toString(), result.toString());
         } catch (IllegalAccessException ex) {
             throw new UtilException(String.format("Error writing value '%s' required property '%s' to field '%s' of object '%s'",
-                    result.toString(), path, field.getType().getSimpleName(), object.getClass().getSimpleName()), ex);
+                result.toString(), path, field.getType().getSimpleName(), object.getClass().getSimpleName()), ex);
         }
     }
     //endregion
