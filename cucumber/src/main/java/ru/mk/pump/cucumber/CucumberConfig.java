@@ -17,6 +17,13 @@ public class CucumberConfig {
     @Property("hook.after.feature")
     private boolean afterFeatureHook = true;
 
+    @Property("plugin.enable")
+    private boolean loadPumpPlugin = true;
+
+    @Property("plugin.browser.singleton")
+    private boolean oneBrowserAllFeature = true;
+
+
     public static CucumberConfig of() {
         CucumberConfig res = new CucumberConfig();
         return res;

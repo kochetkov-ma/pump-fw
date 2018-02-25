@@ -1,10 +1,10 @@
 Feature: Debug
 
-  #Scenario: Test scenario - 1
-   # * Verify - equals object expected '1' and actual '2'
+  Scenario: Test scenario - 1
+    * Verify - equals object expected '1' and actual '2'
 
-  Scenario: Test scenario - 2
-    * Verify - equals string expected '1' and actual '1'
+  #Scenario: Test scenario - 2
+   # * Verify - equals string expected '1' and actual '1'
 
   #Scenario: Test scenario - 3
     #* Verify - equals long expected '2' and actual '1'

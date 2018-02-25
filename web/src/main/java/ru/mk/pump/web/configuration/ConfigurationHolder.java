@@ -3,6 +3,8 @@ package ru.mk.pump.web.configuration;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.concurrent.locks.ReentrantLock;
+
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.config.ConfigurationHelper;
@@ -24,6 +26,7 @@ public class ConfigurationHolder {
 
     private static volatile ConfigurationHolder INSTANCE;
 
+    @Getter
     private final ConfigurationHelper<Configuration> configurationHelper;
 
 

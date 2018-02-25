@@ -24,6 +24,11 @@ public abstract class AbstractNotifier<T, V extends Enum<V>, L extends Listener<
         return this;
     }
 
+    public AbstractNotifier addListeners(Set<L> actionListener) {
+        actionListeners.addAll(actionListener);
+        return this;
+    }
+
     public AbstractNotifier addListener(L actionListener) {
         actionListeners.add(actionListener);
         return this;

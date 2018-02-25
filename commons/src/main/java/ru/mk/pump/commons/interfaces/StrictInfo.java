@@ -1,6 +1,7 @@
 package ru.mk.pump.commons.interfaces;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public interface StrictInfo {
@@ -10,7 +11,7 @@ public interface StrictInfo {
         private final Map<String, String> map;
 
         private StringMapBuilder() {
-            this.map = new HashMap<>();
+            this.map = new LinkedHashMap<>();
         }
 
         public Map<String, String> build() {

@@ -1,7 +1,7 @@
 package ru.mk.pump.cucumber.steps.web;
 
 import cucumber.api.java.en.Given;
-import ru.mk.pump.cucumber.CucumberPumpCore;
+import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.cucumber.steps.AbstractSteps;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
@@ -19,10 +19,10 @@ public class BrowserSteps extends AbstractSteps {
 
     @Given("^Browser - restart$")
     public void restart() {
-        if (!CucumberPumpCore.instance().getBrowsers().has()) {
-            throw new IllegalStateException("You have to start at least one browser before restart");
+        if (!CucumberCore.instance().getBrowsers().has()) {
+            throw new IllegalStateException("You have to startScenario at least one browser before restart");
         }
-        Browser browser = CucumberPumpCore.instance().getBrowsers().get();
+        Browser browser = CucumberCore.instance().getBrowsers().get();
         browser.close();
         core().getBrowsers().newBrowser(browser.getConfig()).start();
     }

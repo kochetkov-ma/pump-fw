@@ -6,7 +6,7 @@ import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import java.util.Locale;
 import java.util.Queue;
-import ru.mk.pump.cucumber.CucumberPumpCore;
+import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.web.interpretator.items.Item;
 
 public class PumpkinParamTransformer extends Transformer<Object> {
@@ -17,7 +17,7 @@ public class PumpkinParamTransformer extends Transformer<Object> {
 
     @Override
     public Object transform(String value) {
-        Queue<Item> items = CucumberPumpCore.instance().paramParser().generateItems(value);
+        Queue<Item> items = CucumberCore.instance().paramParser().generateItems(value);
         if (items.isEmpty()) {
             return null;
         } else {

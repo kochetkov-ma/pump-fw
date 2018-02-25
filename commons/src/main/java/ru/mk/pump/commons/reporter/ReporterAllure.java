@@ -1,18 +1,11 @@
 package ru.mk.pump.commons.reporter;
 
 
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
-
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Parameter;
 import io.qameta.allure.model.Status;
 import io.qameta.allure.model.StepResult;
 import io.qameta.allure.model.TestResult;
-import java.io.ByteArrayInputStream;
-import java.util.Deque;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +16,17 @@ import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Strings;
 
-@SuppressWarnings("unused")
+import java.io.ByteArrayInputStream;
+import java.util.Deque;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Consumer;
+
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
+
+@SuppressWarnings({"unused", "WeakerAccess"})
 @Slf4j
 @ToString(exclude = {"currentTestUuid", "blockUuidQueue"})
 public class ReporterAllure implements Reporter, AutoCloseable {
@@ -46,16 +49,39 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     private ThreadLocal<String> currentTestUuid = new InheritableThreadLocal<>();
 
-    private ThreadLocal<Deque<String>> blockUuidQueue = ThreadLocal.withInitial(ConcurrentLinkedDeque::new);
-
-    private static String now() {
-        return org.joda.time.Instant.now().toString(new DateTimeFormatterBuilder()
-                .appendPattern("dd-MM-yy HH:mm:ss:SSSS")
-                .toFormatter());
-    }
-
+    private ThreadLocal<Deque<String>> blockUuidQueue = InheritableThreadLocal.withInitial(ConcurrentLinkedDeque::new);
     @Getter
     private AttachmentsFactory attachmentsFactory;
+
+    @AllArgsConstructor
+    private class Info {
+
+        private static final String I = "kochetkov-ma@yandex.ru";
+
+        private Attachment attachment;
+
+        private Throwable throwable;
+
+        @Override
+        public String toString() {
+            return Strings
+                    .space(I, attachment != null ? "Attachment exists" : null,
+                            throwable != null ? "Throwable class " + throwable.getClass().getSimpleName() : null);
+        }
+
+        Attachment attachment() {
+            return attachment;
+        }
+
+        Throwable throwable() {
+            return throwable;
+        }
+    }
+
+    public ReporterAllure() {
+        this.attachmentsFactory = new AttachmentsFactory(Optional::empty);
+        this.minimumLevelForDuplicateInSlf4 = Type.INFO;
+    }
 
     public ReporterAllure(Screenshoter screenshoter) {
         this.attachmentsFactory = new AttachmentsFactory(screenshoter);
@@ -75,23 +101,12 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     @Override
     public void testStart(String title, String description) {
-        currentTestUuid.set(UUID.randomUUID().toString());
-        final TestResult testResult = new TestResult()
-                .withDescription(description)
-                .withName(title)
-                .withUuid(currentTestUuid.get());
-        Allure.getLifecycle().scheduleTestCase(testResult);
-        Allure.getLifecycle().startTestCase(currentTestUuid.get());
+        currentTestUuid.set(testStart(title, description, null));
     }
 
     @Override
     public void testStop() {
-        blockStopAll();
-        if (!Strings.isEmpty(currentTestUuid.get())) {
-            Allure.getLifecycle().updateTestCase(currentTestUuid.get(), tc -> tc.setStatus(Status.PASSED));
-            Allure.getLifecycle().stopTestCase(currentTestUuid.get());
-            Allure.getLifecycle().writeTestCase(currentTestUuid.get());
-        }
+        testStop(currentTestUuid.get(), tc -> tc.setStatus(Status.PASSED));
     }
 
     @Override
@@ -121,21 +136,11 @@ public class ReporterAllure implements Reporter, AutoCloseable {
         }
     }
 
-    private void blockStop(String uuid) {
-        Allure.getLifecycle().updateStep(uuid, block -> block.withStatus(Status.PASSED));
-        Allure.getLifecycle().stopStep(uuid);
-    }
-
     @Override
     public void blockStopAll() {
         while (!blockUuidQueue.get().isEmpty()) {
             blockStop(blockUuidQueue.get().pop());
         }
-    }
-
-    @Override
-    public void warn(String title, String description, Attachment attachment) {
-        step(Type.WARNING, title, description, new Info(attachment, null));
     }
 
     @Override
@@ -146,6 +151,11 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     @Override
     public void warn(String title, String description, Throwable throwable) {
         step(Type.WARNING, title, Strings.concat(LINE, description, Strings.toString(throwable)), new Info(null, null));
+    }
+
+    @Override
+    public void warn(String title, String description, Attachment attachment) {
+        step(Type.WARNING, title, description, new Info(attachment, null));
     }
 
     @Override
@@ -203,61 +213,45 @@ public class ReporterAllure implements Reporter, AutoCloseable {
         return attachmentsFactory;
     }
 
+    public String testStart(String title, String description, Consumer<TestResult> testResultConsumer) {
+        String uuid = UUID.randomUUID().toString();
+        final TestResult testResult = new TestResult()
+                .withDescription(description)
+                .withName(title)
+                .withUuid(uuid);
+        if (testResultConsumer != null) {
+            testResultConsumer.accept(testResult);
+        }
+        Allure.getLifecycle().scheduleTestCase(testResult);
+        Allure.getLifecycle().startTestCase(uuid);
+        return uuid;
+    }
+
+    public void testStop(String uuid, Consumer<TestResult> testResultConsumer) {
+        blockStopAll();
+        if (!Strings.isEmpty(uuid)) {
+            if (testResultConsumer != null) {
+                Allure.getLifecycle().updateTestCase(uuid, testResultConsumer);
+            }
+            Allure.getLifecycle().stopTestCase(uuid);
+            Allure.getLifecycle().writeTestCase(uuid);
+        }
+    }
+
     @Override
     public void close() {
         //testStop();
     }
 
-    public enum Type {
-        OFF("", Integer.MAX_VALUE),
-        ALL("", 0),
-        INFO("", 2),
-        WARNING("[WARN] ", 3),
-        ERROR("[ERROR] ", 4),
-        ATTACHMENT("[ATTACHMENT] ", 0),
-        PASS("[PASS] ", 1),
-        FAIL("[FAIL] ", 4);
-
-        @Getter
-        private final String value;
-
-        @Getter
-        private final int priority;
-
-        Type(String value, int priority) {
-            this.value = value;
-            this.priority = priority;
-        }
-
-        @Override
-        public String toString() {
-            return name();
-        }
+    private static String now() {
+        return org.joda.time.Instant.now().toString(new DateTimeFormatterBuilder()
+                .appendPattern("dd-MM-yy HH:mm:ss:SSSS")
+                .toFormatter());
     }
 
-    @AllArgsConstructor
-    private class Info {
-
-        private static final String I = "kochetkov-ma@yandex.ru";
-
-        private Attachment attachment;
-
-        private Throwable throwable;
-
-        Attachment attachment() {
-            return attachment;
-        }
-
-        Throwable throwable() {
-            return throwable;
-        }
-
-        @Override
-        public String toString() {
-            return Strings
-                    .space(I, attachment != null ? "Attachment exists" : null,
-                            throwable != null ? "Throwable class " + throwable.getClass().getSimpleName() : null);
-        }
+    private void blockStop(String uuid) {
+        Allure.getLifecycle().updateStep(uuid, block -> block.withStatus(Status.PASSED));
+        Allure.getLifecycle().stopStep(uuid);
     }
 
     /**
@@ -276,8 +270,16 @@ public class ReporterAllure implements Reporter, AutoCloseable {
                 .withStatus(Status.PASSED)
                 .withParameters(new Parameter().withName("status").withValue(level.name()),
                         new Parameter().withName("time").withValue(now()));
-
-        Allure.getLifecycle().startStep(stepUuid, stepResult);
+        if (Allure.getLifecycle().getCurrentTestCase().isPresent()) {
+            Allure.getLifecycle().startStep(stepUuid, stepResult);
+        } else {
+            String blockUuid = blockUuidQueue.get().peekLast();
+            if (blockUuid != null) {
+                Allure.getLifecycle().startStep(blockUuid, stepUuid, stepResult);
+            } else if (currentTestUuid.get() != null) {
+                Allure.getLifecycle().startStep(currentTestUuid.get(), stepUuid, stepResult);
+            }
+        }
         if (Objects.nonNull(description)) {
             if (description.contains("\n")) {
                 attach(attachments().text("Description", description));
@@ -318,5 +320,32 @@ public class ReporterAllure implements Reporter, AutoCloseable {
             }
         }
         Allure.getLifecycle().stopStep(stepUuid);
+    }
+
+    public enum Type {
+        OFF("", Integer.MAX_VALUE),
+        ALL("", 0),
+        INFO("", 2),
+        WARNING("[WARN] ", 3),
+        ERROR("[ERROR] ", 4),
+        ATTACHMENT("[ATTACHMENT] ", 0),
+        PASS("[PASS] ", 1),
+        FAIL("[FAIL] ", 4);
+
+        @Getter
+        private final String value;
+
+        @Getter
+        private final int priority;
+
+        Type(String value, int priority) {
+            this.value = value;
+            this.priority = priority;
+        }
+
+        @Override
+        public String toString() {
+            return name();
+        }
     }
 }

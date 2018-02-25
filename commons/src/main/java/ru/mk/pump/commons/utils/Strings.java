@@ -1,10 +1,18 @@
 package ru.mk.pump.commons.utils;
 
 
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
-
 import com.google.common.base.Preconditions;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.beans.propertyeditors.*;
+import ru.mk.pump.commons.constants.StringConstants;
+import ru.mk.pump.commons.exception.UtilException;
+import ru.mk.pump.commons.interfaces.PrettyPrinter;
+
+import javax.annotation.Nullable;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.io.File;
@@ -18,44 +26,16 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.annotation.Nullable;
-import lombok.NonNull;
-import lombok.experimental.UtilityClass;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.beans.propertyeditors.CharArrayPropertyEditor;
-import org.springframework.beans.propertyeditors.ClassArrayEditor;
-import org.springframework.beans.propertyeditors.ClassEditor;
-import org.springframework.beans.propertyeditors.FileEditor;
-import org.springframework.beans.propertyeditors.PathEditor;
-import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
-import org.springframework.beans.propertyeditors.URIEditor;
-import org.springframework.beans.propertyeditors.URLEditor;
-import org.springframework.beans.propertyeditors.UUIDEditor;
-import ru.mk.pump.commons.constants.StringConstants;
-import ru.mk.pump.commons.exception.UtilException;
+
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @UtilityClass
 public class Strings {
 
-    static {
-        PropertyEditorManager.registerEditor(String[].class, StringArrayPropertyEditor.class);
-        PropertyEditorManager.registerEditor(char[].class, CharArrayPropertyEditor.class);
-        PropertyEditorManager.registerEditor(Class[].class, ClassArrayEditor.class);
-        PropertyEditorManager.registerEditor(Class.class, ClassEditor.class);
-        PropertyEditorManager.registerEditor(File.class, FileEditor.class);
-        PropertyEditorManager.registerEditor(Path.class, PathEditor.class);
-        PropertyEditorManager.registerEditor(UUID.class, UUIDEditor.class);
-        PropertyEditorManager.registerEditor(URL.class, URLEditor.class);
-        PropertyEditorManager.registerEditor(URI.class, URIEditor.class);
-    }
-
     public static final String LITE_NORMALIZE = "[\\n\\t]";
-
     public static final String NORMALIZE = "[-+.^:(),\\s\\n\\t]";
-
     public static final String WIN_FILE_NORMALIZE = "[\\\\/:*?<>|]";
 
     public String empty() {
@@ -70,6 +50,10 @@ public class Strings {
         final StringBuilder stringBuilder = new StringBuilder();
         IntStream.range(0, count).forEach((index) -> stringBuilder.append(StringConstants.SPACE));
         return stringBuilder.toString();
+    }
+
+    public String line(String... strings) {
+        return trim(Arrays.stream(strings).filter(i -> i != null && !i.isEmpty()).collect(Collectors.joining(StringConstants.LINE)));
     }
 
     public String space(String... strings) {
@@ -91,7 +75,7 @@ public class Strings {
         }
         map.forEach((key, value) -> {
             if (key != null && value != null) {
-                stringBuilder.append(key.toString()).append(KEY_VALUE_PRETTY_DELIMITER).append(value.toString()).append(LINE);
+                stringBuilder.append(key.toString()).append(KEY_VALUE_PRETTY_DELIMITER).append(Strings.toPrettyString(value)).append(LINE);
                 if (offset != 0) {
                     stringBuilder.append(space(offset + StringConstants.KEY_VALUE_PRETTY_DELIMITER.length()));
                 }
@@ -102,6 +86,16 @@ public class Strings {
 
     public String toPrettyString(@Nullable Collection<?> collection) {
         return toPrettyString(collection, 0);
+    }
+
+    public String toPrettyString(@Nullable Object object) {
+        if (object == null) {
+            return "null";
+        }
+        if (object instanceof PrettyPrinter) {
+            return ((PrettyPrinter) object).toPrettyString();
+        }
+        return Strings.toString(object);
     }
 
     public String toPrettyString(@Nullable Object[] array) {
@@ -125,8 +119,8 @@ public class Strings {
                 if (offset != 0) {
                     sb.append(space(offset));
                 }
-                sb.append(value.toString());
-                if (!StringUtils.contains(value.toString(), LINE)) {
+                sb.append(Strings.toPrettyString(value));
+                if (!StringUtils.endsWith(Strings.toPrettyString(value), LINE)) {
                     sb.append(LINE);
                 }
             }
@@ -214,6 +208,7 @@ public class Strings {
         return StringUtils.isBlank(value);
     }
 
+    @Nullable
     public <T> T toObject(@NonNull String string, @NonNull Class<T> targetType) {
         Preconditions.checkNotNull(string);
         Preconditions.checkNotNull(targetType);
@@ -221,8 +216,24 @@ public class Strings {
         if (editor == null) {
             throw new UtilException(String.format("Cannot find PropertyEditor of '%s'", targetType));
         }
-        editor.setAsText(string);
+        try {
+            editor.setAsText(string);
+        } catch (Exception ignore) {
+            return null;
+        }
         //noinspection unchecked
         return (T) editor.getValue();
+    }
+
+    static {
+        PropertyEditorManager.registerEditor(String[].class, StringArrayPropertyEditor.class);
+        PropertyEditorManager.registerEditor(char[].class, CharArrayPropertyEditor.class);
+        PropertyEditorManager.registerEditor(Class[].class, ClassArrayEditor.class);
+        PropertyEditorManager.registerEditor(Class.class, ClassEditor.class);
+        PropertyEditorManager.registerEditor(File.class, FileEditor.class);
+        PropertyEditorManager.registerEditor(Path.class, PathEditor.class);
+        PropertyEditorManager.registerEditor(UUID.class, UUIDEditor.class);
+        PropertyEditorManager.registerEditor(URL.class, URLEditor.class);
+        PropertyEditorManager.registerEditor(URI.class, URIEditor.class);
     }
 }

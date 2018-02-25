@@ -1,24 +1,27 @@
 package ru.mk.pump.commons.config;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.MoreObjects;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.ConfigurationException;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.FileUtils;
 import ru.mk.pump.commons.utils.Preconditions;
-import ru.mk.pump.commons.utils.ReflectionUtils;
+
+import javax.annotation.Nullable;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @Slf4j
+@ToString
 public class ConfigurationHelper<T> {
 
     private final String sysEnvName;
@@ -43,7 +46,12 @@ public class ConfigurationHelper<T> {
         return actualConfig;
     }
 
+    public Optional<ConfigurationsLoader> getLoader() {
+        return Optional.ofNullable(configurationsLoader);
+    }
+
     public synchronized T loadFromLoader(@NonNull ConfigurationsLoader configurationsLoader) {
+        this.configurationsLoader = configurationsLoader;
         configurationsLoader.load();
         actualConfig = configurationsLoader.toObject(getType());
         return actualConfig;
@@ -89,7 +97,7 @@ public class ConfigurationHelper<T> {
             try {
                 return loadFromSystemEnv(sysEnvName);
             } catch (Exception ex) {
-                log.error("[PUMP-CONFIG] Cannot load any resources. Cause is '{}'", ex.getLocalizedMessage());
+                log.error("[PUMP-CONFIG] Cannot load any resources. Cause is '{}'", ex.toString());
                 log.info("[PUMP-CONFIG] Try to load from default Configuration class");
                 actualConfig = defaultConfig;
                 return actualConfig;
@@ -99,7 +107,7 @@ public class ConfigurationHelper<T> {
             try {
                 return loadFromResource(classPathResource);
             } catch (Exception ex) {
-                log.error("[PUMP-CONFIG] Cannot load any resources. Cause is '{}'", ex.getLocalizedMessage());
+                log.error("[PUMP-CONFIG] Cannot load any resources. Cause is '{}'", ex.toString());
                 log.info("[PUMP-CONFIG] Try to load from default Configuration class");
                 actualConfig = defaultConfig;
                 return actualConfig;
@@ -107,10 +115,10 @@ public class ConfigurationHelper<T> {
         }
     }
 
-    public InputStream getResource(String resourceName) {
+    private InputStream getResource(String resourceName) {
         ClassLoader loader =
-            MoreObjects.firstNonNull(
-                Thread.currentThread().getContextClassLoader(), getClass().getClassLoader());
+                MoreObjects.firstNonNull(
+                        Thread.currentThread().getContextClassLoader(), getClass().getClassLoader());
         InputStream inputStream = loader.getResourceAsStream(resourceName);
         checkArgument(inputStream != null, "resource %s not found.", resourceName);
         return inputStream;
@@ -118,7 +126,7 @@ public class ConfigurationHelper<T> {
 
     private Class<T> getType() {
         //noinspection unchecked
-        return (Class<T>)defaultConfig.getClass();
+        return (Class<T>) defaultConfig.getClass();
     }
 
     private RuntimeException exception(String type, String path, String scope) {

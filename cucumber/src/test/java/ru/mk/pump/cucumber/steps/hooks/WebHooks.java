@@ -6,17 +6,22 @@ import cucumber.api.java.Before;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.cucumber.CucumberPumpCore;
+import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.cucumber.CucumberUtil;
 
 @Slf4j
 public class WebHooks {
 
     @Setter
-    private static boolean beforeScenarioHook = CucumberPumpCore.instance().getConfig().isBeforeScenarioHook();
+    private static boolean beforeScenarioHook = CucumberCore.instance().getConfig().isBeforeScenarioHook();
 
     @Setter
-    private static boolean afterScenarioHook = CucumberPumpCore.instance().getConfig().isAfterScenarioHook();
+    private static boolean afterScenarioHook = CucumberCore.instance().getConfig().isAfterScenarioHook();
+
+    @Before(order = 0)
+    public void mainHook() {
+        CucumberCore.instance().getMonitor().checkPlugin();
+    }
 
     @Before
     public void beforeScenarioDefault(Scenario scenario) {

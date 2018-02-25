@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <!-- Stop output INFO at start -->
+  <!-- Stop output INFO at startScenario -->
   <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
   <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">

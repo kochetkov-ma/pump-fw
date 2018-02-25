@@ -1,14 +1,6 @@
 package ru.mk.pump.commons.config;
 
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
-
 import com.google.common.collect.Maps;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Objects;
-import javax.annotation.Nullable;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
@@ -22,19 +14,24 @@ import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.PropertiesUtil;
 import ru.mk.pump.commons.utils.Strings;
 
+import javax.annotation.Nullable;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Objects;
+
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
+
 @SuppressWarnings({"UnusedReturnValue", "WeakerAccess", "unused"})
 @Slf4j
 public class ConfigurationsLoader {
 
     public static final int HISTORY_SIZE = 100;
-
+    private final boolean discoverInEnv;
     //region FIELDS
     private InputStream inputStreamProperties;
-
     private Path propertiesConfigurationPath;
-
-    private final boolean discoverInEnv;
-
     private Map<String, String> configMap = Maps.newHashMap();
 
     private History<String> history = new History<>(100);
@@ -149,7 +146,7 @@ public class ConfigurationsLoader {
 
     private <T> T resolvedAnnotatedFields(T object, Map<String, String> configMap, String prefix) {
         FieldUtils.getAllFieldsList(object.getClass()).forEach(field ->
-            resolvedField(object, field, configMap, prefix));
+                resolvedField(object, field, configMap, prefix));
         return object;
     }
 
@@ -175,10 +172,10 @@ public class ConfigurationsLoader {
         String path;
         String finalPath = "";
         if (field.isAnnotationPresent(Property.class)
-            && !ClassUtils.isPrimitiveOrWrapper(field.getType())
-            && !field.getType().isAssignableFrom(String.class)
-            && !field.getType().isEnum()
-            && !field.getType().isArray()) {
+                && !ClassUtils.isPrimitiveOrWrapper(field.getType())
+                && !field.getType().isAssignableFrom(String.class)
+                && !field.getType().isEnum()
+                && !field.getType().isArray()) {
             try {
                 path = getPrefixOrNull(field, prefix);
                 result = resolvedAnnotatedFields(instancedFiled(object, field), getMap(), path);
@@ -212,7 +209,7 @@ public class ConfigurationsLoader {
                 result = Strings.toObject(defaultValue, field.getType());
             } else if (isRequired) {
                 throw new UtilException(String.format("Cannot find required property '%s' of field '%s' of object '%s' in file, in system env and default",
-                    path, field.getType().getSimpleName(), object.getClass().getSimpleName()));
+                        path, field.getType().getSimpleName(), object.getClass().getSimpleName()));
             } else {
                 log.debug("Resolving is nonArg result for not required property {} {}", field.toString(), annotation.toString());
                 return;
@@ -221,12 +218,12 @@ public class ConfigurationsLoader {
         try {
             FieldUtils.writeField(field, object, result, true);
             if (!Strings.isEmpty(finalPath)) {
-                cache.append(Strings.concat(KEY_VALUE_PRETTY_DELIMITER, finalPath, result.toString())).append(StringConstants.LINE);
+                cache.append(Strings.concat(KEY_VALUE_PRETTY_DELIMITER, finalPath, Strings.toString(result))).append(StringConstants.LINE);
             }
-            log.debug("Resolving is success. Field {} is {}", field.toString(), result.toString());
+            log.debug("Resolving is success. Field {} is {}", field.toString(), Strings.toString(result));
         } catch (IllegalAccessException ex) {
             throw new UtilException(String.format("Error writing value '%s' required property '%s' to field '%s' of object '%s'",
-                result.toString(), path, field.getType().getSimpleName(), object.getClass().getSimpleName()), ex);
+                    Strings.toString(result), path, field.getType().getSimpleName(), object.getClass().getSimpleName()), ex);
         }
     }
     //endregion

@@ -1,23 +1,26 @@
 package ru.mk.pump.commons.utils;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.utils.History.Info;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Slf4j
-public class HistoryTest {
+class HistoryTest {
 
     private History<String> history;
 
     private LocalDateTime intermediateDate;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
 
         history = new History<>(3);
         history.add(Info.of("id-1", "test-1"));
@@ -32,21 +35,36 @@ public class HistoryTest {
     }
 
     @Test
-    public void getAll() {
+    void getAll() {
         assertThat(history.getAll())
-            .hasOnlyElementsOfType(Info.class)
-            .hasSize(3);
+                .hasOnlyElementsOfType(Info.class)
+                .hasSize(3);
     }
 
     @Test
-    public void add() {
+    void prettyPrinter() {
+        log.info(history.toPrettyString());
+    }
+
+    @Test
+    void getLast() {
+        history.add(Info.of("id-5", "test-5"));
+        assertThat(history.getLast().get().getPayload()).isEqualTo("test-5");
+
+        Info<String> info = Info.of(UUID.randomUUID().toString(), "test-4", LocalDateTime.now().minusSeconds(1));
+        history.add(info);
+        assertThat(history.getLast().get().getPayload()).isEqualTo("test-5");
+    }
+
+    @Test
+    void add() {
         Info<String> info = Info.of("test-4");
         history.add(info);
         assertThat(history.getAll()).contains(info);
     }
 
     @Test
-    public void clear() {
+    void clear() {
         history.clear();
         assertThat(history.getAll()).isEmpty();
         assertThat(history.asList()).isEmpty();
@@ -54,23 +72,23 @@ public class HistoryTest {
     }
 
     @Test
-    public void findAfter() {
+    void findAfter() {
         assertThat(history.findAfter(intermediateDate)).hasSize(2);
     }
 
     @Test
-    public void findBefore() {
+    void findBefore() {
         assertThat(history.findBefore(intermediateDate)).hasSize(1);
     }
 
     @Test
-    public void findById() {
+    void findById() {
         history.add(Info.of("id-3", "test-4"));
         assertThat(history.findById("id-3"));
     }
 
     @Test
-    public void findLastById() {
+    void findLastById() {
         LocalDateTime time = LocalDateTime.now();
         history.add(Info.of("id-3", "test-4"));
         Optional<Info<String>> info = history.findLastById("id-3");
@@ -80,20 +98,20 @@ public class HistoryTest {
     }
 
     @Test
-    public void asList() {
+    void asList() {
         assertThat(history.asList())
-            .hasOnlyElementsOfType(Info.class)
-            .hasSize(3);
+                .hasOnlyElementsOfType(Info.class)
+                .hasSize(3);
     }
 
     @Test
-    public void testClone() {
+    void testClone() {
         final History<String> newHistory = history.clone();
         assertThat(newHistory.getAll()).contains(history.getAll().poll(), history.getAll().poll(), history.getAll().poll());
     }
 
     @Test
-    public void getMaxSize() {
+    void getMaxSize() {
         final History<String> newHistory = history.clone();
 
         assertThat(history.getCapacity()).isEqualTo(3);
@@ -101,7 +119,7 @@ public class HistoryTest {
     }
 
     @Test
-    public void testInfo() {
+    void testInfo() {
         final Info<String> info = Info.of("test1");
         assertThat(info.getCreateDate()).isBeforeOrEqualTo(LocalDateTime.now());
         assertThat(info.getId()).matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");

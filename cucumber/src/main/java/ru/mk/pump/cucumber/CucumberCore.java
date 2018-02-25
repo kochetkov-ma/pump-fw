@@ -1,7 +1,6 @@
 package ru.mk.pump.cucumber;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,24 +17,27 @@ import ru.mk.pump.web.page.PageManager;
 import ru.mk.pump.web.utils.TestVars;
 import ru.mk.pump.web.utils.WebReporter;
 
+import java.util.Map;
+
 @SuppressWarnings("unused")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CucumberPumpCore {
+public class CucumberCore {
 
     private static final String DEFAULT_SYSTEM_ENV_NAME = "pump.cucumber.configuration.path";
 
     private static final String DEFAULT_CLASSPATH_RESOURCE = "pump.cucumber.properties";
 
-    private static final CucumberPumpCore INSTANCE = new CucumberPumpCore();
+    private static final CucumberCore INSTANCE = new CucumberCore();
 
     private final Map<String, Object> DEFAULT_TEST_VARS = ImmutableMap.<String, Object>builder()
-        .put("test_runner", "cucumber")
-        .build();
+            .put("test_runner", "cucumber")
+            .build();
 
+    @Getter
     private final ConfigurationHelper<CucumberConfig> configHelper = new ConfigurationHelper<>(DEFAULT_SYSTEM_ENV_NAME, DEFAULT_CLASSPATH_RESOURCE,
-        CucumberConfig.of());
+            CucumberConfig.of());
 
-    private final ThreadLocal<CucumberMonitor> cucumberMonitor = InheritableThreadLocal.withInitial(CucumberMonitor::new);
+    private final ThreadLocal<CucumberMonitor> cucumberMonitor = InheritableThreadLocal.withInitial(CucumberMonitor::newInactive);
 
     @Getter
     private final Browsers browsers = new Browsers();
@@ -45,13 +47,19 @@ public class CucumberPumpCore {
 
     private volatile WebItemsController webController;
 
-
-    public static CucumberPumpCore instance() {
+    public static CucumberCore instance() {
         return INSTANCE;
     }
 
     public CucumberMonitor getMonitor() {
         return cucumberMonitor.get();
+    }
+
+    /**
+     * For internal using
+     */
+    public void setMonitor(CucumberMonitor monitor) {
+        cucumberMonitor.set(monitor);
     }
 
     public Reporter getReporter() {

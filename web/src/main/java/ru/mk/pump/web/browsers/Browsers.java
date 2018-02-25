@@ -1,8 +1,6 @@
 package ru.mk.pump.web.browsers;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
+import com.google.common.collect.Queues;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.History;
 import ru.mk.pump.commons.utils.History.Info;
@@ -10,6 +8,14 @@ import ru.mk.pump.web.browsers.builders.ChromeDriverBuilder;
 import ru.mk.pump.web.browsers.builders.GhostDriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.exceptions.BrowserException;
+
+import java.util.Deque;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @Slf4j
@@ -19,30 +25,22 @@ public class Browsers implements AutoCloseable {
 
     private final ThreadLocal<History<Browser>> browserHistory;
 
-    private List<Browser> internalAllBrowsers;
+    private Set<Browser> internalAllBrowsers;
 
     public Browsers() {
         currentBrowser = new InheritableThreadLocal<>();
-        internalAllBrowsers = new CopyOnWriteArrayList<>();
+        internalAllBrowsers = new CopyOnWriteArraySet<>();
         browserHistory = InheritableThreadLocal.withInitial(() -> new History<>(100));
     }
 
-    private static DriverBuilder getBuilder(BrowserConfig browserConfig) {
-        switch (browserConfig.getType()) {
-            case CHROME:
-                return new ChromeDriverBuilder(browserConfig);
-            case PHANTOMJS:
-                return new GhostDriverBuilder(browserConfig);
-            case FIREFOX:
-                throw new UnsupportedOperationException();
-            case IE:
-                throw new UnsupportedOperationException();
-            default:
-                throw new UnsupportedOperationException();
-        }
+    public Deque<Browser> getStartedBrowsers() {
+        return Queues.newArrayDeque(getBrowsers().asList().stream()
+                .map(Info::getPayload)
+                .filter(Browser::isStarted)
+                .collect(Collectors.toList()));
     }
 
-    public Browser addBrowser(Browser browser){
+    public Browser setBrowser(Browser browser) {
         checkClosed();
         internalAllBrowsers.add(browser);
         currentBrowser.set(browser);
@@ -61,9 +59,8 @@ public class Browsers implements AutoCloseable {
     }
 
     /**
-     *
-     * @throws BrowserException No active browser
      * @return current browser or throw exception
+     * @throws BrowserException No active browser
      */
     public Browser get() {
         if (has()) {
@@ -101,9 +98,24 @@ public class Browsers implements AutoCloseable {
         }
     }
 
+    private static DriverBuilder getBuilder(BrowserConfig browserConfig) {
+        switch (browserConfig.getType()) {
+            case CHROME:
+                return new ChromeDriverBuilder(browserConfig);
+            case PHANTOMJS:
+                return new GhostDriverBuilder(browserConfig);
+            case FIREFOX:
+                throw new UnsupportedOperationException();
+            case IE:
+                throw new UnsupportedOperationException();
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
     private void checkClosed() {
         if (isClosed()) {
-            throw new IllegalStateException("The Object was already closed");
+            throw new IllegalStateException("The Object was already closed. Or never had activated");
         }
     }
 }

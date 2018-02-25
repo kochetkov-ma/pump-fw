@@ -4,7 +4,7 @@ import ru.mk.pump.commons.listener.Event;
 import ru.mk.pump.commons.listener.Listener;
 import ru.mk.pump.cucumber.plugin.CucumberListener.TestEvent;
 
-interface CucumberListener extends Listener<CucumberMonitor, TestEvent> {
+public interface CucumberListener extends Listener<CucumberMonitor, TestEvent> {
 
     @Override
     default void on(Event<CucumberMonitor, TestEvent> event, Object... args) {
@@ -18,13 +18,13 @@ interface CucumberListener extends Listener<CucumberMonitor, TestEvent> {
             case START_SCENARIO:
                 onStartScenario(event.get());
                 break;
-            case FINISH_FEATURE:
+            case FINISH_TEST:
                 onFinishTest(event.get());
                 break;
-            case FINISH_SCENARIO:
+            case FINISH_FEATURE:
                 onFinishFeature(event.get());
                 break;
-            case FINISH_TEST:
+            case FINISH_SCENARIO:
                 onFinishScenario(event.get());
                 break;
         }

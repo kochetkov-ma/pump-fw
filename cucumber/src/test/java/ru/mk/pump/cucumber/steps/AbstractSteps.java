@@ -1,17 +1,17 @@
 package ru.mk.pump.cucumber.steps;
 
-import ru.mk.pump.cucumber.CucumberPumpCore;
+import ru.mk.pump.cucumber.CucumberCore;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractSteps {
 
-    private final CucumberPumpCore core;
+    private final CucumberCore core;
 
     public AbstractSteps() {
-        core = CucumberPumpCore.instance();
+        core = CucumberCore.instance();
     }
 
-    public CucumberPumpCore core() {
+    public CucumberCore core() {
         return core;
     }
 
