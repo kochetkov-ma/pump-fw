@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import ru.mk.pump.cucumber.CucumberCore;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -35,7 +36,7 @@ public class CucumberMonitor {
      * @throws IllegalStateException If PumpCucumberPlugin plugin didn't enabled
      */
     public void checkPlugin() {
-        if (!isStarted() && !isFinished()) {
+        if (!isStarted() && !isFinished() && CucumberCore.instance().getConfig().isLoadPumpPlugin()) {
             throw new IllegalStateException(Strings.space("You must enable ru.mk.pump.cucumber.plugin.PumpCucumberPlugin in cucumber options. ",
                     "In @CucumberOptions add parameter 'plugin = {\"ru.mk.pump.cucumber.plugin.PumpCucumberPlugin\"}'. ",
                     "Or in java args add parameter '--plugin ru.mk.pump.cucumber.plugin.PumpCucumberPlugin'"));
@@ -60,7 +61,7 @@ public class CucumberMonitor {
     }
 
     static CucumberMonitor newDefault() {
-        return new CucumberMonitor().addListeners(Listeners.defaultListeners());
+        return new CucumberMonitor().addListeners(Listeners.defaultListeners(CucumberCore.instance().getConfig()));
     }
 
     Set<CucumberListener> getRuntimeListeners() {

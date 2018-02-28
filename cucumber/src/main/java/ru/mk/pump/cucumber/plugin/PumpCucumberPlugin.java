@@ -37,18 +37,20 @@ public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEv
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestRunStarted.class, testStartedHandler);
-        publisher.registerHandlerFor(TestSourceRead.class, featureStartedHandler);
+        if (CucumberCore.instance().getConfig().isLoadPumpPlugin()) {
+            publisher.registerHandlerFor(TestRunStarted.class, testStartedHandler);
+            publisher.registerHandlerFor(TestSourceRead.class, featureStartedHandler);
 
-        publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
-        publisher.registerHandlerFor(TestRunFinished.class, testFinishedHandler);
+            publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
+            publisher.registerHandlerFor(TestRunFinished.class, testFinishedHandler);
 
-        allureCucumber2Jvm.setEventPublisher(publisher);
+            allureCucumber2Jvm.setEventPublisher(publisher);
 
-        publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
-        publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
+            publisher.registerHandlerFor(TestCaseStarted.class, caseStartedHandler);
+            publisher.registerHandlerFor(TestStepStarted.class, stepStartedHandler);
 
-        publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
+            publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
+        }
 
     }
 

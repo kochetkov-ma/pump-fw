@@ -20,8 +20,14 @@ public class CucumberConfig {
     @Property("plugin.enable")
     private boolean loadPumpPlugin = true;
 
+    @Property("plugin.browser")
+    private boolean browserManager = true;
+
     @Property("plugin.browser.singleton")
     private boolean oneBrowserAllFeature = true;
+
+    @Property("plugin.information")
+    private boolean informationManager = true;
 
 
     public static CucumberConfig of() {

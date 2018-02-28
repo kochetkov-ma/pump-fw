@@ -14,9 +14,9 @@ public class CucumberUtil {
     /**
      * @throws AssumptionViolatedException - throw AssumptionViolatedException to skip test
      */
-    public void skip() throws AssumptionViolatedException {
+    public void skipScenario(Scenario scenario) throws AssumptionViolatedException {
         //noinspection ConstantConditions
-        Assume.assumeTrue("[SKIPPED]", false);
+        Assume.assumeTrue("[SKIPPED] " + scenario.getId(), false);
     }
 
     public String toPrettyString(Scenario scenario) {
