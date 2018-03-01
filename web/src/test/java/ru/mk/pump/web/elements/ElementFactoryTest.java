@@ -1,21 +1,20 @@
 package ru.mk.pump.web.elements;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
 import ru.mk.pump.web.elements.internal.BaseElement;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 @Slf4j
 class ElementFactoryTest {
@@ -43,9 +42,9 @@ class ElementFactoryTest {
 
     @Test
     void newElement() {
-        final Map<String, Parameter<?>> param = ImmutableMap.of("дополнительные xpath", Parameter.of(By::xpath, By.class).withValue("xpath"));
+        final Parameters param = Parameters.of(Parameter.of("дополнительные xpath", By.class, "xpath"));
         final ElementConfig config = ElementConfig.of("Тестовый элемент", "Для юнит теста")
-            .withParameters(param);
+                .withParameters(param);
         final By by = By.tagName("div");
         log.info(Strings.toPrettyString(elementFactory.getInfo()));
 
@@ -67,12 +66,12 @@ class ElementFactoryTest {
 
     @Test
     void newElementList() {
-        final Map<String, Parameter<?>> param = ImmutableMap.of("дополнительные xpath", Parameter.of(By::xpath, By.class).withValue("xpath"),
-            "еще параметр", Parameter.of("строка"));
+        final Parameters param = Parameters.of(Parameter.of("дополнительные xpath", By.class, "xpath"),
+                Parameter.of("еще параметр", "строка"));
         final ElementConfig configParent = ElementConfig.of("Тестовый элемент", "Для юнит теста")
-            .withParameters(param);
+                .withParameters(param);
         final ElementConfig configChild = ElementConfig.of("Тестовый элемент", "Для юнит теста")
-            .withParameters(param);
+                .withParameters(param);
 
         final By byParent = By.tagName("section");
         final By byChild = By.xpath(".//button[@data-aid='startRegistration']");

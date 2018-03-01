@@ -1,12 +1,13 @@
 package ru.mk.pump.commons.activity;
 
+import ru.mk.pump.commons.helpers.Parameters;
+
 import java.io.Closeable;
-import java.util.Map;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface Activity extends Closeable {
 
-    Map<String, Parameter<?>> getParams();
+    Parameters getParams();
 
     boolean isClosed();
 

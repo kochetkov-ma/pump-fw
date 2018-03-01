@@ -6,13 +6,13 @@ import ru.mk.pump.web.elements.api.part.SelectedItems;
 import ru.mk.pump.web.elements.internal.DocParameters;
 
 @DocParameters({
-    ElementParams.DROPDOWN_EXPAND_BY,
-    ElementParams.DROPDOWN_BEFORE_SELECT,
-    ElementParams.SELECTOR_STATIC_ITEMS,
-    ElementParams.SELECTOR_ITEMS_BY,
-    ElementParams.SELECTED_MARK,
-    ElementParams.SELECTED_STRATEGY,
-    ElementParams.EDITABLE_SET
+    "DROPDOWN_EXPAND_BY",
+    "DROPDOWN_BEFORE_SELECT",
+    "SELECTOR_STATIC_ITEMS",
+    "SELECTOR_ITEMS_BY",
+    "SELECTED_MARK",
+    "SELECTED_STRATEGY",
+    "EDITABLE_SET"
 })
 public interface DropDown extends Element, SelectedItems {
 

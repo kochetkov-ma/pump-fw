@@ -1,23 +1,25 @@
 package ru.mk.pump.web.elements.internal;
 
-import com.google.common.collect.ImmutableMap;
-import java.util.List;
-import java.util.function.Predicate;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.*;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.AbstractTestWithBrowser;
+import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 @Slf4j
 public class SubElementHelperTest extends AbstractTestWithBrowser {
@@ -29,10 +31,10 @@ public class SubElementHelperTest extends AbstractTestWithBrowser {
         super.setUp();
         ElementFactory elementFactory = new ElementFactory(new ElementImplDispatcher(), getBrowser());
         final ElementConfig configParent = ElementConfig.of("Тестовый элемент", "Для юнит теста")
-            .withParameters(ImmutableMap.of("дополнительные xpath", Parameter.of(By::xpath, By.class).withValue("xpath")));
+                .withParameters(Parameters.of(Parameter.of("дополнительные xpath", By.class, "xpath")));
         final By byParent = By.tagName("section");
         parent = elementFactory.newElement(TextArea.class, byParent, configParent.withIndex(1));
-        getBrowser().open("https://app-digitalmortgage003.open.ru/");
+        getBrowser().open(DMUrls.MAIN_PAGE_URL);
     }
 
     @Test

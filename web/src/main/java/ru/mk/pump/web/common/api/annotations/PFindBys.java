@@ -9,7 +9,8 @@ import java.lang.annotation.Target;
 import java.util.Arrays;
 import java.util.Map;
 import org.openqa.selenium.By;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.web.common.api.ParameterTransformer;
 import ru.mk.pump.web.common.api.annotations.PFindBy.PFindByTransformer;
 import ru.mk.pump.web.common.pageobject.ParameterTransformerAnnotation;
@@ -25,11 +26,11 @@ public @interface PFindBys {
     class PFindBysTransformer implements ParameterTransformer<By[], PFindBys> {
 
         @Override
-        public Map<String, Parameter<By[]>> transform(PFindBys annotation) {
+        public Parameters transform(PFindBys annotation) {
             final ParameterTransformer<By[], PFindBy> transformer = new PFindByTransformer();
-            final Map<String, Parameter<By[]>> result = Maps.newHashMap();
+            final Parameters result = Parameters.of();
             Arrays.stream(annotation.value())
-                .forEach(a -> result.putAll(transformer.transform(a)));
+                .forEach(a -> result.addAll(transformer.transform(a)));
             return result;
         }
     }

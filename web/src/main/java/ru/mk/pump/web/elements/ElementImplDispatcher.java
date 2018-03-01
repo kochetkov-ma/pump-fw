@@ -8,8 +8,8 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.reflections.Reflections;
-import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.commons.exception.PumpMessage;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.utils.ReflectionUtils;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.common.api.PageItemImplDispatcher;
@@ -48,6 +48,41 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
 
     private final SetMultimap<Class<? extends Element>, ElementImpl<? extends BaseElement>> interfaceToImplMap;
 
+    @SuppressWarnings("WeakerAccess")
+    @Getter
+    @EqualsAndHashCode(of = {"implementation"})
+    public static class ElementImpl<T extends BaseElement> {
+
+        private final Class<T> implementation;
+
+        private Parameters parameters;
+
+        private ElementImpl(@NonNull Class<T> implementation, @Nullable Parameters parameters) {
+            this.implementation = implementation;
+            this.parameters = parameters;
+        }
+
+        public static <T extends BaseElement> ElementImpl<T> of(@NonNull Class<T> implementation, @Nullable Parameters parameters) {
+            return new ElementImpl<>(implementation, parameters);
+        }
+
+        public ElementImpl<T> setParameters(Parameters parameters) {
+            this.parameters = parameters;
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("ElementImpl(");
+            sb.append("implementation=").append(implementation.getName());
+            if (parameters != null && !parameters.isEmpty()) {
+                sb.append(", parameters=").append(parameters);
+            }
+            sb.append(')');
+            return sb.toString();
+        }
+    }
+
     public ElementImplDispatcher() {
         this(HashMultimap.create());
     }
@@ -75,7 +110,7 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
         return interfaceToImplMap;
     }
 
-    public <T extends BaseElement> long addParams(@NonNull Class<T> elementImpl, @NonNull Map<String, Parameter<?>> parameters) {
+    public <T extends BaseElement> long addParams(@NonNull Class<T> elementImpl, @NonNull Parameters parameters) {
         return getAll().values().stream()
                 .filter(impl -> elementImpl.isAssignableFrom(impl.getImplementation()))
                 .map(impl -> impl.setParameters(parameters))
@@ -105,41 +140,6 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
         }
         addImplementation(Element.class, ElementImpl.of(BaseElement.class, null));
         log.debug("[ElementImplDispatcher] implementation load - success : {}", Strings.toPrettyString(getInfo()));
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    @Getter
-    @EqualsAndHashCode(of = {"implementation"})
-    public static class ElementImpl<T extends BaseElement> {
-
-        private final Class<T> implementation;
-
-        private Map<String, Parameter<?>> parameters;
-
-        private ElementImpl(@NonNull Class<T> implementation, @Nullable Map<String, Parameter<?>> parameters) {
-            this.implementation = implementation;
-            this.parameters = parameters;
-        }
-
-        public static <T extends BaseElement> ElementImpl<T> of(@NonNull Class<T> implementation, @Nullable Map<String, Parameter<?>> parameters) {
-            return new ElementImpl<>(implementation, parameters);
-        }
-
-        public ElementImpl<T> setParameters(Map<String, Parameter<?>> parameters) {
-            this.parameters = parameters;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            final StringBuilder sb = new StringBuilder("ElementImpl(");
-            sb.append("implementation=").append(implementation.getName());
-            if (parameters != null && !parameters.isEmpty()) {
-                sb.append(", parameters=").append(parameters);
-            }
-            sb.append(')');
-            return sb.toString();
-        }
     }
 
     @SuppressWarnings("unchecked")

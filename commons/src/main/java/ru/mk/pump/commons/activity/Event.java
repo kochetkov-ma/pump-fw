@@ -1,10 +1,10 @@
 package ru.mk.pump.commons.activity;
 
-import java.util.Map;
+import ru.mk.pump.commons.helpers.Parameters;
 
 public interface Event {
 
     String getName();
 
-    Map<String, Parameter<?>> getParams();
+    Parameters getParams();
 }

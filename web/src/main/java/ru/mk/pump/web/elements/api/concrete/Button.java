@@ -5,7 +5,7 @@ import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.DocParameters;
 
 @DocParameters({
-    ElementParams.EDITABLE_SET
+    "EDITABLE_SET"
 })
 public interface Button extends Element {
 

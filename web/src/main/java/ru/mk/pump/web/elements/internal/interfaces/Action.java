@@ -2,7 +2,8 @@ package ru.mk.pump.web.elements.internal.interfaces;
 
 import java.util.Map;
 import java.util.Set;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.SetState;
@@ -20,9 +21,9 @@ public interface Action<T> extends StrictInfo {
 
     InternalElement getTarget();
 
-    Action<T> withParameters(Map<String, Parameter<?>> parameters);
+    Action<T> withParameters(Parameters parameters);
 
-    Map<String, Parameter<?>> getParameters();
+    Parameters getParameters();
 
     int getTry();
 

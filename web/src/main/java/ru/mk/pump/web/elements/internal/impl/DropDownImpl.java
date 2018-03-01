@@ -11,14 +11,15 @@ import ru.mk.pump.web.elements.api.part.SelectedItems;
 import ru.mk.pump.web.elements.internal.DocParameters;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
-import ru.mk.pump.web.utils.Parameters;
+import ru.mk.pump.commons.utils.ParameterUtils;
 
 /**
  * {@inheritDoc}
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 @FrameworkImpl
-@DocParameters({ElementParams.DROPDOWN_EXPAND_BY, ElementParams.DROPDOWN_BEFORE_SELECT})
+@DocParameters({"DROPDOWN_EXPAND_BY",
+        "DROPDOWN_BEFORE_SELECT"})
 class DropDownImpl extends AbstractSelectorItems implements DropDown {
 
     private static final By[] DEFAULT_EXPAND_BY = {By.xpath("//i[contains(@class,chevron)]"), By.xpath(".")};
@@ -44,8 +45,8 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
     @Override
     protected void initFromParams() {
         super.initFromParams();
-        expandBy = Parameters.getOrDefault(getParams(), ElementParams.DROPDOWN_EXPAND_BY, By[].class, expandBy);
-        beforeSelect = Parameters.getOrDefault(getParams(), ElementParams.DROPDOWN_BEFORE_SELECT, Boolean.class, beforeSelect);
+        expandBy = ParameterUtils.getOrDefault(getParams(), ElementParams.DROPDOWN_EXPAND_BY.getName(), By[].class, expandBy);
+        beforeSelect = ParameterUtils.getOrDefault(getParams(), ElementParams.DROPDOWN_BEFORE_SELECT.getName(), Boolean.class, beforeSelect);
     }
 
     @Override
@@ -66,12 +67,12 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
 
     @Override
     public boolean isExpand() {
-        return !getItems().isEmpty() && getItems().get(0).isDisplayed(1000);
+        return !getItems().isEmpty() && getItems().get(0).isDisplayed(1000).result().isSuccess();
     }
 
     @Override
     public boolean isNotExpand() {
-        return getItems().isEmpty() || getItems().get(0).isNotDisplayed(1000);
+        return getItems().isEmpty() || getItems().get(0).isNotDisplayed(1000).result().isSuccess();
     }
 
     @Override

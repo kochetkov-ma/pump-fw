@@ -1,12 +1,10 @@
 package ru.mk.pump.web.elements.internal;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
+/**
+ * See this parameters in {@link ru.mk.pump.web.constants.ElementParams}
+ */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.CLASS)

@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.web.common.api.ParameterTransformer;
 import ru.mk.pump.web.common.api.annotations.PComponent;
 import ru.mk.pump.web.common.api.annotations.PElement;
@@ -23,8 +24,9 @@ public class PumpElementAnnotations extends Annotations {
         super(annotatedElement);
     }
 
-    @NonNull Map<String, Parameter<?>> buildParameters() {
-        final Map<String, Parameter<?>> parameters = Maps.newHashMap();
+    @NonNull
+    Parameters buildParameters() {
+        final Parameters parameters = Parameters.of();
 
         for (Annotation annotation : getAnnotatedElement().getAnnotations()) {
             if (annotation.annotationType().isAnnotationPresent(ParameterTransformerAnnotation.class)) {
@@ -34,7 +36,7 @@ public class PumpElementAnnotations extends Annotations {
                             .newInstance();
                     if (parameterBuilder != null) {
                         //noinspection unchecked
-                        parameters.putAll(parameterBuilder.transform(annotation));
+                        parameters.addAll(parameterBuilder.transform(annotation));
                     } else {
                         log.error("Cannot find parameter transformer for annotation '{}' and annotated element '{}'", annotation, getAnnotatedElement());
                     }

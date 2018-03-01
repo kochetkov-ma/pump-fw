@@ -1,23 +1,22 @@
 package ru.mk.pump.web.elements.internal;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.Action.ActionStage;
 import ru.mk.pump.web.exceptions.ActionExecutingException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @NoArgsConstructor
@@ -27,7 +26,7 @@ public class ActionExecutor extends ActionNotifier {
     private static final int MAX_TRY = 5;
 
     @Getter
-    private final Map<String, Parameter<?>> parameters = new HashMap<>();
+    private final Parameters parameters = Parameters.of();
 
     private final List<Action> beforeActions = new ArrayList<>();
 
@@ -73,7 +72,7 @@ public class ActionExecutor extends ActionNotifier {
     public <T> T execute(Action<T> tAction) {
         tAction.setStage(ActionStage.NOT_RUN);
         try {
-            if (isExcludedStrategy(tAction, ActionStrategy.NO_STATE_CHECK)){
+            if (isExcludedStrategy(tAction, ActionStrategy.NO_STATE_CHECK)) {
                 if (tAction.getRedefineState() != null) {
                     tAction.setStage(ActionStage.BEFORE);
                     stateResolver.resolve(tAction.getRedefineState()).result().throwExceptionOnFail();
@@ -99,6 +98,11 @@ public class ActionExecutor extends ActionNotifier {
         return payloadExecute(tAction);
     }
 
+    public ActionExecutor withParameters(Parameters parameters) {
+        this.parameters.addAll(parameters);
+        return this;
+    }
+
     protected boolean needNewExecution(Action tAction, Throwable throwable) {
         if (throwable instanceof AssertionError || actionExecutionTry == MAX_TRY) {
             return false;
@@ -107,11 +111,6 @@ public class ActionExecutor extends ActionNotifier {
             return true;
         }
         return true;
-    }
-
-    public ActionExecutor withParameters(Map<String, Parameter<?>> parameters) {
-        this.parameters.putAll(parameters);
-        return this;
     }
 
     protected <T> T payloadExecute(Action<T> tAction) {
@@ -157,6 +156,6 @@ public class ActionExecutor extends ActionNotifier {
 
     private boolean isExcludedStrategy(Action<?> action, ActionStrategy... strategies) {
         return action.getStrategy().isEmpty() || action.getStrategy().stream().anyMatch(i -> i.equals(ActionStrategy.STANDARD)) || Arrays.stream(strategies)
-            .noneMatch(item -> action.getStrategy().stream().anyMatch(strategy -> strategy.equals(item)));
+                .noneMatch(item -> action.getStrategy().stream().anyMatch(strategy -> strategy.equals(item)));
     }
 }

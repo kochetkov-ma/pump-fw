@@ -1,19 +1,16 @@
 package ru.mk.pump.web.elements.internal;
 
 import com.google.common.collect.Sets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiFunction;
 import lombok.ToString;
 import org.openqa.selenium.WebElement;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+
+import java.util.*;
+import java.util.function.BiFunction;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @ToString(exclude = {"actionSupplier", "stateSet"})
@@ -21,7 +18,7 @@ abstract class AbstractAction<T> implements Action<T> {
 
     private static final int MAX_TRY = 5;
 
-    private final BiFunction<WebElement, Map<String, Parameter<?>>, T> actionSupplier;
+    private final BiFunction<WebElement, Parameters, T> actionSupplier;
 
     private final InternalElement internalElement;
 
@@ -33,19 +30,14 @@ abstract class AbstractAction<T> implements Action<T> {
 
     private Set<ActionStrategy> actionStrategies = Sets.newHashSet();
 
-    private Map<String, Parameter<?>> parameters = new HashMap<>();
+    private Parameters parameters = Parameters.of();
 
     private SetState stateSet;
 
-    AbstractAction(BiFunction<WebElement, Map<String, Parameter<?>>, T> actionFunction, InternalElement internalElement, String name) {
+    AbstractAction(BiFunction<WebElement, Parameters, T> actionFunction, InternalElement internalElement, String name) {
         this.actionSupplier = actionFunction;
         this.internalElement = internalElement;
         this.name = name;
-    }
-
-    WebElement getInteractElement() {
-
-        return internalElement.getFinder().findFast().throwExceptionOnFail().getResult();
     }
 
     @Override
@@ -88,13 +80,13 @@ abstract class AbstractAction<T> implements Action<T> {
     }
 
     @Override
-    public Action<T> withParameters(Map<String, Parameter<?>> parameters) {
-        this.parameters.putAll(parameters);
+    public Action<T> withParameters(Parameters parameters) {
+        this.parameters.addAll(parameters);
         return this;
     }
 
     @Override
-    public Map<String, Parameter<?>> getParameters() {
+    public Parameters getParameters() {
         return parameters;
     }
 
@@ -114,14 +106,14 @@ abstract class AbstractAction<T> implements Action<T> {
     }
 
     @Override
-    public Action<T> withStrategy(ActionStrategy... strategies) {
-        actionStrategies.addAll(Arrays.asList(strategies));
+    public Action<T> redefineExpectedState(SetState stateSet) {
+        this.stateSet = stateSet;
         return this;
     }
 
     @Override
-    public Action<T> redefineExpectedState(SetState stateSet) {
-        this.stateSet = stateSet;
+    public Action<T> withStrategy(ActionStrategy... strategies) {
+        actionStrategies.addAll(Arrays.asList(strategies));
         return this;
     }
 
@@ -139,5 +131,10 @@ abstract class AbstractAction<T> implements Action<T> {
             result.put("redefined stateSet", this.stateSet.toString());
         }
         return result;
+    }
+
+    WebElement getInteractElement() {
+
+        return internalElement.getFinder().findFast().throwExceptionOnFail().getResult();
     }
 }

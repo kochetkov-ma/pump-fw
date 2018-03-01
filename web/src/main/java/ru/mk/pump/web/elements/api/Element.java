@@ -7,15 +7,16 @@ import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.Text;
 import ru.mk.pump.web.elements.internal.DocParameters;
+import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.SubElementHelper;
 import ru.mk.pump.web.elements.internal.interfaces.ElementInfo;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
 
 @DocParameters({
-    ElementParams.FOCUS_CUSTOM_SCRIPT,
-    ElementParams.FOCUS_TYPE,
-    ElementParams.CLEAR_TYPE,
+    "FOCUS_CUSTOM_SCRIPT",
+    "FOCUS_TYPE",
+    "CLEAR_TYPE",
 })
 public interface Element extends PrettyPrinter, StrictInfo, Clickable, Text, PageItem {
 
@@ -23,25 +24,25 @@ public interface Element extends PrettyPrinter, StrictInfo, Clickable, Text, Pag
 
     InternalElement advanced();
 
-    boolean isDisplayed();
+    State isDisplayed();
 
-    boolean isNotDisplayed();
+    State isNotDisplayed();
 
-    boolean isExists();
+    State isExists();
 
-    boolean isNotExists();
+    State isNotExists();
 
-    boolean isEnabled();
+    State isEnabled();
 
-    boolean isNotEnabled();
+    State isNotEnabled();
 
-    boolean isDisplayed(int timeoutMs);
+    State isDisplayed(int timeoutMs);
 
-    boolean isNotDisplayed(int timeoutMs);
+    State isNotDisplayed(int timeoutMs);
 
-    boolean isExists(int timeoutMs);
+    State isExists(int timeoutMs);
 
-    boolean isNotExists(int timeoutMs);
+    State isNotExists(int timeoutMs);
 
     String getAttribute(String name);
 

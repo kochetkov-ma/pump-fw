@@ -39,7 +39,7 @@ class PageManagerTest extends AbstractTestWithBrowser {
         this.manager = new PageManager(getBrowsers());
         assertThat(manager.getItemsSet()).isEmpty();
         assertThatThrownBy(() -> manager.getOne("Главная страница")).isInstanceOf(ItemManagerException.class);
-        this.manager = new PageManager(getBrowsers(), null);
+        this.manager = new PageManager(getBrowsers());
         assertThat(manager.getItemsSet()).isEmpty();
         assertThatThrownBy(() -> manager.getOne("Главная страница")).isInstanceOf(ItemManagerException.class);
     }
@@ -64,7 +64,7 @@ class PageManagerTest extends AbstractTestWithBrowser {
 
     @Test
     void getInfo() {
-        assertThat(manager.getInfo()).containsOnlyKeys("browser", "current list", "reporter", "current item", "type", "loaded items", "packages", "pageLoader");
+        assertThat(manager.getInfo()).containsOnlyKeys("browsers", "current list", "reporter", "current item", "type", "loaded items", "packages", "pageLoader");
     }
 
     @Test

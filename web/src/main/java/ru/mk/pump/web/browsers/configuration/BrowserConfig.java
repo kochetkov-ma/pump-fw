@@ -4,8 +4,9 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.commons.config.Property;
+import ru.mk.pump.commons.helpers.Parameters;
 
 @RequiredArgsConstructor
 @Data
@@ -52,5 +53,5 @@ public class BrowserConfig {
     @Property(value = "vnc", defaultValue = "false")
     private boolean selenoidVnc = false;
 
-    private Map<String, Parameter<?>> extraParams = Maps.newHashMap();
+    private Parameters extraParams = Parameters.of();
 }

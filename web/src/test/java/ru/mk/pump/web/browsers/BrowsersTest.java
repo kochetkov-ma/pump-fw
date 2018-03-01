@@ -3,6 +3,8 @@ package ru.mk.pump.web.browsers;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+import java.util.Set;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +45,7 @@ public class BrowsersTest extends AbstractTestWithBrowser {
         threadOne.join();
 
         assertThat(getBrowsers().getBrowsers().size()).isEqualTo(0);
-        assertThat((List) FieldUtils.readField(getBrowsers(), "internalAllBrowsers", true)).hasSize(5);
+        assertThat((Set) FieldUtils.readField(getBrowsers(), "internalAllBrowsers", true)).hasSize(5);
     }
 
     @Test

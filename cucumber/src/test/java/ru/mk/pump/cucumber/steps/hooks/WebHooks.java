@@ -26,11 +26,11 @@ public class WebHooks {
         this.core = CucumberCore.instance();
     }
 
-    @Before(order = 0)
+    @Before(order = 10)
     @Step("Before scenario '{scenario.name}'")
     public void beforeScenarioDefault(Scenario scenario) {
         final TagHelper tags = new TagHelper(scenario);
-        mainHook();
+        checkPluginHook();
         skipHook(tags);
         if (beforeScenarioHook) {
             if (tags.isBrowserRestart()) {
@@ -41,7 +41,7 @@ public class WebHooks {
         }
     }
 
-    @After(order = 0)
+    @After(order = 10)
     @Step("After scenario '{scenario.name}'")
     public void afterScenarioDefault(Scenario scenario) {
         final TagHelper tags = new TagHelper(scenario);
@@ -51,7 +51,7 @@ public class WebHooks {
         }
     }
 
-    private void mainHook() {
+    private void checkPluginHook() {
         core.getMonitor().checkPlugin();
     }
 

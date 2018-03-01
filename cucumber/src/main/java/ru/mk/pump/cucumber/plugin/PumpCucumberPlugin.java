@@ -17,7 +17,6 @@ public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEv
     private final Reporter reporter;
     private final CucumberMonitor monitor;
     private final EventHandler<TestRunStarted> testStartedHandler = this::testStarted;
-    private final EventHandler<TestSourceRead> featureStartedHandler = this::featureStarted;
     private final EventHandler<TestCaseStarted> caseStartedHandler = this::caseStarted;
     private final EventHandler<TestCaseFinished> caseFinishedHandler = this::caseFinished;
     private final EventHandler<TestStepStarted> stepStartedHandler = this::stepStarted;
@@ -39,7 +38,6 @@ public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEv
     public void setEventPublisher(EventPublisher publisher) {
         if (CucumberCore.instance().getConfig().isLoadPumpPlugin()) {
             publisher.registerHandlerFor(TestRunStarted.class, testStartedHandler);
-            publisher.registerHandlerFor(TestSourceRead.class, featureStartedHandler);
 
             publisher.registerHandlerFor(TestCaseFinished.class, caseFinishedHandler);
             publisher.registerHandlerFor(TestRunFinished.class, testFinishedHandler);
@@ -51,7 +49,6 @@ public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEv
 
             publisher.registerHandlerFor(TestStepFinished.class, stepFinishedHandler);
         }
-
     }
 
     private void testStarted(final TestRunStarted event) {
@@ -62,6 +59,8 @@ public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEv
 
     private void testFinished(final TestRunFinished event) {
         if (monitor.getLastFeature().isPresent()) {
+            /*завершить последнюю Feature*/
+            monitor.getLastFeature().get().finish();
             notify(event(monitor, TestEvent.FINISH_FEATURE));
         }
         notify(event(monitor, TestEvent.FINISH_TEST));
@@ -69,15 +68,21 @@ public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEv
         reporter.testStop();
     }
 
-    private void featureStarted(final TestSourceRead event) {
-        if (monitor.getLastFeature().isPresent()) {
-            notify(event(monitor, TestEvent.FINISH_FEATURE));
-        }
-        monitor.addFeature(new Feature(event.uri, event.source));
-        notify(event(monitor, TestEvent.START_FEATURE));
-    }
-
     private void caseStarted(final TestCaseStarted event) {
+        if (monitor.getLastFeature().isPresent()
+                && !monitor.getLastFeature().get().getUrl().equals(event.testCase.getUri())) {
+            /*завершить прошлую Feature*/
+            monitor.getLastFeature().get().finish();
+            notify(event(monitor, TestEvent.FINISH_FEATURE));
+            /*начать новую  Feature*/
+            monitor.addFeature(new Feature(event.testCase.getUri(), event.testCase.getScenarioDesignation()));
+            notify(event(monitor, TestEvent.START_FEATURE));
+        } else if (!monitor.getLastFeature().isPresent()) {
+            /*начать самую первую Feature*/
+            monitor.addFeature(new Feature(event.testCase.getUri(), event.testCase.getScenarioDesignation()));
+            notify(event(monitor, TestEvent.START_FEATURE));
+        }
+
         monitor.updateFeature(feature -> feature.startScenario(new Scenario(event.testCase)));
         notify(event(monitor, TestEvent.START_SCENARIO));
     }

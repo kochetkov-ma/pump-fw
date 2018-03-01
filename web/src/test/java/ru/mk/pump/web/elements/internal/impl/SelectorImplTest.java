@@ -1,14 +1,11 @@
 package ru.mk.pump.web.elements.internal.impl;
 
-import static ru.mk.pump.web.constants.ElementParams.SELECTED_MARK;
-
-import com.google.common.collect.ImmutableMap;
-import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.*;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
@@ -33,15 +30,13 @@ class SelectorImplTest extends AbstractWebTest {
         ElementWaiter.DEFAULT_TIMEOUT_S = 3;
         createPages(getBrowser());
 
-        Assertions.assertThatThrownBy(() -> regPage.getSelectorProgram().set(Collections.singletonMap("fail", Parameter.of("Вторич"))))
-            .isInstanceOf(IllegalArgumentException.class);
-        Assertions.assertThatThrownBy(() -> regPage.getSelectorProgram().set(Collections.singletonMap(ElementParams.EDITABLE_SET, Parameter.of(Long.class, 0L))))
-            .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(() -> regPage.getSelectorProgram().set(Parameter.of("fail", "Вторич")))
+                .isInstanceOf(IllegalArgumentException.class);
 
-        regPage.getSelectorProgram().set(Collections.singletonMap(ElementParams.EDITABLE_SET, Parameter.of("Вторич")));
+        regPage.getSelectorProgram().set(ElementParams.EDITABLE_SET_STRING.withValue("Вторич"));
         Assertions.assertThat(regPage.getSelectorProgram().getSelected().getText()).isEqualTo("Вторичное жилье");
 
-        regPage.getSelectorProgram().set(Collections.singletonMap(ElementParams.EDITABLE_SET, Parameter.of(Integer.class, 0)));
+        regPage.getSelectorProgram().set(ElementParams.EDITABLE_SET_NUMBER.withValue(0));
         Assertions.assertThat(regPage.getSelectorProgram().getSelected().getText()).isEqualTo("Новостройка");
     }
 
@@ -50,19 +45,18 @@ class SelectorImplTest extends AbstractWebTest {
         ElementWaiter.DEFAULT_TIMEOUT_S = 3;
         createPages(getBrowser());
         ((BaseElement) regPage.getSelectorProgram())
-            .withParams(
-                ImmutableMap.<String, Parameter<?>>builder().putAll(ElementParams.enumAsParam(SelectedStrategy.EQUALS)).put(SELECTED_MARK, Parameter.of("selected"))
-                    .build());
+                .withParams(Parameters.of(ElementParams.SELECTED_STRATEGY.withValue(SelectedStrategy.EQUALS),
+                        ElementParams.SELECTED_MARK.withValue("selected")));
 
-        Assertions.assertThatThrownBy(()->regPage.getSelectorProgram().select("Вторич"))
-            .isInstanceOf(ActionExecutingException.class)
-            .hasMessageContaining("Executing action 'Select item by text Вторич' error")
-            .hasCauseInstanceOf(SubElementsNotFoundException.class);
+        Assertions.assertThatThrownBy(() -> regPage.getSelectorProgram().select("Вторич"))
+                .isInstanceOf(ActionExecutingException.class)
+                .hasMessageContaining("Executing action 'Select item by text Вторич' error")
+                .hasCauseInstanceOf(SubElementsNotFoundException.class);
 
         ((BaseElement) regPage.getSelectorProgram())
-            .withParams(
-                ImmutableMap.<String, Parameter<?>>builder().putAll(ElementParams.enumAsParam(SelectedStrategy.CONTAINS)).put(SELECTED_MARK, Parameter.of("selected"))
-                    .build());
+                .withParams(
+                        Parameters.of(ElementParams.SELECTED_STRATEGY.withValue(SelectedStrategy.CONTAINS),
+                                ElementParams.SELECTED_MARK.withValue("selected")));
 
         regPage.getSelectorProgram().select("Вторич");
         Assertions.assertThat(regPage.getSelectorProgram().getSelected().getText()).isEqualTo("Вторичное жилье");

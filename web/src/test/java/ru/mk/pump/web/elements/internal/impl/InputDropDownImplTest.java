@@ -1,11 +1,9 @@
 package ru.mk.pump.web.elements.internal.impl;
 
-import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.*;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.mk.pump.commons.activity.Parameter;
 import ru.mk.pump.web.constants.ElementParams;
 
 @Slf4j
@@ -26,16 +24,16 @@ class InputDropDownImplTest extends AbstractWebTest {
 
     @Test
     void set() {
-        regPage.getInputDropDownRegions().set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Мос")));
+        regPage.getInputDropDownRegions().set(ElementParams.EDITABLE_SET_STRING.withValue("Мос"));
         regPage.getInputDropDownRegions()
-            .set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Мос"), ElementParams.INPUT_DROPDOWN_SET, Parameter.of("Москва")));
+                .set(ElementParams.EDITABLE_SET_STRING.withValue("Мос"), ElementParams.INPUT_DROPDOWN_SET_STRING.withValue("Москва"));
     }
 
     @Test
     void getText() {
         String res = regPage.getInputDropDownRegions().getText();
         log.info(res);
-        regPage.getInputDropDownRegions().set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Москва")));
+        regPage.getInputDropDownRegions().set(ElementParams.EDITABLE_SET_STRING.withValue("Москва"));
         res = regPage.getInputDropDownRegions().getText();
         log.info(res);
     }
@@ -44,7 +42,7 @@ class InputDropDownImplTest extends AbstractWebTest {
     void getTextHidden() {
         String res = regPage.getInputDropDownRegions().getTextHidden();
         log.info(res);
-        regPage.getInputDropDownRegions().set(ImmutableMap.of(ElementParams.EDITABLE_SET, Parameter.of("Москва")));
+        regPage.getInputDropDownRegions().set(ElementParams.EDITABLE_SET_STRING.withValue("Москва"));
         res = regPage.getInputDropDownRegions().getTextHidden();
         log.info(res);
     }

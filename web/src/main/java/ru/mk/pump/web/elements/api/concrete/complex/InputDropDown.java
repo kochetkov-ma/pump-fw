@@ -6,16 +6,16 @@ import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.internal.DocParameters;
 
 @DocParameters({
-    ElementParams.INPUTDROPDOWN_INPUT_BY,
-    ElementParams.INPUTDROPDOWN_DROPDOWN_BY,
-    ElementParams.INPUTDROPDOWN_LOAD_BY,
-    ElementParams.DROPDOWN_EXPAND_BY,
-    ElementParams.DROPDOWN_BEFORE_SELECT,
-    ElementParams.SELECTOR_STATIC_ITEMS,
-    ElementParams.SELECTOR_ITEMS_BY,
-    ElementParams.SELECTED_MARK,
-    ElementParams.SELECTED_STRATEGY,
-    ElementParams.EDITABLE_SET
+    "INPUTDROPDOWN_INPUT_BY",
+    "INPUTDROPDOWN_DROPDOWN_BY",
+    "INPUTDROPDOWN_LOAD_BY",
+    "DROPDOWN_EXPAND_BY",
+    "DROPDOWN_BEFORE_SELECT",
+    "SELECTOR_STATIC_ITEMS",
+    "SELECTOR_ITEMS_BY",
+    "SELECTED_MARK",
+    "SELECTED_STRATEGY",
+    "EDITABLE_SET"
 })
 public interface InputDropDown extends Input, DropDown {
 

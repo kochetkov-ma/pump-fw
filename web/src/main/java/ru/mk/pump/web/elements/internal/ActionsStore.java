@@ -1,17 +1,19 @@
 package ru.mk.pump.web.elements.internal;
 
-import static java.lang.String.format;
-
-import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import ru.mk.pump.commons.utils.ParameterUtils;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.ClearType;
 import ru.mk.pump.web.elements.enums.FocusType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+
+import java.util.List;
+
+import static java.lang.String.format;
 
 /**
  * [RUS]
@@ -42,12 +44,8 @@ public class ActionsStore {
 
     Action clear() {
         return actions.newAction((webElement, param) -> {
-            final ClearType clearType;
-            if (param.containsKey(ElementParams.CLEAR_TYPE)) {
-                clearType = param.get(ElementParams.CLEAR_TYPE).getValue(ClearType.class);
-            } else {
-                clearType = ClearType.ADVANCED;
-            }
+            final ClearType clearType = ParameterUtils.getOrDefault(param, ElementParams.CLEAR_TYPE.getName(), ClearType.class, ClearType.ADVANCED);
+            //noinspection ConstantConditions
             switch (clearType) {
                 case BASIC:
                     webElement.clear();
@@ -85,16 +83,17 @@ public class ActionsStore {
         final String SCROLL_TOP = "arguments[0].scrollIntoView(true);";
         final String SCROLL_BOTTOM = "arguments[0].scrollIntoView(false);";
         final String SCROLL_CENTER = "var viewPortHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);"
-            + "var elementTop = arguments[0].getBoundingClientRect().top;"
-            + "window.scrollBy(0, elementTop-(viewPortHeight/2));";
+                + "var elementTop = arguments[0].getBoundingClientRect().top;"
+                + "window.scrollBy(0, elementTop-(viewPortHeight/2));";
 
         return actions.newAction((webElement, param) -> {
             String scrollScript = SCROLL_TOP;
-            if (param.containsKey(ElementParams.FOCUS_CUSTOM_SCRIPT)) {
-                scrollScript = param.get(ElementParams.FOCUS_CUSTOM_SCRIPT).asString();
+            if (param.has(ElementParams.FOCUS_CUSTOM_SCRIPT.getName())) {
+                //noinspection ConstantConditions
+                scrollScript = param.get(ElementParams.FOCUS_CUSTOM_SCRIPT.getName()).getStringValue();
             } else {
-                if (param.containsKey(ElementParams.FOCUS_TYPE)) {
-                    final FocusType focusType = param.get(ElementParams.FOCUS_TYPE).getValue(FocusType.class);
+                if (param.has(ElementParams.FOCUS_TYPE.getName())) {
+                    final FocusType focusType = param.get(ElementParams.FOCUS_TYPE.getName()).getValue(FocusType.class);
                     switch (focusType) {
                         case BOTTOM:
                             scrollScript = SCROLL_BOTTOM;

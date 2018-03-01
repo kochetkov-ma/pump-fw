@@ -1,14 +1,14 @@
 package ru.mk.pump.commons.activity;
 
-import com.google.common.collect.Maps;
-import java.util.Map;
 import lombok.ToString;
+import ru.mk.pump.commons.helpers.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 
 @SuppressWarnings("unused")
 @ToString
 public final class NamedEvent implements Event {
 
-    private final Map<String, Parameter<?>> parameterMap = Maps.newHashMap();
+    private final Parameters parameters = Parameters.of();
 
     private final String name;
 
@@ -20,8 +20,8 @@ public final class NamedEvent implements Event {
         return new NamedEvent(name);
     }
 
-    public NamedEvent addParam(String name, Parameter<?> param) {
-        parameterMap.put(name, param);
+    public NamedEvent addParam(Parameter<?> param) {
+        parameters.add(param);
         return this;
     }
 
@@ -31,7 +31,7 @@ public final class NamedEvent implements Event {
     }
 
     @Override
-    public Map<String, Parameter<?>> getParams() {
-        return parameterMap;
+    public Parameters getParams() {
+        return parameters;
     }
 }

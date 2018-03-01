@@ -2,19 +2,28 @@ package ru.mk.pump.web.utils;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Nullable;
 import lombok.NonNull;
 import lombok.ToString;
 import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.utils.Strings;
 
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
+
 @SuppressWarnings("unused")
 @ToString
 public final class TestVars implements PrettyPrinter {
 
+    @SuppressWarnings("WeakerAccess")
+    public final static String RESULT = "result";
+
+    @SuppressWarnings("WeakerAccess")
+    public final static String LAST_PUT = "last_put";
+
     private final Map<String, Object> sourceMap;
+
+    private volatile Object last;
 
     private TestVars(Map<String, Object> sourceMap) {
         /*HashMap because concurrent map not supplies null value*/
@@ -43,7 +52,24 @@ public final class TestVars implements PrettyPrinter {
     @NonNull
     public TestVars put(@NonNull String key, @Nullable Object value) {
         sourceMap.put(key, value);
+        last = value;
         return this;
+    }
+
+    @NonNull
+    public TestVars putResult(@Nullable Object value) {
+        sourceMap.put(RESULT, value);
+        return this;
+    }
+
+    @Nullable
+    public Object getResult() {
+        return sourceMap.get(RESULT);
+    }
+
+    @Nullable
+    public Object getLastPut() {
+        return last;
     }
 
     @Nullable

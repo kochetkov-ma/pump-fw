@@ -33,7 +33,7 @@ class BasePageTest extends AbstractPageTest {
         assertThat(page.getPageTitle().info().getDescription()).isEqualTo("Главный заголовок страницы");
 
         InputDropDown inputDropDown = page.getMainForm().getRegFormZones().get(2).getRegFormZoneColumns().get(1).getInputDropDownRegions();
-        assertThat(((BaseElement) inputDropDown).getParams()).hasSize(5);
+        assertThat(((BaseElement) inputDropDown).getParams().size()).isEqualTo(5);
         assertThatCode(() -> inputDropDown.typeAndSelect("Москва")).doesNotThrowAnyException();
 
         assertThatThrownBy(

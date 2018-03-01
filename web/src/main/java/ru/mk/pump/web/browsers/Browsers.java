@@ -4,16 +4,15 @@ import com.google.common.collect.Queues;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.History;
 import ru.mk.pump.commons.utils.History.Info;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.builders.ChromeDriverBuilder;
 import ru.mk.pump.web.browsers.builders.GhostDriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.exceptions.BrowserException;
 
 import java.util.Deque;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
@@ -96,6 +95,20 @@ public class Browsers implements AutoCloseable {
             getBrowsers().getAll().forEach(browser -> browser.getPayload().close());
             currentBrowser.remove();
         }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Browsers{");
+        if (currentBrowser.get() != null) {
+            sb.append("currentBrowser=").append(currentBrowser.get().getId());
+        }
+        if (browserHistory.get() != null) {
+            sb.append("browserHistory=").append(Strings.toString(browserHistory));
+        }
+        sb.append(", internalAllBrowsers=").append(internalAllBrowsers);
+        sb.append('}');
+        return sb.toString();
     }
 
     private static DriverBuilder getBuilder(BrowserConfig browserConfig) {

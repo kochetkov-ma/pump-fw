@@ -44,6 +44,8 @@ public interface Component extends PageItem{
         };
     }
 
+    void check();
+
     Initializer getInitializer();
 
 

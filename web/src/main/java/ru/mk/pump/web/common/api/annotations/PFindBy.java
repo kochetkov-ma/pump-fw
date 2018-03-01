@@ -9,7 +9,7 @@ import java.util.Arrays;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBy.FindByBuilder;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.web.common.pageobject.ParameterTransformerAnnotation;
 import ru.mk.pump.web.common.pageobject.SingleParameterTransformer;
 

@@ -1,11 +1,12 @@
 package ru.mk.pump.commons.activity;
 
-import java.util.Map;
+import lombok.Setter;
+import lombok.ToString;
+import ru.mk.pump.commons.helpers.Parameters;
+
 import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
-import lombok.Setter;
-import lombok.ToString;
 
 @SuppressWarnings("unused")
 @ToString()
@@ -18,7 +19,7 @@ public abstract class AbstractActivity extends Observable implements Activity {
 
     private volatile boolean activated = false;
 
-    private Map<String, Parameter<?>> param;
+    private Parameters param;
 
     protected AbstractActivity(Observer observer, String uuid) {
         this.uuid = uuid;
@@ -39,13 +40,13 @@ public abstract class AbstractActivity extends Observable implements Activity {
         this(null, UUID.randomUUID().toString());
     }
 
-    public AbstractActivity withParam(Map<String, Parameter<?>> param) {
+    public AbstractActivity withParam(Parameters param) {
         this.param = param;
         return this;
     }
 
     @Override
-    public Map<String, Parameter<?>> getParams() {
+    public Parameters getParams() {
         return param;
     }
 

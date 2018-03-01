@@ -1,7 +1,9 @@
 package ru.mk.pump.web.elements.api.part;
 
-import java.util.Map;
-import ru.mk.pump.commons.activity.Parameter;
+import lombok.NonNull;
+import ru.mk.pump.commons.helpers.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
+import ru.mk.pump.web.elements.internal.DocParameters;
 
 /**
  * [RUS]
@@ -9,13 +11,19 @@ import ru.mk.pump.commons.activity.Parameter;
  * Нужен для унифицированных шагов действий над элементов
  */
 @SuppressWarnings("unused")
+@DocParameters({"EDITABLE_SET", "INPUT_DROPDOWN_SET_STRING", "INPUT_DROPDOWN_SET_NUMBER"})
 public interface Editable {
 
     /**
      * [RUS]
      * Общий метод для установки значения в элемент
+     *
      * @param params Основное значение для установки + любые дополнительные параметры.
-     *      Проверка обязательных параметров осуществляется в реализации каждого конкретного элемента
+     *               Проверка обязательных параметров осуществляется в реализации каждого конкретного элемента
      */
-    void set(Map<String, Parameter<?>> params);
+    void set(Parameters params);
+
+    default void set(@NonNull Parameter... parameters) {
+        set(Parameters.of(parameters));
+    }
 }

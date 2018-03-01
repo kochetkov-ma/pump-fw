@@ -85,8 +85,8 @@ public class PageLoaderPump implements PageLoader {
 
     @Override
     public void checkElements() {
-        existsElements.forEach(el -> checker.checkTrue(format("On page '%s' element '%s' is exists", getPage().getName(), el.info().getName()), el.isExists()));
-        displayedElements.forEach(el -> checker.checkTrue(format("On page '%s' element '%s' is displayed",getPage().getName() , el.info().getName()), el.isDisplayed()));
+        existsElements.forEach(el -> checker.checkTrue(format("On page '%s' element '%s' is exists", getPage().getName(), el.info().getName()), el.isExists().result().isSuccess()));
+        displayedElements.forEach(el -> checker.checkTrue(format("On page '%s' element '%s' is displayed",getPage().getName() , el.info().getName()), el.isDisplayed().result().isSuccess()));
         textContainsElements.forEach((el, text) -> checker.contains(format("On page '%s' element '%s' contains text",getPage().getName(), el.info().getName()), text, el.getText()));
         predicateElements.forEach((el, predicate) -> checker.checkTrue(format("On page '%s' predicate element '%s' is success", getPage().getName(), el.info().getName()), predicate.test(el)));
     }

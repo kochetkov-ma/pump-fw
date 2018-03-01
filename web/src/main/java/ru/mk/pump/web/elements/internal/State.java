@@ -10,12 +10,14 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import lombok.NonNull;
+import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.interfaces.StrictInfo;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.enums.StateType;
 
 @SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue"})
-public class State implements StrictInfo{
+public class State implements StrictInfo, PrettyPrinter{
 
     private final StateType stateType;
 
@@ -73,6 +75,11 @@ public class State implements StrictInfo{
     public State withTearDown(Consumer<WaitResult<Boolean>> tearDown) {
         this.tearDown = tearDown;
         return this;
+    }
+
+    @Override
+    public String toPrettyString() {
+        return Strings.toPrettyString(getInfo());
     }
 
     protected State withPayload(Set<Callable<Boolean>> payload) {

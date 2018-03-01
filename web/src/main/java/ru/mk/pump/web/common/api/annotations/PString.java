@@ -5,7 +5,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.web.common.pageobject.ParameterTransformerAnnotation;
 import ru.mk.pump.web.common.pageobject.SingleParameterTransformer;
 

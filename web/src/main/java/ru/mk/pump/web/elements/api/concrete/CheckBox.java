@@ -7,7 +7,7 @@ import ru.mk.pump.web.elements.internal.DocParameters;
 
 @SuppressWarnings({"UnnecessaryInterfaceModifier", "unused"})
 @DocParameters({
-    ElementParams.EDITABLE_SET
+    "EDITABLE_SET"
 })
 public interface CheckBox extends Element, Editable {
 

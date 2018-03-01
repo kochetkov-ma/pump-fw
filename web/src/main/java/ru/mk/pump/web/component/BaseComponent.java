@@ -8,6 +8,7 @@ import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
 import ru.mk.pump.web.elements.internal.BaseElement;
+import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
 
@@ -30,6 +31,12 @@ public class BaseComponent extends BaseElement implements Component {
 
     public BaseComponent(By avatarBy, Browser browser) {
         super(avatarBy, browser);
+    }
+
+    @Override
+    public void check() {
+        State res = getStateResolver().resolve(ready());
+        getVerifier().checkTrue(res.name(), res.result().isSuccess(), res.toPrettyString());
     }
 
     @Override

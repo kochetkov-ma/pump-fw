@@ -9,6 +9,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.BiFunction;
 import javax.annotation.Nullable;
+
+import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
@@ -318,8 +320,8 @@ public class WebItemsController implements StrictInfo {
     }
     //endregion
 
-    @Nullable
-    public static <T> T cast(@Nullable Object object, @NonNull Class<T> expectedClass) {
+    @NonNull
+    public static <T> T cast(@NonNull Object object, @NonNull Class<T> expectedClass) {
         return Objects.cast(object, expectedClass);
     }
 }

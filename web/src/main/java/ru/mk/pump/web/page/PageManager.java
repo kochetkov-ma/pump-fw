@@ -5,6 +5,7 @@ import org.apache.commons.lang3.reflect.ConstructorUtils;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.AbstractItemsManager;
 import ru.mk.pump.web.common.pageobject.PumpElementAnnotations;
@@ -44,7 +45,7 @@ public class PageManager extends AbstractItemsManager<BasePage> {
     protected Constructor<? extends BasePage> findConstructor(Class<? extends BasePage> itemClass) throws ReflectiveOperationException {
         Constructor<? extends BasePage> res = ConstructorUtils.getAccessibleConstructor(itemClass, Browsers.class, Reporter.class);
         if (res == null) {
-            return itemClass.getConstructor(Browsers.class);
+            return itemClass.getConstructor(Browser.class);
         } else {
             return res;
         }

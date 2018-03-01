@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.AbstractItemsManager;
 import ru.mk.pump.web.common.api.annotations.PComponent;
@@ -36,7 +37,7 @@ public class ComponentStaticManager extends AbstractItemsManager<BaseComponent> 
 
     @Override
     protected Constructor<? extends BaseComponent> findConstructor(Class<? extends BaseComponent> itemClass) throws ReflectiveOperationException {
-        return itemClass.getConstructor(By.class, Browsers.class);
+        return itemClass.getConstructor(By.class, Browser.class);
     }
 
     @Override

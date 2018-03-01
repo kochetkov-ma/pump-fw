@@ -1,18 +1,18 @@
 package ru.mk.pump.web.elements;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Verifier;
+
+import javax.annotation.Nullable;
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.Set;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Getter
@@ -21,7 +21,7 @@ public class ElementConfig {
 
     private Set<Class<? extends Annotation>> requirements = Sets.newHashSet();
 
-    private Map<String, Parameter<?>> parameters = Maps.newHashMap();
+    private Parameters parameters = Parameters.of();
 
     private int index = -1;
 
@@ -51,13 +51,13 @@ public class ElementConfig {
         return this;
     }
 
-    public ElementConfig withParameters(@NonNull Map<String, Parameter<?>> parameters) {
-        this.parameters.putAll(parameters);
+    public ElementConfig withParameters(@NonNull Parameters parameters) {
+        this.parameters.addAll(parameters);
         return this;
     }
 
     public ElementConfig addParameter(@NonNull String key, Parameter value) {
-        this.parameters.put(key, value);
+        this.parameters.add(value.withName(key));
         return this;
     }
 

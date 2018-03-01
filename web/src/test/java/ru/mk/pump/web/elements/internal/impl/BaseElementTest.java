@@ -95,7 +95,7 @@ public class BaseElementTest extends AbstractWebTest {
 
         getBrowser().open(regPage.getUrl());
 
-        Assertions.assertThat(regPage.getHiddenItems().isNotEnabled()).isFalse();
+        Assertions.assertThat(regPage.getHiddenItems().isNotEnabled().result().isSuccess()).isFalse();
 
         getBrowser().open(mainPage.getUrl());
 
@@ -121,24 +121,24 @@ public class BaseElementTest extends AbstractWebTest {
     void isAllState() {
         getBrowser().open(regPage.getUrl());
 
-        Assertions.assertThat(regPage.getHiddenItems().isExists()).isTrue();
-        Assertions.assertThat(regPage.getInputSurname().isDisplayed()).isTrue();
-        Assertions.assertThat(regPage.getInputSurname().isEnabled()).isTrue();
+        Assertions.assertThat(regPage.getHiddenItems().isExists().result().isSuccess()).isTrue();
+        Assertions.assertThat(regPage.getInputSurname().isDisplayed().result().isSuccess()).isTrue();
+        Assertions.assertThat(regPage.getInputSurname().isEnabled().result().isSuccess()).isTrue();
     }
 
     @Test
     void isNotAllState() {
         getBrowser().open(regPage.getUrl());
 
-        Assertions.assertThat(regPage.getHiddenItems().isNotDisplayed()).isTrue();
-        Assertions.assertThat(regPage.getNotExists().isNotEnabled()).isTrue();
-        Assertions.assertThat(regPage.getNotExists().isNotExists()).isTrue();
+        Assertions.assertThat(regPage.getHiddenItems().isNotDisplayed().result().isSuccess()).isTrue();
+        Assertions.assertThat(regPage.getNotExists().isNotEnabled().result().isSuccess()).isTrue();
+        Assertions.assertThat(regPage.getNotExists().isNotExists().result().isSuccess()).isTrue();
 
-        Assertions.assertThat(regPage.getHiddenItems().isExists()).isTrue();
+        Assertions.assertThat(regPage.getHiddenItems().isExists().result().isSuccess()).isTrue();
 
-        Assertions.assertThat(regPage.getHiddenItems().isNotDisplayed()).isTrue();
-        Assertions.assertThat(regPage.getNotExists().isNotEnabled()).isTrue();
-        Assertions.assertThat(regPage.getNotExists().isNotExists()).isTrue();
+        Assertions.assertThat(regPage.getHiddenItems().isNotDisplayed().result().isSuccess()).isTrue();
+        Assertions.assertThat(regPage.getNotExists().isNotEnabled().result().isSuccess()).isTrue();
+        Assertions.assertThat(regPage.getNotExists().isNotExists().result().isSuccess()).isTrue();
     }
 
     @Test
@@ -148,9 +148,9 @@ public class BaseElementTest extends AbstractWebTest {
 
         getBrowser().open(regPage.getUrl());
 
-        Assertions.assertThat(regPage.getHiddenItems().isNotEnabled()).isFalse();
-        Assertions.assertThat(regPage.getInputSurname().isNotEnabled()).isFalse();
-        Assertions.assertThat(regPage.getInputSurname().isNotExists()).isFalse();
+        Assertions.assertThat(regPage.getHiddenItems().isNotEnabled().result().isSuccess()).isFalse();
+        Assertions.assertThat(regPage.getInputSurname().isNotEnabled().result().isSuccess()).isFalse();
+        Assertions.assertThat(regPage.getInputSurname().isNotExists().result().isSuccess()).isFalse();
     }
 
     @Test
@@ -160,9 +160,9 @@ public class BaseElementTest extends AbstractWebTest {
 
         getBrowser().open(regPage.getUrl());
 
-        Assertions.assertThat(regPage.getHiddenItems().isDisplayed()).isFalse();
-        Assertions.assertThat(regPage.getNotExists().isEnabled()).isFalse();
-        Assertions.assertThat(regPage.getNotExists().isExists()).isFalse();
+        Assertions.assertThat(regPage.getHiddenItems().isDisplayed().result().isSuccess()).isFalse();
+        Assertions.assertThat(regPage.getNotExists().isEnabled().result().isSuccess()).isFalse();
+        Assertions.assertThat(regPage.getNotExists().isExists().result().isSuccess()).isFalse();
 
     }
 

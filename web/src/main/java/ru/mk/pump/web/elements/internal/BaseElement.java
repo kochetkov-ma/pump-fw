@@ -1,13 +1,10 @@
 package ru.mk.pump.web.elements.internal;
 
-import com.google.common.collect.Maps;
-import java.util.Map;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import ru.mk.pump.commons.activity.Parameter;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
@@ -22,6 +19,9 @@ import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
 import ru.mk.pump.web.utils.WebReporter;
 
+import javax.annotation.Nullable;
+import java.util.Map;
+
 /**
  * PUBLIC BASE IMPLEMENTATION InternalElement interface
  */
@@ -29,7 +29,7 @@ import ru.mk.pump.web.utils.WebReporter;
 @Slf4j
 public class BaseElement extends AbstractElement<BaseElement> implements Element {
 
-    private final Map<String, Parameter<?>> elementParams = Maps.newHashMap();
+    private final Parameters elementParams = Parameters.of();
 
     private ElementFactory selfElementFactory;
 
@@ -41,6 +41,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     private Initializer initializer;
 
+    @SuppressWarnings("FieldCanBeLocal")
     private BaseElementHelper helper;
 
     public BaseElement(By avatarBy, Page page) {
@@ -58,32 +59,15 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         initLocal();
     }
 
-    public Map<String, Parameter<?>> getParams() {
+    public Parameters getParams() {
         return elementParams;
     }
 
-    public BaseElement withParams(Map<String, Parameter<?>> elementConfig) {
-        elementParams.putAll(elementConfig);
+    public BaseElement withParams(Parameters elementConfig) {
+        elementParams.addAll(elementConfig);
         initFromParams();
         getActionExecutor().withParameters(elementConfig);
         return this;
-    }
-
-    /**
-     * Init all parameters:
-     * <ul>
-     *     <li>init field like : {@code private final By[] fieldParam}</li>
-     *     <li>override this method in your subclass</li>
-     *     <li>read parameter and write to the field in method body like :
-     *     {@code fieldParam = Parameters.getOrDefault(getParams(), ElementParams.PARAMETER_NAME, By[].class, fieldParam)}</li>
-     *     <li>do not forget to call super : {@code super.initFromParams()}</li>
-     *     <li>do this in all subclass with parameters</li>
-     * </ul>
-     */
-    protected void initFromParams() {
-        /*
-         * init class fields fom parameter value
-         */
     }
 
     public BaseElement withVerifier(@Nullable Verifier verifier) {
@@ -131,59 +115,53 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     @Override
-    public boolean isDisplayed() {
-        final SetState res = getStateResolver().resolve(displayed());
-        return res.result().isSuccess();
+    public State isDisplayed() {
+        return getStateResolver().resolve(displayed());
     }
 
     @Override
-    public boolean isNotDisplayed() {
-        final SetState res = getStateResolver().resolve(notDisplayed());
-        return res.result().isSuccess();
+    public State isNotDisplayed() {
+        return getStateResolver().resolve(notDisplayed());
     }
 
     @Override
-    public boolean isExists() {
-        final SetState res = getStateResolver().resolve(exists());
-        return res.result().isSuccess();
+    public State isExists() {
+        return getStateResolver().resolve(exists());
     }
 
     @Override
-    public boolean isNotExists() {
-        final State res = getStateResolver().resolve(notExists());
-        return res.result().isSuccess();
+    public State isNotExists() {
+        return getStateResolver().resolve(notExists());
     }
 
     @Override
-    public boolean isEnabled() {
-        final SetState res = getStateResolver().resolve(enabled());
-        return res.result().isSuccess();
+    public State isEnabled() {
+        return getStateResolver().resolve(enabled());
     }
 
     @Override
-    public boolean isNotEnabled() {
-        final SetState res = getStateResolver().resolve(notEnabled());
-        return res.result().isSuccess();
+    public State isNotEnabled() {
+        return getStateResolver().resolve(notEnabled());
     }
 
     @Override
-    public boolean isDisplayed(int timeoutMs) {
-        return getStateResolver().resolve(displayed(), timeoutMs).result().isSuccess();
+    public State isDisplayed(int timeoutMs) {
+        return getStateResolver().resolve(displayed(), timeoutMs);
     }
 
     @Override
-    public boolean isNotDisplayed(int timeoutMs) {
-        return getStateResolver().resolve(notDisplayed(), timeoutMs).result().isSuccess();
+    public State isNotDisplayed(int timeoutMs) {
+        return getStateResolver().resolve(notDisplayed(), timeoutMs);
     }
 
     @Override
-    public boolean isExists(int timeoutMs) {
-        return getStateResolver().resolve(exists(), timeoutMs).result().isSuccess();
+    public State isExists(int timeoutMs) {
+        return getStateResolver().resolve(exists(), timeoutMs);
     }
 
     @Override
-    public boolean isNotExists(int timeoutMs) {
-        return getStateResolver().resolve(notExists(), timeoutMs).result().isSuccess();
+    public State isNotExists(int timeoutMs) {
+        return getStateResolver().resolve(notExists(), timeoutMs);
     }
 
     @Override
@@ -211,10 +189,27 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return super.getElementDescription();
     }
 
+    /**
+     * Init all parameters:
+     * <ul>
+     * <li>init field like : {@code private final By[] fieldParam}</li>
+     * <li>override this method in your subclass</li>
+     * <li>read parameter and write to the field in method body like :
+     * {@code fieldParam = ParameterUtils.getOrDefault(getParams(), ElementParams.PARAMETER_NAME, By[].class, fieldParam)}</li>
+     * <li>do not forget to call super : {@code super.initFromParams()}</li>
+     * <li>do this in all subclass with parameters</li>
+     * </ul>
+     */
+    protected void initFromParams() {
+        /*
+         * init class fields fom parameter value
+         */
+    }
+
     @Override
     protected ActionExecutor newDelegateActionExecutor(StateResolver stateResolver) {
         return super.newDelegateActionExecutor(stateResolver)
-            .addBefore(getFocusAction());
+                .addBefore(getFocusAction());
     }
 
     @Override
@@ -230,17 +225,6 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return res;
     }
 
-    private void initLocal() {
-        setReporter(WebReporter.getReporter());
-        withVerifier(WebReporter.getVerifier());
-        /*helper instance init*/
-        this.helper = new BaseElementHelper(this);
-        /*helper features init*/
-        helper.windowSizeCheckerEnable();
-        helper.stateReportingEnable();
-        helper.actionsReportingEnable();
-    }
-
     protected ElementFactory getSubElementFactory() {
         if (selfElementFactory == null) {
             if (getPage() != null) {
@@ -250,6 +234,17 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
             }
         }
         return selfElementFactory;
+    }
+
+    private void initLocal() {
+        setReporter(WebReporter.getReporter());
+        withVerifier(WebReporter.getVerifier());
+        /*helper instance init*/
+        this.helper = new BaseElementHelper(this);
+        /*helper features init*/
+        helper.windowSizeCheckerEnable();
+        helper.stateReportingEnable();
+        helper.actionsReportingEnable();
     }
 
 

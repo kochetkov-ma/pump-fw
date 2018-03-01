@@ -10,7 +10,7 @@ import org.openqa.selenium.By;
 import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.BaseElement;
-import ru.mk.pump.web.utils.Parameters;
+import ru.mk.pump.commons.utils.ParameterUtils;
 
 @SuppressWarnings("WeakerAccess")
 @ToString(exclude = {"parentElement", "cache"})
@@ -81,7 +81,7 @@ public class Child<T extends Element> {
     }
 
     private By[] extractBys() {
-        defaultByArray = Parameters.getOrDefault(parentElement.getParams(), parameterName, By[].class, defaultByArray);
+        defaultByArray = ParameterUtils.getOrDefault(parentElement.getParams(), parameterName, By[].class, defaultByArray);
         return defaultByArray;
     }
 }
