@@ -27,7 +27,7 @@ public class WebHooks {
     }
 
     @Before(order = 10)
-    @Step("Before scenario '{scenario.name}'")
+    @Step("Before scenario '{scenario.scenarioName}'")
     public void beforeScenarioDefault(Scenario scenario) {
         final TagHelper tags = new TagHelper(scenario);
         checkPluginHook();
@@ -42,7 +42,7 @@ public class WebHooks {
     }
 
     @After(order = 10)
-    @Step("After scenario '{scenario.name}'")
+    @Step("After scenario '{scenario.scenarioName}'")
     public void afterScenarioDefault(Scenario scenario) {
         final TagHelper tags = new TagHelper(scenario);
         if (afterScenarioHook) {

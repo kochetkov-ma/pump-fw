@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import javax.annotation.Nullable;
 
-import com.sun.istack.internal.NotNull;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;

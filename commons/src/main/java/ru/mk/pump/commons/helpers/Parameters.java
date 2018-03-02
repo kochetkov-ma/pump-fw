@@ -3,16 +3,14 @@ package ru.mk.pump.commons.helpers;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.sun.istack.internal.NotNull;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import ru.mk.pump.commons.constants.StringConstants;
-
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
 
 @SuppressWarnings("unused")
 @ToString
@@ -77,7 +75,7 @@ public class Parameters {
         return ImmutableSet.copyOf(parameterMap.values());
     }
 
-    @NotNull
+    @NonNull
     public Parameter<?> getOrEmpty(@Nullable String name) {
         if (name == null) {
             return Parameter.of(StringConstants.UNDEFINED);
@@ -90,12 +88,12 @@ public class Parameters {
         }
     }
 
-    @NotNull
+    @NonNull
     public Parameter<?> getOrEmpty(@NonNull Parameter<?> parameter) {
         return getOrEmpty(parameter.getName());
     }
 
-    @NotNull
+    @NonNull
     public Parameter<?> get(@NonNull Parameter<?> parameter) {
         return get(parameter.getName());
     }
