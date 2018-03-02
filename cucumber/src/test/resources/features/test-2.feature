@@ -1,4 +1,4 @@
-Feature: Debug
+Feature: Debug - 2
 
   Scenario: Test scenario - 1
     * Verify - equals object expected '1' and actual '2'

@@ -1,4 +1,4 @@
-Feature: Debug
+Feature: Debug - 1
 
   @NoSkip
   Scenario: Test scenario - 1
