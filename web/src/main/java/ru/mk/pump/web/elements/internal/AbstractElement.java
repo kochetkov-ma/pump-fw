@@ -224,6 +224,11 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         return actionsStore.inputAction(keys);
     }
 
+    public String getTagName() {
+        return actionExecutor
+                .execute(actionsStore.tagName().withStrategy(ActionStrategy.NO_FINALLY, ActionStrategy.NO_AFTER).redefineExpectedState(exists()));
+    }
+
     public String getAttribute(String name) {
         return actionExecutor
             .execute(actionsStore.attribute(name).withStrategy(ActionStrategy.NO_FINALLY, ActionStrategy.NO_AFTER).redefineExpectedState(exists()));
@@ -337,7 +342,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         result.put("description", getElementDescription());
         result.put("by", getBy().toString());
         if (parentElement != null) {
-            result.put("parentElement", Strings.space(parentElement.getName(), parentElement.getBy().toString()));
+            result.put("parentElement", Strings.space(parentElement.getName()));
         } else {
             result.put("parentElement", "no");
         }

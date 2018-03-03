@@ -1,8 +1,12 @@
 package ru.mk.pump.commons.utils;
 
-import static java.lang.String.format;
-
 import com.google.common.io.Files;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import ru.mk.pump.commons.exception.UtilException;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.InvalidPathException;
@@ -12,11 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
-import lombok.NonNull;
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import ru.mk.pump.commons.exception.UtilException;
+
+import static java.lang.String.format;
 
 /**
  * @author kochetkovma
@@ -45,6 +46,16 @@ public class FileUtils {
         } catch (IOException e) {
             return true;
         }
+    }
+
+    public Path copy(@NonNull Path sourcePath, @NonNull Path targetPath) {
+        targetPath = createIfNotExists(targetPath);
+        try {
+            Files.copy(sourcePath.toFile(), targetPath.toFile());
+        } catch (final IOException cause) {
+            throw new UtilException(format("Cannot copy from '%s' to '%s'", sourcePath.toString(), targetPath.toString()), cause);
+        }
+        return targetPath;
     }
 
     public Path createIfNotExists(@NonNull Path path) {
@@ -117,7 +128,7 @@ public class FileUtils {
         }
         try {
             return java.nio.file.Files.find(sourceDir, depth, (path, attr) -> attr.isDirectory() && path.getFileName().toString().startsWith(dirName))
-                .findFirst().orElseThrow(() -> new UtilException(format("Cannot find dir '%s' in dir '%s'", dirName, sourceDir)));
+                    .findFirst().orElseThrow(() -> new UtilException(format("Cannot find dir '%s' in dir '%s'", dirName, sourceDir)));
         } catch (IOException e) {
             throw new UtilException(format("Cannot find dir '%s' in dir '%s'", dirName, sourceDir), e);
         }
@@ -132,7 +143,7 @@ public class FileUtils {
         }
         try {
             return java.nio.file.Files.find(sourceDir, depth, (path, attr) -> attr.isRegularFile() && path.getFileName().toString().startsWith(fileName))
-                .collect(Collectors.toList());
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new UtilException(format("Cannot find files '%s' in dir '%s'", fileName, sourceDir), e);
         }

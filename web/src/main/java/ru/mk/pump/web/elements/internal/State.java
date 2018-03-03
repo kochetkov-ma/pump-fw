@@ -105,7 +105,7 @@ public class State implements StrictInfo, PrettyPrinter{
         final LinkedHashMap<String, String> result = new LinkedHashMap<>();
         result.put("type", getClass().getSimpleName());
         result.put("stateType", stateType.toString());
-        result.put("result", Objects.toString(result));
+        result.put("result", Strings.toString(this.result));
         result.put("name", name);
         return result;
     }
@@ -150,7 +150,7 @@ public class State implements StrictInfo, PrettyPrinter{
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(" + "stateType=" + stateType.toString()
-            + ", result=" + Objects.toString(result)
+            + ", result=" + Strings.toString(this.result)
             + ", name='" + name + '\''
             + ')';
     }

@@ -32,7 +32,7 @@ import java.util.Map;
 @Slf4j
 @FrameworkImpl
 @DocParameters({
-        "INPUTDROPDOWN_INPUT_BY",
+        "EXTRA_INPUT_BY",
         "INPUTDROPDOWN_DROPDOWN_BY",
         "INPUTDROPDOWN_LOAD_BY",
         "DROPDOWN_EXPAND_BY",
@@ -268,7 +268,7 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     }
 
     {
-        input = new Child<Input>(ElementParams.INPUTDROPDOWN_INPUT_BY.getName(), this).withDefaultBy(DEFAULT_INPUT_BY);
+        input = new Child<Input>(ElementParams.EXTRA_INPUT_BY.getName(), this).withDefaultBy(DEFAULT_INPUT_BY);
         dropDown = new Child<DropDown>(ElementParams.INPUTDROPDOWN_DROPDOWN_BY.getName(), this).withDefaultBy(DEFAULT_DROP_DOWN_BY);
         loadIcon = new Child<>(ElementParams.INPUTDROPDOWN_LOAD_BY.getName(), this).withDefaultBy(DEFAULT_LOAD_ICON);
     }

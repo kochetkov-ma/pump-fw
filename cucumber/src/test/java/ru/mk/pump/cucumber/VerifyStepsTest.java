@@ -2,7 +2,15 @@ package ru.mk.pump.cucumber;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
+import lombok.Getter;
+import lombok.NonNull;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.support.FindBy;
+import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.common.api.annotations.PElement;
+import ru.mk.pump.web.common.api.annotations.PPage;
+import ru.mk.pump.web.elements.api.concrete.TextArea;
+import ru.mk.pump.web.page.BasePage;
 
 
 @RunWith(Cucumber.class)
@@ -12,7 +20,22 @@ import org.junit.runner.RunWith;
         glue = "ru.mk.pump.cucumber",
         features = "classpath:features/")
 public class VerifyStepsTest {
-    void method() {
 
+    @PPage(value = "Главная страница", desc = "Главная страница", baseUrl = "https://ipotekaonline.open.ru")
+    public static class MainPage extends BasePage {
+
+        @FindBy(tagName = "h2")
+        @PElement(value = "Заголовок", desc = "Главный заголовок страницы")
+        @Getter
+        private TextArea pageTitle;
+
+        public MainPage(@NonNull Browser browser) {
+            super(browser);
+        }
+
+        @Override
+        public String getTitle() {
+            return pageTitle.getTextHidden();
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.mk.pump.commons.config.ConfigurationHelper;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Verifier;
@@ -32,6 +33,10 @@ public class CucumberCore {
     private final Map<String, Object> DEFAULT_TEST_VARS = ImmutableMap.<String, Object>builder()
             .put("test_runner", "cucumber")
             .build();
+
+    @Setter
+    @Getter
+    private Stand standConfig;
 
     @Getter
     private final ConfigurationHelper<CucumberConfig> configHelper = new ConfigurationHelper<>(DEFAULT_SYSTEM_ENV_NAME, DEFAULT_CLASSPATH_RESOURCE,

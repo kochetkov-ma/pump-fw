@@ -113,6 +113,25 @@ public class ActionsStore {
         }, "Focus on element");
     }
 
+    Action<Boolean> tryClick() {
+        return actions.newAction(element -> {
+            try {
+                element.click();
+                return true;
+            } catch (Exception ignore){
+                return false;
+            }
+        }, "Is clickable");
+    }
+
+    public Action<Boolean> selected() {
+        return actions.newAction(WebElement::isSelected, "Is selected").withStrategy(ActionStrategy.SIMPLE, ActionStrategy.NO_STATE_CHECK);
+    }
+
+    Action<String> tagName() {
+        return actions.newAction(WebElement::getTagName, "Get Attribute");
+    }
+
     Action<String> attribute(String name) {
         return actions.newAction(e -> {
             return e.getAttribute(name);

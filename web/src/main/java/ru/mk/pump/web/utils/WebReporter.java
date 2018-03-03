@@ -28,9 +28,9 @@ public class WebReporter {
 
     private final static Function<Supplier<WebDriver>, Screenshoter> DEFAULT_SCREEN = BrowserScreenshoter::new;
 
-    private Reporter reporter;
+    private ThreadLocal<Reporter> reporter = new InheritableThreadLocal<>();
 
-    private Verifier verifier;
+    private ThreadLocal<Verifier> verifier = new InheritableThreadLocal<>();
 
     static {
         /*fake init without screens*/
@@ -53,27 +53,27 @@ public class WebReporter {
     }
 
     public synchronized void setReporter(Reporter reporter) {
-        WebReporter.reporter = reporter;
+        WebReporter.reporter.set(reporter);
     }
 
     public synchronized void setVerifier(Verifier verifier) {
-        WebReporter.verifier = verifier;
+        WebReporter.verifier.set(verifier);
     }
 
     /**
      * {@link WebReporter#init(Supplier)} or {@link WebReporter#setReporter(Reporter)} before using
      */
     public Reporter getReporter() {
-        Preconditions.checkNotNull(reporter, "Initialize before using");
-        return reporter;
+        Preconditions.checkNotNull(reporter.get(), "Initialize before using");
+        return reporter.get();
     }
 
     /**
      * {@link WebReporter#init(Supplier)} or {@link WebReporter#setVerifier(Verifier)} before using
      */
     public Verifier getVerifier() {
-        Preconditions.checkNotNull(verifier, "Initialize before using");
-        return verifier;
+        Preconditions.checkNotNull(verifier.get(), "Initialize before using");
+        return verifier.get();
     }
 
     private void newInstancesAndSave(Screenshoter screenshoter, Type loggerDuplicateLevel) {

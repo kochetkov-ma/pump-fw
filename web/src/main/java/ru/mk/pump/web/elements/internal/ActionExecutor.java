@@ -104,7 +104,7 @@ public class ActionExecutor extends ActionNotifier {
     }
 
     protected boolean needNewExecution(Action tAction, Throwable throwable) {
-        if (throwable instanceof AssertionError || actionExecutionTry == MAX_TRY) {
+        if (throwable instanceof AssertionError || throwable instanceof ActionExecutingException || actionExecutionTry >= MAX_TRY) {
             return false;
         }
         if (throwable instanceof NoSuchElementException || throwable instanceof InvalidElementStateException) {
@@ -147,7 +147,7 @@ public class ActionExecutor extends ActionNotifier {
                 tAction.setStage(ActionStage.COMPLETED);
             } else {
                 notifyOnFail(tAction, throwable);
-                throw new ActionExecutingException(tAction, throwable);
+                throw new ActionExecutingException(tAction, throwable).addTarget("action", tAction);
             }
         }
         notifyOnSuccess(tAction, result);

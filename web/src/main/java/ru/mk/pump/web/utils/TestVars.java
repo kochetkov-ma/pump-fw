@@ -93,6 +93,6 @@ public final class TestVars implements PrettyPrinter {
 
     @Override
     public String toPrettyString() {
-        return Strings.toString(sourceMap);
+        return Strings.toPrettyString(sourceMap);
     }
 }

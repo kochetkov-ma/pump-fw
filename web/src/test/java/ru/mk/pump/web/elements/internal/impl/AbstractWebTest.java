@@ -7,6 +7,7 @@ import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
+import ru.mk.pump.web.elements.api.concrete.CheckBox;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.Selector;
@@ -80,6 +81,8 @@ abstract class AbstractWebTest extends AbstractTestWithBrowser {
 
         private final Input inputSurname;
 
+        private final CheckBox checkbox;
+
         private RegPage(Browser browser) {
             inputSurname = new InputImpl(By.id("lastNameId"), browser);
             notExists = new BaseElement(By.xpath(".//div[@class='not_exists']"), browser);
@@ -87,6 +90,7 @@ abstract class AbstractWebTest extends AbstractTestWithBrowser {
             dropDownRegions = new DropDownImpl(By.id("regionAutocompleteId"), browser);
             selectorProgram = new SelectorImpl(By.id("apartmentTypeId"), browser);
             inputDropDownRegions = new InputDropDownImpl(By.id("regionAutocompleteId"), browser);
+            checkbox = new CheckBoxImpl(By.xpath("//input[@id='acceptCreditReportRequestId']/.."), browser);
         }
     }
 

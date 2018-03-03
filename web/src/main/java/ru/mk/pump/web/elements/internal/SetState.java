@@ -67,7 +67,7 @@ public class SetState extends State {
         return StrictInfo.infoBuilder("SetState")
             .put("state type", type().name())
             .put("state name", name())
-            .put("result", Objects.toString(result()))
+            .put("result", Strings.toString(result()))
             .put("states", Strings.toPrettyString(getAll()))
             .build();
     }
@@ -76,7 +76,7 @@ public class SetState extends State {
     public String toString() {
         final StringBuilder sb = new StringBuilder("SetState(");
         sb.append("stateType=").append(type().name());
-        sb.append(", result=").append(Objects.toString(result()));
+        sb.append(", result=").append(Strings.toString(result()));
         sb.append(", name='").append(name());
         if (getTearDown().isPresent()) {
             sb.append(", tearDown=").append("exists");

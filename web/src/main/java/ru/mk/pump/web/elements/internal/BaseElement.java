@@ -70,6 +70,11 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return this;
     }
 
+    @Override
+    public boolean tryClick() {
+        return getActionExecutor().execute(getActionsStore().tryClick());
+    }
+
     public BaseElement withVerifier(@Nullable Verifier verifier) {
         if (verifier != null) {
             this.verifier = verifier;

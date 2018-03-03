@@ -5,6 +5,7 @@ import org.apache.commons.text.WordUtils;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
+import ru.mk.pump.web.elements.enums.CheckBoxState;
 import ru.mk.pump.web.elements.enums.ClearType;
 import ru.mk.pump.web.elements.enums.FocusType;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
@@ -34,6 +35,11 @@ public class ElementParams {
      * {@link ru.mk.pump.web.elements.api.part.Editable#set(ru.mk.pump.commons.helpers.Parameters)} parameter name
      */
     public static final Parameter<Integer> EDITABLE_SET_NUMBER = intParam("setValueNumber");
+    /**
+     * Defined required value to set in any CheckBox element
+     * {@link ru.mk.pump.web.elements.api.part.Editable#set(ru.mk.pump.commons.helpers.Parameters)} parameter name
+     */
+    public static final Parameter<CheckBoxState> EDITABLE_SET_CHECKBOX = enumParam(CheckBoxState.class);
 
     /**
      * drop down element parameter is array of {@link org.openqa.selenium.By} in InputDropDownImpl
@@ -42,7 +48,7 @@ public class ElementParams {
     /**
      * input element parameter is array of {@link org.openqa.selenium.By} in InputDropDownImpl
      */
-    public static final Parameter<By[]> INPUTDROPDOWN_INPUT_BY = byArrayParam("iddInputBy");
+    public static final Parameter<By[]> EXTRA_INPUT_BY = byArrayParam("iddInputBy");
     /**
      * load icon element parameter is array of {@link org.openqa.selenium.By} in InputDropDownImpl (when ajax list of element loading too long)
      */

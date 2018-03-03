@@ -9,6 +9,7 @@ import ru.mk.pump.web.browsers.builders.ChromeDriverBuilder;
 import ru.mk.pump.web.browsers.builders.GhostDriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.exceptions.BrowserException;
+import ru.mk.pump.web.utils.WebReporter;
 
 import java.util.Deque;
 import java.util.Set;
@@ -44,7 +45,9 @@ public class Browsers implements AutoCloseable {
         internalAllBrowsers.add(browser);
         currentBrowser.set(browser);
         browserHistory.get().add(Info.of(browser.getId(), browser));
-        return currentBrowser.get();
+        /*update screen shooter*/
+        WebReporter.init(browser);
+        return browser;
     }
 
     public Browser newBrowser(BrowserConfig browserConfig) {
@@ -54,7 +57,9 @@ public class Browsers implements AutoCloseable {
         internalAllBrowsers.add(newBrowser);
         currentBrowser.set(newBrowser);
         browserHistory.get().add(Info.of(newBrowser.getId(), newBrowser));
-        return currentBrowser.get();
+        /*update screen shooter*/
+        WebReporter.init(newBrowser);
+        return newBrowser;
     }
 
     /**

@@ -1,22 +1,27 @@
 package ru.mk.pump.web.elements.api.concrete;
 
-import ru.mk.pump.web.constants.ElementParams;
+import com.google.common.base.Preconditions;
+import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.part.Editable;
+import ru.mk.pump.web.elements.enums.CheckBoxState;
 import ru.mk.pump.web.elements.internal.DocParameters;
+
+import static ru.mk.pump.web.constants.ElementParams.EDITABLE_SET_CHECKBOX;
 
 @SuppressWarnings({"UnnecessaryInterfaceModifier", "unused"})
 @DocParameters({
-    "EDITABLE_SET"
+        "EDITABLE_SET"
 })
 public interface CheckBox extends Element, Editable {
 
-    void setState(State state);
+    CheckBoxState getState();
 
-    void getState(State state);
+    void setState(CheckBoxState state);
 
-    public enum State {
-        CHECKED, UNCHECKED
+    @Override
+    default void set(Parameters params) {
+        Preconditions.checkArgument(params.has(EDITABLE_SET_CHECKBOX), "Has EDITABLE_SET_CHECKBOX in Parameters");
+        setState(params.get(EDITABLE_SET_CHECKBOX).getValue(CheckBoxState.class));
     }
-
 }

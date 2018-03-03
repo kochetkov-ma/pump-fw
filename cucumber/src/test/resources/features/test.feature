@@ -2,6 +2,7 @@ Feature: Debug - 1
 
   @NoSkip
   Scenario: Test scenario - 1
+    * Page - open 'Главная страница'
     * Verify - equals object expected '1' and actual '2'
     * Verify - equals object expected '1' and actual '2'
 
