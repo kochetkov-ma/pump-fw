@@ -1,26 +1,26 @@
-group='ru.iopump'
+group = 'ru.iopump'
 
 
 ext {
     versions = [
-            aspectj      : "1.8.10",
+            aspectj: "1.8.10",
             allure_gradle: "2.5",
-            annotations  : "3.0.2",
-            lombok       : "latest.release",
-            apache       : "latest.release",
-            guava        : "latest.release",
-            reflections  : "latest.release",
-            logger       : "latest.release",
-            junit        : "4.12",
-            jackson      : "2.9.0.pr4",
-            selenium     : "3.7.0",
-            allure       : "latest.release",
-            assertj      : "3.8.0",
-            allureJunit4 : "latest.release",
-            junit5       : "latest.release",
-            mockito      : "2.+",
-            trove        : "3.+",
-            joda_time    : "latest.release"
+            annotations: "3.0.2",
+            lombok: "latest.release",
+            apache: "latest.release",
+            guava: "latest.release",
+            reflections: "latest.release",
+            logger: "latest.release",
+            junit: "4.12",
+            jackson: "2.9.0.pr4",
+            selenium: "3.7.0",
+            allure: "latest.release",
+            assertj: "3.8.0",
+            allureJunit4: "latest.release",
+            junit5: "latest.release",
+            mockito: "2.+",
+            trove: "3.+",
+            joda_time: "latest.release"
     ]
 }
 
@@ -73,6 +73,7 @@ subprojects {
     project.version = rootProject.version
     project.group = rootProject.group
 
+    apply plugin: 'signing'
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'org.junit.platform.gradle.plugin'
@@ -117,11 +118,12 @@ subprojects {
     }
 
     dependencies {
+
         compile(
+                "org.projectlombok:lombok:$versions.lombok",
                 "joda-time:joda-time:$versions.joda_time",
                 "org.aspectj:aspectjweaver:1.8.13",
                 "com.google.code.findbugs:jsr305:$versions.annotations",
-                "org.projectlombok:lombok:$versions.lombok",
                 "org.apache.httpcomponents:httpclient:$versions.apache",
                 "org.reflections:reflections:$versions.reflections",
                 "commons-collections:commons-collections:$versions.apache",
@@ -150,12 +152,38 @@ subprojects {
         )
     }
 
+
+
     javadoc {
         failOnError = false
     }
 
+    jar {
+        println "custom jar $project.name"
+        if (project.name == "cucumber") {
+            println 'cucumber'
+            from sourceSets.test.output.classesDirs.getAsFileTree().matching {
+                include('**/steps/**')
+            } + sourceSets.main.output
+        } else {
+            from sourceSets.main.output
+        }
+    }
+
+    task customJar(type: Jar) {
+        println "custom jar $project.name"
+        if (project.name == "cucumber") {
+            println 'cucumber'
+            from sourceSets.test.output.classesDirs.getAsFileTree().matching {
+                include('**/steps/**')
+            } + sourceSets.main.output
+        } else {
+            from sourceSets.main.output
+        }
+    }
+
     task sourceJar(type: Jar) {
-        classifier 'sources'
+        classifier = 'sources'
         from sourceSets.main.allJava
     }
 
@@ -164,18 +192,83 @@ subprojects {
         classifier = 'javadoc'
     }
 
+
+
+    artifacts {
+        archives jar
+        archives sourceJar
+        archives projectJavadoc
+    }
+
+    task signJars (type : Sign, dependsOn: [customJar, projectJavadoc, sourceJar]) {
+        sign configurations.archives
+    }
+
+    task preparePublish(dependsOn: signJars)
+
+    def getSignatureFiles = {
+        def allFiles = project.tasks.signJars.signatureFiles.collect { it }
+        def signedSources = allFiles.find { it.name.contains('-sources') }
+        def signedJavadoc = allFiles.find { it.name.contains('-javadoc') }
+        def signedJar = (allFiles - [signedSources, signedJavadoc])[0]
+        return [
+                [archive: signedSources, classifier: 'sources', extension: 'jar.asc'],
+                [archive: signedJavadoc, classifier: 'javadoc', extension: 'jar.asc'],
+                [archive: signedJar,     classifier: '',      extension: 'jar.asc']
+        ]
+    }
+
+
+
     publishing {
         publications {
+            /*
+            signatures (MavenPublication) {
+                getSignatureFiles().each { signature ->
+                    println "signature: " + signature
+                    println "signature.archive: " + signature.archive
+                    println ""
+                    artifact (signature.archive) {
+                        classifier = signature.classifier
+                        extension  = signature.extension
+                    }
+                }
+            }
+            */
             eachProject(MavenPublication) {
                 from components.java
+                //artifact tasks.customJar
                 artifact tasks.sourceJar
                 artifact tasks.projectJavadoc
+
+                pom.withXml {
+                    asNode().children().last() + {
+                        resolveStrategy = Closure.DELEGATE_FIRST
+                        name project.name
+                        description project.description
+                        licenses {
+                            license {
+                                name 'The Apache Software License, Version 2.0'
+                                url 'http://www.apache.org/license/LICENSE-2.0.txt'
+                                distribution 'repo'
+                            }
+                        }
+                        developers {
+                            developer {
+                                id 'kochetkov-ma'
+                                name 'Kochetkov Maksim'
+                                email 'kochetkov-ma@yandex.ru'
+                            }
+                        }
+                    }
+                }
+
             }
         }
         repositories {
             maven {
                 name "open-nexus"
-                if(project.version.endsWith('-SNAPSHOT')) {
+                if (project.version.endsWith('-SNAPSHOT')) {
                     url "http://rumskapt527.open.ru:8081/content/repositories/automatization_snapshots/"
                 } else {
                     url "http://rumskapt527.open.ru:8081/content/repositories/automatization_releases/"

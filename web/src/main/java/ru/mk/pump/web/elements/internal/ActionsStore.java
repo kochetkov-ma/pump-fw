@@ -32,8 +32,13 @@ public class ActionsStore {
         this.actions = actions;
     }
 
+    public Action<Boolean> selected() {
+        return actions.newAction(WebElement::isSelected, "Is selected")
+                .withStrategy(ActionStrategy.SIMPLE, ActionStrategy.NO_STATE_CHECK);
+    }
+
     Action<String> clickAction() {
-        return actions.newAction(WebElement::click, "Click");
+        return actions.newVoidAction(WebElement::click, "Click");
     }
 
     Action<String> textAction() {
@@ -43,7 +48,7 @@ public class ActionsStore {
     }
 
     Action clear() {
-        return actions.newAction((webElement, param) -> {
+        return actions.newVoidAction((webElement, param) -> {
             final ClearType clearType = ParameterUtils.getOrDefault(param, ElementParams.CLEAR_TYPE.getName(), ClearType.class, ClearType.ADVANCED);
             //noinspection ConstantConditions
             switch (clearType) {
@@ -86,14 +91,16 @@ public class ActionsStore {
                 + "var elementTop = arguments[0].getBoundingClientRect().top;"
                 + "window.scrollBy(0, elementTop-(viewPortHeight/2));";
 
-        return actions.newAction((webElement, param) -> {
+        return actions.newVoidAction((webElement, param) -> {
             String scrollScript = SCROLL_TOP;
             if (param.has(ElementParams.FOCUS_CUSTOM_SCRIPT.getName())) {
                 //noinspection ConstantConditions
                 scrollScript = param.get(ElementParams.FOCUS_CUSTOM_SCRIPT.getName()).getStringValue();
             } else {
                 if (param.has(ElementParams.FOCUS_TYPE.getName())) {
+                    //noinspection ConstantConditions
                     final FocusType focusType = param.get(ElementParams.FOCUS_TYPE.getName()).getValue(FocusType.class);
+                    //noinspection ConstantConditions
                     switch (focusType) {
                         case BOTTOM:
                             scrollScript = SCROLL_BOTTOM;
@@ -118,24 +125,23 @@ public class ActionsStore {
             try {
                 element.click();
                 return true;
-            } catch (Exception ignore){
+            } catch (Exception ignore) {
                 return false;
             }
         }, "Is clickable");
     }
 
-    public Action<Boolean> selected() {
-        return actions.newAction(WebElement::isSelected, "Is selected").withStrategy(ActionStrategy.SIMPLE, ActionStrategy.NO_STATE_CHECK);
-    }
-
     Action<String> tagName() {
-        return actions.newAction(WebElement::getTagName, "Get Attribute");
+        return actions.newAction(WebElement::getTagName, "Get Attribute")
+                .withStrategy(ActionStrategy.SIMPLE)
+                .redefineExpectedState(element.exists());
     }
 
     Action<String> attribute(String name) {
         return actions.newAction(e -> {
             return e.getAttribute(name);
-        }, "Get Attribute");
+        }, "Get Attribute")
+                .withStrategy(ActionStrategy.NO_FINALLY, ActionStrategy.NO_AFTER).redefineExpectedState(element.exists());
     }
 
     <T extends InternalElement> Action<List<T>> subItemsAction(By by, Class<T> elementClass) {

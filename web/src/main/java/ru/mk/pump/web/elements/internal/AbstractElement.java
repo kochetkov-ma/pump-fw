@@ -226,12 +226,12 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     public String getTagName() {
         return actionExecutor
-                .execute(actionsStore.tagName().withStrategy(ActionStrategy.NO_FINALLY, ActionStrategy.NO_AFTER).redefineExpectedState(exists()));
+                .execute(actionsStore.tagName());
     }
 
     public String getAttribute(String name) {
         return actionExecutor
-            .execute(actionsStore.attribute(name).withStrategy(ActionStrategy.NO_FINALLY, ActionStrategy.NO_AFTER).redefineExpectedState(exists()));
+            .execute(actionsStore.attribute(name));
     }
 
     public State jsReady() {

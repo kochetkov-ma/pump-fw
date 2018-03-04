@@ -7,10 +7,7 @@ import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
-import ru.mk.pump.web.elements.api.concrete.CheckBox;
-import ru.mk.pump.web.elements.api.concrete.DropDown;
-import ru.mk.pump.web.elements.api.concrete.Input;
-import ru.mk.pump.web.elements.api.concrete.Selector;
+import ru.mk.pump.web.elements.api.concrete.*;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
 import ru.mk.pump.web.elements.internal.BaseElement;
 
@@ -43,6 +40,10 @@ abstract class AbstractWebTest extends AbstractTestWithBrowser {
 
         private final BaseElement childButtonDiv;
 
+        private final Button flatDocs;
+
+        private final Link flatDocsDownload;
+
         private MainPage(Browser browser) {
             /*parents*/
             parentDiv = new BaseElement(By.xpath(".//div[contains(@class,'b-calculator__rightblock')]"), browser)
@@ -59,6 +60,9 @@ abstract class AbstractWebTest extends AbstractTestWithBrowser {
             parentDivFail = new BaseElement(By.xpath(".//div[contains(@class,'b-calculator__rightblock1')]"), browser);
             /*failChild*/
             childButtonSectionFail = new BaseElement(By.xpath(".//button[@data-aid='startRegistration']"), parentDivFail);
+
+            flatDocs = new ButtonImpl(By.xpath(".//button[text() = 'Перечень документов по приобретаемой квартире']"), browser);
+            flatDocsDownload = new LinkImpl(By.xpath(".//a[text() = 'Ознакомьтесь с полным перечнем документов']"), browser);
 
         }
     }

@@ -5,10 +5,7 @@ import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.*;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class ActionFactory {
@@ -19,8 +16,8 @@ public class ActionFactory {
         this.element = element;
     }
 
-    public <R> Action<R> newAction(BiFunction<WebElement, Parameters, R> actionSupplier, String name) {
-        return new AbstractAction<R>(actionSupplier, element, name) {
+    public <R> Action<R> newAction(BiFunction<WebElement, Parameters, R> actionBiFunction, String name) {
+        return new AbstractAction<R>(actionBiFunction, element, name) {
         };
     }
 
@@ -29,7 +26,12 @@ public class ActionFactory {
         };
     }
 
-    public Action<String> newAction(BiConsumer<WebElement, Parameters> actionConsumer, String name) {
+    public <R> Action<R> newAction(Supplier<R> actionSupplier, String name) {
+        return new AbstractAction<R>((webElement, param) -> actionSupplier.get(), element, name) {
+        };
+    }
+
+    public Action newVoidAction(BiConsumer<WebElement, Parameters> actionConsumer, String name) {
         return new AbstractAction<String>((webElement, param) -> {
             actionConsumer.accept(webElement, param);
             return "void";
@@ -37,9 +39,17 @@ public class ActionFactory {
         };
     }
 
-    public Action<String> newAction(Consumer<WebElement> actionConsumer, String name) {
+    public Action newVoidAction(Consumer<WebElement> actionConsumer, String name) {
         return new AbstractAction<String>((webElement, param) -> {
             actionConsumer.accept(webElement);
+            return "void";
+        }, element, name) {
+        };
+    }
+
+    public Action newVoidAction(Runnable actionRunnable, String name) {
+        return new AbstractAction<String>((webElement, param) -> {
+            actionRunnable.run();
             return "void";
         }, element, name) {
         };

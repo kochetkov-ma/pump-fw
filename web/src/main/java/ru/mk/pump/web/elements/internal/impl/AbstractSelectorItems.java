@@ -99,7 +99,7 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
             finalText = itemText;
         }
         final List<Element> elements = getItems();
-        final Action<String> action = actionFactory.newAction(webElement -> {
+        final Action<?> action = actionFactory.newVoidAction(webElement -> {
             elements.stream().filter(element -> find(element, finalText)).findFirst()
                     .orElseThrow(() -> new SubElementsNotFoundException("text name = " + itemText).withTargetElement(this))
                     .click();
@@ -111,7 +111,7 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
     public void select(int index) {
         final List<Element> elements = getItems();
         Preconditions.checkArgListSize(index, elements);
-        final Action<String> action = actionFactory.newAction(w -> {
+        final Action<?> action = actionFactory.newVoidAction(w -> {
             elements.get(index).click();
         }, "Select item by index " + index).withStrategy(ActionStrategy.NO_AFTER, ActionStrategy.NO_FINALLY, ActionStrategy.NO_STATE_CHECK);
         getActionExecutor().execute(action);

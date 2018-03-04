@@ -1,18 +1,19 @@
 package ru.mk.pump.web.elements.api.concrete.complex;
 
-import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.By;
+import ru.mk.pump.commons.utils.ParameterUtils;
 import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.BaseElement;
-import ru.mk.pump.commons.utils.ParameterUtils;
 
-@SuppressWarnings("WeakerAccess")
+import javax.annotation.Nullable;
+
+@SuppressWarnings({"WeakerAccess", "unused"})
 @ToString(exclude = {"parentElement", "cache"})
 @Slf4j
 public class Child<T extends Element> {
@@ -26,10 +27,17 @@ public class Child<T extends Element> {
 
     private T cache;
 
-    public Child(@NonNull String parameterName, @NonNull BaseElement parentElement) {
+
+    public Child(@NonNull BaseElement parentElement, @Nullable String parameterName) {
         Preconditions.checkStringNotBlank(parameterName);
         this.parameterName = parameterName;
         this.parentElement = parentElement;
+    }
+
+    public Child(@NonNull BaseElement parentElement, @NonNull By[] childByArray) {
+        this.parameterName = null;
+        this.parentElement = parentElement;
+        withDefaultBy(childByArray);
     }
 
     /**
@@ -42,6 +50,7 @@ public class Child<T extends Element> {
 
     /**
      * Find child element and write to local cache
+     *
      * @param childClass Child class element to create if any element has been found
      * @return new child element
      */

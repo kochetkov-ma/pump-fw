@@ -49,7 +49,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
         this.builder = builder;
         this.config = builder.getConfig();
         this.id = this.config.getType().name() + "_" + uuid;
-        this.downloads = new DownloadManager();
+        this.downloads = new DownloadManager(getConfig());
         this.actions = new BrowserActions(this::getDriver);
         this.logs = new LogManager();
         this.windows = new WindowManager(this);

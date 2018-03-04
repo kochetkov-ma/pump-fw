@@ -119,7 +119,7 @@ public class Parameters {
     }
 
     public boolean has(@Nullable String name) {
-        return parameterMap.containsKey(name);
+        return name != null && parameterMap.containsKey(name);
     }
 
     public boolean has(@Nullable Parameter<?> parameter) {

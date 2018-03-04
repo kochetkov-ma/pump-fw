@@ -1,10 +1,7 @@
 package ru.mk.pump.web.browsers.configuration;
 
-import com.google.common.collect.Maps;
-import java.util.Map;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.commons.config.Property;
 import ru.mk.pump.commons.helpers.Parameters;
 
@@ -29,8 +26,8 @@ public class BrowserConfig {
     @Property(value = "remote.url", required = false)
     private String remoteDriverUrl;
 
-    @Property(value = "download.dir", required = false)
-    private String downloadDirPath;
+    @Property(value = "download.dir", defaultValue = "auto_downloads")
+    private String downloadDirPath = "auto_downloads";
 
     @Property(value = "size", required = false)
     private Size sizeOrDevice = Size.of(true);

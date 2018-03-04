@@ -268,8 +268,8 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     }
 
     {
-        input = new Child<Input>(ElementParams.EXTRA_INPUT_BY.getName(), this).withDefaultBy(DEFAULT_INPUT_BY);
-        dropDown = new Child<DropDown>(ElementParams.INPUTDROPDOWN_DROPDOWN_BY.getName(), this).withDefaultBy(DEFAULT_DROP_DOWN_BY);
-        loadIcon = new Child<>(ElementParams.INPUTDROPDOWN_LOAD_BY.getName(), this).withDefaultBy(DEFAULT_LOAD_ICON);
+        input = new Child<Input>(this, ElementParams.EXTRA_INPUT_BY.getName()).withDefaultBy(DEFAULT_INPUT_BY);
+        dropDown = new Child<DropDown>(this, ElementParams.INPUTDROPDOWN_DROPDOWN_BY.getName()).withDefaultBy(DEFAULT_DROP_DOWN_BY);
+        loadIcon = new Child<>(this, ElementParams.INPUTDROPDOWN_LOAD_BY.getName()).withDefaultBy(DEFAULT_LOAD_ICON);
     }
 }

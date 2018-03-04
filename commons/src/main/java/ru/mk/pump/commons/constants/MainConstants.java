@@ -11,4 +11,6 @@ public final class MainConstants {
 
     public static final String SCREEN_FORMAT = "png";
 
+    public static final String HOME = System.getProperty("user.home");
+
 }

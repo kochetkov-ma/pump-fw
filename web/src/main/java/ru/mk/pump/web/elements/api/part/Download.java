@@ -5,5 +5,7 @@ import java.nio.file.Path;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public interface Download {
 
-    Path download();
+    String download();
+
+    void checkDownload(String pathOfFileName);
 }

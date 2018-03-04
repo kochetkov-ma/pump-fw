@@ -35,9 +35,9 @@ public class CheckBoxImpl extends BaseElement implements CheckBox {
 
     @Override
     public CheckBoxState getState() {
-        Action<Boolean> action = newDelegateActionFactory().newAction((webElement, parameters) -> {
-            return getInput().advanced().getActionExecutor().execute(getInput().advanced().getActionsStore().selected());
-        }, "Check state");
+        Action<Boolean> action = newDelegateActionFactory().newAction((webElement) ->
+            getInput().advanced().getActionExecutor().execute(getInput().advanced().getActionsStore().selected())
+        , "Check state");
 
         if (getActionExecutor().execute(action)) {
             return CheckBoxState.CHECKED;
@@ -60,7 +60,7 @@ public class CheckBoxImpl extends BaseElement implements CheckBox {
         }
         /*инициализировать Child<Element> для поиска и хранения input*/
         if (input == null) {
-            input = new Child<>(ElementParams.EXTRA_INPUT_BY.getName(), this).withDefaultBy(DEFAULT_INPUT_BY);
+            input = new Child<>(this, ElementParams.EXTRA_INPUT_BY.getName()).withDefaultBy(DEFAULT_INPUT_BY);
         }
         return input.get(Element.class);
     }

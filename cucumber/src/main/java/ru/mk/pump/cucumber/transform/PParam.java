@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  * [RUS] Помечается параметер в шаге Cucumber, который будет обрабатываться как выражение Pumpkin с правилами для Grrovy скриптов и тестовых параметров
  * Т.е. будут подставляться параметры из Groovy либо из тестовых параметров.
- * <p/>Не поддерживает коллекции или массивы
+ * Не поддерживает коллекции или массивы
  */
 @Transform(PumpkinParamTransformer.class)
 @Retention(RetentionPolicy.RUNTIME)
