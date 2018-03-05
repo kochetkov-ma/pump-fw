@@ -49,5 +49,9 @@ public class WindowSteps extends AbstractSteps {
         core().getVerifier().checkTrue(res.name(), res.result().isSuccess(), res.toPrettyString());
     }
 
+    @Given("^Window - execute '(.+)'$")
+    public void pageExecute(String pumpkinExpression) {
+        core().getWebController().executeOnCurrentComponent(pumpkinExpression);
+    }
 
 }

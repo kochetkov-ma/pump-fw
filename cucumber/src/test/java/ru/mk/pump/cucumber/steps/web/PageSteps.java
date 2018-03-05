@@ -22,6 +22,11 @@ public class PageSteps extends AbstractSteps {
         controller = core().getWebController();
     }
 
+    @Given("^Page - execute '(.+)'$")
+    public void pageExecute(String pumpkinExpression) {
+        core().getWebController().executeOnCurrentPage(pumpkinExpression);
+    }
+
     @Given("^Page - check current page '(.+)'$")
     public void pageSet(String pumpkinExpression) {
         core().getWebController().initPage(pumpkinExpression).check();

@@ -1,4 +1,4 @@
-group = 'ru.iopump'
+group = 'ru.iopump.pumpfw'
 
 
 ext {
@@ -72,15 +72,14 @@ subprojects {
 
     project.version = rootProject.version
     project.group = rootProject.group
+    //project.archivesBaseName=project.name
 
     apply plugin: 'signing'
+    apply plugin: 'maven'
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: 'io.qameta.allure'
-    apply plugin: 'maven-publish'
-    apply plugin: 'maven-publish-auth'
-
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -152,8 +151,6 @@ subprojects {
         )
     }
 
-
-
     javadoc {
         failOnError = false
     }
@@ -170,111 +167,66 @@ subprojects {
         }
     }
 
-    task customJar(type: Jar) {
-        println "custom jar $project.name"
-        if (project.name == "cucumber") {
-            println 'cucumber'
-            from sourceSets.test.output.classesDirs.getAsFileTree().matching {
-                include('**/steps/**')
-            } + sourceSets.main.output
-        } else {
-            from sourceSets.main.output
-        }
-    }
-
     task sourceJar(type: Jar) {
         classifier = 'sources'
         from sourceSets.main.allJava
     }
 
-    task projectJavadoc(type: Jar, dependsOn: 'javadoc') {
+    task javadocJar(type: Jar, dependsOn: 'javadoc') {
         from javadoc.destinationDir
         classifier = 'javadoc'
     }
 
-
-
     artifacts {
-        archives jar
-        archives sourceJar
-        archives projectJavadoc
+        archives sourceJar,javadocJar
     }
 
-    task signJars (type : Sign, dependsOn: [customJar, projectJavadoc, sourceJar]) {
+    signing {
         sign configurations.archives
     }
 
-    task preparePublish(dependsOn: signJars)
-
-    def getSignatureFiles = {
-        def allFiles = project.tasks.signJars.signatureFiles.collect { it }
-        def signedSources = allFiles.find { it.name.contains('-sources') }
-        def signedJavadoc = allFiles.find { it.name.contains('-javadoc') }
-        def signedJar = (allFiles - [signedSources, signedJavadoc])[0]
-        return [
-                [archive: signedSources, classifier: 'sources', extension: 'jar.asc'],
-                [archive: signedJavadoc, classifier: 'javadoc', extension: 'jar.asc'],
-                [archive: signedJar,     classifier: '',      extension: 'jar.asc']
-        ]
-    }
-
-
-
-    publishing {
-        publications {
-            /*
-            signatures (MavenPublication) {
-                getSignatureFiles().each { signature ->
-                    println "signature: " + signature
-                    println "signature.archive: " + signature.archive
-                    println ""
-                    artifact (signature.archive) {
-                        classifier = signature.classifier
-                        extension  = signature.extension
-                    }
-                }
-            }
-            */
-            eachProject(MavenPublication) {
-                from components.java
-                //artifact tasks.customJar
-                artifact tasks.sourceJar
-                artifact tasks.projectJavadoc
-
-                pom.withXml {
-                    asNode().children().last() + {
-                        resolveStrategy = Closure.DELEGATE_FIRST
-                        name project.name
-                        description project.description
-                        licenses {
-                            license {
-                                name 'The Apache Software License, Version 2.0'
-                                url 'http://www.apache.org/license/LICENSE-2.0.txt'
-                                distribution 'repo'
-                            }
-                        }
-                        developers {
-                            developer {
-                                id 'kochetkov-ma'
-                                name 'Kochetkov Maksim'
-                                email 'kochetkov-ma@yandex.ru'
-                            }
-                        }
-                    }
-                }
-
-            }
-        }
+    uploadArchives {
         repositories {
-            maven {
-                name "open-nexus"
-                if (project.version.endsWith('-SNAPSHOT')) {
-                    url "http://rumskapt527.open.ru:8081/content/repositories/automatization_snapshots/"
-                } else {
-                    url "http://rumskapt527.open.ru:8081/content/repositories/automatization_releases/"
+            //noinspection GroovyAssignabilityCheck
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name project.name
+                    packaging 'jar'
+                    description project.description
+                    url 'https://github.com/kochetkov-ma/pump-fw'
+
+                    scm {
+                        connection 'https://github.com/kochetkov-ma/pump-fw.git'
+                        developerConnection 'https://github.com/kochetkov-ma/pump-fw.git'
+                        url 'https://github.com/kochetkov-ma/pump-fw'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'kochetkov-ma'
+                            name 'Kochetkov Maksim'
+                            email 'kochetkov-ma@yandex.ru'
+                        }
+                    }
                 }
             }
         }
     }
 }
-
