@@ -134,8 +134,7 @@ subprojects {
                 "ch.qos.logback:logback-core:$versions.logger",
                 "org.seleniumhq.selenium:selenium-java:$versions.selenium",
                 "io.qameta.allure:allure-java-commons:$versions.allure",
-                "net.sf.trove4j:trove4j:$versions.trove",
-                "io.qameta.allure:allure-gradle:$versions.allure_gradle"
+                "net.sf.trove4j:trove4j:$versions.trove"
         )
 
         testCompileOnly('org.apiguardian:apiguardian-api:+')
