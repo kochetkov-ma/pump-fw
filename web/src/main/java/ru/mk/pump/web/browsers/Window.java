@@ -3,6 +3,7 @@ package ru.mk.pump.web.browsers;
 import java.util.Observer;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import ru.mk.pump.commons.activity.AbstractActivity;
 import ru.mk.pump.commons.activity.Activity;

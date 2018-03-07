@@ -67,21 +67,20 @@ public abstract class AbstractWithItems extends BaseElement implements WithSubIt
                                 .waitPredicate(this::refreshItemsCache, Objects::equals);
                     }
                     return itemsCache;
-                }, "Get sub-elements list").withStrategy(ActionStrategy.SIMPLE)
-                .redefineExpectedState(displayed());
+                }, "Get sub-elements list").withStrategy(ActionStrategy.SIMPLE);
         return getActionExecutor().execute(action);
     }
 
     @Override
     public WaitResult<Boolean> hasItems(int count, int timeoutMs) {
-        final SetState state = (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.EXISTS, () -> getItems().size() >= count))
+        final SetState state = (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.EXISTS, () -> refreshItemsCache() >= count))
                 .withName(String.format("Items count not less '%d'", count));
         return getStateResolver().resolve(state, timeoutMs).result();
     }
 
     @Override
     public WaitResult<Boolean> hasItems(int count) {
-        final SetState state = (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.EXISTS, () -> getItems().size() >= count))
+        final SetState state = (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.EXISTS, () -> refreshItemsCache() >= count))
                 .withName(String.format("Items count not less '%d'", count));
         return getStateResolver().resolve(state).result();
     }

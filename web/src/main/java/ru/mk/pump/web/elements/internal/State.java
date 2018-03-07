@@ -8,8 +8,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import javax.annotation.Nullable;
 import lombok.NonNull;
+import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
@@ -17,7 +19,7 @@ import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.enums.StateType;
 
 @SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue"})
-public class State implements StrictInfo, PrettyPrinter{
+public class State implements StrictInfo, PrettyPrinter {
 
     private final StateType stateType;
 
@@ -38,6 +40,13 @@ public class State implements StrictInfo, PrettyPrinter{
 
     public static State of(@NonNull StateType stateType, @NonNull Set<Callable<Boolean>> payload) {
         return new State(stateType, payload, null);
+    }
+
+    public static State of(@NonNull StateType stateType, @NonNull Function<WaitResult<WebElement>, Boolean> payload, @NonNull Finder finder) {
+        return of(stateType, () -> {
+            finder.clearCache();
+            return payload.apply(finder.findFast());
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -106,14 +115,16 @@ public class State implements StrictInfo, PrettyPrinter{
         result.put("type", getClass().getSimpleName());
         result.put("stateType", stateType.toString());
         result.put("result", Strings.toString(this.result));
-        result.put("name", name);
+        if (!stateType.toString().equals(name)) {
+            result.put("name", name);
+        }
         return result;
     }
 
     @Override
     public int hashCode() {
         int result1 = stateType != null ? stateType.hashCode() : 0;
-        result1 = 31 * result1 + (result != null ? result.getResult().hashCode() : 0);
+        result1 = 31 * result1 + (result != null && result.getResult() != null ? result.getResult().hashCode() : 0);
         result1 = 31 * result1 + (name != null ? name.hashCode() : 0);
         result1 = 31 * result1 + (payload != null ? payload.getClass().hashCode() : 0);
         result1 = 31 * result1 + (tearDown != null ? 1 : 0);

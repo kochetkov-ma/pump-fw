@@ -1,20 +1,6 @@
 package ru.mk.pump.web.common;
 
 import com.google.common.collect.Sets;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.ToString;
-import org.apache.commons.lang3.ArrayUtils;
-import org.reflections.Reflections;
-import ru.mk.pump.commons.interfaces.StrictInfo;
-import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browsers;
-import ru.mk.pump.web.common.api.ItemsManager;
-import ru.mk.pump.web.common.api.WebObject;
-import ru.mk.pump.web.exceptions.ItemManagerException;
-import ru.mk.pump.web.utils.WebReporter;
-
 import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +8,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.ToString;
+import org.apache.commons.lang3.ArrayUtils;
+import ru.mk.pump.commons.interfaces.StrictInfo;
+import ru.mk.pump.commons.reporter.Reporter;
+import ru.mk.pump.commons.utils.ReflectionUtils;
+import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.web.browsers.Browsers;
+import ru.mk.pump.web.common.api.ItemsManager;
+import ru.mk.pump.web.common.api.WebObject;
+import ru.mk.pump.web.exceptions.ItemManagerException;
+import ru.mk.pump.web.utils.WebReporter;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @ToString(exclude = {"browsers", "reporter"})
@@ -44,6 +43,7 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
 
     @Getter
     private List<? extends T> currentList;
+
     private Set<BiPredicate<AbstractItemsManager<T>, Class<? extends T>>> predicateSet = Sets.newHashSet();
 
     //region CONSTRUCTORS
@@ -76,11 +76,11 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     public <V extends T> Set<Class<V>> find(@NonNull String itemName, @NonNull Class<V> itemClass) {
         //noinspection unchecked
         return itemsSet.stream()
-                .filter(itemClass::isAssignableFrom)
-                .filter(i -> findFilter(itemName, i))
-                .filter(i -> predicateSet.stream().allMatch(p -> p.test(this, i)))
-                .map(i -> (Class<V>) i)
-                .collect(Collectors.toSet());
+            .filter(itemClass::isAssignableFrom)
+            .filter(i -> findFilter(itemName, i))
+            .filter(i -> predicateSet.stream().allMatch(p -> p.test(this, i)))
+            .map(i -> (Class<V>) i)
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -107,7 +107,7 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
         Set<Class<V>> items = find(name, itemSubClass);
         if (items.isEmpty()) {
             throw new ItemManagerException(String.format("Cannot find any item with name '%s' and class '%s'", name, itemSubClass.getCanonicalName()))
-                    .withManager(this);
+                .withManager(this);
         }
         current = newItem(items.iterator().next());
         //noinspection unchecked
@@ -131,7 +131,7 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
             return afterItemCreate(result);
         } catch (ReflectiveOperationException | ClassCastException ex) {
             throw new ItemManagerException(String.format("Error when try to create item with class '%s'", getItemClass().getCanonicalName()), ex)
-                    .withManager(this);
+                .withManager(this);
         }
     }
 
@@ -149,19 +149,18 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
         if (ArrayUtils.isEmpty(packagesName)) {
             return Collections.emptySet();
         }
-        final Reflections reflections = new Reflections((Object[]) packagesName);
-        return reflections.getSubTypesOf(getItemClass());
+        return ReflectionUtils.getAllClasses(getItemClass(), packagesName);
     }
 
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("Items Manager")
-                .put("browsers", Strings.toString(browsers))
-                .put("current item", Strings.toString(current))
-                .put("current list", Strings.toPrettyString(currentList))
-                .put("reporter", Strings.toString(reporter))
-                .put("loaded items", Strings.toPrettyString(itemsSet))
-                .put("packages", Strings.toPrettyString(packages))
-                .build();
+            .put("browsers", Strings.toString(browsers))
+            .put("current item", Strings.toString(current))
+            .put("current list", Strings.toPrettyString(currentList))
+            .put("reporter", Strings.toString(reporter))
+            .put("loaded items", Strings.toPrettyString(itemsSet))
+            .put("packages", Strings.toPrettyString(packages))
+            .build();
     }
 }

@@ -44,8 +44,6 @@ import java.util.Map;
 })
 class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
 
-    public final static By[] DEFAULT_LOAD_ICON = {};
-
     public final static By[] DEFAULT_INPUT_BY = {By.tagName("input")};
 
     public final static By[] DEFAULT_DROP_DOWN_BY = {By.xpath(".")};
@@ -53,8 +51,6 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     private final Child<Input> input;
 
     private final Child<DropDown> dropDown;
-
-    private final Child<Element> loadIcon;
 
     public InputDropDownImpl(By avatarBy, Page page) {
         super(avatarBy, page);
@@ -73,7 +69,6 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
         return "InputDropDownImpl(" +
                 "input=" + Strings.toString(input) +
                 ", dropDown=" + Strings.toString(dropDown) +
-                ", loadIcon=" + Strings.toString(loadIcon) +
                 ") " + super.toString();
     }
 
@@ -81,7 +76,7 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     public String type(String... text) {
         final String oldItems = ((DropDownImpl) getDropDown()).getItemsTextFast();
         final String res = getInput().type(text);
-        checkLoadIconFlow(loadIcon);
+        ((DropDownImpl) getDropDown()).checkLoadIconFlow();
         if (!isChanged(oldItems)) {
             getReporter().warn(String.format("InputDropDown items did not changed after type text '%s'", Strings.toString(text)),
                     "OLD ITEMS : " + oldItems + System.lineSeparator() + "CURRENT ITEMS : " + ((DropDownImpl) getDropDown()).getItemsTextFast()
@@ -132,7 +127,6 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
         final Map<String, String> res = super.getInfo();
         res.put("drop down", Strings.toString(dropDown));
         res.put("input", Strings.toString(input));
-        res.put("load icon", Strings.toString(loadIcon));
         return res;
 
     }
@@ -242,20 +236,7 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
         return getStateResolver().resolve(itemsIsChangedOrEmpty(oldItems), 1000).result().isSuccess();
     }
 
-    protected void checkLoadIconFlow(Child<Element> loadIcon) {
-        //TODO:Сделать настраиваемым
-        if (loadIcon.isDefined()) {
-            final Element element = loadIcon.get(Element.class);
-            /*строгая проверка*/
-            element.advanced().getStateResolver().resolve(element.advanced().displayed(), 1).result().throwExceptionOnFail();
-            element.advanced().getStateResolver().resolve(element.advanced().notDisplayed(), 1).result().throwExceptionOnFail();
-            /*НЕ строгая проверка*/
-            /*
-            loadIcon.get(PElement.class).isDisplayed(1);
-            loadIcon.get(PElement.class).isNotDisplayed(1);
-            */
-        }
-    }
+
 
     protected State itemsIsChangedOrEmpty(String oldItems) {
         return State.of(StateType.OTHER, () -> !StringUtils.equalsIgnoreCase(((DropDownImpl) getDropDown()).getItemsTextFast(), oldItems));
@@ -270,6 +251,5 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     {
         input = new Child<Input>(this, ElementParams.EXTRA_INPUT_BY.getName()).withDefaultBy(DEFAULT_INPUT_BY);
         dropDown = new Child<DropDown>(this, ElementParams.INPUTDROPDOWN_DROPDOWN_BY.getName()).withDefaultBy(DEFAULT_DROP_DOWN_BY);
-        loadIcon = new Child<>(this, ElementParams.INPUTDROPDOWN_LOAD_BY.getName()).withDefaultBy(DEFAULT_LOAD_ICON);
     }
 }

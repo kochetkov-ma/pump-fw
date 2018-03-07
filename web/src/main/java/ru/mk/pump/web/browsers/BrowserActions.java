@@ -1,12 +1,17 @@
 package ru.mk.pump.web.browsers;
 
+import io.qameta.allure.Step;
 import java.util.function.Supplier;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import ru.mk.pump.commons.utils.WaitResult;
+import ru.mk.pump.commons.utils.Waiter;
+import ru.mk.pump.web.exceptions.BrowserException;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 @Slf4j
@@ -64,8 +69,15 @@ public class BrowserActions {
         return result;
     }
 
-    public String getCurrentUrl(){
+    public String getCurrentUrl() {
         return driver.get().getCurrentUrl();
     }
 
+    @Step("Try to get alert in '{timeout}'")
+    public Alert alert(int timeoutS) {
+        Waiter waiter = new Waiter();
+        WaitResult<Boolean> result = waiter.waitIgnoreExceptions(10, 100, () -> driver.get().switchTo().alert() != null);
+        result.throwExceptionOnFail((res) -> new BrowserException(String.format("Waiting of alert has failed in '%s'", res.getTimeout()), res.getCause()));
+        return driver.get().switchTo().alert();
+    }
 }

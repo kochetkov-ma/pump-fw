@@ -126,7 +126,8 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
 
     @Override
     public String getItemsTextFast() {
-        final List<Element> items = getItems();
+        refreshItemsCache();
+        final List<Element> items = getItemsCache();
         if (items.isEmpty()) {
             return "";
         }

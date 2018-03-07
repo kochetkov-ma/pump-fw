@@ -46,7 +46,12 @@ public class BuilderHelper {
     }
 
     public Capabilities getCommonCapabilities() {
-        final DesiredCapabilities capabilities = new DesiredCapabilities();
+        final DesiredCapabilities capabilities;
+        if (browserConfig.getCapabilities() != null) {
+            capabilities = browserConfig.getCapabilities();
+        } else {
+            capabilities = new DesiredCapabilities();
+        }
         if (browserConfig.isDebug()) {
             capabilities.setCapability("enableVNC", true); /*selenoid*/
         }

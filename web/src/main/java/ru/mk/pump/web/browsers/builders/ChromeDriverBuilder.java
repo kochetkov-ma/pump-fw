@@ -35,6 +35,10 @@ public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
             builder.put("download.default_directory", getConfig().getDownloadDirPath());
         }
 
+        chromeOptions.addArguments("-incognito");
+        chromeOptions.addArguments("--disable-popup-blocking");
+        chromeOptions.addArguments("chrome.switches","--disable-extensions");
+
         chromeOptions.setExperimentalOption("prefs", builder.build());
         chromeOptions.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         getBuilderHelper().findLocalBrowserPath().ifPresent(chromeOptions::setBinary);

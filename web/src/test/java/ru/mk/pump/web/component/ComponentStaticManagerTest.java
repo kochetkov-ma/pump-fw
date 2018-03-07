@@ -50,7 +50,7 @@ public class ComponentStaticManagerTest extends AbstractTestWithBrowser {
         @Getter
         private Element elemntTwo;
 
-        @FindBy(id = "inner")
+        @FindBy(id = "one")
         @Getter
         private InnerComponent inner;
 

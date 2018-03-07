@@ -3,6 +3,7 @@ package ru.mk.pump.commons.config;
 import com.google.common.base.MoreObjects;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.ConfigurationException;
@@ -31,6 +32,7 @@ public class ConfigurationHelper<T> {
     private final T defaultConfig;
 
     @Getter
+    @Setter
     private volatile T actualConfig;
 
     private ConfigurationsLoader configurationsLoader;

@@ -27,8 +27,10 @@ public class WaitResult<T> implements StrictInfo {
     @Getter
     private T result;
 
+    @Getter
     private int timeout = -1;
 
+    @Getter
     private int intervalMs = -1;
 
     private Function<WaitResult<T>, ? extends RuntimeException> exceptionOnFail = (w) ->

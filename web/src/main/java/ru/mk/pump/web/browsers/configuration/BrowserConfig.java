@@ -2,6 +2,7 @@ package ru.mk.pump.web.browsers.configuration;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import ru.mk.pump.commons.config.Property;
 import ru.mk.pump.commons.helpers.Parameters;
 
@@ -51,4 +52,6 @@ public class BrowserConfig {
     private boolean selenoidVnc = false;
 
     private Parameters extraParams = Parameters.of();
+
+    private DesiredCapabilities capabilities;
 }

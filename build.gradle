@@ -145,8 +145,8 @@ subprojects {
                 "org.junit.jupiter:junit-jupiter-api:$versions.junit5",
                 "org.assertj:assertj-core:$versions.assertj",
                 "org.mockito:mockito-core:$versions.mockito",
-                "io.qameta.allure:allure-junit5:latest.release",
-                "io.qameta.allure:allure-gradle:$versions.allure_gradle"
+                "io.qameta.allure:allure-junit5:latest.release"
+                //"io.qameta.allure:allure-gradle:$versions.allure_gradle"
         )
     }
 

@@ -18,7 +18,6 @@ import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.api.listeners.StateListener;
-import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
@@ -129,6 +128,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         actionListener.forEach(actionExecutor::addListener);
         return this;
     }
+
     public AbstractElement addStateListener(List<StateListener> stateListener) {
         stateListener.forEach(stateResolver::addListener);
         return this;
@@ -226,7 +226,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     public String getTagName() {
         return actionExecutor
-                .execute(actionsStore.tagName());
+            .execute(actionsStore.tagName());
     }
 
     public String getAttribute(String name) {
@@ -278,7 +278,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     @Override
     public SetState displayed() {
         return (SetState) SetState.of(StateType.DISPLAYED, exists(), State.of(StateType.SELENIUM_DISPLAYED, () -> {
-            final WaitResult<WebElement> res = getFinder().findFast();
+            final WaitResult<WebElement> res = getFinder().find();
             return res.isSuccess() && res.getResult().isDisplayed();
         }, TEAR_DOWN)).withName("Exists And Displayed");
     }
@@ -286,10 +286,9 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     @Override
     public SetState enabled() {
-        return (SetState) SetState.of(StateType.ENABLED, exists(), State.of(StateType.SELENIUM_ENABLED, () -> {
-            final WaitResult<WebElement> res = getFinder().findFast();
-            return res.isSuccess() && res.getResult().isEnabled();
-        }, TEAR_DOWN)).withName("Exists And Enabled");
+        return (SetState) SetState.of(StateType.ENABLED, exists(),
+            State.of(StateType.SELENIUM_ENABLED, (webElement) -> webElement.isSuccess() && webElement.getResult().isEnabled(), getFinder())
+                .withTearDown(TEAR_DOWN)).withName("Exists And Enabled");
     }
 
     @Override

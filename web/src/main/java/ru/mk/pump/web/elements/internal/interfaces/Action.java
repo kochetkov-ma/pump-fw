@@ -31,6 +31,8 @@ public interface Action<T> extends StrictInfo {
 
     Set<ActionStrategy> getStrategy();
 
+    Action<T> setMaxTruCount(int maxTruCount);
+
     Action<T> redefineExpectedState(SetState stateSet);
 
     Action<T> withStrategy(ActionStrategy... strategies);

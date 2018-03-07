@@ -20,6 +20,8 @@ allure {
 }
 
 dependencies {
+    compile "org.junit.platform:junit-platform-commons:1.1.0"
+
     compile "org.springframework:spring-beans:$springVersion"
     compile "org.awaitility:awaitility:$awaitilityVersion"
     compile "org.codehaus.groovy:groovy-console:$groovyVersion"

@@ -18,6 +18,8 @@ abstract class AbstractAction<T> implements Action<T> {
 
     private static final int MAX_TRY = 5;
 
+    private int maxTruCount = MAX_TRY;
+
     private final BiFunction<WebElement, Parameters, T> actionSupplier;
 
     private final InternalElement internalElement;
@@ -45,7 +47,7 @@ abstract class AbstractAction<T> implements Action<T> {
         RuntimeException ex = null;
         Error error = null;
         actionExecutionTry = 0;
-        while (actionExecutionTry < MAX_TRY) {
+        while (actionExecutionTry < maxTruCount) {
             try {
                 actionExecutionTry++;
                 return actionSupplier.apply(getInteractElement(), getParameters());
@@ -111,6 +113,11 @@ abstract class AbstractAction<T> implements Action<T> {
         return this;
     }
 
+    public AbstractAction<T> setMaxTruCount(int maxTruCount) {
+        this.maxTruCount = maxTruCount;
+        return this;
+    }
+
     @Override
     public Action<T> withStrategy(ActionStrategy... strategies) {
         actionStrategies.addAll(Arrays.asList(strategies));
@@ -126,7 +133,7 @@ abstract class AbstractAction<T> implements Action<T> {
         result.put("current stage", this.currentStage.toString());
         result.put("target element", Strings.space(internalElement.getName(), internalElement.getBy().toString()));
         result.put("parameters", this.parameters.toString());
-        result.put("max tries", String.valueOf(MAX_TRY));
+        result.put("max tries", String.valueOf(maxTruCount));
         if (stateSet != null) {
             result.put("redefined stateSet", this.stateSet.toString());
         }

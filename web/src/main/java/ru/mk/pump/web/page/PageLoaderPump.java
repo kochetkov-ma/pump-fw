@@ -11,7 +11,9 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import ru.mk.pump.commons.utils.Verifier;
+import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.page.api.Page;
@@ -65,7 +67,6 @@ public class PageLoaderPump implements PageLoader {
     @Override
     public void addDisplayedElements(Element... elements) {
         displayedElements.addAll(Arrays.asList(elements));
-
     }
 
     @Override
@@ -85,10 +86,14 @@ public class PageLoaderPump implements PageLoader {
 
     @Override
     public void checkElements() {
-        existsElements.forEach(el -> checker.checkTrue(format("On page '%s' element '%s' is exists", getPage().getName(), el.info().getName()), el.isExists().result().isSuccess()));
-        displayedElements.forEach(el -> checker.checkTrue(format("On page '%s' element '%s' is displayed",getPage().getName() , el.info().getName()), el.isDisplayed().result().isSuccess()));
-        textContainsElements.forEach((el, text) -> checker.contains(format("On page '%s' element '%s' contains text",getPage().getName(), el.info().getName()), text, el.getText()));
-        predicateElements.forEach((el, predicate) -> checker.checkTrue(format("On page '%s' predicate element '%s' is success", getPage().getName(), el.info().getName()), predicate.test(el)));
+        existsElements.forEach(el -> checker
+            .checkTrue(format("On page '%s' element '%s' is exists", getPage().getName(), el.info().getName()), el.isExists().result().isSuccess()));
+        displayedElements.forEach(el -> checker
+            .checkTrue(format("On page '%s' element '%s' is displayed", getPage().getName(), el.info().getName()), el.isDisplayed().result().isSuccess()));
+        textContainsElements.forEach(
+            (el, text) -> checker.contains(format("On page '%s' element '%s' contains text", getPage().getName(), el.info().getName()), text, el.getText()));
+        predicateElements.forEach((el, predicate) -> checker
+            .checkTrue(format("On page '%s' predicate element '%s' is success", getPage().getName(), el.info().getName()), predicate.test(el)));
     }
 
     @Override
@@ -98,6 +103,7 @@ public class PageLoaderPump implements PageLoader {
 
     @Override
     public void checkUrl() {
+        new Waiter().wait(5, 100, () -> StringUtils.containsIgnoreCase(getPage().getBrowser().actions().getCurrentUrl(), getPage().getUrl()));
         checker.contains("Page URL contains text", getPage().getUrl(), getPage().getBrowser().actions().getCurrentUrl());
     }
 }

@@ -1,6 +1,7 @@
 package ru.mk.pump.cucumber.steps.web;
 
 import cucumber.api.java.en.Given;
+import org.openqa.selenium.Alert;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.cucumber.steps.AbstractSteps;
 import ru.mk.pump.web.browsers.Browser;
@@ -44,5 +45,21 @@ public class BrowserSteps extends AbstractSteps {
     @Given("^Browser - stop anyone$")
     public void closeAll() {
         core().getBrowsers().close();
+    }
+
+    @Given("^Alert - save text to 'result'$")
+    public void alertText() {
+        Alert alert = core().getBrowsers().get().actions().alert(5);
+        core().getTestVariables().putResult(alert.getText());
+    }
+
+    @Given("^Alert - accept$")
+    public void alertAccept() {
+        core().getBrowsers().get().actions().alert(5).accept();
+    }
+
+    @Given("^Alert - dismiss$")
+    public void alertDismiss() {
+        core().getBrowsers().get().actions().alert(5).dismiss();
     }
 }

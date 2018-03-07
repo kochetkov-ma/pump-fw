@@ -1,6 +1,7 @@
 package ru.mk.pump.cucumber.steps.common;
 
 import cucumber.api.java.en.Given;
+import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.cucumber.steps.AbstractSteps;
 import ru.mk.pump.cucumber.transform.PParam;
 
@@ -14,5 +15,10 @@ public class CommonSteps extends AbstractSteps {
     @Given("^Common - save to var '(.+)' method result '(.+)'$")
     public void evaluateAndSaveTestVar(String key, String pumpkinExpression) {
         core().getTestVariables().put(key, transform(pumpkinExpression));
+    }
+
+    @Given("^Common - wait '(.+)' sec$")
+    public void wait(int sec) {
+        Waiter.sleep(sec * 1000);
     }
 }
