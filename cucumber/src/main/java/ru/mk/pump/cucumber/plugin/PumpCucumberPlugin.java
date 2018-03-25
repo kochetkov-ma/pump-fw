@@ -8,6 +8,7 @@ import ru.mk.pump.commons.listener.AbstractNotifier;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.cucumber.plugin.CucumberListener.TestEvent;
+import ru.mk.pump.web.utils.TestVars;
 
 @SuppressWarnings("unused")
 public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEvent, CucumberListener> implements Formatter {

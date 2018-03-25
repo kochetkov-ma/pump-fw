@@ -1,12 +1,6 @@
 package ru.mk.pump.web.elements.internal;
 
 import com.google.common.collect.Maps;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -24,6 +18,13 @@ import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
 import ru.mk.pump.web.utils.Xpath;
 
+import javax.annotation.Nullable;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue", "unchecked"})
 abstract class AbstractElement<CHILD> implements InternalElement {
 
@@ -32,6 +33,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     private final By avatarBy;
 
+    @Setter
     private final ElementWaiter waiter;
 
     @Getter
@@ -49,7 +51,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     private final Finder finder;
 
     private final Consumer<WaitResult<Boolean>> TEAR_DOWN = stateWaitResult -> getFinder().getLast()
-        .ifPresent(waitResult -> stateWaitResult.withCause(waitResult.getCause()));
+            .ifPresent(waitResult -> stateWaitResult.withCause(waitResult.getCause()));
 
     @Getter
     private final ActionsStore actionsStore;
@@ -226,41 +228,37 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     public String getTagName() {
         return actionExecutor
-            .execute(actionsStore.tagName());
+                .execute(actionsStore.tagName());
     }
 
     public String getAttribute(String name) {
         return actionExecutor
-            .execute(actionsStore.attribute(name));
+                .execute(actionsStore.attribute(name));
     }
 
     public State jsReady() {
         final String js = "return document.readyState";
         return State.of(StateType.OTHER, () -> "complete".equals(Strings.toString(getBrowser().actions().executeScript(js))), TEAR_DOWN)
-            .withName("JS is completed");
+                .withName("JS is completed");
     }
 
     @Override
     public State notExists() {
         getFinder().clearCache();
         return State.of(StateType.EXISTS.not(), () -> !getFinder().findFast().isSuccess(), TEAR_DOWN).withName("Not Exists in DOM")
-            .withName("Not Exists Or Not Displayed");
+                .withName("Not Exists Or Not Displayed");
     }
 
     @Override
     public SetState notDisplayed() {
-        return (SetState) SetState.of(StateType.DISPLAYED.not(), notExists(), State.of(StateType.SELENIUM_DISPLAYED.not(), () -> {
-            final WaitResult<WebElement> res = getFinder().findFast();
-            return !res.isSuccess() || !res.getResult().isDisplayed();
-        }, TEAR_DOWN)).withName("Not Exists Or Not Displayed");
+        return (SetState) SetState.of(StateType.DISPLAYED.not(), notExists(), State.of(StateType.SELENIUM_DISPLAYED.not(), webElement ->
+                !webElement.isSuccess() || !webElement.getResult().isDisplayed(), getFinder()).withTearDown(TEAR_DOWN)).withName("Not Exists Or Not Displayed");
     }
 
     @Override
     public SetState notEnabled() {
-        return (SetState) SetState.of(StateType.ENABLED.not(), notExists(), State.of(StateType.SELENIUM_ENABLED.not(), () -> {
-            final WaitResult<WebElement> res = getFinder().findFast();
-            return !res.isSuccess() || !res.getResult().isEnabled();
-        }, TEAR_DOWN)).withName("Not Exists Or Not Enabled");
+        return (SetState) SetState.of(StateType.ENABLED.not(), notExists(), State.of(StateType.SELENIUM_ENABLED.not(), webElement ->
+            !webElement.isSuccess() || !webElement.getResult().isEnabled(), getFinder()).withTearDown(TEAR_DOWN)).withName("Not Exists Or Not Enabled");
     }
 
     @Override
@@ -268,10 +266,10 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         getFinder().clearCache();
         if (JS_WAIT) {
             return (SetState) SetState.of(StateType.EXISTS, jsReady(),
-                State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
+                    State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
         } else {
             return (SetState) SetState.of(StateType.EXISTS,
-                State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
+                    State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
         }
     }
 
@@ -287,8 +285,8 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     @Override
     public SetState enabled() {
         return (SetState) SetState.of(StateType.ENABLED, exists(),
-            State.of(StateType.SELENIUM_ENABLED, (webElement) -> webElement.isSuccess() && webElement.getResult().isEnabled(), getFinder())
-                .withTearDown(TEAR_DOWN)).withName("Exists And Enabled");
+                State.of(StateType.SELENIUM_ENABLED, (webElement) -> webElement.isSuccess() && webElement.getResult().isEnabled(), getFinder())
+                        .withTearDown(TEAR_DOWN)).withName("Exists And Enabled");
     }
 
     @Override

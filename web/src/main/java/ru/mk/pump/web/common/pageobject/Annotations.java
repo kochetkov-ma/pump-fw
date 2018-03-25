@@ -16,6 +16,7 @@ import org.openqa.selenium.support.pagefactory.AbstractAnnotations;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Annotations extends AbstractAnnotations {
+
     private AnnotatedElement annotatedElement;
 
     public Annotations(AnnotatedElement annotatedElement) {

@@ -10,6 +10,7 @@ import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.Editable;
 import ru.mk.pump.web.elements.internal.State;
+import ru.mk.pump.web.utils.TestVars;
 
 import static ru.mk.pump.web.common.WebItemsController.cast;
 
@@ -42,6 +43,11 @@ public class PageSteps extends AbstractSteps {
         cast(controller.executeOnCurrentPage(pumpkinExpression), Editable.class).set(ElementParams.EDITABLE_SET_STRING.withValue(argument));
     }
 
+    @Given("^Page - get element '(.+)' and save text to 'result'$")
+    public void pageElementText(String pumpkinExpression) {
+        core().getTestVariables().putResult(cast(controller.executeOnCurrentPage(pumpkinExpression), Element.class).getText());
+    }
+
     @Given("^Page - get element '(.+)' and click")
     public void pageElementClick(String pumpkinExpression) {
         cast(controller.executeOnCurrentPage(pumpkinExpression), Clickable.class).click();
@@ -58,4 +64,6 @@ public class PageSteps extends AbstractSteps {
         State res = cast(controller.executeOnCurrentPage(pumpkinExpression), Element.class).isNotDisplayed();
         core().getVerifier().checkTrue(res.name(), res.result().isSuccess(), res.toPrettyString());
     }
+
+
 }

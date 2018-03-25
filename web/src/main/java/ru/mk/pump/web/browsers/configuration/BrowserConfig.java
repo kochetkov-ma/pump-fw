@@ -54,4 +54,24 @@ public class BrowserConfig {
     private Parameters extraParams = Parameters.of();
 
     private DesiredCapabilities capabilities;
+
+    /*APPIUM*/
+    @Property(value = "appium.platform.name", required = false)
+    private String appiumPlatformName;
+
+    @Property(value = "appium.platform.version", required = false)
+    private String appiumPlatformVersion;
+
+    @Property(value = "appium.device.name", required = false)
+    private String appiumDeviceName;
+
+    @Property(value = "appium.app.path", required = false)
+    private String appiumApp;
+
+    @Property(value = "appium.app.package", required = false)
+    private String appiumAppPackage;
+
+    @Property(value = "appium.app.activity", required = false)
+    private String appiumAppActivity;
+
 }

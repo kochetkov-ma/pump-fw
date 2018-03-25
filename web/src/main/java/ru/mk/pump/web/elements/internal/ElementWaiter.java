@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
@@ -19,6 +20,7 @@ public class ElementWaiter {
 
     public static int DEFAULT_TIMEOUT_S = ConfigurationHolder.get().getElement().getStateTimeout();
 
+    public static int DEFAULT_DELAY_MS = ConfigurationHolder.get().getElement().getStateDelay();
     @Getter
     private final int timeout;
 
@@ -29,7 +31,7 @@ public class ElementWaiter {
     //region CONSTRUCTOR
     private ElementWaiter(int timeout, int delayMs, Waiter waiter) {
         this.timeout = timeout;
-        this.delayMs = 50;
+        this.delayMs = DEFAULT_DELAY_MS;
         this.waiter = waiter;
     }
 
@@ -42,7 +44,7 @@ public class ElementWaiter {
     }
 
     private ElementWaiter() {
-        this(DEFAULT_TIMEOUT_S, 0);
+        this(DEFAULT_TIMEOUT_S, DEFAULT_DELAY_MS);
     }
     //endregion
 
@@ -97,7 +99,8 @@ public class ElementWaiter {
 
     static class VariabilityMatcher<T> extends BaseMatcher<T> {
 
-        private Object prevItem;
+
+        volatile private Object prevItem;
 
         private final BiPredicate<T, T> prevMatchPredicate;
 

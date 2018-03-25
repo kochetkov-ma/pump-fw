@@ -1,7 +1,6 @@
 package ru.mk.pump.web.browsers;
 
-import java.util.Set;
-import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.Setter;
 import org.openqa.selenium.Dimension;
 import ru.mk.pump.commons.activity.AbstractActivityManager;
@@ -9,17 +8,21 @@ import ru.mk.pump.commons.activity.Activity;
 import ru.mk.pump.commons.activity.NamedEvent;
 import ru.mk.pump.web.exceptions.BrowserException;
 
+import java.util.Set;
+
 @SuppressWarnings("unchecked")
 public class WindowManager extends AbstractActivityManager {
 
     @Setter
     private Browser browser;
 
-    WindowManager(@Nullable AbstractBrowser browser) {
+    @SuppressWarnings("WeakerAccess")
+    protected WindowManager(@NonNull AbstractBrowser browser) {
         super();
         this.browser = browser;
         setFilterActivityClass(Window.class);
         add(browser);
+
     }
 
     public WindowManager setSize(Dimension dimension) {

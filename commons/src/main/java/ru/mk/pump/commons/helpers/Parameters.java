@@ -42,7 +42,7 @@ public class Parameters {
 
     @NonNull
     public Parameters add(@NonNull Parameter<?>... parameter) {
-        Arrays.stream(parameter).forEach(p -> parameterMap.put(p.getName(), p));
+        Arrays.stream(parameter).forEach(this::add);
         return this;
     }
 
@@ -65,7 +65,7 @@ public class Parameters {
     @NonNull
     public Parameters addAll(@Nullable Set<Parameter<?>> parameterSet) {
         if (parameterSet != null && !parameterSet.isEmpty()) {
-            parameterSet.forEach(p -> parameterMap.put(p.getName(), p));
+            parameterSet.forEach(this::add);
         }
         return this;
     }

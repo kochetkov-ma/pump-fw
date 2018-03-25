@@ -23,7 +23,6 @@ public class DownloadManager {
         }
         FileUtils.createIfNotExists(downloadDir);
         return downloadDir;
-
     }
 
 }

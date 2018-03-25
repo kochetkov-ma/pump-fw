@@ -6,7 +6,7 @@ import ru.mk.pump.web.common.api.WebObject;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.component.api.Component;
 
-public interface Page extends WebObject,StrictInfo, Component, AppResource {
+public interface Page extends WebObject, StrictInfo, Component, AppResource {
 
     void open();
 
@@ -29,12 +29,13 @@ public interface Page extends WebObject,StrictInfo, Component, AppResource {
 
     /**
      * PPage Loader for adding conditions and checking correct page loading result
+     *
      * @return {@link PageLoader}
      */
     PageLoader getPageLoader();
 
 
-    default void check(){
+    default void check() {
         getPageLoader().checkAdditionalCondition();
         getPageLoader().checkElements();
         getPageLoader().checkUrl();

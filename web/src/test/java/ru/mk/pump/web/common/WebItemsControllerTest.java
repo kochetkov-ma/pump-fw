@@ -27,6 +27,7 @@ import ru.mk.pump.web.page.AbstractPageTest.MainPage;
 import ru.mk.pump.web.page.AbstractPageTest.MainPageOther;
 import ru.mk.pump.web.page.AbstractPageTest.RegPage;
 import ru.mk.pump.web.page.AbstractPageTest.RegPage.RegFormZone;
+import ru.mk.pump.web.page.BasePage;
 import ru.mk.pump.web.page.PageManager;
 import ru.mk.pump.web.utils.TestVars;
 
@@ -67,14 +68,16 @@ class WebItemsControllerTest extends AbstractTestWithBrowser {
 
     @Test
     void initPage() {
+
         assertThat(controller.initPage("Главная страница")).isInstanceOfAny(MainPageOther.class, MainPage.class);
         assertThat(controller.initPage("MainPageOther")).isInstanceOfAny(MainPageOther.class);
         assertThat(controller.initPage("MainPage")).isInstanceOfAny(MainPage.class);
         assertThat(controller.initPage("Регистрация")).isInstanceOfAny(RegPage.class);
 
-        assertThatThrownBy(() -> controller.initPage("")).isInstanceOfAny(ItemManagerException.class);
+        assertThat(controller.initPage("")).isInstanceOfAny(BasePage.class);
         assertThatThrownBy(() -> controller.initPage(null)).isInstanceOfAny(NullPointerException.class);
         assertThatThrownBy(() -> controller.initPage("RegMainForm")).isInstanceOfAny(ItemManagerException.class);
+
 
     }
 

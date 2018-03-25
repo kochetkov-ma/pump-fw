@@ -8,7 +8,7 @@ import ru.mk.pump.web.elements.internal.DocParameters;
 @DocParameters({
     "EXTRA_INPUT_BY",
     "INPUTDROPDOWN_DROPDOWN_BY",
-    "INPUTDROPDOWN_LOAD_BY",
+    "DROPDOWN_LOAD_BY",
     "DROPDOWN_EXPAND_BY",
     "DROPDOWN_BEFORE_SELECT",
     "SELECTOR_STATIC_ITEMS",

@@ -170,6 +170,7 @@ public class BaseElementTest extends AbstractWebTest {
     void getSubElements() {
         getBrowser().open(regPage.getUrl());
 
+        regPage.getDropDownRegions().advanced().getStateResolver().resolve(regPage.getDropDownRegions().advanced().ready());
         List<Element> elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced("//div[@class='item']",
             (el) -> el.getAttribute("class").equals("item"));
         log.info(Strings.toPrettyString(elementList));

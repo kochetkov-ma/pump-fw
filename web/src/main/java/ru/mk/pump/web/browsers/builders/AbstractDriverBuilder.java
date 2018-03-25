@@ -1,7 +1,5 @@
 package ru.mk.pump.web.browsers.builders;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import lombok.Getter;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
@@ -9,6 +7,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.mk.pump.web.browsers.DriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.exceptions.BrowserException;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 abstract class AbstractDriverBuilder<T extends Capabilities> implements DriverBuilder {
@@ -30,17 +31,21 @@ abstract class AbstractDriverBuilder<T extends Capabilities> implements DriverBu
     @SuppressWarnings("unchecked")
     public WebDriver createAndStartDriver() {
         if (config.isRemoteDriver()) {
-            return new RemoteWebDriver(gridUrl(), getSpecialCapabilities().merge(builderHelper.getCommonCapabilities()));
+            return createRemoteDriver(gridUrl(), (T) getSpecialCapabilities().merge(builderHelper.getCommonCapabilities()));
         } else {
             builderHelper.prepareLocalDriverPath();
             return createLocalDriver((T) getSpecialCapabilities().merge(builderHelper.getCommonCapabilities()));
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
+    protected WebDriver createRemoteDriver(URL remoteUrl, T allCapabilities) {
+        return new RemoteWebDriver(remoteUrl, allCapabilities);
+    }
+
     abstract protected WebDriver createLocalDriver(T allCapabilities);
 
     /**
-     *
      * @return Only special. Common auto merge further
      */
     abstract protected T getSpecialCapabilities();

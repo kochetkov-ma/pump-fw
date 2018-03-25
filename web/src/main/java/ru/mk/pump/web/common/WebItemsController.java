@@ -1,15 +1,6 @@
 package ru.mk.pump.web.common;
 
 import com.google.common.collect.Sets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.function.BiFunction;
-import javax.annotation.Nullable;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
@@ -37,6 +28,10 @@ import ru.mk.pump.web.page.BasePage;
 import ru.mk.pump.web.page.api.Page;
 import ru.mk.pump.web.utils.TestVars;
 
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.BiFunction;
+
 @Slf4j
 @ToString(exclude = {"pumpkin", "resultHandlerChain"})
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -47,8 +42,8 @@ public class WebItemsController implements StrictInfo {
     private final Set<BiFunction<Object, WebItemsController, Object>> resultHandlerChain = Sets.newHashSet();
 
     private final static BiFunction<Object, WebItemsController, Object> DEFAULT_HANDLER = (result, controller) -> {
-        controller.getTestVars()
-            .put(VAR_LAST_RESULT, result);
+        controller.getTestVars().put(VAR_LAST_RESULT, result);
+        log.debug("[CONTROLLER] Result : {}", result);
         return result;
     };
 
@@ -69,7 +64,7 @@ public class WebItemsController implements StrictInfo {
     private String lastPumpkinExpression;
 
     public WebItemsController(@NonNull ItemsManager<BasePage> pageManager, @NonNull ItemsManager<BaseComponent> componentManager, @NonNull Pumpkin pumpkin,
-        @NonNull TestVars testVars) {
+                              @NonNull TestVars testVars) {
         this.pageManager = pageManager;
         this.componentManager = componentManager;
         this.pumpkin = pumpkin;
@@ -78,7 +73,7 @@ public class WebItemsController implements StrictInfo {
     }
 
     public WebItemsController(@NonNull ItemsManager<BasePage> pageManager, @NonNull ItemsManager<BaseComponent> componentManager,
-        @NonNull TestVars testVars) {
+                              @NonNull TestVars testVars) {
         this(pageManager, componentManager, new Pumpkin(testVars.asMap()), testVars);
     }
 
@@ -110,7 +105,7 @@ public class WebItemsController implements StrictInfo {
     public Object executeOnCurrentPage(@NonNull String pumpkinExpression) {
         if (pageManager.getCurrent() == null) {
             throw new ExecutionException("Current page is undefined. Please, initPage before using")
-                .addTarget("controller", this);
+                    .addTarget("controller", this);
         }
         return execute(pageManager.getCurrent(), pumpkinExpression);
     }
@@ -118,7 +113,7 @@ public class WebItemsController implements StrictInfo {
     public Object executeOnCurrentComponent(@NonNull String pumpkinExpression) {
         if (componentManager.getCurrent() == null) {
             throw new ExecutionException("Current component is undefined. Please, initComponent before using")
-                .addTarget("controller", this);
+                    .addTarget("controller", this);
         }
         return execute(componentManager.getCurrent(), pumpkinExpression);
     }
@@ -137,12 +132,12 @@ public class WebItemsController implements StrictInfo {
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("WebItemsController")
-            .put("page manager", Strings.toPrettyString(pageManager.getInfo()))
-            .put("component manager", Strings.toPrettyString(componentManager.getInfo()))
-            .put("last expression", lastPumpkinExpression)
-            .put("lastResult", Strings.toString(lastResult))
-            .put("test vars", testVars.toPrettyString())
-            .build();
+                .put("page manager", Strings.toPrettyString(pageManager.getInfo()))
+                .put("component manager", Strings.toPrettyString(componentManager.getInfo()))
+                .put("last expression", lastPumpkinExpression)
+                .put("lastResult", Strings.toString(lastResult))
+                .put("test vars", testVars.toPrettyString())
+                .build();
     }
 
     public WebItemsController clearResultHandlers() {
@@ -193,8 +188,8 @@ public class WebItemsController implements StrictInfo {
                     return res;
                 } else {
                     throw new ExecutionException(
-                        String.format("Target object is 'null' with field '%s'. Source expression is '%s'", Strings.toString(field), lastPumpkinExpression))
-                        .addTarget("controller", this);
+                            String.format("Target object is 'null' with field '%s'. Source expression is '%s'", Strings.toString(field), lastPumpkinExpression))
+                            .addTarget("controller", this);
                 }
             }
         }
@@ -202,9 +197,9 @@ public class WebItemsController implements StrictInfo {
             return findField(candidate, field);
         }
         throw new ExecutionException(
-            String.format("Object '%s' with field '%s' is not expected class : Page or Component. Source expression is '%s'", getClass(candidate),
-                Strings.toString(field), lastPumpkinExpression))
-            .addTarget("controller", this);
+                String.format("Object '%s' with field '%s' is not expected class : Page or Component. Source expression is '%s'", getClass(candidate),
+                        Strings.toString(field), lastPumpkinExpression))
+                .addTarget("controller", this);
     }
 
 
@@ -220,9 +215,9 @@ public class WebItemsController implements StrictInfo {
                 Object res = readField(candidate, field);
                 if (!(res instanceof List)) {
                     throw new ExecutionException(
-                        String.format("Target object '%s' with field '%s' is not expected class : List. Source expression is '%s'", getClass(candidate),
-                            Strings.toString(field), lastPumpkinExpression))
-                        .addTarget("controller", this);
+                            String.format("Target object '%s' with field '%s' is not expected class : List. Source expression is '%s'", getClass(candidate),
+                                    Strings.toString(field), lastPumpkinExpression))
+                            .addTarget("controller", this);
                 }
                 return ((List) res).get(field.getIndex());
             } else {
@@ -230,27 +225,27 @@ public class WebItemsController implements StrictInfo {
             }
         }
         throw new ExecutionException(
-            String.format("Target object '%s' with field '%s' is not expected class : Component. Source expression is '%s'", getClass(candidate),
-                Strings.toString(field), lastPumpkinExpression))
-            .addTarget("controller", this);
+                String.format("Target object '%s' with field '%s' is not expected class : Component. Source expression is '%s'", getClass(candidate),
+                        Strings.toString(field), lastPumpkinExpression))
+                .addTarget("controller", this);
     }
 
     private Object readField(Object candidate, Field field) {
         Preconditions.checkObjectNotNull(candidate, Object.class,
-            String.format("Target object with filed '%s' cannot be null . Source expression is '%s'", field, lastPumpkinExpression));
+                String.format("Target object with filed '%s' cannot be null . Source expression is '%s'", field, lastPumpkinExpression));
         java.lang.reflect.Field result;
         Optional<java.lang.reflect.Field> optionalField = FieldUtils.getFieldsListWithAnnotation(candidate.getClass(), PElement.class).stream()
-            .filter(f -> f.getAnnotation(PElement.class).value().equalsIgnoreCase(field.getSource()) || f.getName().equalsIgnoreCase(field.getSource()))
-            .findFirst();
+                .filter(f -> f.getAnnotation(PElement.class).value().equalsIgnoreCase(field.getSource()) || f.getName().equalsIgnoreCase(field.getSource()))
+                .findFirst();
         //noinspection OptionalIsPresent
         if (!optionalField.isPresent()) {
             result = FieldUtils.getFieldsListWithAnnotation(candidate.getClass(), PComponent.class).stream()
-                .filter(f -> f.getAnnotation(PComponent.class).value().equalsIgnoreCase(field.getSource()) || f.getName().equalsIgnoreCase(field.getSource()))
-                .findFirst()
-                .orElseThrow(() -> new ExecutionException(
-                    String.format("Cannot find in object '%s' field '%s'. Source expression is '%s'", getClass(candidate), Strings.toString(field),
-                        lastPumpkinExpression))
-                    .addTarget("controller", this));
+                    .filter(f -> f.getAnnotation(PComponent.class).value().equalsIgnoreCase(field.getSource()) || f.getName().equalsIgnoreCase(field.getSource()))
+                    .findFirst()
+                    .orElseThrow(() -> new ExecutionException(
+                            String.format("Cannot find in object '%s' field '%s'. Source expression is '%s'", getClass(candidate), Strings.toString(field),
+                                    lastPumpkinExpression))
+                            .addTarget("controller", this));
         } else {
             result = optionalField.get();
         }
@@ -259,48 +254,48 @@ public class WebItemsController implements StrictInfo {
             return result.get(candidate);
         } catch (IllegalAccessException e) {
             throw new ExecutionException(String
-                .format("Execution error in object '%s' field '%s'. Source expression is '%s'", getClass(candidate), Strings.toString(field),
-                    lastPumpkinExpression), e)
-                .addTarget("controller", this);
+                    .format("Execution error in object '%s' field '%s'. Source expression is '%s'", getClass(candidate), Strings.toString(field),
+                            lastPumpkinExpression), e)
+                    .addTarget("controller", this);
         }
     }
 
     private Object callMethod(Object candidate, Method method) {
         Preconditions.checkObjectNotNull(candidate, Object.class,
-            String.format("Target object with method '%s' cannot be null. Source expression is '%s'", method, lastPumpkinExpression));
+                String.format("Target object with method '%s' cannot be null. Source expression is '%s'", method, lastPumpkinExpression));
         Preconditions.checkObjectNotNull(method, Method.class, String.format("Method desc cannot be null. Source expression is '%s'", lastPumpkinExpression));
         if (candidate instanceof Page || candidate instanceof Component || candidate instanceof Element) {
             return invoke(candidate, method);
         }
         throw new ExecutionException(
-            String.format("Object '%s' with method '%s' is not expected class : Page or Component or Element. Source expression is '%s'", getClass(candidate),
-                Strings.toString(method), lastPumpkinExpression))
-            .addTarget("controller", this);
+                String.format("Object '%s' with method '%s' is not expected class : Page or Component or Element. Source expression is '%s'", getClass(candidate),
+                        Strings.toString(method), lastPumpkinExpression))
+                .addTarget("controller", this);
     }
 
     private Object invoke(Object candidate, Method method) {
         Preconditions.checkObjectNotNull(candidate, Object.class);
         java.lang.reflect.Method oneMethod = Arrays.stream(candidate.getClass().getDeclaredMethods())
-            .filter(m -> {
-                if (m.isAnnotationPresent(PAction.class)) {
-                    return m.getAnnotation(PAction.class).value().equalsIgnoreCase(method.getSource()) || m.getName().equalsIgnoreCase(method.getSource());
-                } else {
-                    return m.getName().equalsIgnoreCase(method.getSource());
-                }
-            })
-            .filter(m -> m.getParameterCount() == method.getArgs().length)
-            .findFirst()
-            .orElseThrow(() -> new ExecutionException(
-                String.format("Cannot find in object '%s' method '%s'", getClass(candidate), Strings.toString(method))).addTarget("controller", this)
-                .addTarget("controller", this));
+                .filter(m -> {
+                    if (m.isAnnotationPresent(PAction.class)) {
+                        return m.getAnnotation(PAction.class).value().equalsIgnoreCase(method.getSource()) || m.getName().equalsIgnoreCase(method.getSource());
+                    } else {
+                        return m.getName().equalsIgnoreCase(method.getSource());
+                    }
+                })
+                .filter(m -> m.getParameterCount() == method.getArgs().length)
+                .findFirst()
+                .orElseThrow(() -> new ExecutionException(
+                        String.format("Cannot find in object '%s' method '%s'", getClass(candidate), Strings.toString(method))).addTarget("controller", this)
+                        .addTarget("controller", this));
         try {
             oneMethod.setAccessible(true);
             return oneMethod.invoke(candidate, castArgs(oneMethod, method.getArgs()));
         } catch (Exception e) {
             throw new ExecutionException(String
-                .format("Execution error in object '%s' method '%s'. Source expression is '%s'", getClass(candidate), Strings.toString(method),
-                    lastPumpkinExpression), e)
-                .addTarget("controller", this);
+                    .format("Execution error in object '%s' method '%s'. Source expression is '%s'", getClass(candidate), Strings.toString(method),
+                            lastPumpkinExpression), e)
+                    .addTarget("controller", this);
         }
     }
 

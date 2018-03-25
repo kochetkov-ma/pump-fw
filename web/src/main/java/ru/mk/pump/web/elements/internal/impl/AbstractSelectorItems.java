@@ -131,7 +131,8 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
         if (items.isEmpty()) {
             return "";
         }
-        return items.get(0).getSubElements(Element.class).find(By.xpath("/../")).getTextHidden();
+        String res = items.get(0).getSubElements(Element.class).find(By.xpath("/../")).getTextHidden();
+        return res;
     }
 
     @Override

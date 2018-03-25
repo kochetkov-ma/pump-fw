@@ -19,11 +19,9 @@ public final class TestVars implements PrettyPrinter {
     public final static String RESULT = "result";
 
     @SuppressWarnings("WeakerAccess")
-    public final static String LAST_PUT = "last_put";
+    public final static String LAST_PUT = "last";
 
     private final Map<String, Object> sourceMap;
-
-    private volatile Object last;
 
     private TestVars(Map<String, Object> sourceMap) {
         /*HashMap because concurrent map not supplies null value*/
@@ -52,7 +50,7 @@ public final class TestVars implements PrettyPrinter {
     @NonNull
     public TestVars put(@NonNull String key, @Nullable Object value) {
         sourceMap.put(key, value);
-        last = value;
+        sourceMap.put(LAST_PUT, value);
         return this;
     }
 
@@ -69,7 +67,7 @@ public final class TestVars implements PrettyPrinter {
 
     @Nullable
     public Object getLastPut() {
-        return last;
+        return  sourceMap.get(LAST_PUT);
     }
 
     @Nullable

@@ -1,6 +1,7 @@
 package ru.mk.pump.web.common.pageobject;
 
 
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -56,30 +57,31 @@ public class Initializer implements FieldDecorator {
 
     /**
      * [RUS]
-     * Установить карту параметров элементов для их реализаций.
-     * Это замена аннотаций. Например, чтобы установить тип фокуса для элементов типа ButtonImpl:
+     * Установить карту параметров элементов для их интерфейсов.
+     * Это замена аннотаций. Например, чтобы установить тип фокуса для элементов типа Button:
      * <pre>
      * {@code
      * setElementsImplParametersStore(
-     *      ImmutableMap.of(ButtonImpl.class,
-     *      ImmutableMap.of("focusType", FocusType.BOTTOM))
+     *      ImmutableMap.of(Button.class,
+     *      Parameters.of(ElementParams.FOCUS_TYPE.withStrictValue(FocusType.BOTTOM)))
      * );
      * }
      * </pre>
      * <ul>
-     * <li>В качестве ключа указывается конечный класс реализации и проверяется <b>равенство</b> классов </li>
+     * <li>В качестве ключа указывается интерфейс и проверяется <b>равенство</b> классов </li>
      * <li>В качестве значения укзывается карта параметров</li>
      * <li>Параметры из аннотаций перезаписывают одинаковые параметры из этого хранилища</li>
      * </ul>
      */
     @Setter
     @Getter
-    private Map<Class<? extends BaseElement>, Parameters> elementsImplParametersStore;
+    private Map<Class<? extends Element>, Parameters> elementsImplParametersStore = Maps.newHashMap();
 
     /**
      * Details in the type description {@link Initializer}
      */
     public Initializer(@NonNull ElementFactory elementFactory, @NonNull ElementFactory componentFactory) {
+
         this(elementFactory, componentFactory, null);
     }
 
@@ -105,7 +107,7 @@ public class Initializer implements FieldDecorator {
      */
     @Override
     public Object decorate(@NonNull ClassLoader loader, @NonNull Field field) {
-        final PumpElementAnnotations pumpElementAnnotations = new PumpElementAnnotations(field);
+        final FieldElementAnnotation pumpElementAnnotations = new FieldElementAnnotation(field);
         final ElementConfig elementConfig = annotationsToElementConfig(pumpElementAnnotations);
         final By elementBy = pumpElementAnnotations.buildBy();
 
@@ -154,17 +156,19 @@ public class Initializer implements FieldDecorator {
      *
      * @param pumpElementAnnotations filed wrapper for extract rules parameters
      */
-    protected ElementConfig annotationsToElementConfig(@NonNull PumpElementAnnotations pumpElementAnnotations) {
+    protected ElementConfig annotationsToElementConfig(@NonNull FieldElementAnnotation pumpElementAnnotations) {
         return ElementConfig.of(pumpElementAnnotations.getElementName(), pumpElementAnnotations.getElementDescription())
                 .withParameters(getParameterIfCan(pumpElementAnnotations))
                 .withParameters(pumpElementAnnotations.buildParameters())
                 .withRequirements(pumpElementAnnotations.getRequirements());
     }
 
-    private Parameters getParameterIfCan(@NonNull PumpElementAnnotations pumpElementAnnotations) {
-        if (pumpElementAnnotations.getAnnotatedElement() instanceof BaseElement) {
+    private Parameters getParameterIfCan(@NonNull FieldElementAnnotation pumpElementAnnotations) {
+        if (isSingleElement(pumpElementAnnotations.getField())) {
             //noinspection SuspiciousMethodCalls
-            return getElementsImplParametersStore().getOrDefault(pumpElementAnnotations.getAnnotatedElement().getClass(), Parameters.of());
+            return getElementsImplParametersStore().getOrDefault(pumpElementAnnotations.getField().getType(), Parameters.of());
+        } else if (isListElement(pumpElementAnnotations.getField())) {
+            return getElementsImplParametersStore().getOrDefault(getGenericElementClass(pumpElementAnnotations.getField()), Parameters.of());
         } else {
             return Parameters.of();
         }

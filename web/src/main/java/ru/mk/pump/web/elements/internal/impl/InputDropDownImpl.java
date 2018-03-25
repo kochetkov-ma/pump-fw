@@ -34,7 +34,7 @@ import java.util.Map;
 @DocParameters({
         "EXTRA_INPUT_BY",
         "INPUTDROPDOWN_DROPDOWN_BY",
-        "INPUTDROPDOWN_LOAD_BY",
+        "DROPDOWN_LOAD_BY",
         "DROPDOWN_EXPAND_BY",
         "DROPDOWN_BEFORE_SELECT",
         "SELECTOR_STATIC_ITEMS",
@@ -213,22 +213,20 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     protected Input getInput() {
         //noinspection UnnecessaryLocalVariable
         final Input res = input.get(Input.class);
-        //TODO::Удалить?
-        /* Безконтрольное использование параметров, которые предназначены только для главного элемента
-        ((BaseElement) res).withParams(getParams());
-        */
         return res;
     }
 
     protected DropDown getDropDown() {
         final DropDown res = dropDown.get(DropDown.class);
         ((DropDownImpl) res).setStaticItems(false);
+        Parameters params = Parameters.of(ElementParams.DROPDOWN_BEFORE_SELECT.withValue(false),
+                getParams().get(ElementParams.DROPDOWN_EXPAND_BY),
+                getParams().get(ElementParams.DROPDOWN_LOAD_BY)
+
+        );
         ((BaseElement) res)
-                //TODO::Удалить?
-                /* Безконтрольное использование параметров, которые предназначены только для главного элемента
-                .withParams(getParams())
-                */
-                .withParams(Parameters.of(ElementParams.DROPDOWN_BEFORE_SELECT.withValue(false)));
+                .withParams(params);
+
         return res;
     }
 

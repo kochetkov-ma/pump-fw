@@ -1,7 +1,6 @@
 package ru.mk.pump.web.elements.internal.impl;
 
-import java.util.Map;
-import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.utils.ParameterUtils;
 import ru.mk.pump.commons.utils.Strings;
@@ -13,12 +12,14 @@ import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.complex.Child;
 import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
-import ru.mk.pump.web.elements.enums.ActionStrategy;
-import ru.mk.pump.web.elements.internal.ActionExecutor;
+import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.DocParameters;
-import ru.mk.pump.web.elements.internal.StateResolver;
+import ru.mk.pump.web.elements.internal.SetState;
+import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
+
+import java.util.Map;
 
 /**
  * {@inheritDoc}
@@ -26,7 +27,8 @@ import ru.mk.pump.web.page.api.Page;
 @SuppressWarnings({"WeakerAccess", "unused"})
 @FrameworkImpl
 @DocParameters({"DROPDOWN_EXPAND_BY",
-    "DROPDOWN_BEFORE_SELECT"})
+        "DROPDOWN_BEFORE_SELECT"})
+@Slf4j
 class DropDownImpl extends AbstractSelectorItems implements DropDown {
 
     public final static By[] DEFAULT_LOAD_ICON = {};
@@ -62,7 +64,7 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
 
     protected Child<Element> getLoadIcon() {
         if (loadIcon == null) {
-            loadIcon = new Child<>(this, ElementParams.INPUTDROPDOWN_LOAD_BY.getName()).withDefaultBy(DEFAULT_LOAD_ICON);
+            loadIcon = new Child<>(this, ElementParams.DROPDOWN_LOAD_BY.getName()).withDefaultBy(DEFAULT_LOAD_ICON);
         }
         return loadIcon;
     }
@@ -114,11 +116,13 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
         }
     }
 
-    {
-        getActionExecutor().addBefore(getActionFactory().newVoidAction(this::checkLoadIconFlow, "Load icon check").setMaxTruCount(1).withStrategy(
-            ActionStrategy.SIMPLE, ActionStrategy.NO_STATE_CHECK));
-    }
+    /*
+        {
+            getActionExecutor().addBefore(getActionFactory().newVoidAction(this::checkLoadIconFlow, "Load icon check").setMaxTruCount(1).withStrategy(
+                ActionStrategy.SIMPLE, ActionStrategy.NO_STATE_CHECK));
 
+        }
+    */
     @Override
     public Map<String, String> getInfo() {
         final Map<String, String> res = super.getInfo();
@@ -127,11 +131,29 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
 
     }
 
+    @Override
+    public SetState ready() {
+        return SetState
+                .of(StateType.READY,
+                        State.of(StateType.OTHER, this::isDisappearLoadIcon).withName("Load icon Disappear"),
+                        super.ready());
+    }
+
+    boolean isDisappearLoadIcon() {
+        if (getLoadIcon().isDefined()) {
+            final Element element = getLoadIcon().get(Element.class);
+            boolean res = element.isNotDisplayed().result().isSuccess();
+            return res;
+        }
+        return true;
+    }
+
     void checkLoadIconFlow() {
         if (getLoadIcon().isDefined()) {
             final Element element = getLoadIcon().get(Element.class);
-            element.advanced().getStateResolver().resolve(element.advanced().displayed(), 100).result();
-            element.advanced().getStateResolver().resolve(element.advanced().notDisplayed(), 5000).result().throwExceptionOnFail();
+            //TODO: May be 101
+            element.advanced().getStateResolver().resolve(element.advanced().displayed(), 100, 100).result();
+            element.advanced().getStateResolver().resolve(element.advanced().notDisplayed(), 5000, 100).result().throwExceptionOnFail();
         }
     }
 

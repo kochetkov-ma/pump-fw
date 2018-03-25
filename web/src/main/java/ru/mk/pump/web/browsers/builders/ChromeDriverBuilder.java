@@ -1,11 +1,16 @@
 package ru.mk.pump.web.browsers.builders;
 
 import com.google.common.collect.ImmutableMap;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import ru.mk.pump.commons.constants.MainConstants;
+import ru.mk.pump.commons.utils.FileUtils;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.constants.WebConstants;
 
@@ -32,8 +37,16 @@ public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
             put("profile.content_settings.exceptions.automatic_downloads.*.setting", 1).
             put("download.prompt_for_download", "false");
         if (Objects.nonNull(getConfig().getDownloadDirPath())) {
-            builder.put("download.default_directory", getConfig().getDownloadDirPath());
+            final Path path = Paths.get(MainConstants.HOME).resolve(getConfig().getDownloadDirPath());
+            FileUtils.createIfNotExists(path);
+            builder.put("download.default_directory", path.toString());
         }
+
+        if (Objects.nonNull(getConfig().getBrowserBinPath()) && FileUtils.isExistsAndValid(getConfig().getBrowserBinPath())){
+            chromeOptions.setBinary(getConfig().getBrowserBinPath());
+        }
+
+        chromeOptions.addArguments("no-sandbox");
 
         chromeOptions.addArguments("-incognito");
         chromeOptions.addArguments("--disable-popup-blocking");

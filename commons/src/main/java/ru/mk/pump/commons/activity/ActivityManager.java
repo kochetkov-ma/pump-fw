@@ -13,6 +13,8 @@ public interface ActivityManager {
      */
     ActivityManager add(Activity activity);
 
+    ActivityManager clearAll();
+
     ActivityManager addIfNotContains(Activity activity);
 
     Activity addAndActivate(Activity activity);

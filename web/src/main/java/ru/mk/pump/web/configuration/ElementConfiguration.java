@@ -47,9 +47,9 @@ public class ElementConfiguration {
 
     /**
      * [RUS]
-     * Мс. Таймаут проверки окончания изменения подэлементов
+     * Сек. Таймаут проверки окончания изменения подэлементов
      */
-    @Property(value = "element.items.changing.timeout", defaultValue = "1000")
+    @Property(value = "element.items.changing.timeout", defaultValue = "5000")
     private int subItemsChangingTimeout;
 
     /**
@@ -58,6 +58,13 @@ public class ElementConfiguration {
      */
     @Property(value = "element.state.timeout", defaultValue = "30")
     private int stateTimeout;
+
+    /**
+     * [RUS]
+     * Mc. Задержка между попытками проверок состояния
+     */
+    @Property(value = "element.state.poll-delay", defaultValue = "100")
+    private int stateDelay;
 
     @Property(value = "element.packages.impl", required = false)
     private String[] packagesImpl;

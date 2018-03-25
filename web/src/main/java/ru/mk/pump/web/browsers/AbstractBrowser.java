@@ -44,7 +44,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
     private WebDriver driver = null;
 
     //region INIT
-    AbstractBrowser(@NonNull DriverBuilder builder, @NonNull String uuid) {
+    public AbstractBrowser(@NonNull DriverBuilder builder, @NonNull String uuid) {
         super(uuid);
         this.builder = builder;
         this.config = builder.getConfig();

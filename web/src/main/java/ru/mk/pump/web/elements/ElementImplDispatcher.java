@@ -54,7 +54,7 @@ public class ElementImplDispatcher implements PageItemImplDispatcher {
     public static String[] customPackagesImpl = ConfigurationHolder.get().getElement().getPackagesImpl();
 
     @Setter
-    public static String[] customPackagesInterface = ConfigurationHolder.get().getElement().getPackagesImpl();
+    public static String[] customPackagesInterface = ConfigurationHolder.get().getElement().getPackagesInterface();
 
     private final SetMultimap<Class<? extends Element>, ElementImpl<? extends BaseElement>> interfaceToImplMap;
 

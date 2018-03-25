@@ -37,6 +37,11 @@ public class WindowSteps extends AbstractSteps {
         cast(controller.executeOnCurrentComponent(pumpkinExpression), Clickable.class).click();
     }
 
+    @Given("^Window - get element '(.+)' and save text to 'result'$")
+    public void winElementText(String pumpkinExpression) {
+        core().getTestVariables().putResult(cast(controller.executeOnCurrentComponent(pumpkinExpression), Element.class).getText());
+    }
+
     @Given("^Window - get element '(.+)' and check state 'is displayed'$")
     public void winElementStateDisplayed(String pumpkinExpression){
         State res = cast(controller.executeOnCurrentComponent(pumpkinExpression), Element.class).isDisplayed();

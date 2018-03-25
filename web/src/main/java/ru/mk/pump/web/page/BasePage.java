@@ -1,8 +1,5 @@
 package ru.mk.pump.web.page;
 
-import static java.lang.String.format;
-
-import java.util.Map;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -23,6 +20,10 @@ import ru.mk.pump.web.page.api.PageListener;
 import ru.mk.pump.web.page.api.PageLoader;
 import ru.mk.pump.web.utils.UrlUtils;
 import ru.mk.pump.web.utils.WebReporter;
+
+import java.util.Map;
+
+import static java.lang.String.format;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString(exclude = {"browser", "reporter", "initializer", "pageLoader"})
@@ -46,7 +47,7 @@ public class BasePage extends PageNotifier implements Page {
 
     @Getter
     @Setter
-    private String name;
+    private String name = Strings.empty();
 
     @Setter
     @Getter
@@ -94,10 +95,10 @@ public class BasePage extends PageNotifier implements Page {
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("page")
-            .put("name", name)
-            .put("url", url)
-            .put("browser", browser.getId())
-            .build();
+                .put("name", name)
+                .put("url", url)
+                .put("browser", browser.getId())
+                .build();
     }
 
     @Override
@@ -111,8 +112,10 @@ public class BasePage extends PageNotifier implements Page {
     public String getUrl() {
         if (UrlUtils.isUrl(url)) {
             return url;
-        } else {
+        } else if (getBaseUrl() != null) {
             return UrlUtils.concatWithPath(getBaseUrl(), getResourcePath());
+        } else {
+            return Strings.empty();
         }
     }
 

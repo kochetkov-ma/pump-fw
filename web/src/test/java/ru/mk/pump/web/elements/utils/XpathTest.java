@@ -13,6 +13,9 @@ class XpathTest {
     @Test
     void fixIfXpath() {
 
+        assertThat(Xpath.fixIfXpath(By.xpath("//android.widget.TextView[@resource-id='ru.alfabank.mobile.android:id/widget_account_item_balance']")).toString())
+                .isEqualTo("By.xpath: .//android.widget.TextView[@resource-id='ru.alfabank.mobile.android:id/widget_account_item_balance']");
+
         assertThat(Xpath.fixIfXpath(By.xpath(".")).toString())
             .isEqualTo("By.xpath: .");
 
@@ -33,10 +36,10 @@ class XpathTest {
 
         assertThat(Xpath.fixIfXpath(By.xpath("////")).toString())
             .isEqualTo("By.xpath: .");
-
+/*
         assertThat(Xpath.fixIfXpath(By.xpath("./.div")).toString())
             .isEqualTo("By.xpath: ./div");
-
+*/
         assertThat(Xpath.fixIfXpath(By.xpath("div")).toString())
             .isEqualTo("By.xpath: ./div");
 
@@ -51,10 +54,10 @@ class XpathTest {
 
         assertThat(Xpath.fixIfXpath(By.xpath("/././div/././")).toString())
             .isEqualTo("By.xpath: ./div");
-
+/*
         assertThat(Xpath.fixIfXpath(By.xpath("div.")).toString())
             .isEqualTo("By.xpath: ./div");
-
+*/
         assertThat(Xpath.fixIfXpath(By.xpath("./div")).toString())
             .isEqualTo("By.xpath: ./div");
 
@@ -63,10 +66,10 @@ class XpathTest {
 
         assertThat(Xpath.fixIfXpath(By.xpath("div..")).toString())
             .isEqualTo("By.xpath: ./div/..");
-
+/*
         assertThat(Xpath.fixIfXpath(By.xpath(".div..")).toString())
             .isEqualTo("By.xpath: ./div/..");
-
+*/
         assertThat(Xpath.fixIfXpath(By.xpath("./div/..")).toString())
             .isEqualTo("By.xpath: ./div/..");
 

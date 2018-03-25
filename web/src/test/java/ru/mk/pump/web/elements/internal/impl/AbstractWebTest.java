@@ -92,6 +92,7 @@ abstract class AbstractWebTest extends AbstractTestWithBrowser {
             notExists = new BaseElement(By.xpath(".//div[@class='not_exists']"), browser);
             hiddenItems = new BaseElement(By.xpath(".//div[@class='items']"), browser);
             dropDownRegions = new DropDownImpl(By.id("regionAutocompleteId"), browser);
+            ((BaseElement)dropDownRegions).withParams(Parameters.of(ElementParams.DROPDOWN_LOAD_BY.withStrictValue(new By[]{By.xpath("..//div[contains(@class,'loader')]")})));
             selectorProgram = new SelectorImpl(By.id("apartmentTypeId"), browser);
             inputDropDownRegions = new InputDropDownImpl(By.id("regionAutocompleteId"), browser);
             checkbox = new CheckBoxImpl(By.xpath("//input[@id='acceptCreditReportRequestId']/.."), browser);

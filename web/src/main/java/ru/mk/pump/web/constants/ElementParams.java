@@ -52,7 +52,7 @@ public class ElementParams {
     /**
      * load icon element parameter is array of {@link org.openqa.selenium.By} in InputDropDownImpl (when ajax list of element loading too long)
      */
-    public static final Parameter<By[]> INPUTDROPDOWN_LOAD_BY = byArrayParam("iddLoadBy");
+    public static final Parameter<By[]> DROPDOWN_LOAD_BY = byArrayParam("iddLoadBy");
     /**
      * parameter is enum {@link SelectedStrategy}
      */

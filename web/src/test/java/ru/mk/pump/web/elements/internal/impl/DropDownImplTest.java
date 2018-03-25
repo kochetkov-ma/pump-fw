@@ -35,7 +35,7 @@ class DropDownImplTest extends AbstractWebTest {
 
     @Test
     void isExpand() {
-        ElementWaiter.DEFAULT_TIMEOUT_S = 3;
+        ElementWaiter.DEFAULT_TIMEOUT_S = 5;
         createPages(getBrowser());
         Assertions.assertThat(regPage.getDropDownRegions().isExpand()).isFalse();
         /*тэг select всегда развернут и его элементы видимы и по ним можно нормально кикать, хотя в браузере не рендерится ...*/
@@ -50,6 +50,7 @@ class DropDownImplTest extends AbstractWebTest {
 
     @Test
     void expand() {
+        ElementWaiter.DEFAULT_TIMEOUT_S = 1;
         regPage.getDropDownRegions().expand();
         Assertions.assertThat(regPage.getDropDownRegions().isExpand()).isTrue();
     }

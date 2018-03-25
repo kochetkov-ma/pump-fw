@@ -9,6 +9,8 @@ Feature: Debug - 1
   @NoSkip
   Scenario: Test scenario - 2
     * Verify - equals string expected '1' and actual '1'
+    * Page - get element 'Заголовок' and save text to 'result'
+    * Verify - contains string expected 'Гл' to actual '${result}'
 
   @NoSkip
   Scenario: Test scenario - 3

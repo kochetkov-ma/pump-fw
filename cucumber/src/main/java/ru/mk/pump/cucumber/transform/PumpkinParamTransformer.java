@@ -6,9 +6,12 @@ import cucumber.runtime.ParameterInfo;
 import cucumber.runtime.xstream.LocalizedXStreams;
 import java.util.Locale;
 import java.util.Queue;
+
+import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.web.interpretator.items.Item;
 
+@Slf4j
 public class PumpkinParamTransformer extends Transformer<Object> {
 
     private final LocalizedXStreams nativeConverter = new LocalizedXStreams(getClass().getClassLoader());
@@ -47,9 +50,10 @@ public class PumpkinParamTransformer extends Transformer<Object> {
         if (res instanceof String) {
             SingleValueConverter converter = nativeConverter.get(getLocale()).getSingleValueConverter(parameterInfo.getType());
             if (converter != null) {
-                return converter.fromString((String) res);
+                res = converter.fromString((String) res);
             }
         }
+        log.debug("[TRANSFORMER] Result : '{}'", res);
         return res;
     }
 }

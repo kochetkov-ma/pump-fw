@@ -45,6 +45,14 @@ public abstract class AbstractActivityManager implements ActivityManager, Activi
     }
 
     @Override
+    public ActivityManager clearAll() {
+        activityMap.values().forEach(a -> ((Observable)a).deleteObserver(this));
+        activityMap.clear();
+        cache = null;
+        return this;
+    }
+
+    @Override
     public ActivityManager add(Activity activity) {
         if (activity instanceof Observable) {
             ((Observable) activity).addObserver(this);

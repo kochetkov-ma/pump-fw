@@ -5,13 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.History;
 import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.web.browsers.builders.AndroidAppDriverBuilder;
 import ru.mk.pump.web.browsers.builders.ChromeDriverBuilder;
 import ru.mk.pump.web.browsers.builders.GhostDriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
+import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.exceptions.BrowserException;
 import ru.mk.pump.web.utils.WebReporter;
 
 import java.util.Deque;
+import java.util.Observable;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -54,6 +57,9 @@ public class Browsers implements AutoCloseable {
         checkClosed();
         final Browser newBrowser = new AbstractBrowser(Browsers.getBuilder(browserConfig), UUID.randomUUID().toString()) {
         };
+        if (browserConfig.getType() == BrowserType.ANDROID_APP){
+            ((Observable) newBrowser).deleteObserver(newBrowser.windows());
+        }
         internalAllBrowsers.add(newBrowser);
         currentBrowser.set(newBrowser);
         browserHistory.get().add(Info.of(newBrowser.getId(), newBrowser));
@@ -122,6 +128,8 @@ public class Browsers implements AutoCloseable {
                 return new ChromeDriverBuilder(browserConfig);
             case PHANTOMJS:
                 return new GhostDriverBuilder(browserConfig);
+            case ANDROID_APP:
+                return new AndroidAppDriverBuilder(browserConfig);
             case FIREFOX:
                 throw new UnsupportedOperationException();
             case IE:

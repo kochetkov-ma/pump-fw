@@ -81,7 +81,7 @@ class BaseElementHelper {
 
             private void info(String title, Action action, Object result) {
                 PumpMessage msg = new PumpMessage(title)
-                    .withDesc(result != null ? Strings.toString(result) : null)
+                    .withDesc(Strings.toString(result))
                     .withPre("Action reporting message")
                     .addExtraInfo(action);
                 baseElement.getReporter().info(Strings.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString());

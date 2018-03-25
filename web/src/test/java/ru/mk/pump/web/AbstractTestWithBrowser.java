@@ -50,6 +50,7 @@ public abstract class AbstractTestWithBrowser {
         config = BrowserConfig.of(Size.of(true), getTestBrowserType());
         browsers = new Browsers();
         if (getTestBrowserType() == BrowserType.CHROME) {
+            config.setBrowserBinPath("G://ws-home//PortableGoogleChrome63//Chrome//chrome.exe");
             config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
         }
     }

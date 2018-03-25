@@ -3,6 +3,9 @@ package ru.mk.pump.web.elements.internal;
 import static java.lang.String.format;
 
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,11 +32,11 @@ public class StateResolver extends StateNotifier {
         return resolve(state, 500);
     }
 
-    public State resolve(State state, int timeoutMs) {
+    public State resolve(State state, ElementWaiter waiter) {
         final StateResolver resolver = new StateResolver(internalElement) {
             @Override
             protected ElementWaiter waiter() {
-                return ElementWaiter.newWaiterMs(timeoutMs);
+                return waiter;
             }
         };
         if (state instanceof SetState) {
@@ -41,6 +44,14 @@ public class StateResolver extends StateNotifier {
         } else {
             return resolver.resolve(state);
         }
+    }
+
+    public State resolve(State state, int timeoutMs, int delayMs) {
+        return resolve(state, waiter().withTimeoutMs(timeoutMs).withDelay(delayMs));
+    }
+
+    public State resolve(State state, int timeoutMs) {
+        return resolve(state, waiter().withTimeoutMs(timeoutMs));
     }
 
     public State resolve(State state) {
@@ -85,7 +96,7 @@ public class StateResolver extends StateNotifier {
 
     State resolveOr(State state) {
         final WaitResult<Boolean> res = waiter()
-            .withDelay(50)
+            .withDelay(ElementWaiter.DEFAULT_DELAY_MS)
             .wait(() -> state.get().stream().anyMatch(this::call))
             .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult));
         state.getTearDown().ifPresent(waitResultConsumer -> waitResultConsumer.accept(res));
@@ -95,7 +106,7 @@ public class StateResolver extends StateNotifier {
 
     State resolveAnd(State state) {
         final WaitResult<Boolean> res = waiter()
-            .withDelay(50)
+            .withDelay(ElementWaiter.DEFAULT_DELAY_MS)
             .wait(() -> state.get().stream().allMatch(this::call))
             .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult));
         state.getTearDown().ifPresent(waitResultConsumer -> waitResultConsumer.accept(res));

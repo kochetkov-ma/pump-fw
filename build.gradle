@@ -20,7 +20,8 @@ ext {
             junit5: "latest.release",
             mockito: "2.+",
             trove: "3.+",
-            joda_time: "latest.release"
+            joda_time: "latest.release",
+            appium: "6.0.0-BETA4"
     ]
 }
 
@@ -119,6 +120,7 @@ subprojects {
     dependencies {
 
         compile(
+                "io.appium:java-client:$versions.appium",
                 "org.projectlombok:lombok:$versions.lombok",
                 "joda-time:joda-time:$versions.joda_time",
                 "org.aspectj:aspectjweaver:1.8.13",

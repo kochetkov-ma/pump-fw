@@ -34,6 +34,7 @@ class BasePageTest extends AbstractPageTest {
 
         InputDropDown inputDropDown = page.getMainForm().getRegFormZones().get(2).getRegFormZoneColumns().get(1).getInputDropDownRegions();
         assertThat(((BaseElement) inputDropDown).getParams().size()).isEqualTo(5);
+        inputDropDown.typeAndSelect("Москва");
         assertThatCode(() -> inputDropDown.typeAndSelect("Москва")).doesNotThrowAnyException();
 
         assertThatThrownBy(

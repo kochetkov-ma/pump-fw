@@ -6,6 +6,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import ru.mk.pump.commons.constants.MainConstants;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.exception.UtilException;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

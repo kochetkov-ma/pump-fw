@@ -18,5 +18,5 @@
     <appender-ref ref="STDOUT"/>
     <appender-ref ref="FILE"/>
   </root>
-  <logger level="INFO" name="ru.mk.pump"/>
+  <logger level="TRACE" name="ru.mk.pump"/>
 </configuration>

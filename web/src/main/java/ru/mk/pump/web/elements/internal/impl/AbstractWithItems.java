@@ -30,7 +30,7 @@ import java.util.Objects;
         "SELECTOR_STATIC_ITEMS"})
 public abstract class AbstractWithItems extends BaseElement implements WithSubItems {
 
-    protected static final int CHANGING_TIMEOUT = ConfigurationHolder.get().getElement().getSubItemsChangingTimeout();
+    protected static final int CHANGING_TIMEOUT = ConfigurationHolder.get().getElement().getSubItemsChangingTimeout() * 1000;
     private static final int CHANGING_DELAY = ConfigurationHolder.get().getElement().getSubItemsChangingPoolDelay();
     private By itemsByCache;
 

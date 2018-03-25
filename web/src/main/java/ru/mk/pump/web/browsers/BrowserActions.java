@@ -1,19 +1,20 @@
 package ru.mk.pump.web.browsers;
 
+import io.appium.java_client.MobileDriver;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.touch.offset.PointOption;
 import io.qameta.allure.Step;
-import java.util.function.Supplier;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.exceptions.BrowserException;
 
-@SuppressWarnings({"UnusedReturnValue", "unused"})
+import java.util.function.Supplier;
+
+@SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
 @Slf4j
 public class BrowserActions {
 
@@ -26,6 +27,30 @@ public class BrowserActions {
 
     public Object executeScript(String script, Object... args) {
         return ((JavascriptExecutor) driver.get()).executeScript(script, args);
+    }
+
+    @Deprecated
+    public void mobileScroll(int startX, int  startY, int stopX, int stopY) {
+        TouchAction action = new TouchAction(((AndroidDriver) driver.get()));
+        action.longPress(PointOption.point(startX, startY))
+                .moveTo(PointOption.point(stopX, stopY))
+                .release().perform();
+    }
+
+    @Deprecated
+    public void mobileScrollDown() {
+        MobileDriver mobile = ((MobileDriver) driver.get());
+        int startX = (int) (mobile.manage().window().getSize().getWidth() * 0.1);
+        int startY = (int) (mobile.manage().window().getSize().getHeight() * 0.8);
+        int stopX = 1;
+        int stopY = 1;
+
+        mobileScroll(startX, startY, stopX, stopY);
+    }
+
+    public void mobileScroll(PointOption startPoint, PointOption stopPoint) {
+        TouchAction action = new TouchAction(((AndroidDriver) driver.get()));
+        action.longPress(startPoint).moveTo(stopPoint).release().perform();
     }
 
     public Object executeScript(String script) {
