@@ -33,7 +33,6 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     private final By avatarBy;
 
-    @Setter
     private final ElementWaiter waiter;
 
     @Getter

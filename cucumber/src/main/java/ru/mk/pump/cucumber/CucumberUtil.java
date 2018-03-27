@@ -13,6 +13,7 @@ public class CucumberUtil {
 
     /**
      * @throws AssumptionViolatedException - throw AssumptionViolatedException to skip test
+     * @param scenario Scenario
      */
     public void skipScenario(Scenario scenario) throws AssumptionViolatedException {
         //noinspection ConstantConditions

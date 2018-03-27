@@ -62,6 +62,7 @@ public class CucumberCore {
 
     /**
      * For internal using
+     * @param monitor CucumberMonitor
      */
     public void setMonitor(CucumberMonitor monitor) {
         cucumberMonitor.set(monitor);
