@@ -2,6 +2,7 @@ package ru.mk.pump.web.page;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
 import org.openqa.selenium.By;
@@ -19,6 +20,7 @@ import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.common.api.annotations.PString;
 import ru.mk.pump.web.common.api.annotations.PStrings;
 import ru.mk.pump.web.component.BaseComponent;
+import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.Input;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;
@@ -44,7 +46,7 @@ public abstract class AbstractPageTest extends AbstractTestWithBrowser {
         }
 
         @Override
-        public String getTitle() {
+        public Optional<Element> getTitle() {
             return pageTitle.getTextHidden();
         }
     }
@@ -62,7 +64,7 @@ public abstract class AbstractPageTest extends AbstractTestWithBrowser {
         }
 
         @Override
-        public String getTitle() {
+        public Optional<Element> getTitle() {
             return pageTitle.getTextHidden();
         }
     }

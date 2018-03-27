@@ -59,4 +59,11 @@ public class WindowSteps extends AbstractSteps {
         core().getWebController().executeOnCurrentComponent(pumpkinExpression);
     }
 
+    @Given("^Window - get text and save to 'result'$")
+    public void winText() {
+        if (controller.getComponentManager().getCurrent() == null){
+            throw new IllegalStateException("You must to init any component in controller");
+        }
+        core().getTestVariables().putResult(controller.getComponentManager().getCurrent().getText());
+    }
 }

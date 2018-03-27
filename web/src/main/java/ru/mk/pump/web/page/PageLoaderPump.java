@@ -91,7 +91,7 @@ public class PageLoaderPump implements PageLoader {
         displayedElements.forEach(el -> checker
             .checkTrue(format("On page '%s' element '%s' is displayed", getPage().getName(), el.info().getName()), el.isDisplayed().result().isSuccess()));
         textContainsElements.forEach(
-            (el, text) -> checker.contains(format("On page '%s' element '%s' contains text", getPage().getName(), el.info().getName()), text, el.getText()));
+            (el, text) -> checker.contains(format("On page '%s' element '%s' contains text", getPage().getName(), el.info().getName()), text, el.getTextHidden()));
         predicateElements.forEach((el, predicate) -> checker
             .checkTrue(format("On page '%s' predicate element '%s' is success", getPage().getName(), el.info().getName()), predicate.test(el)));
     }

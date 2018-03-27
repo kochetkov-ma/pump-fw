@@ -1,35 +1,39 @@
 package ru.mk.pump.web.page;
 
+import static java.lang.String.format;
+
+import java.util.Map;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
-import org.openqa.selenium.By;
+import org.openqa.selenium.support.FindBy;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.pageobject.Initializer;
 import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
+import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.page.api.Page;
 import ru.mk.pump.web.page.api.PageListener;
 import ru.mk.pump.web.page.api.PageLoader;
 import ru.mk.pump.web.utils.UrlUtils;
 import ru.mk.pump.web.utils.WebReporter;
 
-import java.util.Map;
-
-import static java.lang.String.format;
-
 @SuppressWarnings({"WeakerAccess", "unused"})
-@ToString(exclude = {"browser", "reporter", "initializer", "pageLoader"})
+@ToString(of = {"baseUrl", "resourcePath", "name", "description", "url"})
 public class BasePage extends PageNotifier implements Page {
 
-    public static final By DEFAULT_BODY_BY = By.tagName("body");
+    @PElement("Тело страницы")
+    @FindBy(tagName = "body")
+    private Element pageBody;
 
     @Getter
     @Setter
@@ -85,6 +89,8 @@ public class BasePage extends PageNotifier implements Page {
     protected void afterConstruct() {
         initAllElements();
         getPageLoader().addAdditionalCondition(this::jsReady);
+        getPageLoader().addDisplayedElements(pageBody);
+        getTitle().ifPresent(el -> getPageLoader().addTextContainsElement(el, getName()));
         addListener(newDefaultListener());
     }
 
@@ -95,10 +101,10 @@ public class BasePage extends PageNotifier implements Page {
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("page")
-                .put("name", name)
-                .put("url", url)
-                .put("browser", browser.getId())
-                .build();
+            .put("name", name)
+            .put("url", url)
+            .put("browser", browser.getId())
+            .build();
     }
 
     @Override
@@ -107,6 +113,11 @@ public class BasePage extends PageNotifier implements Page {
             initializer = new Initializer(new ElementFactory(new ElementImplDispatcher(), this), new ElementFactory(Component.getImplDispatcher(), this));
         }
         return initializer;
+    }
+
+    @Override
+    public String getText() {
+        return pageBody.getText();
     }
 
     public String getUrl() {
@@ -138,8 +149,8 @@ public class BasePage extends PageNotifier implements Page {
     }
 
     @Override
-    public String getTitle() {
-        return StringConstants.UNDEFINED;
+    public Optional<Element> getTitle() {
+        return Optional.empty();
     }
 
     @Override
@@ -171,5 +182,11 @@ public class BasePage extends PageNotifier implements Page {
                 getReporter().info(format("Page '%s' is opening", name), page.toString());
             }
         };
+    }
+
+    public void check() {
+        getPageLoader().checkAdditionalCondition();
+        getPageLoader().checkElements();
+        getPageLoader().checkUrl();
     }
 }

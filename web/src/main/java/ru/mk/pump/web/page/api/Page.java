@@ -1,10 +1,12 @@
 package ru.mk.pump.web.page.api;
 
+import java.util.Optional;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.common.api.WebObject;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.component.api.Component;
+import ru.mk.pump.web.elements.api.Element;
 
 public interface Page extends WebObject, StrictInfo, Component, AppResource {
 
@@ -18,9 +20,9 @@ public interface Page extends WebObject, StrictInfo, Component, AppResource {
     String getName();
 
     /**
-     * @return Static text in element from real page html code
+     * @return Static text in element from real page html code. I should override this in concrete page
      */
-    String getTitle();
+    Optional<Element> getTitle();
 
     /**
      * @return PageObject description {@link PPage#desc()}
@@ -33,11 +35,4 @@ public interface Page extends WebObject, StrictInfo, Component, AppResource {
      * @return {@link PageLoader}
      */
     PageLoader getPageLoader();
-
-
-    default void check() {
-        getPageLoader().checkAdditionalCondition();
-        getPageLoader().checkElements();
-        getPageLoader().checkUrl();
-    }
 }

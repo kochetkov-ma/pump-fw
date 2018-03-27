@@ -65,5 +65,11 @@ public class PageSteps extends AbstractSteps {
         core().getVerifier().checkTrue(res.name(), res.result().isSuccess(), res.toPrettyString());
     }
 
-
+    @Given("^Page - get text and save to 'result'$")
+    public void pageText() {
+        if (controller.getPageManager().getCurrent() == null){
+            throw new IllegalStateException("You must to init any page in controller");
+        }
+        core().getTestVariables().putResult(controller.getPageManager().getCurrent().getText());
+    }
 }

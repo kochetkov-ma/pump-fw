@@ -1,6 +1,6 @@
 package ru.mk.pump.web.appium;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import java.util.Optional;
 import lombok.Getter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,7 @@ import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.common.api.annotations.PString;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
+import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.page.BasePage;
 import ru.mk.pump.web.page.PageLoaderPump;
@@ -41,11 +42,6 @@ public class AndroidAppTest {
         public Calculator(Browser browser) {
             super(browser);
             setPageLoader(new PageLoaderPump(this, WebReporter.getVerifier()));
-        }
-
-        @Override
-        public String getTitle() {
-            return "Калькулятор";
         }
     }
 

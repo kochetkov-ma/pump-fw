@@ -48,5 +48,5 @@ public interface Component extends PageItem{
 
     Initializer getInitializer();
 
-
+    String getText();
 }

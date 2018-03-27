@@ -54,7 +54,9 @@ public class PageManager extends AbstractItemsManager<BasePage> {
     @Override
     protected BasePage afterItemCreate(BasePage itemInstance) {
         BasePage res = handleAnnotations(itemInstance);
-        res.setPageLoader(pageLoader);
+        if (pageLoader != null) {
+            res.setPageLoader(pageLoader);
+        }
         return res;
     }
 
