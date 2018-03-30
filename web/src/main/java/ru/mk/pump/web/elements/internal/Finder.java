@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
-import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.commons.utils.Waiter;
+import ru.mk.pump.web.elements.api.concrete.Frame;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFinderException;
 
@@ -58,6 +59,9 @@ public class Finder implements StrictInfo {
         if (!getCache().isPresent()) {
             logFindSelfAmount++;
             log.debug("Call findSelf() from Finder.get() '{}'", toString());
+            if (getMainElement() instanceof Frame){
+                ((Frame) getMainElement()).switchTo();
+            }
             return findStrategy.findSelf();
         } else {
             logReturnCacheAmount++;
@@ -67,7 +71,7 @@ public class Finder implements StrictInfo {
     }
 
     public WaitResult<WebElement> findFast() {
-        logFindAmount++;
+        logFindAmount ++;
         log.debug("Call Finder.findFast() '{}'" + toString());
         try {
             final WebElement result = get();
@@ -76,7 +80,7 @@ public class Finder implements StrictInfo {
             } else {
                 lastResult = new WaitResult<>(false, 0);
             }
-        } catch (ElementFinderException | NoSuchElementException ex) {
+        } catch (ElementFinderException | NotFoundException ex) {
             lastResult = new WaitResult<WebElement>(false, 0).withCause(ex);
         }
         return lastResult;
@@ -88,7 +92,7 @@ public class Finder implements StrictInfo {
         setCache(null);
         lastResult = new Waiter()
             .withNotIgnoreExceptions(ElementFinderException.class)
-            .withNotIgnoreExceptions(NoSuchElementException.class)
+            .withNotIgnoreExceptions(NotFoundException.class)
             .waitIgnoreExceptions(FIND_TIMEOUT_S, 0, this::get, Matchers.notNullValue(WebElement.class));
         return lastResult;
     }

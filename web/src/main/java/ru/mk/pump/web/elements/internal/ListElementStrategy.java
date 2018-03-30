@@ -2,7 +2,7 @@ package ru.mk.pump.web.elements.internal;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -58,7 +58,7 @@ class ListElementStrategy extends FindStrategy {
         } catch (StaleElementReferenceException ex) {
             getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
             throw ex;
-        } catch (NoSuchElementException ex) {
+        } catch (NotFoundException ex) {
             throw ex;
         } catch (WebDriverException ex) {
             getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));

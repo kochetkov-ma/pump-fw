@@ -1,5 +1,7 @@
 package ru.mk.pump.cucumber.steps.web;
 
+import static ru.mk.pump.web.common.WebItemsController.cast;
+
 import cucumber.api.java.en.Given;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.cucumber.steps.AbstractSteps;
@@ -7,12 +9,10 @@ import ru.mk.pump.cucumber.transform.PParam;
 import ru.mk.pump.web.common.WebItemsController;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Element;
+import ru.mk.pump.web.elements.api.concrete.Frame;
 import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.Editable;
 import ru.mk.pump.web.elements.internal.State;
-import ru.mk.pump.web.utils.TestVars;
-
-import static ru.mk.pump.web.common.WebItemsController.cast;
 
 @Slf4j
 public class PageSteps extends AbstractSteps {
@@ -21,6 +21,12 @@ public class PageSteps extends AbstractSteps {
 
     public PageSteps() {
         controller = core().getWebController();
+    }
+
+
+    @Given("^Page - switch to frame '(.+)'$")
+    public void setFrame(String pumpkinExpression) {
+        cast(core().getWebController().executeOnCurrentPage(pumpkinExpression), Frame.class).switchTo();
     }
 
     @Given("^Page - execute '(.+)'$")
@@ -67,7 +73,7 @@ public class PageSteps extends AbstractSteps {
 
     @Given("^Page - get text and save to 'result'$")
     public void pageText() {
-        if (controller.getPageManager().getCurrent() == null){
+        if (controller.getPageManager().getCurrent() == null) {
             throw new IllegalStateException("You must to init any page in controller");
         }
         core().getTestVariables().putResult(controller.getPageManager().getCurrent().getText());

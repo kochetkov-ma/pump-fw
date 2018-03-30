@@ -31,7 +31,6 @@ import ru.mk.pump.web.page.api.Page;
 public abstract class AbstractPageTest extends AbstractTestWithBrowser {
 
 
-
     @PPage(value = "Главная страница", desc = "Главная страница", baseUrl = "https://ipotekaonline.open.ru")
     @Alternative
     public static class MainPageOther extends BasePage {
@@ -47,7 +46,7 @@ public abstract class AbstractPageTest extends AbstractTestWithBrowser {
 
         @Override
         public Optional<Element> getTitle() {
-            return pageTitle.getTextHidden();
+            return Optional.of(pageTitle);
         }
     }
 
@@ -65,7 +64,7 @@ public abstract class AbstractPageTest extends AbstractTestWithBrowser {
 
         @Override
         public Optional<Element> getTitle() {
-            return pageTitle.getTextHidden();
+            return Optional.of(pageTitle);
         }
     }
 
@@ -187,15 +186,15 @@ public abstract class AbstractPageTest extends AbstractTestWithBrowser {
             @FindBy(id = "regionAutocompleteId")
             @PElement(value = "Регион", desc = "Выбор региона из выпадающего списка")
             @PStrings({
-                    @PString(name = "testParam1", value = "paramValue1"),
-                    @PString(name = "testParam2", value = "paramValue2")
+                @PString(name = "testParam1", value = "paramValue1"),
+                @PString(name = "testParam2", value = "paramValue2")
             })
 
             @PFindBys({
-                    @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
-                    @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
-                    @PFindBy(name = "iddLoadBy", value = {@FindBy(tagName = "input")}),
-                    @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
+                @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
+                @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
+                @PFindBy(name = "iddLoadBy", value = {@FindBy(tagName = "input")}),
+                @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
             })
             @Getter
             private InputDropDown inputDropDownRegionsFail;
@@ -204,16 +203,16 @@ public abstract class AbstractPageTest extends AbstractTestWithBrowser {
             @PElement(value = "Регион", desc = "Выбор региона из выпадающего списка")
             /*аннотация для определяния нескольких СТРОКОВЫХ параметров элемента*/
             @PStrings({
-                    /*один СТРОКОВЫЙ параметр*/
-                    @PString(name = "testParam1", value = "paramValue1"),
-                    @PString(name = "testParam2", value = "paramValue2")
+                /*один СТРОКОВЫЙ параметр*/
+                @PString(name = "testParam1", value = "paramValue1"),
+                @PString(name = "testParam2", value = "paramValue2")
             })
             /*аннотация для определяния нескольких параметров элемента типа Локатор*/
             @PFindBys({
-                    /*один параметр Локатор*/
-                    @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
-                    @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
-                    @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
+                /*один параметр Локатор*/
+                @PFindBy(name = "extraBy", value = {@FindBy(xpath = "//div")}),
+                @PFindBy(name = "iddInputBy", value = {@FindBy(tagName = "input")}),
+                @PFindBy(name = "iddDropDownBy", value = {@FindBy(xpath = ".")})
             })
             @Getter
             private InputDropDown inputDropDownRegions;
@@ -223,7 +222,7 @@ public abstract class AbstractPageTest extends AbstractTestWithBrowser {
             }
 
             @PAction("Метод")
-            List<String> getStaticListOfString(String var, int number, boolean bool){
+            List<String> getStaticListOfString(String var, int number, boolean bool) {
                 return ImmutableList.of("Строка_1", "Строка_2");
             }
         }

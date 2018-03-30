@@ -18,6 +18,11 @@ public class BrowserSteps extends AbstractSteps {
         core().getBrowsers().newBrowser(config).start();
     }
 
+    @Given("^Browser - reset frame$")
+    public void setRootFrame() {
+        CucumberCore.instance().getBrowsers().get().actions().switchToRootFrame();
+    }
+
     @Given("^Browser - restart$")
     public void restart() {
         if (!CucumberCore.instance().getBrowsers().has()) {

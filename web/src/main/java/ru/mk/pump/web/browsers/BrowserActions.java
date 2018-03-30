@@ -98,6 +98,18 @@ public class BrowserActions {
         return driver.get().getCurrentUrl();
     }
 
+    public void switchToRootFrame() {
+        driver.get().switchTo().defaultContent();
+    }
+
+    public void switchToFrame(WebElement element) {
+        driver.get().switchTo().frame(element);
+    }
+
+    public void switchToFrame(int index) {
+        driver.get().switchTo().frame(index);
+    }
+
     @Step("Try to get alert in '{timeout}'")
     public Alert alert(int timeoutS) {
         Waiter waiter = new Waiter();
