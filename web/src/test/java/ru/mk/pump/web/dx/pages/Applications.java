@@ -5,15 +5,15 @@ import org.openqa.selenium.support.FindBy;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.api.annotations.PPage;
+import ru.mk.pump.web.dx.components.ApplicationMainFrame;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.concrete.Button;
 
 @PPage(value = "Заявки")
 public class Applications extends DxBasePage {
 
-    @PElement("Мои активные Заявки")
-    @FindBy(xpath = "//span[text()='Мои активные Заявки']")
-    private Button activeApplication;
+    @PElement("Главный фрейм")
+    @FindBy(xpath = "//iframe[@id='contentIFrame0']")
+    private ApplicationMainFrame mainFrame;
 
     public Applications(Browser browser) {
         super(browser);
@@ -21,6 +21,6 @@ public class Applications extends DxBasePage {
 
     @Override
     public Optional<Element> getTitle() {
-        return Optional.of(activeApplication);
+        return Optional.of(mainFrame.getActiveApplication());
     }
 }

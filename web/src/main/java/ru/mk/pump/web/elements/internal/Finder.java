@@ -12,7 +12,6 @@ import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.commons.utils.Waiter;
-import ru.mk.pump.web.elements.api.concrete.Frame;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFinderException;
 
@@ -46,7 +45,7 @@ public class Finder implements StrictInfo {
         this.findStrategy = new SingleElementStrategy(getMainElement());
     }
 
-    Finder setFindStrategy(FindStrategy findStrategy) {
+    public Finder setFindStrategy(FindStrategy findStrategy) {
         this.findStrategy = findStrategy;
         return this;
     }
@@ -59,9 +58,6 @@ public class Finder implements StrictInfo {
         if (!getCache().isPresent()) {
             logFindSelfAmount++;
             log.debug("Call findSelf() from Finder.get() '{}'", toString());
-            if (getMainElement() instanceof Frame){
-                ((Frame) getMainElement()).switchTo();
-            }
             return findStrategy.findSelf();
         } else {
             logReturnCacheAmount++;
@@ -71,7 +67,7 @@ public class Finder implements StrictInfo {
     }
 
     public WaitResult<WebElement> findFast() {
-        logFindAmount ++;
+        logFindAmount++;
         log.debug("Call Finder.findFast() '{}'" + toString());
         try {
             final WebElement result = get();

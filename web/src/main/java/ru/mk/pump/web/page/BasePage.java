@@ -135,7 +135,7 @@ public class BasePage extends PageNotifier implements Page {
         notifyOnBeforeLoad(this);
         try {
             getBrowser().open(getUrl());
-            afterOpen();
+            //afterOpen();
         } catch (Throwable throwable) {
             notifyOnLoadFail(this, throwable);
             throw throwable;

@@ -7,6 +7,7 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFinderException;
 import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
@@ -36,6 +37,9 @@ class ListElementStrategy extends FindStrategy {
 
     protected WebElement getFromRoot() {
         try {
+            if (ConfigurationHolder.get().getElement().isFrameSupport()) {
+                getTarget().getBrowser().actions().switchToRootFrame();
+            }
             final List<WebElement> webElements = getTarget().getBrowser().getDriver().findElements(getTarget().getBy());
             final WebElement res = getFromList(webElements);
             getTarget().getFinder().setCache(res);
@@ -59,6 +63,9 @@ class ListElementStrategy extends FindStrategy {
             getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
             throw ex;
         } catch (NotFoundException ex) {
+            if (ConfigurationHolder.get().getElement().isFrameSupport()) {
+                getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
+            }
             throw ex;
         } catch (WebDriverException ex) {
             getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));

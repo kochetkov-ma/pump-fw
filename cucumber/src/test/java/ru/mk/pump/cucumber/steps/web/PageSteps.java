@@ -9,7 +9,6 @@ import ru.mk.pump.cucumber.transform.PParam;
 import ru.mk.pump.web.common.WebItemsController;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.api.concrete.Frame;
 import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.Editable;
 import ru.mk.pump.web.elements.internal.State;
@@ -21,12 +20,6 @@ public class PageSteps extends AbstractSteps {
 
     public PageSteps() {
         controller = core().getWebController();
-    }
-
-
-    @Given("^Page - switch to frame '(.+)'$")
-    public void setFrame(String pumpkinExpression) {
-        cast(core().getWebController().executeOnCurrentPage(pumpkinExpression), Frame.class).switchTo();
     }
 
     @Given("^Page - execute '(.+)'$")
