@@ -3,25 +3,25 @@ group = 'ru.iopump.pumpfw'
 
 ext {
     versions = [
-            aspectj: "1.8.10",
+            aspectj      : "1.8.10",
             allure_gradle: "2.5",
-            annotations: "3.0.2",
-            lombok: "latest.release",
-            apache: "latest.release",
-            guava: "latest.release",
-            reflections: "latest.release",
-            logger: "latest.release",
-            junit: "4.12",
-            jackson: "2.9.0.pr4",
-            selenium: "3.7.0",
-            allure: "latest.release",
-            assertj: "3.8.0",
-            allureJunit4: "latest.release",
-            junit5: "latest.release",
-            mockito: "2.+",
-            trove: "3.+",
-            joda_time: "latest.release",
-            appium: "6.0.0-BETA4"
+            annotations  : "3.0.2",
+            lombok       : "latest.release",
+            apache       : "latest.release",
+            guava        : "latest.release",
+            reflections  : "latest.release",
+            logger       : "latest.release",
+            junit        : "4.12",
+            jackson      : "2.9.0.pr4",
+            selenium     : "3.7.0",
+            allure       : "latest.release",
+            assertj      : "3.8.0",
+            allureJunit4 : "latest.release",
+            junit5       : "latest.release",
+            mockito      : "2.+",
+            trove        : "3.+",
+            joda_time    : "latest.release",
+            appium       : "6.0.0-BETA4"
     ]
 }
 
@@ -179,11 +179,27 @@ subprojects {
     }
 
     artifacts {
-        archives sourceJar,javadocJar
+        archives sourceJar, javadocJar
     }
 
     signing {
         sign configurations.archives
+    }
+
+    task uploadOpenNexus(type: Upload) {
+        configuration = configurations.archives
+        uploadDescriptor = true
+        repositories {
+            mavenDeployer {
+                repository(url: "http://rumskapt527.open.ru:8081/content/repositories/automatization_releases/") {
+                    authentication(userName: openNexusUsername, password: openNexusPassword)
+                }
+
+                snapshotRepository(url: "http://rumskapt527.open.ru:8081/content/repositories/automatization_snapshots/") {
+                    authentication(userName: openNexusUsername, password: openNexusPassword)
+                }
+            }
+        }
     }
 
     uploadArchives {
