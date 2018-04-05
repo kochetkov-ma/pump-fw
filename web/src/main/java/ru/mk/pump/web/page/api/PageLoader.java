@@ -2,6 +2,7 @@ package ru.mk.pump.web.page.api;
 
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
+import ru.mk.pump.commons.utils.CallableExt;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
@@ -26,7 +27,7 @@ public interface PageLoader {
 
     void addPredicateElement(Element element, Predicate<Element> thisElementPredicate);
 
-    void addAdditionalCondition(Callable<Boolean> booleanCallable);
+    void addAdditionalCondition(CallableExt<Boolean> booleanCallable);
 
     void checkElements();
 

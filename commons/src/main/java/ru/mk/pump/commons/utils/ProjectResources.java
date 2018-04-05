@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -15,10 +16,12 @@ import ru.mk.pump.commons.exception.UtilException;
 /**
  * ONLY IN CALLER PROJECT DIRS
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 @UtilityClass
 @Slf4j
 public final class ProjectResources {
+
+    public static final String[] BUILD_DIRS = {"build", "target", "out"};
 
     public Path getBuildDir(@NonNull Class relatedClass) {
         try {
@@ -29,21 +32,16 @@ public final class ProjectResources {
     }
 
     private Path moveToBuildRoot(Path innerProjectPath) {
-        final String pDir = System.getProperty("user.dir");
-        if (pDir == null) {
-            log.error("RESOURCES ERROR : Cannot get system property 'user.dir'");
-            return innerProjectPath;
+        Path result = innerProjectPath;
+        while (result != null) {
+            final Path current = result;
+            if (Arrays.stream(BUILD_DIRS).anyMatch(current::endsWith)) {
+                return current;
+            }
+            result = current.getParent();
         }
-        final Path buildDir = Paths.get(pDir);
-        Path result = innerProjectPath.getParent();
-        while (result != null && !buildDir.equals(result.getParent())) {
-            result = result.getParent();
-        }
-        if (result == null) {
-            throw new UtilException("Cannot get build Path from " + innerProjectPath);
-        }
-        return result;
-
+        log.error("RESOURCES ERROR : Cannot find any dirs '{}' in '{}'. And return '{}'", BUILD_DIRS, innerProjectPath, innerProjectPath.getParent());
+        return innerProjectPath.getParent();
     }
 
     @NonNull
