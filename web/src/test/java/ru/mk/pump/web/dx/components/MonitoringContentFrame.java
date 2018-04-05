@@ -18,10 +18,12 @@ public class MonitoringContentFrame extends BaseFrame {
     @FindBy(id = "dashboardSelectorLink")
     private Button dashboardSelector;
 
+    @Getter
     @PElement("Поиск")
     @FindBy(id = "crmGrid_findCriteria")
-    private Button search;
+    private Input search;
 
+    @Getter
     @PElement("Начать поиск")
     @FindBy(id = "crmGrid_findCriteriaImg")
     private Button searchStart;

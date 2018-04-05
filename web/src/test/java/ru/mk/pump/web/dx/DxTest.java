@@ -7,24 +7,19 @@ import ru.mk.pump.web.dx.pages.Monitoring;
 
 public class DxTest extends AbstractTestWithBrowser {
 
+    private static final String APP = "И-170606-000566";
+
     @Test
     @Disabled
     void testFrame() {
-        final Monitoring page = new Monitoring(getBrowser());
-        page.open();
+        final Monitoring monitoringPage = new Monitoring(getBrowser());
+        monitoringPage.open();
 
-        page.getHome().click();
-        page.getSales().click();
-        page.getApplications().click();
-        page.getHome().click();
-
-        page.getMainFrame().getFrame().getFrame().getFrame().getSearchInput().type("Тест");
-
-        page.getHome().click();
-        page.getSales().click();
-        page.getApplications().click();
-        page.getHome().click();
-
-        page.getMainFrame().getFrame().getFrame().getFrame().getSearchInput().type("Тест");
+        monitoringPage.getHome().click();
+        monitoringPage.getSales().click();
+        monitoringPage.getApplications().click();
+        monitoringPage.getMainFrame().getSearch().type(APP);
+        monitoringPage.getMainFrame().getSearchStart().click();
+        monitoringPage.getMainFrame().getFirstSearchResult().click();
     }
 }
