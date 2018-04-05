@@ -48,7 +48,9 @@ public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
 
         chromeOptions.addArguments("no-sandbox");
 
+        /*
         chromeOptions.addArguments("-incognito");
+        */
         chromeOptions.addArguments("--disable-popup-blocking");
         chromeOptions.addArguments("chrome.switches","--disable-extensions");
 

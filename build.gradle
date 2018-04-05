@@ -19,7 +19,7 @@ ext {
             allureJunit4 : "latest.release",
             junit5       : "latest.release",
             mockito      : "2.+",
-            trove        : "3.+",
+            trove        : "latest.release",
             joda_time    : "latest.release",
             appium       : "6.0.0-BETA4"
     ]

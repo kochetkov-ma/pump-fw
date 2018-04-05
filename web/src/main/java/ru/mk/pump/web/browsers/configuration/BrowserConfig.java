@@ -51,6 +51,9 @@ public class BrowserConfig {
     @Property(value = "vnc", defaultValue = "false")
     private boolean selenoidVnc = false;
 
+    @Property(value = "capabilities.file", defaultValue = "false")
+    private String capabilitiesFile;
+
     private Parameters extraParams = Parameters.of();
 
     private DesiredCapabilities capabilities;

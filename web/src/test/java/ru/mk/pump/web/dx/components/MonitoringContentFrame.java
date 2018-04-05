@@ -18,6 +18,19 @@ public class MonitoringContentFrame extends BaseFrame {
     @FindBy(id = "dashboardSelectorLink")
     private Button dashboardSelector;
 
+    @PElement("Поиск")
+    @FindBy(id = "crmGrid_findCriteria")
+    private Button search;
+
+    @PElement("Начать поиск")
+    @FindBy(id = "crmGrid_findCriteriaImg")
+    private Button searchStart;
+
+    @Getter
+    @PElement("Первый результат поиска")
+    @FindBy(xpath = "//table[@id='gridBodyTable']//tbody/tr/td[2]//a")
+    private Button firstSearchResult;
+
     @Getter
     @FindBy(xpath = "//iframe[@id='dashboardFrame']")
     private FrameDashboard frame;
