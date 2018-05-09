@@ -175,6 +175,9 @@ public class Strings {
         if (object instanceof Collection) {
             return trim(Arrays.toString(((Collection) object).toArray()));
         }
+        if (object instanceof Object[]) {
+            return Arrays.toString((Object[]) object);
+        }
         try {
             if (object.getClass().getMethod("toString").getDeclaringClass() != Object.class) {
                 return object.toString();
