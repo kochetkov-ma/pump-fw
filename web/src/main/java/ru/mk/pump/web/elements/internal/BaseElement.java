@@ -1,5 +1,7 @@
 package ru.mk.pump.web.elements.internal;
 
+import java.util.Map;
+import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +20,6 @@ import ru.mk.pump.web.elements.internal.interfaces.ElementInfo;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
 import ru.mk.pump.web.utils.WebReporter;
-
-import javax.annotation.Nullable;
-import java.util.Map;
 
 /**
  * PUBLIC BASE IMPLEMENTATION InternalElement interface

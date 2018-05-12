@@ -95,7 +95,7 @@ public class ConfigurationHolder {
         Configuration config = new Configuration();
         config.setBrowserConfig(BrowserConfig.of(BrowserType.CHROME));
         config.setApplicationName("undefined");
-        config.getElement().setWindowWidthOffset(0);
+        config.getElement().setWindowWidthOffset(-1);
         return config;
     }
 }

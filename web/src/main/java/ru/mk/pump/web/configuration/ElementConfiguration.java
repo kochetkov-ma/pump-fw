@@ -66,6 +66,14 @@ public class ElementConfiguration {
     @Property(value = "element.state.poll-delay", defaultValue = "100")
     private int stateDelay;
 
+    /**
+     * [RUS]
+     * Включить если планируется использование фреймов.
+     * Влияет на работу классов {@link ru.mk.pump.web.elements.internal.FindStrategy}
+     */
+    @Property(value = "element.frame", required = false)
+    private boolean frameSupport = false;
+
     @Property(value = "element.packages.impl", required = false)
     private String[] packagesImpl;
 

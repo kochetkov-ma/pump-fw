@@ -7,13 +7,12 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import ru.mk.pump.commons.utils.CallableExt;
 import ru.mk.pump.commons.utils.Verifier;
-import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.page.api.Page;
@@ -39,7 +38,7 @@ public class PageLoaderPump implements PageLoader {
 
     private Map<Element, Predicate<Element>> predicateElements = Maps.newHashMap();
 
-    private Set<Callable<Boolean>> conditions = Sets.newHashSet();
+    private Set<CallableExt<Boolean>> conditions = Sets.newHashSet();
 
     public PageLoaderPump(Page page, Verifier checker) {
         this.page = page;
@@ -80,7 +79,7 @@ public class PageLoaderPump implements PageLoader {
     }
 
     @Override
-    public void addAdditionalCondition(Callable<Boolean> booleanCallable) {
+    public void addAdditionalCondition(CallableExt<Boolean> booleanCallable) {
         conditions.add(booleanCallable);
     }
 
@@ -91,19 +90,21 @@ public class PageLoaderPump implements PageLoader {
         displayedElements.forEach(el -> checker
             .checkTrue(format("On page '%s' element '%s' is displayed", getPage().getName(), el.info().getName()), el.isDisplayed().result().isSuccess()));
         textContainsElements.forEach(
-            (el, text) -> checker.contains(format("On page '%s' element '%s' contains text", getPage().getName(), el.info().getName()), text, el.getTextHidden()));
+            (el, text) -> checker
+                .contains(format("On page '%s' element '%s' contains text", getPage().getName(), el.info().getName()), text, el.getTextHidden()));
         predicateElements.forEach((el, predicate) -> checker
             .checkTrue(format("On page '%s' predicate element '%s' is success", getPage().getName(), el.info().getName()), predicate.test(el)));
     }
 
     @Override
     public void checkAdditionalCondition() {
-        conditions.forEach(call -> checker.noExceptions("Custom condition with wait", () -> getWaiter().wait(call).throwExceptionOnFail()));
+        conditions.forEach(call -> checker
+            .noExceptions(format(call.getDescription() + " Page is '%s'", getPage().getName()), () -> getWaiter().wait(call).throwExceptionOnFail()));
     }
 
     @Override
     public void checkUrl() {
-        new Waiter().wait(5, 100, () -> StringUtils.containsIgnoreCase(getPage().getBrowser().actions().getCurrentUrl(), getPage().getUrl()));
+        ElementWaiter.newWaiterS().wait(() -> StringUtils.containsIgnoreCase(getPage().getBrowser().actions().getCurrentUrl(), getPage().getUrl()));
         checker.contains("Page URL contains text", getPage().getUrl(), getPage().getBrowser().actions().getCurrentUrl());
     }
 }

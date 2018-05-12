@@ -11,6 +11,7 @@ import ru.mk.pump.commons.utils.FileUtils;
 import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
+import ru.mk.pump.web.utils.CapabilitiesUtils;
 
 @SuppressWarnings("WeakerAccess")
 public class BuilderHelper {
@@ -46,12 +47,7 @@ public class BuilderHelper {
     }
 
     public Capabilities getCommonCapabilities() {
-        final DesiredCapabilities capabilities;
-        if (browserConfig.getCapabilities() != null) {
-            capabilities = browserConfig.getCapabilities();
-        } else {
-            capabilities = new DesiredCapabilities();
-        }
+        final DesiredCapabilities capabilities = new DesiredCapabilities();
         if (browserConfig.isDebug()) {
             capabilities.setCapability("enableVNC", true); /*selenoid*/
         }
@@ -66,7 +62,9 @@ public class BuilderHelper {
         if (!Strings.isEmpty(browserConfig.getVersion())) {
             capabilities.setVersion(browserConfig.getVersion());
         }
+        if (browserConfig.getCapabilitiesFile() != null) {
+            capabilities.merge(CapabilitiesUtils.loadFromProperties(browserConfig.getCapabilitiesFile()));
+        }
         return capabilities;
     }
-
 }

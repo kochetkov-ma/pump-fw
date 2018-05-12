@@ -12,6 +12,7 @@ import org.openqa.selenium.support.FindBy;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
+import ru.mk.pump.commons.utils.CallableExt;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
@@ -88,7 +89,7 @@ public class BasePage extends PageNotifier implements Page {
 
     protected void afterConstruct() {
         initAllElements();
-        getPageLoader().addAdditionalCondition(this::jsReady);
+        getPageLoader().addAdditionalCondition(CallableExt.of(this::jsReady).withDescription("Waiting js on page"));
         getPageLoader().addDisplayedElements(pageBody);
         getTitle().ifPresent(el -> getPageLoader().addTextContainsElement(el, getName()));
         addListener(newDefaultListener());
@@ -135,7 +136,7 @@ public class BasePage extends PageNotifier implements Page {
         notifyOnBeforeLoad(this);
         try {
             getBrowser().open(getUrl());
-            afterOpen();
+            //afterOpen();
         } catch (Throwable throwable) {
             notifyOnLoadFail(this, throwable);
             throw throwable;
