@@ -14,6 +14,7 @@ ext {
 }
 
 dependencies {
+    compile "io.cucumber:cucumber-guice:$cucumberVersion"
     compile "io.cucumber:cucumber-java8:$cucumberVersion"
     compile "junit:junit:4.12"
     compile "io.qameta.allure:allure-cucumber2-jvm:latest.release"

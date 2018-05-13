@@ -1,6 +1,8 @@
 package ru.mk.pump.cucumber;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +24,7 @@ import java.util.Map;
 
 @SuppressWarnings("unused")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CucumberCore {
+public class CucumberCore extends AbstractModule {
 
     private static final String DEFAULT_SYSTEM_ENV_NAME = "pump.cucumber.configuration.path";
 
@@ -35,7 +37,7 @@ public class CucumberCore {
             .build();
 
     @Setter
-    @Getter
+    @Getter(onMethod_ = {@Provides})
     private Stand standConfig;
 
     @Getter
@@ -44,10 +46,10 @@ public class CucumberCore {
 
     private final ThreadLocal<CucumberMonitor> cucumberMonitor = InheritableThreadLocal.withInitial(CucumberMonitor::newInactive);
 
-    @Getter
+    @Getter(onMethod_ = {@Provides})
     private final Browsers browsers = new Browsers();
 
-    @Getter
+    @Getter(onMethod_ = {@Provides})
     private final TestVars testVariables = TestVars.of(DEFAULT_TEST_VARS);
 
     private volatile WebItemsController webController;
@@ -56,6 +58,7 @@ public class CucumberCore {
         return INSTANCE;
     }
 
+    @Provides
     public CucumberMonitor getMonitor() {
         return cucumberMonitor.get();
     }
@@ -68,14 +71,17 @@ public class CucumberCore {
         cucumberMonitor.set(monitor);
     }
 
+    @Provides
     public Reporter getReporter() {
         return WebReporter.getReporter();
     }
 
+    @Provides
     public Verifier getVerifier() {
         return WebReporter.getVerifier();
     }
 
+    @Provides
     public WebItemsController getWebController() {
         if (!browsers.has()) {
             throw new IllegalStateException("No one browser had not started. Start browser before using WebController");
@@ -88,10 +94,12 @@ public class CucumberCore {
         return webController;
     }
 
+    @Provides
     public Pumpkin paramParser() {
         return Pumpkin.newParamParser(testVariables.asMap());
     }
 
+    @Provides
     public synchronized CucumberConfig getConfig() {
         if (configHelper.getActualConfig() == null) {
             return configHelper.loadAuto();

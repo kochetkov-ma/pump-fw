@@ -1,14 +1,15 @@
 package ru.mk.pump.cucumber.steps.common;
 
+import com.google.inject.Inject;
 import cucumber.api.java.en.Given;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.Collators;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.cucumber.steps.AbstractSteps;
 import ru.mk.pump.cucumber.transform.PParam;
-import ru.mk.pump.web.utils.WebReporter;
+
+import java.util.List;
 
 @Slf4j
 public class VerifySteps extends AbstractSteps {
@@ -17,8 +18,9 @@ public class VerifySteps extends AbstractSteps {
 
     private final Verifier verifier;
 
-    public VerifySteps() {
-        this.verifier = WebReporter.getVerifier();
+    @Inject
+    public VerifySteps(Verifier verifier) {
+        this.verifier = verifier;
     }
 
     @Given("^Verify - equals object expected '(.+)' and actual '(.+)'$")

@@ -26,7 +26,7 @@ import static java.lang.String.format;
 public final class ProjectResources {
 
     public static final String ENV_BUILD_DIR_NAME = "project.build.dir.name";
-    public static final String[] BUILD_DIRS = {"out", "build"};
+    public static final String[] BUILD_DIRS = {"out", "build", "target"};
 
 
     public Path getBuildDir(@NonNull Class relatedClass) {

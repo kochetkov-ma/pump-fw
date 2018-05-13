@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.mk.pump.commons.config.Property;
 
+@SuppressWarnings("WeakerAccess")
 @Getter
 @NoArgsConstructor
 public class CucumberConfig {
@@ -29,8 +30,11 @@ public class CucumberConfig {
     @Property("plugin.information")
     private boolean informationManager = true;
 
+    @Property(value = "guice.modules", required = false)
+    private String[] guiceModules = new String[0];
 
     public static CucumberConfig of() {
+        //noinspection UnnecessaryLocalVariable
         CucumberConfig res = new CucumberConfig();
         return res;
     }
