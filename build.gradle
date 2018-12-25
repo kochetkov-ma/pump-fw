@@ -1,43 +1,3 @@
-group = 'ru.iopump.pumpfw'
-
-
-ext {
-    versions = [
-            aspectj      : "1.8.10",
-            allure_gradle: "2.5",
-            annotations  : "3.0.2",
-            lombok       : "latest.release",
-            apache       : "latest.release",
-            guava        : "latest.release",
-            reflections  : "latest.release",
-            logger       : "latest.release",
-            junit        : "4.12",
-            jackson      : "2.9.0.pr4",
-            selenium     : "3.7.0",
-            allure       : "latest.release",
-            assertj      : "3.8.0",
-            allureJunit4 : "latest.release",
-            junit5       : "latest.release",
-            mockito      : "2.+",
-            trove        : "latest.release",
-            joda_time    : "latest.release",
-            appium       : "6.0.0-BETA4",
-            guice        : "4.2.0"
-    ]
-}
-
-apply plugin: 'idea'
-
-task info {
-    doLast {
-        println 'Information'
-        println project.name
-        println project.description
-        println project.version
-        println project.group
-    }
-}
-
 buildscript {
     repositories {
         mavenCentral()
@@ -52,8 +12,36 @@ buildscript {
         classpath 'io.qameta.allure:allure-gradle:latest.release'
     }
 }
-
-task clean(group: "build") {
+plugins {
+    id 'java'
+    id 'idea'
+    id 'groovy'
+}
+group = 'ru.iopump.pumpfw'
+ext {
+    versions = [
+            allure_gradle: "2.5",
+            annotations  : "3.0.2",
+            lombok       : "1.18.4",
+            apache       : "latest.release",
+            guava        : "latest.release",
+            reflections  : "latest.release",
+            logger       : "latest.release",
+            junit        : "4.12",
+            jackson      : "2.9.8",
+            selenium     : "3.141.59",
+            allure       : "latest.release",
+            assertj      : "3.11.1",
+            allureJunit4 : "latest.release",
+            junit5       : "latest.release",
+            mockito      : "2.23.4",
+            trove        : "latest.release",
+            joda_time    : "latest.release",
+            appium       : "6.1.0",
+            guice        : "4.2.2"
+    ]
+}
+clean {
     doLast {
         println "start clean : $project.name"
         delete buildDir
@@ -67,6 +55,12 @@ task clean(group: "build") {
 
         delete "${rootDir}/allure-results"
         println "dir clean finish : ${rootDir}/allure-results"
+    }
+}
+allprojects {
+    wrapper {
+        gradleVersion = '5.0'
+        distributionType=Wrapper.DistributionType.ALL
     }
 }
 
@@ -125,7 +119,6 @@ subprojects {
                 "io.appium:java-client:$versions.appium",
                 "org.projectlombok:lombok:$versions.lombok",
                 "joda-time:joda-time:$versions.joda_time",
-                "org.aspectj:aspectjweaver:1.8.13",
                 "com.google.code.findbugs:jsr305:$versions.annotations",
                 "org.apache.httpcomponents:httpclient:$versions.apache",
                 "org.reflections:reflections:$versions.reflections",
@@ -187,25 +180,7 @@ subprojects {
     signing {
         sign configurations.archives
     }
-
-    task uploadOpenNexus(type: Upload) {
-        configuration = configurations.archives
-        uploadDescriptor = true
-        /*
-        repositories {
-            mavenDeployer {
-                repository(url: "http://rumskapt527.open.ru:8081/content/repositories/automatization_releases/") {
-                    authentication(userName: openNexusUsername, password: openNexusPassword)
-                }
-
-                snapshotRepository(url: "http://rumskapt527.open.ru:8081/content/repositories/automatization_snapshots/") {
-                    authentication(userName: openNexusUsername, password: openNexusPassword)
-                }
-            }
-        }
-        */
-    }
-
+    
     uploadArchives {
         repositories {
             //noinspection GroovyAssignabilityCheck

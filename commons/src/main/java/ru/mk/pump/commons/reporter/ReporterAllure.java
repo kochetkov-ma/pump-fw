@@ -1,6 +1,5 @@
 package ru.mk.pump.commons.reporter;
 
-
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Parameter;
 import io.qameta.allure.model.Status;
@@ -41,42 +40,14 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     private final Type minimumLevelForDuplicateInSlf4;
 
-    @Setter
-    private Type autoScreenLevel = Type.OFF;
+    @Setter private Type autoScreenLevel = Type.OFF;
 
-    @Setter
-    private Type postingLevel = Type.INFO;
+    @Setter private Type postingLevel = Type.INFO;
 
     private ThreadLocal<String> currentTestUuid = new InheritableThreadLocal<>();
 
     private ThreadLocal<Deque<String>> blockUuidQueue = InheritableThreadLocal.withInitial(ConcurrentLinkedDeque::new);
-    @Getter
-    private AttachmentsFactory attachmentsFactory;
-
-    @AllArgsConstructor
-    private class Info {
-
-        private static final String I = "kochetkov-ma@yandex.ru";
-
-        private Attachment attachment;
-
-        private Throwable throwable;
-
-        @Override
-        public String toString() {
-            return Strings
-                    .space(I, attachment != null ? "Attachment exists" : null,
-                            throwable != null ? "Throwable class " + throwable.getClass().getSimpleName() : null);
-        }
-
-        Attachment attachment() {
-            return attachment;
-        }
-
-        Throwable throwable() {
-            return throwable;
-        }
-    }
+    @Getter private AttachmentsFactory attachmentsFactory;
 
     public ReporterAllure() {
         this.attachmentsFactory = new AttachmentsFactory(Optional::empty);
@@ -92,6 +63,10 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
         this.attachmentsFactory = new AttachmentsFactory(screenshoter);
         this.minimumLevelForDuplicateInSlf4 = minimumLevelForDuplicateInSlf4;
+    }
+
+    private static String now() {
+        return org.joda.time.Instant.now().toString(new DateTimeFormatterBuilder().appendPattern("dd-MM-yy HH:mm:ss:SSSS").toFormatter());
     }
 
     public ReporterAllure withAttachmentsFactory(AttachmentsFactory attachmentsFactory) {
@@ -122,9 +97,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     @Override
     public void blockStart(String title, String description) {
         final String uuid = UUID.randomUUID().toString();
-        final StepResult stepResult = new StepResult()
-                .withDescription(description)
-                .withName(title);
+        final StepResult stepResult = new StepResult().setDescription(description).setName(title);
         Allure.getLifecycle().startStep(uuid, stepResult);
         blockUuidQueue.get().add(uuid);
     }
@@ -215,10 +188,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     public String testStart(String title, String description, Consumer<TestResult> testResultConsumer) {
         String uuid = UUID.randomUUID().toString();
-        final TestResult testResult = new TestResult()
-                .withDescription(description)
-                .withName(title)
-                .withUuid(uuid);
+        final TestResult testResult = new TestResult().setDescription(description).setName(title).setUuid(uuid);
         if (testResultConsumer != null) {
             testResultConsumer.accept(testResult);
         }
@@ -243,14 +213,8 @@ public class ReporterAllure implements Reporter, AutoCloseable {
         //testStop();
     }
 
-    private static String now() {
-        return org.joda.time.Instant.now().toString(new DateTimeFormatterBuilder()
-                .appendPattern("dd-MM-yy HH:mm:ss:SSSS")
-                .toFormatter());
-    }
-
     private void blockStop(String uuid) {
-        Allure.getLifecycle().updateStep(uuid, block -> block.withStatus(Status.PASSED));
+        Allure.getLifecycle().updateStep(uuid, block -> block.setStatus(Status.PASSED));
         Allure.getLifecycle().stopStep(uuid);
     }
 
@@ -265,11 +229,8 @@ public class ReporterAllure implements Reporter, AutoCloseable {
             return;
         }
         final String stepUuid = UUID.randomUUID().toString();
-        final StepResult stepResult = new StepResult()
-                .withName(level.getValue() + title)
-                .withStatus(Status.PASSED)
-                .withParameters(new Parameter().withName("status").withValue(level.name()),
-                        new Parameter().withName("time").withValue(now()));
+        final StepResult stepResult = new StepResult().setName(level.getValue() + title).setStatus(Status.PASSED)
+                .setParameters(new Parameter().setName("status").setValue(level.name()), new Parameter().setName("time").setValue(now()));
         if (Allure.getLifecycle().getCurrentTestCase().isPresent()) {
             Allure.getLifecycle().startStep(stepUuid, stepResult);
         } else {
@@ -284,7 +245,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
             if (description.contains("\n")) {
                 attach(attachments().text("Description", description));
             } else {
-                Allure.getLifecycle().updateStep(stepUuid, res -> res.withParameters(new Parameter().withName("description").withValue(description)));
+                Allure.getLifecycle().updateStep(stepUuid, res -> res.setParameters(new Parameter().setName("description").setValue(description)));
             }
         }
 
@@ -310,10 +271,8 @@ public class ReporterAllure implements Reporter, AutoCloseable {
                 Allure.getLifecycle().stopStep(stepUuid);
                 throw (AssertionError) info.throwable();
             } else {
-                final PumpMessage exceptionMessage = new PumpMessage(title, description)
-                        .addExtraInfo("Status", level.name())
-                        .addExtraInfo("Attachment",
-                                info.attachment() != null ? Strings.space(info.attachment().getName(), info.attachment().getType()) : null);
+                final PumpMessage exceptionMessage = new PumpMessage(title, description).addExtraInfo("Status", level.name())
+                        .addExtraInfo("Attachment", info.attachment() != null ? Strings.space(info.attachment().getName(), info.attachment().getType()) : null);
                 Allure.getLifecycle().updateStep(stepUuid, res -> res.setStatus(Status.BROKEN));
                 Allure.getLifecycle().stopStep(stepUuid);
                 throw new ExecutionException(exceptionMessage, info.throwable());
@@ -323,20 +282,12 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     }
 
     public enum Type {
-        OFF("", Integer.MAX_VALUE),
-        ALL("", 0),
-        INFO("", 2),
-        WARNING("[WARN] ", 3),
-        ERROR("[ERROR] ", 4),
-        ATTACHMENT("[ATTACHMENT] ", 0),
-        PASS("[PASS] ", 1),
+        OFF("", Integer.MAX_VALUE), ALL("", 0), INFO("", 2), WARNING("[WARN] ", 3), ERROR("[ERROR] ", 4), ATTACHMENT("[ATTACHMENT] ", 0), PASS("[PASS] ", 1),
         FAIL("[FAIL] ", 4);
 
-        @Getter
-        private final String value;
+        @Getter private final String value;
 
-        @Getter
-        private final int priority;
+        @Getter private final int priority;
 
         Type(String value, int priority) {
             this.value = value;
@@ -346,6 +297,30 @@ public class ReporterAllure implements Reporter, AutoCloseable {
         @Override
         public String toString() {
             return name();
+        }
+    }
+
+    @AllArgsConstructor
+    private class Info {
+
+        private static final String I = "kochetkov-ma@yandex.ru";
+
+        private Attachment attachment;
+
+        private Throwable throwable;
+
+        @Override
+        public String toString() {
+            return Strings.space(I, attachment != null ? "Attachment exists" : null,
+                    throwable != null ? "Throwable class " + throwable.getClass().getSimpleName() : null);
+        }
+
+        Attachment attachment() {
+            return attachment;
+        }
+
+        Throwable throwable() {
+            return throwable;
         }
     }
 }

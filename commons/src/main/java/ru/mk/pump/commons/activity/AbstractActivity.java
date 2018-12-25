@@ -9,7 +9,7 @@ import java.util.Observer;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
-@ToString()
+@ToString
 public abstract class AbstractActivity extends Observable implements Activity {
 
     @Setter
