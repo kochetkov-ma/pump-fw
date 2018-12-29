@@ -1,71 +1,48 @@
 buildscript {
     repositories {
-        mavenCentral()
-        jcenter()
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public"
         }
     }
     dependencies {
-        classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:latest.release'
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:latest.release'
-        classpath 'io.qameta.allure:allure-gradle:latest.release'
+        classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:2.0.1'
+        classpath 'io.qameta.allure:allure-gradle:2.5'
     }
-}
-plugins {
-    id 'java'
-    id 'idea'
-    id 'groovy'
 }
 group = 'ru.iopump.pumpfw'
 ext {
     versions = [
-            allure_gradle: "2.5",
-            annotations  : "3.0.2",
-            lombok       : "1.18.4",
-            apache       : "latest.release",
-            guava        : "latest.release",
-            reflections  : "latest.release",
-            logger       : "latest.release",
-            junit        : "4.12",
-            jackson      : "2.9.8",
-            selenium     : "3.141.59",
-            allure       : "latest.release",
-            assertj      : "3.11.1",
-            allureJunit4 : "latest.release",
-            junit5       : "latest.release",
-            mockito      : "2.23.4",
-            trove        : "latest.release",
-            joda_time    : "latest.release",
-            appium       : "6.1.0",
-            guice        : "4.2.2"
+            allure_gradle     : "2.5",
+            annotations       : "3.0.2",
+            lombok            : "1.18.4",
+            httpclient        : "4.5.6",
+            commonsCollections: "3.2.2",
+            commonsLang3      : "3.8.1",
+            commonsIo         : "2.6",
+            commonsText       : "1.6",
+            guava             : "27.0.1-jre",
+            reflections       : "0.9.11",
+            logger            : "1.2.3",
+            junit             : "4.12",
+            jackson           : "2.9.8",
+            selenium          : "3.141.59",
+            allure            : "2.8.1",
+            assertj           : "3.11.1",
+            junit5            : "5.3.2",
+            mockito           : "2.23.4",
+            trove             : "3.0.3",
+            joda_time         : "2.10.1",
+            appium            : "6.1.0",
+            guice             : "4.2.2"
     ]
-}
-clean {
-    doLast {
-        println "start clean : $project.name"
-        delete buildDir
-        println "dir clean finish : $buildDir"
-
-        delete "${rootDir}/out"
-        println "dir clean finish : ${rootDir}/out"
-
-        delete "${rootDir}/target"
-        println "dir clean finish : ${rootDir}/target"
-
-        delete "${rootDir}/allure-results"
-        println "dir clean finish : ${rootDir}/allure-results"
-    }
 }
 allprojects {
     wrapper {
         gradleVersion = '5.0'
-        distributionType=Wrapper.DistributionType.ALL
+        distributionType = Wrapper.DistributionType.ALL
     }
 }
-
 subprojects {
-
     project.version = rootProject.version
     project.group = rootProject.group
     //project.archivesBaseName=project.name
@@ -74,7 +51,6 @@ subprojects {
     apply plugin: 'maven'
     apply plugin: 'java'
     apply plugin: 'idea'
-    apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: 'io.qameta.allure'
 
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -83,6 +59,10 @@ subprojects {
     compileTestJava.options.encoding = "UTF-8"
 
     repositories {
+        mavenLocal()
+        maven {
+            url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public"
+        }
         maven { url 'https://jitpack.io' }
     }
 
@@ -99,34 +79,21 @@ subprojects {
         delete "${project.projectDir}/allure-results"
         println "dir clean finish : ${project.projectDir}/allure-results"
     }
-
-    junitPlatform {
-        details 'tree'
-    }
-
-    repositories {
-        jcenter()
-        mavenCentral()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-
+    
     dependencies {
-
         compile(
                 "com.google.inject:guice:$versions.guice",
                 "io.appium:java-client:$versions.appium",
                 "org.projectlombok:lombok:$versions.lombok",
                 "joda-time:joda-time:$versions.joda_time",
                 "com.google.code.findbugs:jsr305:$versions.annotations",
-                "org.apache.httpcomponents:httpclient:$versions.apache",
+                "org.apache.httpcomponents:httpclient:$versions.httpclient",
                 "org.reflections:reflections:$versions.reflections",
-                "commons-collections:commons-collections:$versions.apache",
+                "commons-collections:commons-collections:$versions.commonsCollections",
                 "com.google.guava:guava:$versions.guava",
-                "org.apache.commons:commons-lang3:$versions.apache",
-                "commons-io:commons-io:$versions.apache",
-                "org.apache.commons:commons-text:$versions.apache",
+                "org.apache.commons:commons-lang3:$versions.commonsLang3",
+                "commons-io:commons-io:$versions.commonsIo",
+                "org.apache.commons:commons-text:$versions.commonsText",
                 "ch.qos.logback:logback-classic:$versions.logger",
                 "ch.qos.logback:logback-core:$versions.logger",
                 "org.seleniumhq.selenium:selenium-java:$versions.selenium",
@@ -134,16 +101,14 @@ subprojects {
                 "net.sf.trove4j:trove4j:$versions.trove"
         )
 
-        testCompileOnly('org.apiguardian:apiguardian-api:+')
+        testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
 
         testRuntime("org.junit.jupiter:junit-jupiter-engine:$versions.junit5")
 
         testCompile(
                 "org.junit.jupiter:junit-jupiter-api:$versions.junit5",
                 "org.assertj:assertj-core:$versions.assertj",
-                "org.mockito:mockito-core:$versions.mockito",
-                "io.qameta.allure:allure-junit5:latest.release"
-                //"io.qameta.allure:allure-gradle:$versions.allure_gradle"
+                "org.mockito:mockito-core:$versions.mockito"
         )
     }
 
@@ -180,40 +145,33 @@ subprojects {
     signing {
         sign configurations.archives
     }
-    
+
     uploadArchives {
         repositories {
-            //noinspection GroovyAssignabilityCheck
             mavenDeployer {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
                     authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
-
                 snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
                     authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
-
                 pom.project {
                     name project.name
                     packaging 'jar'
                     description project.description
                     url 'https://github.com/kochetkov-ma/pump-fw'
-
                     scm {
                         connection 'https://github.com/kochetkov-ma/pump-fw.git'
                         developerConnection 'https://github.com/kochetkov-ma/pump-fw.git'
                         url 'https://github.com/kochetkov-ma/pump-fw'
                     }
-
                     licenses {
                         license {
                             name 'The Apache License, Version 2.0'
                             url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                         }
                     }
-
                     developers {
                         developer {
                             id 'kochetkov-ma'

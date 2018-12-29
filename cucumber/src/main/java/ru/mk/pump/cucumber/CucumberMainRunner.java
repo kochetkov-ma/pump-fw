@@ -7,7 +7,7 @@ public class CucumberMainRunner {
 
     public static String[] ARGS_TO_MERGE = {"--plugin", "ru.mk.pump.cucumber.plugin.PumpCucumberPlugin"};
 
-    public static void main(String[] argv) throws Throwable {
+    public static void main(String[] argv) {
         Main.main(ArrayUtils.addAll(argv, ARGS_TO_MERGE));
     }
 }

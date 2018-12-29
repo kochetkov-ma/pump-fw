@@ -19,7 +19,7 @@ import ru.mk.pump.web.page.BasePage;
 @CucumberOptions(
         strict = true,
         plugin = {"ru.mk.pump.cucumber.plugin.PumpCucumberPlugin"},
-        glue = "ru.mk.pump.cucumber",
+        glue = "ru.mk.pump.cucumber.steps",
         features = "classpath:features/")
 public class VerifyStepsTest {
 

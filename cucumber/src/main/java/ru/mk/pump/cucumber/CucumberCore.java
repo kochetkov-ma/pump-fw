@@ -83,9 +83,11 @@ public class CucumberCore extends AbstractModule {
 
     @Provides
     public WebItemsController getWebController() {
+        /*
         if (!browsers.has()) {
             throw new IllegalStateException("No one browser had not started. Start browser before using WebController");
         }
+        */
         if (webController == null) {
             ComponentStaticManager cManager = new ComponentStaticManager(browsers, ConfigurationHolder.get().getComponent().getPackages());
             PageManager pManager = new PageManager(browsers, ConfigurationHolder.get().getPage().getPackages());

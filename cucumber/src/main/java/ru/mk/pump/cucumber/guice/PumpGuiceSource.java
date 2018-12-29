@@ -22,7 +22,7 @@ public class PumpGuiceSource implements InjectorSource {
 
     private Collection<Module> allModules() {
         Collection<Module> res = prepareExtraModules();
-        res.add(CucumberModules.SCENARIO);
+        res.add(CucumberModules.createScenarioModule());
         res.add(CucumberCore.instance());
         return res;
     }

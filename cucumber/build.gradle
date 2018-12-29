@@ -1,23 +1,20 @@
 allure {
-    version = '2.4.1'
+    version = '2.6.0'
     resultsDir = project.file('allure-results')
     aspectjweaver = true
     aspectjVersion = versions.aspectj
-
-    useJUnit5 {
-        version = versions.junit5
-    }
+    downloadLink = 'http://nexus.nspk.ru:8081/nexus/service/local/repositories/thirdparty/content/io/qameta/allure-cli/2.6.0/allure-cli-2.6.0.zip'
 }
 
 ext {
-    cucumberVersion = '2.3.1'
+    cucumberVersion = '4.2.0'
 }
 
 dependencies {
     compile "io.cucumber:cucumber-guice:$cucumberVersion"
     compile "io.cucumber:cucumber-java8:$cucumberVersion"
     compile "junit:junit:4.12"
-    compile "io.qameta.allure:allure-cucumber2-jvm:latest.release"
+    compile "io.qameta.allure:allure-cucumber3-jvm:2.8.1"
     testCompile "io.cucumber:cucumber-junit:$cucumberVersion"
 
 
@@ -25,4 +22,3 @@ dependencies {
     compile project(':web')
     compile project(':commons')
 }
-

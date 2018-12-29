@@ -10,14 +10,11 @@ test {
 }
 
 allure {
-    version = '2.8.1'
+    version = '2.6.0'
     resultsDir = project.file('allure-results')
     aspectjweaver = true
     aspectjVersion = versions.aspectj
-
-    useJUnit5 {
-        version = versions.junit5
-    }
+    downloadLink = 'http://nexus.nspk.ru:8081/nexus/service/local/repositories/thirdparty/content/io/qameta/allure-cli/2.6.0/allure-cli-2.6.0.zip'
 }
 
 dependencies {

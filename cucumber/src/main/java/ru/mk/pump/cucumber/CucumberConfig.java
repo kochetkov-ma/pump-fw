@@ -34,9 +34,6 @@ public class CucumberConfig {
     private String[] guiceModules = new String[0];
 
     public static CucumberConfig of() {
-        //noinspection UnnecessaryLocalVariable
-        CucumberConfig res = new CucumberConfig();
-        return res;
+        return new CucumberConfig();
     }
-
 }

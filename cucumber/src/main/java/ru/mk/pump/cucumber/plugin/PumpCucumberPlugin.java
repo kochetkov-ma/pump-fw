@@ -1,20 +1,24 @@
 package ru.mk.pump.cucumber.plugin;
 
-import cucumber.api.event.*;
-import cucumber.api.formatter.Formatter;
-import io.qameta.allure.cucumber2jvm.AllureCucumber2Jvm;
-import io.qameta.allure.cucumber2jvm.CucumberSourceUtils;
+import cucumber.api.event.EventHandler;
+import cucumber.api.event.EventListener;
+import cucumber.api.event.EventPublisher;
+import cucumber.api.event.TestCaseFinished;
+import cucumber.api.event.TestCaseStarted;
+import cucumber.api.event.TestRunFinished;
+import cucumber.api.event.TestRunStarted;
+import cucumber.api.event.TestStepFinished;
+import cucumber.api.event.TestStepStarted;
+import io.qameta.allure.cucumber3jvm.AllureCucumber3Jvm;
 import ru.mk.pump.commons.listener.AbstractNotifier;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.cucumber.plugin.CucumberListener.TestEvent;
-import ru.mk.pump.web.utils.TestVars;
 
 @SuppressWarnings("unused")
-public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEvent, CucumberListener> implements Formatter {
+public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEvent, CucumberListener> implements EventListener {
 
-    private final CucumberSourceUtils cucumberSourceUtils = new CucumberSourceUtils();
-    private final AllureCucumber2Jvm allureCucumber2Jvm;
+    private final AllureCucumber3Jvm allureCucumber2Jvm;
     private final Reporter reporter;
     private final CucumberMonitor monitor;
     private final EventHandler<TestRunStarted> testStartedHandler = this::testStarted;
@@ -28,7 +32,7 @@ public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEv
 
         this.reporter = CucumberCore.instance().getReporter();
         this.monitor = CucumberMonitor.newDefault();
-        this.allureCucumber2Jvm = new AllureCucumber2Jvm();
+        this.allureCucumber2Jvm = new AllureCucumber3Jvm();
 
         CucumberCore.instance().setMonitor(monitor);
         monitor.started();

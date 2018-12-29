@@ -3,10 +3,6 @@ allure {
     resultsDir = project.file('allure-results')
     aspectjweaver = true
     aspectjVersion = versions.aspectj
-
-    useJUnit5 {
-        version = versions.junit5
-    }
 }
 
 dependencies {
