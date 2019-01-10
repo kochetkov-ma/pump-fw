@@ -1,8 +1,5 @@
 package ru.mk.pump.web.browsers;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Observer;
 import lombok.NonNull;
 import lombok.ToString;
 import org.openqa.selenium.WebDriver;
@@ -14,9 +11,12 @@ import ru.mk.pump.commons.activity.NamedEvent;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
-import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.exceptions.BrowserException;
 import ru.mk.pump.web.utils.WebReporter;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Observer;
 
 /**
  * Created by kochetkov-ma on 5/31/17.
@@ -161,13 +161,9 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
         return result;
     }
 
-    private void forkCloseByBrowserType() {
-        if (getConfig().getType() == BrowserType.PHANTOMJS) {
-            driver.close();
-            driver.quit();
-        } else {
-            driver.quit();
-        }
+    protected void forkCloseByBrowserType() {
+        /*for special closing logic some browser types*/
+        driver.quit();
     }
 
     protected Observer getDefaultListener() {
@@ -189,7 +185,7 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
 
             private void report(NamedEvent namedEvent, Activity activity) {
                 final PumpMessage msg = new PumpMessage(Strings.toString(namedEvent))
-                    .addExtraInfo(((AbstractBrowser) activity));
+                        .addExtraInfo(((AbstractBrowser) activity));
                 WebReporter.getReporter().info("Browser has been " + namedEvent.getName(), msg.toPrettyString());
             }
         };

@@ -1,13 +1,11 @@
 allure {
-    version = '2.4.1'
+    version = '2.6.0'
     resultsDir = project.file('allure-results')
     aspectjweaver = true
     aspectjVersion = versions.aspectj
 }
 
 dependencies {
-    compileOnly 'com.github.detro:ghostdriver:2.1.0'
-
     compile project(':commons')
 }
 

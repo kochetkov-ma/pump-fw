@@ -17,8 +17,6 @@ dependencies {
     compile "io.qameta.allure:allure-cucumber3-jvm:2.8.1"
     testCompile "io.cucumber:cucumber-junit:$cucumberVersion"
 
-
-
     compile project(':web')
     compile project(':commons')
 }

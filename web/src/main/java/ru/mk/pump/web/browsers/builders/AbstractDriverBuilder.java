@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import ru.mk.pump.commons.exception.ConfigurationException;
 import ru.mk.pump.web.browsers.DriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.exceptions.BrowserException;
@@ -30,6 +31,9 @@ abstract class AbstractDriverBuilder<T extends Capabilities> implements DriverBu
     @Override
     @SuppressWarnings("unchecked")
     public WebDriver createAndStartDriver() {
+        if (config.isHeadless() && !isHeadlessSupport()) {
+            throw new ConfigurationException("Headless mode isn't supported. Disable it in browser config");
+        }
         if (config.isRemoteDriver()) {
             return createRemoteDriver(gridUrl(), (T) getSpecialCapabilities().merge(builderHelper.getCommonCapabilities()));
         } else {

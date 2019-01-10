@@ -62,7 +62,7 @@ public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
 
         getBuilderHelper().findLocalBrowserPath().ifPresent(chromeOptions::setBinary);
 
-        /*type browser init size*/
+        /*size*/
         if (getConfig().getSizeOrDevice().useSize()) {
             chromeOptions.addArguments("window-size=" + getSize(), "--no-sandbox");
         } else if (getConfig().getSizeOrDevice().isFullScreen()) {
@@ -73,7 +73,11 @@ public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
                 chromeOptions.addArguments("start-maximized", "--no-sandbox");
             }
         }
-
+        /*headless*/
+        if (getConfig().isHeadless()) {
+            chromeOptions.addArguments("--headless");
+            chromeOptions.addArguments("--disable-gpu");
+        }
         return chromeOptions;
     }
 
@@ -81,4 +85,8 @@ public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
         return getConfig().getSizeOrDevice().getX() + "," + getConfig().getSizeOrDevice().getY();
     }
 
+    @Override
+    public boolean isHeadlessSupport() {
+        return true;
+    }
 }

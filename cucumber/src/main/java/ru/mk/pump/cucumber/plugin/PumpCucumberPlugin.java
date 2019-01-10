@@ -1,7 +1,8 @@
 package ru.mk.pump.cucumber.plugin;
 
+import cucumber.api.Plugin;
+import cucumber.api.event.ConcurrentEventListener;
 import cucumber.api.event.EventHandler;
-import cucumber.api.event.EventListener;
 import cucumber.api.event.EventPublisher;
 import cucumber.api.event.TestCaseFinished;
 import cucumber.api.event.TestCaseStarted;
@@ -16,7 +17,7 @@ import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.cucumber.plugin.CucumberListener.TestEvent;
 
 @SuppressWarnings("unused")
-public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEvent, CucumberListener> implements EventListener {
+public class PumpCucumberPlugin extends AbstractNotifier<CucumberMonitor, TestEvent, CucumberListener> implements ConcurrentEventListener, Plugin {
 
     private final AllureCucumber3Jvm allureCucumber2Jvm;
     private final Reporter reporter;

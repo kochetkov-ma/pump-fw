@@ -137,7 +137,7 @@ public class Verifier {
     }
 
     public void noExceptions(String title, @NonNull Runnable runnable) {
-        final String message = "Ожидается выполнение без Исключений";
+        final String message = "Ожидается выполнение без исключений";
         try {
             runnable.run();
         } catch (Exception ex) {

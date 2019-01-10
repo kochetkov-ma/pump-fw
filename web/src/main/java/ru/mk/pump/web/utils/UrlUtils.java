@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.text.StrBuilder;
 import ru.mk.pump.commons.utils.Preconditions;
 import ru.mk.pump.commons.utils.Strings;
 
@@ -49,7 +50,7 @@ public class UrlUtils {
         if (hasPathParam(baseUrl)) {
             res = fixUrl(replaceParams(baseUrl, path));
         } else {
-            StringBuilder sb = new StringBuilder(baseUrl);
+            StrBuilder sb = new StrBuilder(baseUrl);
             if (path != null) {
                 Arrays.stream(path).forEach(p -> sb.append("/").append(p));
             }

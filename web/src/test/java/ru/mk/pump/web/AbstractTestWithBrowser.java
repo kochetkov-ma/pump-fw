@@ -48,6 +48,9 @@ public abstract class AbstractTestWithBrowser {
     @BeforeAll
     public static void beforeAll() {
         config = BrowserConfig.of(Size.of(true), getTestBrowserType());
+        /*headless*/
+        config.setHeadless(true);
+
         browsers = new Browsers();
         if (getTestBrowserType() == BrowserType.CHROME) {
             config.setBrowserBinPath("G://ws-home//PortableGoogleChrome63//Chrome//chrome.exe");

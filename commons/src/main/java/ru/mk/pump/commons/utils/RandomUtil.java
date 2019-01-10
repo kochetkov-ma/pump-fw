@@ -1,11 +1,12 @@
 package ru.mk.pump.commons.utils;
 
-import javax.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 import ru.mk.pump.commons.exception.UtilException;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 @UtilityClass
@@ -14,13 +15,16 @@ public final class RandomUtil {
 
     private static final String RUSSIAN_CODE = "+7";
 
-    public static final RandomStringGenerator.Builder RUSSIAN = new RandomStringGenerator.Builder().withinRange('А', 'я')
+    public static final RandomStringGenerator.Builder RUSSIAN = new RandomStringGenerator.Builder()
+            .withinRange('\u0410', '\u044F')
             .filteredBy(CharacterPredicates.LETTERS);
 
-    public static final RandomStringGenerator.Builder ENGLISH = new RandomStringGenerator.Builder().withinRange('A', 'z')
+    public static final RandomStringGenerator.Builder ENGLISH = new RandomStringGenerator.Builder()
+            .withinRange('A', 'z')
             .filteredBy(CharacterPredicates.LETTERS);
 
-    public static final RandomStringGenerator.Builder NUMBER = new RandomStringGenerator.Builder().withinRange('0', '9')
+    public static final RandomStringGenerator.Builder NUMBER = new RandomStringGenerator.Builder()
+            .withinRange('0', '9')
             .filteredBy(CharacterPredicates.DIGITS);
 
     public static String newNumber(int len) {

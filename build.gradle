@@ -1,5 +1,6 @@
 buildscript {
     repositories {
+        mavenLocal()
         maven {
             url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public"
         }
@@ -7,6 +8,7 @@ buildscript {
     dependencies {
         classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:2.0.1'
         classpath 'io.qameta.allure:allure-gradle:2.5'
+        classpath 'io.franzbecker:gradle-lombok:1.14'
     }
 }
 group = 'ru.iopump.pumpfw'
@@ -35,56 +37,60 @@ ext {
             appium            : "6.1.0",
             guice             : "4.2.2"
     ]
+    isReleaseVersion = !version.endsWith("SNAPSHOT")
 }
 allprojects {
     wrapper {
-        gradleVersion = '5.0'
+        gradleVersion = '5.1'
         distributionType = Wrapper.DistributionType.ALL
     }
 }
 subprojects {
     project.version = rootProject.version
     project.group = rootProject.group
-    //project.archivesBaseName=project.name
-
+    
+    apply plugin: 'idea'
+    apply plugin: 'java'
     apply plugin: 'signing'
     apply plugin: 'maven'
-    apply plugin: 'java'
-    apply plugin: 'idea'
+    apply plugin: 'maven-publish'
     apply plugin: 'io.qameta.allure'
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    compileJava.options.encoding = "UTF-8"
-    compileTestJava.options.encoding = "UTF-8"
-
+    apply plugin: 'io.franzbecker.gradle-lombok'
+    lombok {
+        version = versions.lombok
+    }
+    idea {
+        module {
+            inheritOutputDirs = false
+            outputDir = file("$buildDir/resources/main")
+            testOutputDir = file("$buildDir/resources/test")
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
     repositories {
         mavenLocal()
         maven {
             url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public"
         }
-        maven { url 'https://jitpack.io' }
     }
-
-    /*sub projects full clean*/
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    compileJava.options.encoding = "UTF-8"
+    compileTestJava.options.encoding = "UTF-8"
     clean.doFirst {
         println "start clean : $project.name"
-
         delete "${project.projectDir}/out"
         println "dir clean finish : ${project.projectDir}/out"
-
         delete "${project.projectDir}/target"
         println "dir clean finish : ${project.projectDir}/target"
-
         delete "${project.projectDir}/allure-results"
         println "dir clean finish : ${project.projectDir}/allure-results"
     }
-    
     dependencies {
         compile(
                 "com.google.inject:guice:$versions.guice",
                 "io.appium:java-client:$versions.appium",
-                "org.projectlombok:lombok:$versions.lombok",
                 "joda-time:joda-time:$versions.joda_time",
                 "com.google.code.findbugs:jsr305:$versions.annotations",
                 "org.apache.httpcomponents:httpclient:$versions.httpclient",
@@ -100,52 +106,37 @@ subprojects {
                 "io.qameta.allure:allure-java-commons:$versions.allure",
                 "net.sf.trove4j:trove4j:$versions.trove"
         )
-
         testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
-
         testRuntime("org.junit.jupiter:junit-jupiter-engine:$versions.junit5")
-
         testCompile(
                 "org.junit.jupiter:junit-jupiter-api:$versions.junit5",
                 "org.assertj:assertj-core:$versions.assertj",
                 "org.mockito:mockito-core:$versions.mockito"
         )
     }
-
     javadoc {
         failOnError = false
     }
-
     jar {
         println "custom jar $project.name"
-        if (project.name == "cucumber") {
-            println 'cucumber'
-            from sourceSets.test.output.classesDirs.getAsFileTree().matching {
-                include('**/steps/**')
-            } + sourceSets.main.output
-        } else {
-            from sourceSets.main.output
-        }
+        from sourceSets.main.output
     }
-
     task sourceJar(type: Jar) {
         classifier = 'sources'
         from sourceSets.main.allJava
     }
-
     task javadocJar(type: Jar, dependsOn: 'javadoc') {
         from javadoc.destinationDir
         classifier = 'javadoc'
     }
-
     artifacts {
         archives sourceJar, javadocJar
     }
-
     signing {
+        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
         sign configurations.archives
     }
-
+    /*publishing to maven central*/
     uploadArchives {
         repositories {
             mavenDeployer {
@@ -180,6 +171,15 @@ subprojects {
                         }
                     }
                 }
+            }
+        }
+    }
+    /*publishing to maven local*/
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifact sourceJar
+                artifact javadocJar
             }
         }
     }

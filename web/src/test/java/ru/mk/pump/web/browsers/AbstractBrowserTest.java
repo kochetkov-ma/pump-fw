@@ -28,7 +28,6 @@ class AbstractBrowserTest extends AbstractTestWithBrowser {
         getBrowser().open("https://ya.ru");
         getBrowser().windows().newTab();
         getBrowser().open("https://google.ru");
-        Waiter.sleep(5000);
         getBrowser().close();
     }
 

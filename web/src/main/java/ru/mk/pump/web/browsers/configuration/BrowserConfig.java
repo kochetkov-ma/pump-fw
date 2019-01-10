@@ -48,6 +48,9 @@ public class BrowserConfig {
     @Property(value = "debug", defaultValue = "false")
     private boolean debug = false;
 
+    @Property(value = "headless", defaultValue = "false")
+    private boolean headless = false;
+
     @Property(value = "vnc", defaultValue = "false")
     private boolean selenoidVnc = false;
 

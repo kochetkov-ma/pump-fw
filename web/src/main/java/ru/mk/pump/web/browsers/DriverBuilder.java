@@ -8,4 +8,8 @@ public interface DriverBuilder {
     BrowserConfig getConfig();
 
     WebDriver createAndStartDriver();
+
+    default boolean isHeadlessSupport() {
+        return false;
+    }
 }

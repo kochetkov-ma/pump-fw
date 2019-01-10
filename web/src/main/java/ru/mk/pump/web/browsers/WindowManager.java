@@ -37,13 +37,15 @@ public class WindowManager extends AbstractActivityManager {
 
     public Window newTab() {
         final Set<String> windows = browser.getDriver().getWindowHandles();
+        /*new tab through JS*/
         browser.actions().executeScript("window.open()");
+        /*check new tab*/
         final Set<String> newWindows = browser.getDriver().getWindowHandles();
         newWindows.removeAll(windows);
         if (newWindows.size() == 0) {
             throw new BrowserException("Cannot create new Tab by JS");
         }
-
+        /*register new logical activity*/
         final Window window = Window.of(this, browser.getDriver(), newWindows.iterator().next());
         addAndActivate(window);
         return window;

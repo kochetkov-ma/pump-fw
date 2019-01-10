@@ -7,7 +7,6 @@ import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.builders.AndroidAppDriverBuilder;
 import ru.mk.pump.web.browsers.builders.ChromeDriverBuilder;
-import ru.mk.pump.web.browsers.builders.GhostDriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.exceptions.BrowserException;
@@ -126,8 +125,6 @@ public class Browsers implements AutoCloseable {
         switch (browserConfig.getType()) {
             case CHROME:
                 return new ChromeDriverBuilder(browserConfig);
-            case PHANTOMJS:
-                return new GhostDriverBuilder(browserConfig);
             case ANDROID_APP:
                 return new AndroidAppDriverBuilder(browserConfig);
             case FIREFOX:
