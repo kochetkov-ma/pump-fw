@@ -1,10 +1,10 @@
-package ru.mk.pump.cucumber.steps.web;
+package ru.mk.pump.cucumber.glue.step.ru;
 
 import static ru.mk.pump.web.common.WebItemsController.cast;
 
 import cucumber.api.java.en.Given;
 import lombok.extern.slf4j.Slf4j;
-import ru.mk.pump.cucumber.steps.AbstractSteps;
+import ru.mk.pump.cucumber.glue.AbstractSteps;
 import ru.mk.pump.web.common.WebItemsController;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Element;

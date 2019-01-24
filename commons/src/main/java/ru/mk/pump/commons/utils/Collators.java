@@ -50,6 +50,27 @@ public class Collators {
         };
     }
 
+    public Collator<String> containsReverse() {
+        return new Collator<String>() {
+
+            private String expected;
+
+            private String actual;
+
+            @Override
+            public boolean collate(String expected, String actual) {
+                this.expected = expected;
+                this.actual = actual;
+                return StringUtils.contains(this.expected, this.actual);
+            }
+
+            @Override
+            public String getMessage() {
+                return Strings.space(actual(actual), "содержится в ожидаемой строке", info(expected));
+            }
+        };
+    }
+
     /**
      * use {@link Strings#liteNormalize(String)} for actual and expected
      */

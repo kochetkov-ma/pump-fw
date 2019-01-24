@@ -1,5 +1,7 @@
 package ru.mk.pump.commons.utils;
 
+import static java.lang.String.format;
+
 import lombok.NonNull;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,10 +12,11 @@ import ru.mk.pump.commons.interfaces.Collator;
 import ru.mk.pump.commons.reporter.Reporter;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
-
-import static java.lang.String.format;
 
 @SuppressWarnings("ALL")
 public class Verifier {

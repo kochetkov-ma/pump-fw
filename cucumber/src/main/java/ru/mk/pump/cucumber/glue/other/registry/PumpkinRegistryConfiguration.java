@@ -1,4 +1,4 @@
-package ru.mk.pump.cucumber.steps.registry;
+package ru.mk.pump.cucumber.glue.other.registry;
 
 import static java.util.Locale.ENGLISH;
 

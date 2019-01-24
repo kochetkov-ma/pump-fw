@@ -1,24 +1,19 @@
 package ru.mk.pump.web.common.pageobject;
 
-import com.google.common.collect.Maps;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.web.common.api.ParameterTransformer;
 import ru.mk.pump.web.common.api.annotations.PComponent;
 import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.elements.api.annotations.Requirements;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class PumpElementAnnotations extends Annotations {
@@ -94,6 +89,13 @@ public class PumpElementAnnotations extends Annotations {
             return getAnnotatedElement().getAnnotation(PPage.class).resource();
         }
         return "";
+    }
+
+    public @NonNull String[] getPageExtraUrls() {
+        if (getAnnotatedElement().isAnnotationPresent(PPage.class)) {
+            return getAnnotatedElement().getAnnotation(PPage.class).extraUrls();
+        }
+        return new String[]{};
     }
 
     public @NonNull String getElementName() {

@@ -1,4 +1,4 @@
-package ru.mk.pump.cucumber.steps.common;
+package ru.mk.pump.cucumber.glue.step.en;
 
 import com.google.inject.Inject;
 import cucumber.api.java.en.Given;
@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.Collators;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
-import ru.mk.pump.cucumber.steps.AbstractSteps;
+import ru.mk.pump.cucumber.glue.AbstractSteps;
 
 import java.util.List;
 

@@ -1,9 +1,10 @@
-package ru.mk.pump.cucumber.steps.registry;
+package ru.mk.pump.cucumber.glue.other.registry;
 
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.JavaType;
 import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.web.interpretator.items.Item;
 
@@ -50,10 +51,13 @@ public class PumpkinTransformer implements ParameterByTypeTransformer {
         return res;
     }
 
-    protected Object parseNonPumpkin(Object fromValue, Type expectedType) {
+    protected Object parseNonPumpkin(String fromValue, Type expectedType) {
         final JavaType javaType = objectMapper.constructType(expectedType);
-        if (javaType.isTypeOrSubTypeOf(List.class) && fromValue instanceof String) {
-            return Arrays.stream(((String) fromValue).split(delimiter))
+        if (javaType.isTypeOrSubTypeOf(Boolean.class)) {
+            return !Strings.isBlank(fromValue);
+        }
+        if (javaType.isTypeOrSubTypeOf(List.class)) {
+            return Arrays.stream((fromValue).split(delimiter))
                     .map(i -> objectMapper.convertValue(i, javaType.getContentType()))
                     .collect(Collectors.toList());
         }
@@ -63,7 +67,7 @@ public class PumpkinTransformer implements ParameterByTypeTransformer {
     private Object parse(Queue<Item> itemQueue, Type expectedType) {
         Object res = parsePumpkin(itemQueue, expectedType);
         if (res instanceof String) {
-            res = parseNonPumpkin(res, expectedType);
+            res = parseNonPumpkin((String) res, expectedType);
         }
         log.debug("[TRANSFORMER] Result : '{}'", res);
         return res;

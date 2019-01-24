@@ -19,6 +19,8 @@ public interface PageLoader {
 
     Verifier getChecker();
 
+    void setExtraUrls(String[] urls);
+
     void addExistsElements(Element... elements);
 
     void addDisplayedElements(Element... elements);

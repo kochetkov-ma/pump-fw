@@ -1,4 +1,4 @@
-package ru.mk.pump.cucumber.steps.hooks;
+package ru.mk.pump.cucumber.glue.other.hooks;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;

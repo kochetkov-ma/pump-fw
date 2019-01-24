@@ -57,6 +57,7 @@ public class PageManager extends AbstractItemsManager<BasePage> {
         if (pageLoader != null) {
             res.setPageLoader(pageLoader);
         }
+        res.getPageLoader().setExtraUrls(itemInstance.getExtraUrls());
         return res;
     }
 
@@ -78,6 +79,7 @@ public class PageManager extends AbstractItemsManager<BasePage> {
         Strings.ifNotEmptyOrBlank(annotations.getPageDescription(), page::setDescription);
         Strings.ifNotEmptyOrBlank(annotations.getPageBaseUrl(), page::setBaseUrl);
         Strings.ifNotEmptyOrBlank(annotations.getPageResource(), page::setResourcePath);
+        page.setExtraUrls(annotations.getPageExtraUrls());
         return page;
     }
 

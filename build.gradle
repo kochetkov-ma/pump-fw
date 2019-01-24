@@ -178,8 +178,33 @@ subprojects {
     publishing {
         publications {
             mavenJava(MavenPublication) {
+                from project.components.java
                 artifact sourceJar
                 artifact javadocJar
+                pom {
+                    name =  project.name
+                    packaging = 'jar'
+                    description = project.description
+                    url = 'https://github.com/kochetkov-ma/pump-fw'
+                    scm {
+                        connection = 'https://github.com/kochetkov-ma/pump-fw.git'
+                        developerConnection = 'https://github.com/kochetkov-ma/pump-fw.git'
+                        url = 'https://github.com/kochetkov-ma/pump-fw'
+                    }
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'kochetkov-ma'
+                            name = 'Kochetkov Maksim'
+                            email = 'kochetkov-ma@yandex.ru'
+                        }
+                    }
+                }
             }
         }
     }

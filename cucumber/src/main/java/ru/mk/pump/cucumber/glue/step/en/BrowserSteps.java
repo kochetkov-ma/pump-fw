@@ -1,9 +1,9 @@
-package ru.mk.pump.cucumber.steps.web;
+package ru.mk.pump.cucumber.glue.step.en;
 
 import cucumber.api.java.en.Given;
 import org.openqa.selenium.Alert;
 import ru.mk.pump.cucumber.CucumberCore;
-import ru.mk.pump.cucumber.steps.AbstractSteps;
+import ru.mk.pump.cucumber.glue.AbstractSteps;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;

@@ -2,6 +2,7 @@ package ru.mk.pump.web.page;
 
 import static java.lang.String.format;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.util.Arrays;
@@ -10,8 +11,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import ru.mk.pump.commons.utils.CallableExt;
+import ru.mk.pump.commons.utils.Collators;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
@@ -25,6 +28,9 @@ public class PageLoaderPump implements PageLoader {
 
     @Setter
     private ElementWaiter waiter;
+
+    @Setter
+    private String[] extraUrls;
 
     @Setter
     @Getter
@@ -104,7 +110,14 @@ public class PageLoaderPump implements PageLoader {
 
     @Override
     public void checkUrl() {
-        ElementWaiter.newWaiterS().wait(() -> StringUtils.containsIgnoreCase(getPage().getBrowser().actions().getCurrentUrl(), getPage().getUrl()));
-        checker.contains("Page URL contains text", getPage().getUrl(), getPage().getBrowser().actions().getCurrentUrl());
+        if (ArrayUtils.isNotEmpty(extraUrls)) {
+            ElementWaiter.newWaiterS().wait(() -> StringUtils.containsAny(getPage().getBrowser().actions().getCurrentUrl(), extraUrls));
+            final String currentUrl = getPage().getBrowser().actions().getCurrentUrl();
+            checker.listContains("Page extra URLs contains text", ImmutableList.of(currentUrl), Arrays.asList(extraUrls), Collators.containsReverse());
+        } else {
+            ElementWaiter.newWaiterS().wait(() -> StringUtils.containsAny(getPage().getBrowser().actions().getCurrentUrl(), getPage().getUrl()));
+            final String currentUrl = getPage().getBrowser().actions().getCurrentUrl();
+            checker.contains("Page URL contains text", getPage().getUrl(), currentUrl);
+        }
     }
 }

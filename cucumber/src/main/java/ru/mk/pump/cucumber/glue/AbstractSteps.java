@@ -1,4 +1,4 @@
-package ru.mk.pump.cucumber.steps;
+package ru.mk.pump.cucumber.glue;
 
 import ru.mk.pump.cucumber.CucumberCore;
 

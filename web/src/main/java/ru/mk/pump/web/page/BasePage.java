@@ -4,6 +4,8 @@ import static java.lang.String.format;
 
 import java.util.Map;
 import java.util.Optional;
+
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -57,6 +59,10 @@ public class BasePage extends PageNotifier implements Page {
     @Setter
     @Getter
     private String description = StringConstants.UNDEFINED;
+
+    @Getter(AccessLevel.PACKAGE)
+    @Setter(AccessLevel.PACKAGE)
+    private String[] extraUrls;
 
     @Setter
     private String url;

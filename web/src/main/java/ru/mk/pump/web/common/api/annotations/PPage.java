@@ -20,5 +20,8 @@ public @interface PPage {
 
     String resource() default "";
 
-
+    /**
+     * [RUS] url'ы для проверки корректности открытой страницы
+     */
+    String[] extraUrls() default "";
 }
