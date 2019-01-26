@@ -43,7 +43,7 @@ import java.util.stream.IntStream;
 public class Strings {
 
     public static final String LITE_NORMALIZE = "[\\n\\t]";
-    public static final String NORMALIZE = "[-+.^:(),\\s\\n\\t]";
+    public static final String NORMALIZE = "[-!—+.^:(),\\s\\n\\t]";
     public static final String WIN_FILE_NORMALIZE = "[\\\\/:*?<>|]";
 
     public String empty() {

@@ -13,7 +13,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.StrBuilder;
-import ru.mk.pump.commons.utils.Preconditions;
+import ru.mk.pump.commons.utils.Pre;
 import ru.mk.pump.commons.utils.Strings;
 
 /**
@@ -45,7 +45,7 @@ public class UrlUtils {
      * @throws IllegalArgumentException Если URL после всех постановок и обработок не соответсвует формату либо не найден парметр с указанным номером
      */
     public String concatWithPath(@NonNull String baseUrl, @Nullable String... path) {
-        Preconditions.checkStringNotBlank(baseUrl);
+        Pre.checkStringNotBlank(baseUrl);
         final String res;
         if (hasPathParam(baseUrl)) {
             res = fixUrl(replaceParams(baseUrl, path));

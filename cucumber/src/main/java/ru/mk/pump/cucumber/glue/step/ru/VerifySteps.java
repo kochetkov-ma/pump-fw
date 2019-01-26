@@ -1,5 +1,7 @@
 package ru.mk.pump.cucumber.glue.step.ru;
 
+import static java.lang.String.format;
+
 import com.google.inject.Inject;
 import cucumber.api.java.en.Given;
 import lombok.extern.slf4j.Slf4j;
@@ -8,12 +10,13 @@ import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.cucumber.glue.AbstractSteps;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
 public class VerifySteps extends AbstractSteps {
 
-    private static final String MSG = "Cucumber verification step";
+    private static final String MSG = "Cucumber шаг проверки значений";
 
     private final Verifier verifier;
 
@@ -22,63 +25,139 @@ public class VerifySteps extends AbstractSteps {
         this.verifier = verifier;
     }
 
-    @Given("^Verify - equals object expected '(.+)' and actual '(.+)'$")
-    public void equalsObject(Object expect, Object actual) {
-        verifier.equals(MSG, expect, actual);
+    @Given("^проверено, что ожидаемый объект (.+?)( не|) равен актуальному (.+?)$")
+    public void equalsObject(Object expect, boolean not, Object actual) {
+        if (not) {
+            verifier.notEquals(MSG, expect, actual);
+        } else {
+            verifier.equals(MSG, expect, actual);
+        }
     }
 
-    @Given("^Verify - NOT equals object expected '(.+)' and actual '(.+)'$")
-    public void notEqualsObject(Object expect, Object actual) {
-        verifier.notEquals(MSG, expect, actual);
+    @Given("^проверено, что ожидаемая строка '(.+?)'( не|) (равна|содержится в) актаульной '(.+?)'( используя нормализацию|)$")
+    public void equalsString(String expect, boolean not, String type, String actual, boolean normalize) {
+        if (normalize) {
+            expect = Strings.normalize(expect);
+            actual = Strings.normalize(actual);
+        }
+        switch (type) {
+            case "равна":
+                if (not) {
+                    verifier.notEquals(MSG, expect, actual);
+                } else {
+                    verifier.equals(MSG, expect, actual);
+                }
+                break;
+            case "содержится в":
+                if (not) {
+                    verifier.notContains(MSG, expect, actual);
+                } else {
+                    verifier.contains(MSG, expect, actual);
+                }
+                break;
+            default:
+                operationTypeError(type);
+        }
     }
 
-    @Given("^Verify - equals string expected '(.+)' and actual '(.+)'$")
-    public void equalsString(String expect, String actual) {
-        verifier.equals(MSG, Strings.liteNormalize(expect), Strings.liteNormalize(actual));
+    @Given("^проверено, что ожидаемое число (.+?)( не|) (равно|больше|меньше|больше или равно|меньше или равно) актуальн(?:ому|ого) (.+?)$")
+    public void equalsNumber(long expect, boolean not, String type, long actual) {
+        switch (type) {
+            case "равно":
+                if (not) {
+                    verifier.notEquals(MSG, expect, actual);
+                } else {
+                    verifier.equals(MSG, expect, actual);
+                }
+                break;
+            case "больше":
+                if (not) {
+                    verifier.checkFalse(MSG + type, expect > actual);
+                } else {
+                    verifier.checkTrue(MSG + type, expect > actual);
+                }
+                break;
+            case "меньше":
+                if (not) {
+                    verifier.checkFalse(MSG + type, expect < actual);
+                } else {
+                    verifier.checkTrue(MSG + type, expect < actual);
+                }
+                break;
+            case "больше или равно":
+                if (not) {
+                    verifier.checkFalse(MSG + type, expect >= actual);
+                } else {
+                    verifier.checkTrue(MSG + type, expect >= actual);
+                }
+                break;
+            case "меньше или равно":
+                if (not) {
+                    verifier.checkFalse(MSG + type, expect <= actual);
+                } else {
+                    verifier.checkTrue(MSG + type, expect <= actual);
+                }
+                break;
+            default:
+                operationTypeError(type);
+        }
     }
 
-    @Given("^Verify - NOT equals string expected '(.+)' and actual '(.+)'$")
-    public void notEqualsString(String expect, String actual) {
-        verifier.notEquals(MSG, Strings.liteNormalize(expect), Strings.liteNormalize(actual));
+    @Given("^проверено, что актуальное значение (.+?) (истина|ложь|null|не null)$")
+    public void isTrue(Object object, String type) {
+        switch (type) {
+            case "истина":
+                if (object instanceof Boolean) {
+                    verifier.checkTrue(MSG, (boolean) object);
+                } else {
+                    verifier.notNull(MSG, object);
+                }
+                break;
+            case "ложь":
+                if (object instanceof Boolean) {
+                    verifier.checkFalse(MSG, (boolean) object);
+                } else {
+                    verifier.checkNull(MSG, object);
+                }
+                break;
+            case "null":
+                verifier.checkNull(MSG, object);
+                break;
+            case "не null":
+                verifier.notNull(MSG, object);
+                break;
+            default:
+                operationTypeError(type);
+        }
     }
 
-    @Given("^Verify - equals long expected '(.+)' and actual '(.+)'$")
-    public void equalsNumber(long expect, long actual) {
-        verifier.equals(MSG, expect, actual);
+    @Given("^проверено, что ожидаемые список значений '(.+?)' (равен списку|содержится в списке) '(.+?)'( с учетом позиции|)$")
+    public void equalsList(List<String> expect, String type, List<String> actual, boolean strict) {
+        switch (type) {
+            case "равен списку":
+                if (strict) {
+                    verifier.listEquals(MSG, expect, actual, Collators.equals(), null);
+                } else {
+                    expect.sort(Comparator.naturalOrder());
+                    verifier.listEquals(MSG, expect, actual, Collators.equals(), Comparator.naturalOrder());
+                }
+                break;
+            case "содержится в списке":
+                if (strict) {
+                    verifier.listStrictContains(MSG, expect, actual, Collators.liteNormalizeContains(), null);
+                } else {
+                    verifier.listContains(MSG, expect, actual, Collators.liteNormalizeContains());
+                }
+                break;
+            default:
+                operationTypeError(type);
+        }
+
     }
 
-    @Given("^Verify - NOT equals long expected '(.+)' and actual '(.+)'$")
-    public void notEqualsNumber(long expect, long actual) {
-        verifier.notEquals(MSG, expect, actual);
+    //region private
+    private void operationTypeError(String operationType) {
+        throw new UnsupportedOperationException(format("Операция '%s' не поддерживается", Strings.toString(operationType)));
     }
-
-    @Given("^Verify - equals list expected '(.+)' and actual '(.+)'$")
-    public void equalsList(List<String> expect, List<String> actual) {
-        verifier.listEquals(MSG, expect, actual, Collators.equals(), null);
-    }
-
-    @Given("^Verify - contains string expected '(.+)' to actual '(.+)'$")
-    public void contains(String expect, String actual) {
-        verifier.contains(MSG, Strings.liteNormalize(expect), Strings.liteNormalize(actual));
-    }
-
-    @Given("^Verify - NOT contains string expected '(.+)' to actual '(.+)'$")
-    public void notContains(String expect, String actual) {
-        verifier.notContains(MSG, Strings.liteNormalize(expect), Strings.liteNormalize(actual));
-    }
-
-    @Given("^Verify - contains list expected '(.+)' and actual '(.+)'$")
-    public void containsList(List<String> expect, List<String> actual) {
-        verifier.listStrictContains(MSG, expect, actual, Collators.liteNormalizeContains(), null);
-    }
-
-    @Given("^Verify - actual '(.+)' is true$")
-    public void isTrue(boolean actual) {
-        verifier.checkTrue(MSG, actual);
-    }
-
-    @Given("^Verify - actual '(.+)' is false$")
-    public void isFalse(boolean actual) {
-        verifier.checkFalse(MSG, actual);
-    }
+    //endregion
 }

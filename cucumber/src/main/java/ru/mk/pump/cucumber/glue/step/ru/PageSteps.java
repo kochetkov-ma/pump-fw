@@ -2,16 +2,23 @@ package ru.mk.pump.cucumber.glue.step.ru;
 
 import static ru.mk.pump.web.common.WebItemsController.cast;
 
+import cucumber.api.Transpose;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.mn.Харин;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import ru.mk.pump.commons.utils.Pre;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.cucumber.glue.AbstractSteps;
 import ru.mk.pump.web.common.WebItemsController;
+import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.Editable;
 import ru.mk.pump.web.elements.internal.State;
+import ru.mk.pump.web.interpretator.items.Method;
+import ru.mk.pump.web.page.BasePage;
 import ru.mk.pump.web.page.api.Page;
 
 @Slf4j
@@ -23,13 +30,17 @@ public class PageSteps extends AbstractSteps {
         controller = core().getWebController();
     }
 
-    @Given("^страница открыта успешно (.+?)$")
-    public void pageSet(String pumpkinExpression) {
-        controller.initPage(pumpkinExpression).check();
+    @Given("^(страница|окно) (.+?) открыт[aо] успешно$")
+    public void pageSet(String type, String pumpkinExpression) {
+        if (isPage(type)) {
+            controller.initPage(pumpkinExpression).check();
+        } else {
+            controller.initComponent(pumpkinExpression).check();
+        }
     }
 
-    @Given("^страница открыта( и проверена|) (.+?)$")
-    public void pageOpen(boolean check, String pumpkinExpression) {
+    @Given("^страница (.+?) открыта( и проверена|)$")
+    public void pageOpen(String pumpkinExpression, boolean check) {
         final Page page = controller.initPage(pumpkinExpression);
         page.open();
         if (check) {
@@ -37,46 +48,70 @@ public class PageSteps extends AbstractSteps {
         }
     }
 
-    @Given("^на странице выполнена команда (.+?)(?:результат сохранен в (.+?))$")
-    public void pageExecute(String pumpkinExpression, String key) {
-        final Object object = controller.executeOnCurrentPage(pumpkinExpression);
+    @Given("^(на странице|в окне) весь текст сохранен в (.+?|result)$")
+    public void pageText(String type, String key) {
+        final Component object;
+        if (isPage(type)) {
+            object = controller.getPageManager().getCurrent();
+        } else {
+            object = controller.getComponentManager().getCurrent();
+        }
+        Pre.checkObjectNotNull(object, BasePage.class, "Сначала инициализируйте страницу или окно");
+        core().getTestVariables().put(key, object.getText());
+    }
+
+    @Given("^(на странице|в окне) выполнена команда (.+?)(?: результат сохранен в (.+?|result))$")
+    public void pageExecute(String type, String pumpkinExpression, String key) {
+        final Object object = getWebItem(type, pumpkinExpression);
         if (!Strings.isBlank(key)) {
             core().getTestVariables().put(key, object);
         }
     }
 
-    @Given("^на странице получен элемент (.+?) и (установлено|выбрано) значение (.+?)$")
-    public void pageElementSet(String pumpkinExpression, String argument) {
-        cast(controller.executeOnCurrentPage(pumpkinExpression), Editable.class).set(ElementParams.EDITABLE_SET_STRING.withValue(argument));
+    @Given("^(на странице|в окне) найден элемент (.+?) и (установлено|выбрано) значение (.+?)$")
+    public void pageElementSet(String type, String pumpkinExpression, String argument) {
+        final Object object = getWebItem(type, pumpkinExpression);
+        cast(object, Editable.class).set(ElementParams.EDITABLE_SET_STRING.withValue(argument));
     }
 
-    @Given("^на странице получен элемент '(.+)' и текст сохранен 'result'$")
-    public void pageElementText(String pumpkinExpression) {
-        core().getTestVariables().putResult(cast(controller.executeOnCurrentPage(pumpkinExpression), Element.class).getText());
+    @Given("^(на странице|в окне) найден элемент (.+?)(?: текст сохранен в (.+?|result))$")
+    public void pageElementText(String type, String pumpkinExpression, String key) {
+        final Object object = getWebItem(type, pumpkinExpression);
+        core().getTestVariables().put(key, cast(object, Element.class).getText());
     }
 
-    @Given("^Page - get element '(.+)' and click")
-    public void pageElementClick(String pumpkinExpression) {
-        cast(controller.executeOnCurrentPage(pumpkinExpression), Clickable.class).click();
+    @Given("^(на странице|в окне) найден элемент (.+?) и совершен клик")
+    public void pageElementClick(String type, String pumpkinExpression) {
+        final Object object = getWebItem(type, pumpkinExpression);
+        cast(object, Clickable.class).click();
     }
 
-    @Given("^Page - get element '(.+)' and check state 'is displayed'$")
-    public void pageElementStateDisplayed(String pumpkinExpression) {
-        State res = cast(controller.executeOnCurrentPage(pumpkinExpression), Element.class).isDisplayed();
-        core().getVerifier().checkTrue(res.name(), res.result().isSuccess(), res.toPrettyString());
-    }
-
-    @Given("^Page - get element '(.+)' and check state 'is NOT displayed'$")
-    public void pageElementStateNotDisplayed(String pumpkinExpression) {
-        State res = cast(controller.executeOnCurrentPage(pumpkinExpression), Element.class).isNotDisplayed();
-        core().getVerifier().checkTrue(res.name(), res.result().isSuccess(), res.toPrettyString());
-    }
-
-    @Given("^Page - get text and save to 'result'$")
-    public void pageText() {
-        if (controller.getPageManager().getCurrent() == null) {
-            throw new IllegalStateException("You must to init any page in controller");
+    @Given("^(на странице|в окне) найден элемент (.+?) и он (виден|не виден|присутствует|не присутствует|включен|не включен)(?: за ([0-9]+?) сек)$")
+    public void pageElementStateDisplayed(String type, String pumpkinExpression, String status, int timeout) {
+        final Object object = getWebItem(type, pumpkinExpression);
+        final Element element = cast(object, Element.class);
+        final Method method = new Method(status);
+        if (timeout >= 0) {
+            method.addArg(timeout);
         }
-        core().getTestVariables().putResult(controller.getPageManager().getCurrent().getText());
+        final State state = cast(controller.callMethod(element, method), State.class);
+        core().getVerifier().checkTrue(state.name(), state.result().isSuccess(), state.toPrettyString());
     }
+
+    //region private
+    private static boolean isPage(String string) {
+        if (Strings.isBlank(string)) {
+            return true;
+        }
+        return StringUtils.containsIgnoreCase(string, "страниц");
+    }
+
+    private Object getWebItem(String type, String pumpkinExpression) {
+        if (isPage(type)) {
+            return controller.executeOnCurrentPage(pumpkinExpression);
+        } else {
+            return controller.executeOnCurrentComponent(pumpkinExpression);
+        }
+    }
+    //endregion
 }

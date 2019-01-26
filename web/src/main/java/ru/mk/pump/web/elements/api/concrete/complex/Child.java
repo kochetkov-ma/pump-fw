@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.utils.ParameterUtils;
-import ru.mk.pump.commons.utils.Preconditions;
+import ru.mk.pump.commons.utils.Pre;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.BaseElement;
 
@@ -29,7 +29,7 @@ public class Child<T extends Element> {
 
 
     public Child(@NonNull BaseElement parentElement, @Nullable String parameterName) {
-        Preconditions.checkStringNotBlank(parameterName);
+        Pre.checkStringNotBlank(parameterName);
         this.parameterName = parameterName;
         this.parentElement = parentElement;
     }

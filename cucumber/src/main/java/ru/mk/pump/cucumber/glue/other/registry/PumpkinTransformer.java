@@ -4,6 +4,7 @@ import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.JavaType;
 import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.web.interpretator.items.Item;
@@ -53,7 +54,13 @@ public class PumpkinTransformer implements ParameterByTypeTransformer {
 
     protected Object parseNonPumpkin(String fromValue, Type expectedType) {
         final JavaType javaType = objectMapper.constructType(expectedType);
-        if (javaType.isTypeOrSubTypeOf(Boolean.class)) {
+        if (boolean.class.equals(expectedType) || Boolean.class.equals(expectedType)) {
+            if (StringUtils.equalsAny(fromValue, "true","истина")) {
+                return true;
+            }
+            if (StringUtils.equalsAny(fromValue, "false","ложь")) {
+                return false;
+            }
             return !Strings.isBlank(fromValue);
         }
         if (javaType.isTypeOrSubTypeOf(List.class)) {

@@ -8,6 +8,7 @@ import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.utils.Strings;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +18,9 @@ public final class TestVars implements PrettyPrinter {
 
     @SuppressWarnings("WeakerAccess")
     public final static String RESULT = "result";
-
+    public final static String NULL = "null";
+    public final static String NULL_STRING = "null_string";
+    public final static String EMPTY_STRING = "empty";
     @SuppressWarnings("WeakerAccess")
     public final static String LAST_PUT = "last";
 
@@ -26,6 +29,9 @@ public final class TestVars implements PrettyPrinter {
     private TestVars(Map<String, Object> sourceMap) {
         /*HashMap because concurrent map not supplies null value*/
         this.sourceMap = new HashMap<>(sourceMap);
+        this.sourceMap.put(NULL, null);
+        this.sourceMap.put(NULL_STRING, "null");
+        this.sourceMap.put(EMPTY_STRING, "");
     }
 
     private TestVars() {
@@ -86,7 +92,7 @@ public final class TestVars implements PrettyPrinter {
 
     @NonNull
     public Map<String, Object> asMap() {
-        return ImmutableMap.copyOf(sourceMap);
+        return Collections.unmodifiableMap(sourceMap);
     }
 
     @Override

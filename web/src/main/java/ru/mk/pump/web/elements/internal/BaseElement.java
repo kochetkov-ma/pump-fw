@@ -11,6 +11,7 @@ import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.common.api.annotations.PAction;
 import ru.mk.pump.web.common.pageobject.Initializer;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.ElementImplDispatcher;
@@ -119,51 +120,61 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     @Override
+    @PAction("виден")
     public State isDisplayed() {
         return getStateResolver().resolve(displayed());
     }
 
     @Override
+    @PAction("не виден")
     public State isNotDisplayed() {
         return getStateResolver().resolve(notDisplayed());
     }
 
     @Override
+    @PAction("присутствует")
     public State isExists() {
         return getStateResolver().resolve(exists());
     }
 
     @Override
+    @PAction("не присутствует")
     public State isNotExists() {
         return getStateResolver().resolve(notExists());
     }
 
     @Override
+    @PAction("включен")
     public State isEnabled() {
         return getStateResolver().resolve(enabled());
     }
 
     @Override
+    @PAction("не включен")
     public State isNotEnabled() {
         return getStateResolver().resolve(notEnabled());
     }
 
     @Override
+    @PAction("виден")
     public State isDisplayed(int timeoutMs) {
         return getStateResolver().resolve(displayed(), timeoutMs);
     }
 
     @Override
+    @PAction("не виден")
     public State isNotDisplayed(int timeoutMs) {
         return getStateResolver().resolve(notDisplayed(), timeoutMs);
     }
 
     @Override
+    @PAction("присутствует")
     public State isExists(int timeoutMs) {
         return getStateResolver().resolve(exists(), timeoutMs);
     }
 
     @Override
+    @PAction("не присутствует")
     public State isNotExists(int timeoutMs) {
         return getStateResolver().resolve(notExists(), timeoutMs);
     }

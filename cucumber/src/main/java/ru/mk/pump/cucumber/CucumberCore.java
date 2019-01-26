@@ -34,6 +34,8 @@ public class CucumberCore extends AbstractModule {
 
     private final Map<String, Object> DEFAULT_TEST_VARS = ImmutableMap.<String, Object>builder()
             .put("test_runner", "cucumber")
+            .put("true", true)
+            .put("false", false)
             .build();
 
     @Setter

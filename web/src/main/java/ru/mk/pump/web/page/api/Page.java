@@ -8,7 +8,7 @@ import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.elements.api.Element;
 
-public interface Page extends WebObject, StrictInfo, Component, AppResource {
+public interface Page extends StrictInfo, Component, AppResource {
 
     void open();
 

@@ -1,4 +1,4 @@
-package ru.mk.pump.cucumber;
+package ru.mk.pump.cucumber.glue.step.ru;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
@@ -20,7 +20,7 @@ import ru.mk.pump.web.page.BasePage;
         strict = true,
         plugin = {"ru.mk.pump.cucumber.plugin.PumpCucumberPlugin"},
         glue = "ru.mk.pump.cucumber.steps",
-        features = "classpath:features/")
+        features = "classpath:features/verify-steps-test-ru.feature")
 public class VerifyStepsTest {
 
     @PPage(value = "Главная страница", desc = "Главная страница", baseUrl = "https://ipotekaonline.open.ru")

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Objects;
-import ru.mk.pump.commons.utils.Preconditions;
+import ru.mk.pump.commons.utils.Pre;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.common.api.ItemsManager;
 import ru.mk.pump.web.common.api.annotations.PAction;
@@ -151,6 +151,42 @@ public class WebItemsController implements StrictInfo {
         return this;
     }
 
+    public Object findField(Object candidate, Field field) {
+        Pre.checkObjectNotNull(candidate, Object.class);
+        Pre.checkObjectNotNull(field, Method.class);
+        if (candidate instanceof Component) {
+            if (field.hasIndex()) {
+                Object res = readField(candidate, field);
+                if (!(res instanceof List)) {
+                    throw new ExecutionException(
+                            String.format("Target object '%s' with field '%s' is not expected class : List. Source expression is '%s'", getClass(candidate),
+                                    Strings.toString(field), lastPumpkinExpression))
+                            .addTarget("controller", this);
+                }
+                return ((List) res).get(field.getIndex());
+            } else {
+                return readField(candidate, field);
+            }
+        }
+        throw new ExecutionException(
+                String.format("Target object '%s' with field '%s' is not expected class : Component. Source expression is '%s'", getClass(candidate),
+                        Strings.toString(field), lastPumpkinExpression))
+                .addTarget("controller", this);
+    }
+
+    public Object callMethod(Object candidate, Method method) {
+        Pre.checkObjectNotNull(candidate, Object.class,
+                String.format("Target object with method '%s' cannot be null. Source expression is '%s'", method, lastPumpkinExpression));
+        Pre.checkObjectNotNull(method, Method.class, String.format("Method desc cannot be null. Source expression is '%s'", lastPumpkinExpression));
+        if (candidate instanceof Page || candidate instanceof Component || candidate instanceof Element) {
+            return invoke(candidate, method);
+        }
+        throw new ExecutionException(
+                String.format("Object '%s' with method '%s' is not expected class : Page or Component or Element. Source expression is '%s'", getClass(candidate),
+                        Strings.toString(method), lastPumpkinExpression))
+                .addTarget("controller", this);
+    }
+
     //region PRIVATE
     private Object walkOnAllHandlers(Object result) {
         return resultHandlerChain.stream().reduce(result, (res, handler) -> handler.apply(res, this), (prev, next) -> next);
@@ -174,7 +210,7 @@ public class WebItemsController implements StrictInfo {
     }
 
     private Object getField(Object candidate, Field field) {
-        Preconditions.checkObjectNotNull(field, Field.class);
+        Pre.checkObjectNotNull(field, Field.class);
         if (candidate == null) {
             log.warn("[CONTROLLER] Target page or component is undefined");
             if (!pageManager.getList(field.getSource()).isEmpty()) {
@@ -207,31 +243,10 @@ public class WebItemsController implements StrictInfo {
         return ClassUtils.getShortClassName(object, "null");
     }
 
-    private Object findField(Object candidate, Field field) {
-        Preconditions.checkObjectNotNull(candidate, Object.class);
-        Preconditions.checkObjectNotNull(field, Method.class);
-        if (candidate instanceof Component) {
-            if (field.hasIndex()) {
-                Object res = readField(candidate, field);
-                if (!(res instanceof List)) {
-                    throw new ExecutionException(
-                            String.format("Target object '%s' with field '%s' is not expected class : List. Source expression is '%s'", getClass(candidate),
-                                    Strings.toString(field), lastPumpkinExpression))
-                            .addTarget("controller", this);
-                }
-                return ((List) res).get(field.getIndex());
-            } else {
-                return readField(candidate, field);
-            }
-        }
-        throw new ExecutionException(
-                String.format("Target object '%s' with field '%s' is not expected class : Component. Source expression is '%s'", getClass(candidate),
-                        Strings.toString(field), lastPumpkinExpression))
-                .addTarget("controller", this);
-    }
+
 
     private Object readField(Object candidate, Field field) {
-        Preconditions.checkObjectNotNull(candidate, Object.class,
+        Pre.checkObjectNotNull(candidate, Object.class,
                 String.format("Target object with filed '%s' cannot be null . Source expression is '%s'", field, lastPumpkinExpression));
         java.lang.reflect.Field result;
         Optional<java.lang.reflect.Field> optionalField = FieldUtils.getFieldsListWithAnnotation(candidate.getClass(), PElement.class).stream()
@@ -260,23 +275,11 @@ public class WebItemsController implements StrictInfo {
         }
     }
 
-    private Object callMethod(Object candidate, Method method) {
-        Preconditions.checkObjectNotNull(candidate, Object.class,
-                String.format("Target object with method '%s' cannot be null. Source expression is '%s'", method, lastPumpkinExpression));
-        Preconditions.checkObjectNotNull(method, Method.class, String.format("Method desc cannot be null. Source expression is '%s'", lastPumpkinExpression));
-        if (candidate instanceof Page || candidate instanceof Component || candidate instanceof Element) {
-            return invoke(candidate, method);
-        }
-        throw new ExecutionException(
-                String.format("Object '%s' with method '%s' is not expected class : Page or Component or Element. Source expression is '%s'", getClass(candidate),
-                        Strings.toString(method), lastPumpkinExpression))
-                .addTarget("controller", this);
-    }
-
     private Object invoke(Object candidate, Method method) {
-        Preconditions.checkObjectNotNull(candidate, Object.class);
-        java.lang.reflect.Method oneMethod = Arrays.stream(candidate.getClass().getDeclaredMethods())
+        Pre.checkObjectNotNull(candidate, Object.class);
+        java.lang.reflect.Method oneMethod = Arrays.stream(candidate.getClass().getMethods())
                 .filter(m -> {
+                    /*TODO::аннотации проверяются только для класса. В интерфейсах аннотации не проверяются*/
                     if (m.isAnnotationPresent(PAction.class)) {
                         return m.getAnnotation(PAction.class).value().equalsIgnoreCase(method.getSource()) || m.getName().equalsIgnoreCase(method.getSource());
                     } else {
@@ -303,7 +306,7 @@ public class WebItemsController implements StrictInfo {
         final Object[] newArgs = new Object[args.length];
         Class<?>[] expectedArgs = method.getParameterTypes();
         for (int i = 0; i < expectedArgs.length; i++) {
-            Preconditions.checkArgListSize(i, args.length, String.format("Methods arguments count must be '%s'", expectedArgs.length));
+            Pre.checkArgListSize(i, args.length, String.format("Methods arguments count must be '%s'", expectedArgs.length));
             if (String.class.isAssignableFrom(expectedArgs[i]) || !(args[i] instanceof String)) {
                 newArgs[i] = args[i];
             } else {

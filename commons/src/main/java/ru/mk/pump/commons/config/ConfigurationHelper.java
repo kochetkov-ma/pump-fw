@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.ConfigurationException;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.FileUtils;
-import ru.mk.pump.commons.utils.Preconditions;
+import ru.mk.pump.commons.utils.Pre;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
@@ -84,7 +84,7 @@ public class ConfigurationHelper<T> {
 
     public synchronized T loadFromSystemEnv(@NonNull String envVarWithResourceNameInClassPath) {
         log.info("[PUMP-CONFIG] Try to load environment variables configuration from '{}'", envVarWithResourceNameInClassPath);
-        Preconditions.checkStringNotBlank(envVarWithResourceNameInClassPath);
+        Pre.checkStringNotBlank(envVarWithResourceNameInClassPath);
         if (EnvVariables.has(envVarWithResourceNameInClassPath)) {
             //noinspection ConstantConditions
             return loadFromResource(EnvVariables.get(envVarWithResourceNameInClassPath));

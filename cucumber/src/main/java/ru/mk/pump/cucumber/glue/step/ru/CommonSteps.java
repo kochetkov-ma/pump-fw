@@ -6,17 +6,22 @@ import ru.mk.pump.cucumber.glue.AbstractSteps;
 
 public class CommonSteps extends AbstractSteps {
 
-    @Given("^глобальные переменные сохранено для (.+?) значение (.+?)$")
-    public void saveTestVar(String key, Object value) {
+    @Given("^глобальная переменная (.+?) со строкой (.+?) сохранена$")
+    public void saveStringTestVar(String key, String value) {
         core().getTestVariables().put(key, value);
     }
 
-    @Given("^глобальные переменные сохранено для (.+?) результат выполнения (.+?)$")
-    public void evaluateAndSaveTestVar(String key, String pumpkinExpression) {
-        core().getTestVariables().put(key, transform(pumpkinExpression));
+    @Given("^глобальная переменная (.+?) с числом (.+?) сохранена$")
+    public void saveLongTestVar(String key, long value) {
+        core().getTestVariables().put(key, value);
     }
 
-    @Given("^ничего не проиходит '(.+)' секунд")
+    @Given("^глобальная переменная (.+?) с объектом (.+?) сохранена$")
+    public void saveObjectTestVar(String key, String pumpkinObject) {
+        core().getTestVariables().put(key, core().getWebController().execute(pumpkinObject));
+    }
+
+    @Given("^ничего не проиходит ([0-9]+?) секунд$")
     public void wait(int sec) {
         Waiter.sleep(sec * 1000);
     }

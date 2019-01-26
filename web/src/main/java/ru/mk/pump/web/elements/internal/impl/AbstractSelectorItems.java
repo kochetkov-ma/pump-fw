@@ -9,7 +9,7 @@ import org.openqa.selenium.By;
 import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.utils.ParameterUtils;
-import ru.mk.pump.commons.utils.Preconditions;
+import ru.mk.pump.commons.utils.Pre;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.constants.ElementParams;
@@ -110,7 +110,7 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
     @Override
     public void select(int index) {
         final List<Element> elements = getItems();
-        Preconditions.checkArgListSize(index, elements);
+        Pre.checkArgListSize(index, elements);
         final Action<?> action = actionFactory.newVoidAction(w -> {
             elements.get(index).click();
         }, "Select item by index " + index).withStrategy(ActionStrategy.NO_AFTER, ActionStrategy.NO_FINALLY, ActionStrategy.NO_STATE_CHECK);

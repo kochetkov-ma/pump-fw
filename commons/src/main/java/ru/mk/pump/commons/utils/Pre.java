@@ -10,7 +10,7 @@ import lombok.experimental.UtilityClass;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @UtilityClass
-public class Preconditions {
+public class Pre {
 
     public void checkNotEmpty(@Nullable Object[] array) {
         if (array == null || array.length == 0) {
