@@ -65,7 +65,9 @@ public final class Window extends AbstractActivity {
             private void report(NamedEvent namedEvent, Activity activity) {
                 final PumpMessage msg = new PumpMessage(Strings.toString(namedEvent))
                     .withDesc(activity.toString());
-                WebReporter.getReporter().info("Window has been " + namedEvent.getName(), msg.toPrettyString());
+                WebReporter.getReporter()
+                        .info("Window has been " + namedEvent.getName(), msg.toPrettyString(),
+                                WebReporter.getReporter().attachments().dummy());
             }
         };
     }

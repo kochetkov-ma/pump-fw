@@ -1,16 +1,13 @@
 package ru.mk.pump.web.elements.internal;
 
+import static java.lang.String.format;
+
 import com.google.common.collect.Maps;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.Strings;
@@ -24,9 +21,18 @@ import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
 import ru.mk.pump.web.utils.Xpath;
 
-@SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue", "unchecked"})
+import javax.annotation.Nullable;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+@SuppressWarnings( {"WeakerAccess", "unused", "UnusedReturnValue", "unchecked"})
+@Slf4j
 abstract class AbstractElement<CHILD> implements InternalElement {
 
+    private static final String HIGHLIGHT_SIMPLE = "arguments[0].setAttribute('style', '%s border: 4px solid red;');";
     /*turn off for more speed*/
     public static boolean JS_WAIT = false;
 
@@ -49,7 +55,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     private final Finder finder;
 
     private final Consumer<WaitResult<Boolean>> TEAR_DOWN = stateWaitResult -> getFinder().getLast()
-        .ifPresent(waitResult -> stateWaitResult.withCause(waitResult.getCause()));
+            .ifPresent(waitResult -> stateWaitResult.withCause(waitResult.getCause()));
 
     @Getter
     private final ActionsStore actionsStore;
@@ -65,6 +71,13 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     private final Page page;
 
     private int listIndex = -1;
+
+    /**
+     * For disabling highlight
+     */
+    @Getter(AccessLevel.MODULE)
+    @Setter(AccessLevel.MODULE)
+    private String originalStyle;
 
     //region CONSTRUCTORS
     public AbstractElement(By avatarBy, Page page) {
@@ -226,37 +239,37 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     public String getTagName() {
         return actionExecutor
-            .execute(actionsStore.tagName());
+                .execute(actionsStore.tagName());
     }
 
     public String getAttribute(String name) {
         return actionExecutor
-            .execute(actionsStore.attribute(name));
+                .execute(actionsStore.attribute(name));
     }
 
     public State jsReady() {
         final String js = "return document.readyState";
         return State.of(StateType.OTHER, () -> "complete".equals(Strings.toString(getBrowser().actions().executeScript(js))), TEAR_DOWN)
-            .withName("JS is completed");
+                .withName("JS is completed");
     }
 
     @Override
     public State notExists() {
         getFinder().clearCache();
         return State.of(StateType.EXISTS.not(), () -> !getFinder().findFast().isSuccess(), TEAR_DOWN).withName("Not Exists in DOM")
-            .withName("Not Exists Or Not Displayed");
+                .withName("Not Exists Or Not Displayed");
     }
 
     @Override
     public SetState notDisplayed() {
         return (SetState) SetState.of(StateType.DISPLAYED.not(), notExists(), State.of(StateType.SELENIUM_DISPLAYED.not(), webElement ->
-            !webElement.isSuccess() || !webElement.getResult().isDisplayed(), getFinder()).withTearDown(TEAR_DOWN)).withName("Not Exists Or Not Displayed");
+                !webElement.isSuccess() || !webElement.getResult().isDisplayed(), getFinder()).withTearDown(TEAR_DOWN)).withName("Not Exists Or Not Displayed");
     }
 
     @Override
     public SetState notEnabled() {
         return (SetState) SetState.of(StateType.ENABLED.not(), notExists(), State.of(StateType.SELENIUM_ENABLED.not(), webElement ->
-            !webElement.isSuccess() || !webElement.getResult().isEnabled(), getFinder()).withTearDown(TEAR_DOWN)).withName("Not Exists Or Not Enabled");
+                !webElement.isSuccess() || !webElement.getResult().isEnabled(), getFinder()).withTearDown(TEAR_DOWN)).withName("Not Exists Or Not Enabled");
     }
 
     @Override
@@ -264,10 +277,10 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         getFinder().clearCache();
         if (JS_WAIT) {
             return (SetState) SetState.of(StateType.EXISTS, jsReady(),
-                State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
+                    State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
         } else {
             return (SetState) SetState.of(StateType.EXISTS,
-                State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
+                    State.of(StateType.SELENIUM_EXISTS, () -> getFinder().findFast().isSuccess(), TEAR_DOWN)).withTearDown(TEAR_DOWN).withName("Exists in DOM");
         }
     }
 
@@ -283,8 +296,8 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     @Override
     public SetState enabled() {
         return (SetState) SetState.of(StateType.ENABLED, exists(),
-            State.of(StateType.SELENIUM_ENABLED, (webElement) -> webElement.isSuccess() && webElement.getResult().isEnabled(), getFinder())
-                .withTearDown(TEAR_DOWN)).withName("Exists And Enabled");
+                State.of(StateType.SELENIUM_ENABLED, (webElement) -> webElement.isSuccess() && webElement.getResult().isEnabled(), getFinder())
+                        .withTearDown(TEAR_DOWN)).withName("Exists And Enabled");
     }
 
     @Override
@@ -347,6 +360,52 @@ abstract class AbstractElement<CHILD> implements InternalElement {
             result.put("page", "no");
         }
         result.put("browser", getBrowser().getId());
+        return result;
+    }
+
+    @Override
+    public boolean highlight(boolean enable) {
+        final WaitResult<WebElement> avatar = getFinder().findFast();
+        final boolean result;
+        log.debug("Highlighting. Candidate is '{}'", getName());
+        if (!avatar.hasResult()) {
+            log.warn("Cannot find web element for highlight. Candidate is '{}'", getName());
+            return false;
+        }
+        final WebElement webElement = avatar.getResult();
+        if (enable) {
+            if (getOriginalStyle() == null) {
+                setOriginalStyle(webElement.getAttribute("style"));
+                final String script = format(HIGHLIGHT_SIMPLE, getOriginalStyle());
+                try {
+                    getBrowser().actions().executeScript(script, webElement);
+                    return true;
+                } catch (Exception ex) {
+                    log.error(format("Cannot fulfill highlight script '%s'. Candidate is '%s'", HIGHLIGHT_SIMPLE, getName()), ex);
+                    result = false;
+                }
+            } else {
+                log.debug("Already enable highlight. Candidate is '{}'", getName());
+                result = true;
+            }
+        } else {
+            if (getOriginalStyle() != null) {
+                final String script = "arguments[0].setAttribute('style', '" + getOriginalStyle() + "');";
+                try {
+                    getBrowser().actions().executeScript(script, webElement);
+                    result = true;
+                } catch (Exception ex) {
+                    log.error(format("Cannot fulfill highlight script '%s'. Candidate is '%s'", script, getName()), ex);
+                    return false;
+                } finally {
+                    setOriginalStyle(null);
+                }
+            } else {
+                log.debug("Already disable highlight. Candidate is '{}'", getName());
+                return true;
+            }
+        }
+        log.debug("Highlighting success. Candidate is '{}'", getName());
         return result;
     }
 }

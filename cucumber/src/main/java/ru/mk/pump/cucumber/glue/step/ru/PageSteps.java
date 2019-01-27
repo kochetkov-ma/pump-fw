@@ -2,9 +2,7 @@ package ru.mk.pump.cucumber.glue.step.ru;
 
 import static ru.mk.pump.web.common.WebItemsController.cast;
 
-import cucumber.api.Transpose;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.mn.Харин;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import ru.mk.pump.commons.utils.Pre;
@@ -86,12 +84,12 @@ public class PageSteps extends AbstractSteps {
         cast(object, Clickable.class).click();
     }
 
-    @Given("^(на странице|в окне) найден элемент (.+?) и он (виден|не виден|присутствует|не присутствует|включен|не включен)(?: за ([0-9]+?) сек)$")
+    @Given("^(на странице|в окне) найден элемент (.+?) и он (виден|не виден|присутствует|не присутствует|включен|не включен)(?: за ([0-9]+?) сек|)$")
     public void pageElementStateDisplayed(String type, String pumpkinExpression, String status, int timeout) {
         final Object object = getWebItem(type, pumpkinExpression);
         final Element element = cast(object, Element.class);
         final Method method = new Method(status);
-        if (timeout >= 0) {
+        if (timeout > 0) {
             method.addArg(timeout);
         }
         final State state = cast(controller.callMethod(element, method), State.class);

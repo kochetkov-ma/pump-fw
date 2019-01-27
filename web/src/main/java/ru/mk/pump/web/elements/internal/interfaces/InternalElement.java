@@ -23,4 +23,6 @@ public interface InternalElement extends ElementInfo, ElementAction, ElementStat
     StateResolver getStateResolver();
 
     ActionsStore getActionsStore();
+
+    boolean highlight(boolean enable);
 }

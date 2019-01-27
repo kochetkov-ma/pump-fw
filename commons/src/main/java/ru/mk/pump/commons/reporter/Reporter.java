@@ -16,6 +16,10 @@ public interface Reporter {
 
     void info(String title, String description);
 
+    void debug(String title, String description);
+
+    void debug(String title, String description,  Attachment attachment);
+
     void blockStart(String title, String description);
 
     void blockStop();

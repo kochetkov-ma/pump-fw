@@ -53,12 +53,15 @@ class BaseElementHelper {
                 PumpMessage msg = new PumpMessage("After action was failed")
                     .withPre("Action reporting message")
                     .addExtraInfo(action);
+                action.getTarget().highlight(true);
                 baseElement.getReporter().warn(Strings.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString(), throwable);
             }
 
             @Override
             public void onFinallyStateCheck(Action action) {
+                action.getTarget().highlight(true);
                 info("After stage check finally block", action, null);
+                action.getTarget().highlight(false);
             }
 
             @Override
@@ -76,7 +79,9 @@ class BaseElementHelper {
 
             @Override
             public void onBeforeActionSuccess(Action action) {
+                action.getTarget().highlight(true);
                 info("Before action is success", action, null);
+                action.getTarget().highlight(false);
             }
 
             private void info(String title, Action action, Object result) {
@@ -108,11 +113,13 @@ class BaseElementHelper {
                     .withPre("State reporting message")
                     .addExtraInfo(args.getKey())
                     .addExtraInfo(args.getValue());
+                args.getValue().highlight(true);
                 if (args.getKey().result().isSuccess()) {
                     baseElement.getReporter().info(msg.getTitle(), msg.toPrettyString());
                 } else {
                     baseElement.getReporter().warn(msg.getTitle(), msg.toPrettyString());
                 }
+                args.getValue().highlight(false);
             }
         };
     }

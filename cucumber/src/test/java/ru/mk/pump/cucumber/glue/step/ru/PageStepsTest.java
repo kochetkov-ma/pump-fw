@@ -21,8 +21,7 @@ import java.util.Optional;
         strict = true,
         plugin = {"ru.mk.pump.cucumber.plugin.PumpCucumberPlugin"},
         glue = {"ru.mk.pump.cucumber.glue.step.ru", "ru.mk.pump.cucumber.glue.other"},
-        features = "classpath:features/verify-steps-test-ru.feature")
-public class VerifyStepsTest {
-
+        features = "classpath:features/page-steps-test-ru.feature")
+public class PageStepsTest {
 
 }

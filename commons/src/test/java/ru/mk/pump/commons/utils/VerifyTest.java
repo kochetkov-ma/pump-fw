@@ -18,9 +18,6 @@ public class VerifyTest {
 
     @BeforeAll
     public static void setUp() {
-        if (System.getProperty("allure.results.directory") == null) {
-            System.setProperty("allure.results.directory", "out/allure-result");
-        }
     }
 
     @BeforeEach

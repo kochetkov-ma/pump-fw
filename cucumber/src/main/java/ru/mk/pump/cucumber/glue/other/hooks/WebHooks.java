@@ -6,6 +6,10 @@ import cucumber.api.java.Before;
 import io.qameta.allure.Step;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import ru.mk.pump.commons.reporter.Reporter;
+import ru.mk.pump.commons.reporter.ReporterAllure;
+import ru.mk.pump.commons.reporter.Screenshoter;
+import ru.mk.pump.commons.utils.DesktopScreenshoter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.cucumber.CucumberUtil;
@@ -13,6 +17,8 @@ import ru.mk.pump.web.configuration.ConfigurationHolder;
 
 @Slf4j
 public class WebHooks {
+
+    final static private DesktopScreenshoter DESKTOP_SCREENSHOTER = new DesktopScreenshoter();
 
     @Setter
     private static boolean beforeScenarioHook = CucumberCore.instance().getConfig().isBeforeScenarioHook();
@@ -56,7 +62,11 @@ public class WebHooks {
     }
 
     private void screenHook(String status) {
-        core.getReporter().attach(core.getReporter().attachments().screen("On scenario " + status));
+        core.getReporter()
+                .attachments().screen("On scenario " + status,
+                () -> DESKTOP_SCREENSHOTER.getScreen().orElse(null));
+
+
     }
 
     private void skipHook(TagHelper tagHelper) {

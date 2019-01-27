@@ -186,7 +186,9 @@ public abstract class AbstractBrowser extends AbstractActivity implements Browse
             private void report(NamedEvent namedEvent, Activity activity) {
                 final PumpMessage msg = new PumpMessage(Strings.toString(namedEvent))
                         .addExtraInfo(((AbstractBrowser) activity));
-                WebReporter.getReporter().info("Browser has been " + namedEvent.getName(), msg.toPrettyString());
+                WebReporter.getReporter()
+                        .info("Browser has been " + namedEvent.getName(), msg.toPrettyString(),
+                                WebReporter.getReporter().attachments().dummy());
             }
         };
     }

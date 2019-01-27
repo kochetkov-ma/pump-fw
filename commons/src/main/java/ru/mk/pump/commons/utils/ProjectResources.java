@@ -46,7 +46,7 @@ public final class ProjectResources {
         }
         Iterator<Path> iterator = new Iterator<Path>() {
 
-            private Path currentPath = innerProjectPath.getParent();
+            private Path currentPath = innerProjectPath;
 
             @Override
             public boolean hasNext() {
@@ -55,14 +55,16 @@ public final class ProjectResources {
 
             @Override
             public Path next() {
-                currentPath = currentPath.getParent();
-                return currentPath;
+                final Path res = currentPath.getParent();
+                currentPath = res;
+                return res;
             }
         };
 
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), true)
                 .filter(curPath -> Arrays.stream(candidateBuildDirs).anyMatch(curPath::endsWith))
-                .findFirst().orElseThrow(() -> new UtilException(format("Cannot find any build directory '%s' in path '%s'", Strings.toString(candidateBuildDirs), innerProjectPath)));
+                .findFirst().orElseThrow(() -> new UtilException(format("Cannot find any build directory '%s' in path '%s'",
+                        Strings.toString(candidateBuildDirs), innerProjectPath)));
     }
 
     @NonNull

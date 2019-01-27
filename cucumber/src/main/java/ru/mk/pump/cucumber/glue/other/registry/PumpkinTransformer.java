@@ -24,6 +24,9 @@ public class PumpkinTransformer implements ParameterByTypeTransformer {
 
     @Override
     public Object transform(String fromValue, Type toValueType) {
+        if (fromValue == null) {
+            return parseNonPumpkin(null, toValueType);
+        }
         final Queue<Item> items = getItems(fromValue);
         if (items.isEmpty()) {
             return null;

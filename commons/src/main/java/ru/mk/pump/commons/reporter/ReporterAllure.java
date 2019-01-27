@@ -1,5 +1,7 @@
 package ru.mk.pump.commons.reporter;
 
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
+
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Parameter;
 import io.qameta.allure.model.Status;
@@ -23,16 +25,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
-
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings( {"unused", "WeakerAccess"})
 @Slf4j
 @ToString(exclude = {"currentTestUuid", "blockUuidQueue"})
 public class ReporterAllure implements Reporter, AutoCloseable {
 
     /**
      * For your information.
-     * This path cannot be changed after initialisation Allure Lifecycle in any places of program, not only {@link ReporterAllure} such as AllureJunitAdapter or other
+     * This path cannot be changed after initialisation Allure Lifecycle in any places of program,
+     * not only {@link ReporterAllure} such as AllureJunitAdapter or other
      */
     public static final String SYSTEM_ALLURE_RESULT_PATH = "allure.results.directory";
 
@@ -40,14 +41,17 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     private final Type minimumLevelForDuplicateInSlf4;
 
-    @Setter private Type autoScreenLevel = Type.OFF;
+    @Setter
+    private Type autoScreenLevel = Type.OFF;
 
-    @Setter private Type postingLevel = Type.INFO;
+    @Setter
+    private Type postingLevel = Type.INFO;
 
     private ThreadLocal<String> currentTestUuid = new InheritableThreadLocal<>();
 
     private ThreadLocal<Deque<String>> blockUuidQueue = InheritableThreadLocal.withInitial(ConcurrentLinkedDeque::new);
-    @Getter private AttachmentsFactory attachmentsFactory;
+    @Getter
+    private AttachmentsFactory attachmentsFactory;
 
     public ReporterAllure() {
         this.attachmentsFactory = new AttachmentsFactory(Optional::empty);
@@ -87,6 +91,16 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     @Override
     public void info(String title, String description, Attachment attachment) {
         step(Type.INFO, title, description, new Info(attachment, null));
+    }
+
+    @Override
+    public void debug(String title, String description) {
+        step(Type.DEBUG, title, description, new Info(null, null));
+    }
+
+    @Override
+    public void debug(String title, String description, Attachment attachment) {
+        step(Type.DEBUG, title, description, new Info(attachment, null));
     }
 
     @Override
@@ -245,24 +259,32 @@ public class ReporterAllure implements Reporter, AutoCloseable {
             if (description.contains("\n")) {
                 attach(attachments().text("Description", description));
             } else {
-                Allure.getLifecycle().updateStep(stepUuid, res -> res.setParameters(new Parameter().setName("description").setValue(description)));
+                Allure.getLifecycle()
+                        .updateStep(stepUuid, res -> res.setParameters(new Parameter().setName("description").setValue(description)));
             }
         }
 
         if (level.getPriority() >= minimumLevelForDuplicateInSlf4.getPriority()) {
             if (level.getPriority() < 3) {
-                log.info(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title), description, info.toString()));
+                log.info(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title),
+                        description, info.toString()));
             } else if (level.getPriority() == 3) {
-                log.warn(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title), description, info.toString()));
+                log.warn(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title),
+                        description, info.toString()));
             } else if (level.getPriority() > 3) {
-                log.error(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title), description, info.toString()));
+                log.error(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title),
+                        description, info.toString()));
             }
         }
-        if (info.attachment() != null) {
+        if (!AttachmentsFactory.isDummy(info.attachment)
+                && info.attachment() != null) {
             attach(info.attachment());
         }
-        if (!AttachmentsFactory.isScreen(info.attachment) && autoScreenLevel.getPriority() <= level.getPriority()) {
-            log.debug(Strings.space(LOG_PREFIX, "auto attach screen with level=", level.name(), "minimal auto-screen level=", autoScreenLevel.name()));
+        if (!AttachmentsFactory.isDummy(info.attachment)
+                && !AttachmentsFactory.isScreen(info.attachment)
+                && autoScreenLevel.getPriority() <= level.getPriority()) {
+            log.debug(Strings.space(LOG_PREFIX, "auto attach screen with level=",
+                    level.name(), "minimal auto-screen level=", autoScreenLevel.name()));
             attach(getAttachmentsFactory().screen(String.format("auto screen on '%s'", level)));
         }
         if (info.throwable() != null) {
@@ -271,8 +293,10 @@ public class ReporterAllure implements Reporter, AutoCloseable {
                 Allure.getLifecycle().stopStep(stepUuid);
                 throw (AssertionError) info.throwable();
             } else {
-                final PumpMessage exceptionMessage = new PumpMessage(title, description).addExtraInfo("Status", level.name())
-                        .addExtraInfo("Attachment", info.attachment() != null ? Strings.space(info.attachment().getName(), info.attachment().getType()) : null);
+                final PumpMessage exceptionMessage = new PumpMessage(title, description)
+                        .addExtraInfo("Status", level.name())
+                        .addExtraInfo("Attachment", info.attachment() != null
+                                ? Strings.space(info.attachment().getName(), info.attachment().getType()) : null);
                 Allure.getLifecycle().updateStep(stepUuid, res -> res.setStatus(Status.BROKEN));
                 Allure.getLifecycle().stopStep(stepUuid);
                 throw new ExecutionException(exceptionMessage, info.throwable());
@@ -282,12 +306,21 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     }
 
     public enum Type {
-        OFF("", Integer.MAX_VALUE), ALL("", 0), INFO("", 2), WARNING("[WARN] ", 3), ERROR("[ERROR] ", 4), ATTACHMENT("[ATTACHMENT] ", 0), PASS("[PASS] ", 1),
+        OFF("", Integer.MAX_VALUE),
+        ALL("", 0),
+        DEBUG("[DEBUG]", 0),
+        INFO("", 2),
+        WARNING("[WARN] ", 3),
+        ERROR("[ERROR] ", 4),
+        ATTACHMENT("[ATTACHMENT] ", 0),
+        PASS("[PASS] ", 1),
         FAIL("[FAIL] ", 4);
 
-        @Getter private final String value;
+        @Getter
+        private final String value;
 
-        @Getter private final int priority;
+        @Getter
+        private final int priority;
 
         Type(String value, int priority) {
             this.value = value;

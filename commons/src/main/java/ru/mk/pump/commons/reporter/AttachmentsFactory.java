@@ -47,10 +47,25 @@ public class AttachmentsFactory {
                 .withExtension(SCREEN_FORMAT);
     }
 
+    /**
+     * for skip auto screening
+     */
+    public Attachment dummy() {
+        return new Attachment().withName("dummy").withSource("empty")
+                .withType("dummy");
+    }
+
     public Attachment screen(@NonNull String attachmentName) {
         return new Attachment().withName(attachmentName).withSourceByte(() -> screenshoter.getScreen().orElse(new byte[0]))
                 .withExtension("png")
                 .withType(IMAGE);
+    }
+
+    public static boolean isDummy(@Nullable Attachment attachment) {
+        if (attachment == null){
+            return false;
+        }
+        return StringUtils.containsIgnoreCase(attachment.getType(), "dummy");
     }
 
     public static boolean isScreen(@Nullable Attachment attachment){

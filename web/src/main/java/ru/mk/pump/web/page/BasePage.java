@@ -176,7 +176,7 @@ public class BasePage extends PageNotifier implements Page {
         return new PageListener() {
             @Override
             public void onLoadSuccess(Page page) {
-                getReporter().info(format("Page '%s' load success", name), page.toString());
+                getReporter().info(format("Page '%s' load success", name), page.toString(), getReporter().attachments().dummy());
             }
 
             @Override
@@ -186,7 +186,7 @@ public class BasePage extends PageNotifier implements Page {
 
             @Override
             public void onBeforeLoad(Page page) {
-                getReporter().info(format("Page '%s' is opening", name), page.toString());
+                getReporter().info(format("Page '%s' is opening", name), page.toString(),getReporter().attachments().dummy());
             }
         };
     }

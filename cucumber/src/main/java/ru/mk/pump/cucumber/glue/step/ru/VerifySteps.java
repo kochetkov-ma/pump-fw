@@ -131,7 +131,7 @@ public class VerifySteps extends AbstractSteps {
         }
     }
 
-    @Given("^проверено, что ожидаемые список значений '(.+?)' (равен списку|содержится в списке) '(.+?)'( с учетом позиции|)$")
+    @Given("^проверено, что ожидаемый список значений '(.+?)' (равен списку|содержится в списке) '(.+?)'( с учетом позиции|)$")
     public void equalsList(List<String> expect, String type, List<String> actual, boolean strict) {
         switch (type) {
             case "равен списку":

@@ -11,6 +11,7 @@ import ru.mk.pump.web.configuration.ConfigurationHolder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
+
 @Slf4j
 public class InformationManager implements CucumberListener {
 
@@ -39,7 +40,8 @@ public class InformationManager implements CucumberListener {
 
     @Override
     public void onStartFeature(CucumberMonitor monitor) {
-        monitor.getLastFeature().ifPresent((feature) -> reporter.info("Feature started", feature.toPrettyString()));
+        monitor.getLastFeature()
+                .ifPresent((feature) -> reporter.info("Feature started", feature.toPrettyString(), reporter.attachments().dummy()));
     }
 
     @Override
@@ -71,7 +73,7 @@ public class InformationManager implements CucumberListener {
                 final Path source = cucumberCore.getStandConfig().getPropertiesFile();
                 FileUtils.copy(source, resultDir.resolve("environment.properties"));
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             log.error("Cannot copy environment.properties", ex);
         }
         log.warn("Environment properties (Stand.class) in CucumberCore.class was not defined");

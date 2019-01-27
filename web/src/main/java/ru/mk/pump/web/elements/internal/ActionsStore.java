@@ -1,5 +1,7 @@
 package ru.mk.pump.web.elements.internal;
 
+import static java.lang.String.format;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -13,8 +15,6 @@ import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
 import java.util.List;
-
-import static java.lang.String.format;
 
 /**
  * [RUS]
@@ -141,9 +141,7 @@ public class ActionsStore {
     }
 
     Action<String> attribute(String name) {
-        return actions.newAction(e -> {
-            return e.getAttribute(name);
-        }, "Get Attribute")
+        return actions.newAction(e -> e.getAttribute(name), "Get Attribute")
                 .withStrategy(ActionStrategy.NO_FINALLY, ActionStrategy.NO_AFTER).redefineExpectedState(element.exists());
     }
 

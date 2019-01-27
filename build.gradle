@@ -39,11 +39,36 @@ ext {
     ]
     isReleaseVersion = !version.endsWith("SNAPSHOT")
 }
+task ('clean') {
+    group = 'build'
+    doFirst {
+        println "clean main project : $project.name"
+        delete "${project.projectDir}/out"
+        delete "${project.projectDir}/build"
+        delete "${project.projectDir}/allure-results"
+        subprojects.each {
+            it.afterEvaluate {
+                def cleanTask = it.tasks.findByName('clean')
+                if (cleanTask) {
+                    dependsOn(cleanTask)
+                }
+            }
+        }
+    }
+}
 allprojects {
+    apply plugin: 'io.qameta.allure'
     wrapper {
         gradleVersion = '5.1'
         distributionType = Wrapper.DistributionType.ALL
     }
+    allure {
+        version = '2.6.0'
+        resultsDir = rootProject.file('allure-results')
+        aspectjweaver = true
+        downloadLink = 'http://nexus.nspk.ru:8081/nexus/service/local/repositories/thirdparty/content/io/qameta/allure-cli/2.6.0/allure-cli-2.6.0.zip'
+    }
+
 }
 subprojects {
     project.version = rootProject.version
@@ -54,7 +79,6 @@ subprojects {
     apply plugin: 'signing'
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
-    apply plugin: 'io.qameta.allure'
     apply plugin: 'io.franzbecker.gradle-lombok'
     lombok {
         version = versions.lombok
@@ -62,8 +86,8 @@ subprojects {
     idea {
         module {
             inheritOutputDirs = false
-            outputDir = file("$buildDir/resources/main")
-            testOutputDir = file("$buildDir/resources/test")
+            //outputDir = file("$buildDir/classes/java/main")
+            //testOutputDir = file("$buildDir/classes/java/test")
             downloadJavadoc = true
             downloadSources = true
         }
@@ -79,13 +103,10 @@ subprojects {
     compileJava.options.encoding = "UTF-8"
     compileTestJava.options.encoding = "UTF-8"
     clean.doFirst {
-        println "start clean : $project.name"
+        println "clean subproject : $project.name"
         delete "${project.projectDir}/out"
-        println "dir clean finish : ${project.projectDir}/out"
-        delete "${project.projectDir}/target"
-        println "dir clean finish : ${project.projectDir}/target"
+        delete "${project.projectDir}/build"
         delete "${project.projectDir}/allure-results"
-        println "dir clean finish : ${project.projectDir}/allure-results"
     }
     dependencies {
         compile(
