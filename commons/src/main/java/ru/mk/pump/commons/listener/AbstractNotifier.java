@@ -39,7 +39,7 @@ public abstract class AbstractNotifier<T, V extends Enum<V>, L extends Listener<
     }
 
     protected void notify(Event<T, V> event, Object... args) {
-        actionListeners.forEach(i -> i.on(event));
+        actionListeners.forEach(i -> i.on(event, args));
     }
 
     protected Event<T, V> event(T action, V type) {

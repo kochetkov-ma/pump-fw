@@ -1,8 +1,8 @@
 package ru.mk.pump.web.elements.internal;
 
 
+import com.google.common.collect.Sets;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
@@ -18,8 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
-@NoArgsConstructor
+@SuppressWarnings( {"WeakerAccess", "unused"})
 @Slf4j
 public class ActionExecutor extends ActionNotifier {
 
@@ -34,12 +33,24 @@ public class ActionExecutor extends ActionNotifier {
 
     private final List<Action> afterActionError = new ArrayList<>();
 
+    @Getter
+    private final boolean main;
+
     private int actionExecutionTry = 0;
 
     private StateResolver stateResolver;
 
+    public ActionExecutor() {
+        this(Sets.newHashSet(), true);
+    }
+
     protected ActionExecutor(Set<ActionListener> actionListeners) {
+        this(actionListeners, true);
+    }
+
+    protected ActionExecutor(Set<ActionListener> actionListeners, boolean main) {
         super(actionListeners);
+        this.main = main;
     }
 
     public ActionExecutor withStateResolver(StateResolver stateResolver) {
@@ -83,13 +94,16 @@ public class ActionExecutor extends ActionNotifier {
                     }
                 }
             }
+            if (main) {
+                tAction.getTarget().highlight(true);
+            }
         } catch (Throwable throwable) {
             notifyOnFail(tAction, throwable);
             throw new ActionExecutingException(tAction, throwable);
         } finally {
             if (!afterActionError.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_FINALLY)) {
                 tAction.setStage(ActionStage.FINALLY);
-                final ActionExecutor helperExecutor = new ActionExecutor(getActionListeners()).withParameters(parameters);
+                final ActionExecutor helperExecutor = new ActionExecutor(getActionListeners(), false).withParameters(parameters);
                 afterActionError.forEach(helperExecutor::payloadExecute);
                 notifyOnFinallyStateCheck(tAction);
             }
@@ -121,7 +135,7 @@ public class ActionExecutor extends ActionNotifier {
         try {
             if (!beforeActions.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_BEFORE)) {
                 tAction.setStage(ActionStage.BEFORE);
-                helperExecutor = new ActionExecutor(getActionListeners()).withParameters(parameters);
+                helperExecutor = new ActionExecutor(getActionListeners(), false).withParameters(parameters);
                 beforeActions.forEach(helperExecutor::payloadExecute);
                 notifyOnBeforeSuccess(tAction);
             }
@@ -130,7 +144,7 @@ public class ActionExecutor extends ActionNotifier {
 
             if (!afterActions.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_AFTER)) {
                 tAction.setStage(ActionStage.AFTER);
-                helperExecutor = new ActionExecutor(getActionListeners()).withParameters(parameters);
+                helperExecutor = new ActionExecutor(getActionListeners(), false).withParameters(parameters);
                 afterActions.forEach(helperExecutor::payloadExecute);
             }
 
@@ -147,10 +161,16 @@ public class ActionExecutor extends ActionNotifier {
                 tAction.setStage(ActionStage.COMPLETED);
             } else {
                 notifyOnFail(tAction, throwable);
+                if (main) {
+                    tAction.getTarget().highlight(false);
+                }
                 throw new ActionExecutingException(tAction, throwable).addTarget("action", tAction);
             }
         }
         notifyOnSuccess(tAction, result);
+        if (main) {
+            tAction.getTarget().highlight(false);
+        }
         return result;
     }
 

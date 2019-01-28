@@ -184,6 +184,11 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         return new SubElementHelper<>(subElementClazz, this, getSubElementFactory());
     }
 
+    @Override
+    public void scroll() {
+        getActionExecutor().execute(getFocusAction());
+    }
+
     public boolean isJsReady() {
         final State res = getStateResolver().resolve(jsReady());
         return res.result().isSuccess();

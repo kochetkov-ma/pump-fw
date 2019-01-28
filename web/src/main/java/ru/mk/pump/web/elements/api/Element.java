@@ -24,6 +24,8 @@ public interface Element extends PrettyPrinter, StrictInfo, Clickable, Text, Pag
 
     InternalElement advanced();
 
+    void scroll();
+
     State isDisplayed();
 
     State isNotDisplayed();

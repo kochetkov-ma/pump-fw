@@ -52,7 +52,7 @@ public class CucumberCore extends AbstractModule {
     private final Browsers browsers = new Browsers();
 
     @Getter(onMethod_ = {@Provides})
-    private final TestVars testVariables = TestVars.of(DEFAULT_TEST_VARS);
+    private final TestVars testVariables = TestVars.of(DEFAULT_TEST_VARS, getReporter());
 
     private volatile WebItemsController webController;
 

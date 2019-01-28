@@ -1,5 +1,8 @@
 package ru.mk.pump.cucumber.glue;
 
+import static java.lang.String.format;
+
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.cucumber.CucumberCore;
 
 @SuppressWarnings("WeakerAccess")
@@ -17,5 +20,9 @@ public abstract class AbstractSteps {
 
     public Object transform(String pumpkinExpression) {
         return core.getWebController().execute(pumpkinExpression);
+    }
+
+    protected void operationTypeError(String operationType) {
+        throw new UnsupportedOperationException(format("Операция '%s' не поддерживается", Strings.toString(operationType)));
     }
 }

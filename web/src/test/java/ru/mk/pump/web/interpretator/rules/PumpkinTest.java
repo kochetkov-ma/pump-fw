@@ -1,21 +1,23 @@
 package ru.mk.pump.web.interpretator.rules;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Date;
-import java.util.Map;
-import java.util.Queue;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.interpretator.items.Field;
 import ru.mk.pump.web.interpretator.items.Item;
 import ru.mk.pump.web.interpretator.items.Method;
 import ru.mk.pump.web.interpretator.items.TestParameter;
 
-@SuppressWarnings({"deprecation", "FieldCanBeLocal"})
+import java.util.Date;
+import java.util.Map;
+import java.util.Queue;
+
+@SuppressWarnings( {"deprecation", "FieldCanBeLocal"})
 @Slf4j
 class PumpkinTest {
 
@@ -54,12 +56,12 @@ class PumpkinTest {
         sourceExp = "элемент один[1].метод один(аргумент один,${var_1},$groovy{new Date().getDay()}).поле.метод()";
         res = pumpkin.generateItems(sourceExp);
         assertThat(res)
-            .containsExactly(
-                new Field("элемент один").setIndex(1),
-                new Method("метод один").addArg("аргумент один").addArg(1).addArg(new Date().getDay()),
-                new Field("поле"),
-                new Method("метод")
-            );
+                .containsExactly(
+                        new Field("элемент один").setIndex(1),
+                        new Method("метод один").addArg("аргумент один").addArg(1).addArg(new Date().getDay()),
+                        new Field("поле"),
+                        new Method("метод")
+                );
 
         sourceExp = "method one (args/,with/,esc)";
         res = pumpkin.generateItems(sourceExp);
@@ -140,12 +142,11 @@ class PumpkinTest {
     void testNewParamParser() {
         Pumpkin pumpkin = Pumpkin.newParamParser(vars);
         assertThat(pumpkin.generateItems("1,2,3${var_1}$groovy{new Date().getDay()}"))
-            .containsExactly(new TestParameter<>("1,2,3"),
-                new TestParameter<>(1),
-                new TestParameter<>(new Date().getDay())
-            );
+                .containsExactly(new TestParameter<>("1,2,3"),
+                        new TestParameter<>(1),
+                        new TestParameter<>(new Date().getDay())
+                );
         assertThat(pumpkin.generateItems("1,2,3AAA")).containsExactly(new TestParameter<>("1,2,3AAA"));
-
 
 
     }

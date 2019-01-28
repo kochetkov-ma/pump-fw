@@ -42,7 +42,7 @@ public class WebItemsController implements StrictInfo {
     private final Set<BiFunction<Object, WebItemsController, Object>> resultHandlerChain = Sets.newHashSet();
 
     private final static BiFunction<Object, WebItemsController, Object> DEFAULT_HANDLER = (result, controller) -> {
-        controller.getTestVars().put(VAR_LAST_RESULT, result);
+        //controller.getTestVars().put(VAR_LAST_RESULT, result);
         log.debug("[CONTROLLER] Result : {}", result);
         return result;
     };

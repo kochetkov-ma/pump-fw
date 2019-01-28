@@ -154,10 +154,4 @@ public class VerifySteps extends AbstractSteps {
         }
 
     }
-
-    //region private
-    private void operationTypeError(String operationType) {
-        throw new UnsupportedOperationException(format("Операция '%s' не поддерживается", Strings.toString(operationType)));
-    }
-    //endregion
 }
