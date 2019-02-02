@@ -76,13 +76,14 @@ public class SubElementHelper<T extends Element> {
 
     }
 
+    @SuppressWarnings("Duplicates")
     public List<T> findList(@NonNull Predicate<List<WebElement>> webElementListPredicate, @NonNull By... bys) {
         if (bys.length == 0) {
             return Collections.emptyList();
         }
         for (By currentBy : bys) {
-            parent.getStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
-            parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
+            parent.getInternalStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
+            parent.getInternalStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
             final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()))
                 .getResult();
             final List<WebElement> elements = sourceWebElement.findElements(Xpath.fixIfXpath(currentBy));
@@ -194,9 +195,9 @@ public class SubElementHelper<T extends Element> {
         xpathFinal = Xpath.fixXpath(xpathString);
         byResult = By.xpath(xpathFinal);
 
-        parent.getStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
+        parent.getInternalStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
         log.debug("[SUB-ELEMENTS] Parent element is jsReady");
-        parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
+        parent.getInternalStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
         log.debug("[SUB-ELEMENTS] Parent element is exists");
         final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString))
             .getResult();

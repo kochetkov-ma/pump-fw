@@ -28,7 +28,7 @@ public class PumpkinTransformer implements ParameterByTypeTransformer {
         if (fromValue == null) {
             return parseNonPumpkin(null, toValueType);
         }
-        fromValue = StringSubstitutor.replace(fromValue, CucumberCore.instance().getTestVariables().getStringMap());
+        fromValue = new StringSubstitutor(CucumberCore.instance().getTestVariables().getStringMap(), "${str:", "}").replace(fromValue);
         final Queue<Item> items = getItems(fromValue);
         if (items.isEmpty()) {
             return null;

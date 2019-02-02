@@ -1,14 +1,16 @@
 buildscript {
     repositories {
         mavenLocal()
+        //maven { url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public" }
+        mavenCentral()
         maven {
-            url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public"
+            url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
         classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:2.0.1'
         classpath 'io.qameta.allure:allure-gradle:2.5'
-        classpath 'io.franzbecker:gradle-lombok:1.14'
+        classpath 'io.franzbecker:gradle-lombok:2.0'
     }
 }
 group = 'ru.iopump.pumpfw'
@@ -66,7 +68,7 @@ allprojects {
         version = '2.6.0'
         resultsDir = rootProject.file('allure-results')
         aspectjweaver = true
-        downloadLink = 'http://nexus.nspk.ru:8081/nexus/service/local/repositories/thirdparty/content/io/qameta/allure-cli/2.6.0/allure-cli-2.6.0.zip'
+        //downloadLink = 'http://nexus.nspk.ru:8081/nexus/service/local/repositories/thirdparty/content/io/qameta/allure-cli/2.6.0/allure-cli-2.6.0.zip'
     }
 
 }
@@ -86,17 +88,14 @@ subprojects {
     idea {
         module {
             inheritOutputDirs = false
-            //outputDir = file("$buildDir/classes/java/main")
-            //testOutputDir = file("$buildDir/classes/java/test")
             downloadJavadoc = true
             downloadSources = true
         }
     }
     repositories {
         mavenLocal()
-        maven {
-            url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public"
-        }
+        //maven { url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public" }
+        mavenCentral()
     }
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8

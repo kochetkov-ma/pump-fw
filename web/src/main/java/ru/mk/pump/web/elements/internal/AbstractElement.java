@@ -52,6 +52,9 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     private final StateResolver stateResolver;
 
     @Getter
+    private final StateResolver internalStateResolver;
+
+    @Getter
     private final Finder finder;
 
     private final Consumer<WaitResult<Boolean>> TEAR_DOWN = stateWaitResult -> getFinder().getLast()
@@ -110,7 +113,9 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         this.finder = newDelegateFinder();
         this.stateResolver = newDelegateStateResolver();
         this.actionsStore = new ActionsStore(this, newDelegateActionFactory());
-        this.actionExecutor = newDelegateActionExecutor(stateResolver);
+        this.internalStateResolver = newDelegateStateResolver();
+        newDelegateStateResolver().clearListeners();
+        this.actionExecutor = newDelegateActionExecutor(internalStateResolver);
         this.elementName = getBy().toString();
     }
 

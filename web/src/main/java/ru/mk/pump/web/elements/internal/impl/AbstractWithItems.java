@@ -75,14 +75,14 @@ public abstract class AbstractWithItems extends BaseElement implements WithSubIt
     public WaitResult<Boolean> hasItems(int count, int timeoutMs) {
         final SetState state = (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.EXISTS, () -> refreshItemsCache() >= count))
                 .withName(String.format("Items count not less '%d'", count));
-        return getStateResolver().resolve(state, timeoutMs).result();
+        return getInternalStateResolver().resolve(state, timeoutMs).result();
     }
 
     @Override
     public WaitResult<Boolean> hasItems(int count) {
         final SetState state = (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.EXISTS, () -> refreshItemsCache() >= count))
                 .withName(String.format("Items count not less '%d'", count));
-        return getStateResolver().resolve(state).result();
+        return getInternalStateResolver().resolve(state).result();
     }
 
     @SuppressWarnings("SameParameterValue")

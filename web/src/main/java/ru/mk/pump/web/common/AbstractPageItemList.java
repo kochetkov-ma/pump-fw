@@ -57,8 +57,8 @@ public abstract class AbstractPageItemList<T extends PageItem> extends AbstractL
     @Override
     public int size() {
         if (parent != null) {
-            parent.getStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, listBy.toString()));
-            parent.getStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, listBy.toString()));
+            parent.getInternalStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, listBy.toString()));
+            parent.getInternalStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, listBy.toString()));
             final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, listBy.toString()))
                 .getResult();
             return sourceWebElement.findElements(listBy).size();

@@ -63,13 +63,13 @@ public class ActionsStore {
                     return;
                 case ADVANCED:
                     webElement.clear();
-                    State state = element.getStateResolver().resolveFast(element.clearState());
+                    State state = element.getInternalStateResolver().resolveFast(element.clearState());
                     if (state.isResolved() && state.result().isSuccess()) {
                         return;
                     }
                     webElement.sendKeys(Keys.CONTROL, "a");
                     webElement.sendKeys(Keys.BACK_SPACE);
-                    element.getStateResolver().resolveFast(element.clearState()).result().throwExceptionOnFail();
+                    element.getInternalStateResolver().resolveFast(element.clearState()).result().throwExceptionOnFail();
                     return;
                 default:
                     throw new UnsupportedOperationException("ClearType has been modified. Add new type of ClearType in ActionStore");

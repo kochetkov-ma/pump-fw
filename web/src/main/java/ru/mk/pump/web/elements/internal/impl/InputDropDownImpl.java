@@ -231,7 +231,7 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     }
 
     protected boolean isChanged(String oldItems) {
-        return getStateResolver().resolve(itemsIsChangedOrEmpty(oldItems), 1000).result().isSuccess();
+        return getInternalStateResolver().resolve(itemsIsChangedOrEmpty(oldItems), 1000).result().isSuccess();
     }
 
 

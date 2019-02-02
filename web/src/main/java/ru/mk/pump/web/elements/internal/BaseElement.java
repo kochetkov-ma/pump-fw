@@ -190,7 +190,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     }
 
     public boolean isJsReady() {
-        final State res = getStateResolver().resolve(jsReady());
+        final State res = getInternalStateResolver().resolve(jsReady());
         return res.result().isSuccess();
     }
 
@@ -262,6 +262,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         /*helper instance init*/
         this.helper = new BaseElementHelper(this);
         /*helper features init*/
+        helper.stateActionReportingEnable();
         helper.windowSizeCheckerEnable();
         helper.stateReportingEnable();
         helper.actionsReportingEnable();
