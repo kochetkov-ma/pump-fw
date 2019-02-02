@@ -1,5 +1,5 @@
 ext {
-    cucumberVersion = '4.2.0'
+    cucumberVersion = '4.2.2'
 }
 
 dependencies {

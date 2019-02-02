@@ -35,7 +35,7 @@ public class BaseComponent extends BaseElement implements Component {
 
     @Override
     public void check() {
-        State res = getStateResolver().resolve(ready());
+        State res = getInternalStateResolver().resolve(ready());
         getVerifier().checkTrue(res.name(), res.result().isSuccess(), res.toPrettyString());
     }
 

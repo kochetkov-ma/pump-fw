@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.NoSuchElementException;
 import ru.mk.pump.commons.helpers.Parameters;
+import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
@@ -37,7 +38,7 @@ public class ActionExecutor extends ActionNotifier {
     private final boolean main;
 
     private int actionExecutionTry = 0;
-
+    @Getter
     private StateResolver stateResolver;
 
     public ActionExecutor() {
@@ -94,7 +95,7 @@ public class ActionExecutor extends ActionNotifier {
                     }
                 }
             }
-            if (main) {
+            if (main && ConfigurationHolder.get().getElement().isElementHighlight()) {
                 tAction.getTarget().highlight(true);
             }
         } catch (Throwable throwable) {
@@ -161,14 +162,14 @@ public class ActionExecutor extends ActionNotifier {
                 tAction.setStage(ActionStage.COMPLETED);
             } else {
                 notifyOnFail(tAction, throwable);
-                if (main) {
+                if (main && ConfigurationHolder.get().getElement().isElementHighlight()) {
                     tAction.getTarget().highlight(false);
                 }
                 throw new ActionExecutingException(tAction, throwable).addTarget("action", tAction);
             }
         }
         notifyOnSuccess(tAction, result);
-        if (main) {
+        if (main && ConfigurationHolder.get().getElement().isElementHighlight()) {
             tAction.getTarget().highlight(false);
         }
         return result;

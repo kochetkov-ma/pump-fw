@@ -79,4 +79,11 @@ public class ElementConfiguration {
 
     @Property(value = "element.packages.interface", required = false)
     private String[] packagesInterface;
+
+    /**
+     * [RUS]
+     * Включить посветку элементов.
+     */
+    @Property(value = "element.highlight.enable", defaultValue = "true")
+    private boolean elementHighlight = true;
 }

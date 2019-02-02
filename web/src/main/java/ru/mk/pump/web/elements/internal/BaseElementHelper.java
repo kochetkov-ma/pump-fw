@@ -35,6 +35,12 @@ class BaseElementHelper {
         return this;
     }
 
+    public void stateActionReportingEnable() {
+        if (fwConfig.getElement().isStateReporting()) {
+            baseElement.getActionExecutor().getStateResolver().addListener(newActionStateReporterListener());
+        }
+    }
+
     public void stateReportingEnable() {
         if (fwConfig.getElement().isStateReporting()) {
             baseElement.getStateResolver().addListener(newStateReporterListener());
@@ -85,7 +91,10 @@ class BaseElementHelper {
 
             @Override
             public void onBeforeActionSuccess(Action action) {
-                info("Before action is success", action, null);
+                PumpMessage msg = new PumpMessage("Before action is success")
+                        .withPre("Action reporting message")
+                        .addExtraInfo(action);
+                baseElement.getReporter().debug(Strings.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString());
             }
 
             private void info(String title, Action action, Object result) {
@@ -98,12 +107,45 @@ class BaseElementHelper {
         };
     }
 
+    private StateListener newActionStateReporterListener() {
+        return new StateListener() {
+            @Override
+            public void onBefore(Pair<State, InternalElement> args) {
+                if (ConfigurationHolder.get().getElement().isElementHighlight()) {
+                    args.getValue().highlight(true);
+                }
+                //do nothing
+            }
+
+            @Override
+            public void onFinish(Pair<State, InternalElement> args) {
+                PumpMessage msg = new PumpMessage(String
+                        .format("Checking state '%s' of element '%s' is finished in '%d' ms with result '%s'", args.getKey().name(),
+                                args.getValue().getName(),
+                                args.getKey().result().getElapsedTime(),
+                                args.getKey().result().isSuccess()))
+                        .withPre("State reporting message")
+                        .addExtraInfo(args.getKey())
+                        .addExtraInfo(args.getValue());
+                if (args.getKey().result().isSuccess()) {
+                    if (args.getKey().type() == StateType.READY) {
+                        baseElement.getReporter().debug(msg.getTitle(), msg.toPrettyString());
+                    } else {
+                        /*don't report other state*/
+                    }
+                } else {
+                    baseElement.getReporter().warn(msg.getTitle(), msg.toPrettyString());
+                }
+            }
+        };
+    }
 
     private StateListener newStateReporterListener() {
         return new StateListener() {
             @Override
             public void onBefore(Pair<State, InternalElement> args) {
-                if (args.getKey().type() == StateType.DISPLAYED || args.getKey().type() == StateType.SELECTED) {
+                if (args.getKey().type() == StateType.DISPLAYED || args.getKey().type() == StateType.SELECTED
+                        && ConfigurationHolder.get().getElement().isElementHighlight()) {
                     args.getValue().highlight(true);
                 }
                 log.trace("Call StateListener#onBeforeActionSuccess from newStateReporterListener()");
@@ -125,7 +167,9 @@ class BaseElementHelper {
                 } else {
                     baseElement.getReporter().warn(msg.getTitle(), msg.toPrettyString());
                 }
-                args.getValue().highlight(false);
+                if (ConfigurationHolder.get().getElement().isElementHighlight()) {
+                    args.getValue().highlight(false);
+                }
             }
         };
     }
