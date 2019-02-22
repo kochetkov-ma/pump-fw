@@ -10,7 +10,7 @@ import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.AbstractItemsManager;
 import ru.mk.pump.web.common.api.annotations.PComponent;
 import ru.mk.pump.web.common.pageobject.PumpElementAnnotations;
-import ru.mk.pump.web.utils.WebReporter;
+import ru.mk.pump.web.common.WebReporter;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;

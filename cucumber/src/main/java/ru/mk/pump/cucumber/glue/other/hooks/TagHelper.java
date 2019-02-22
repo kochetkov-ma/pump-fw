@@ -18,6 +18,11 @@ public class TagHelper {
      */
     public final static String NO_SKIP = "@NoSkip";
 
+    /**
+     * skip test
+     */
+    public final static String SKIP = "@Skip";
+
     private final Collection<String> tags;
 
     @Getter
@@ -37,6 +42,10 @@ public class TagHelper {
             tag = "@" + tag;
         }
         return tags.stream().anyMatch(tag::equalsIgnoreCase);
+    }
+
+    public boolean isSkip() {
+        return hasTag(SKIP);
     }
 
     public boolean isNoSkip() {

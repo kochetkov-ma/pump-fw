@@ -1,7 +1,5 @@
 package ru.mk.pump.web.elements.internal;
 
-import java.util.Map;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +9,8 @@ import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.common.WebReporter;
+import ru.mk.pump.web.common.api.WebListenersConfiguration;
 import ru.mk.pump.web.common.api.annotations.PAction;
 import ru.mk.pump.web.common.pageobject.Initializer;
 import ru.mk.pump.web.elements.ElementFactory;
@@ -20,7 +20,9 @@ import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.ElementInfo;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.page.api.Page;
-import ru.mk.pump.web.utils.WebReporter;
+
+import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * PUBLIC BASE IMPLEMENTATION InternalElement interface
@@ -266,7 +268,21 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
         helper.windowSizeCheckerEnable();
         helper.stateReportingEnable();
         helper.actionsReportingEnable();
+        /*external listeners configuration*/
+        final WebListenersConfiguration lConf = WebReporter.getListenersConfiguration();
+        if (lConf != null) {
+            if (lConf.eraseActionListener()) {
+                getActionExecutor().clearListeners();
+            }
+            if (lConf.eraseActionStateListener()) {
+                getInternalStateResolver().clearListeners();
+            }
+            if (lConf.eraseStateListener()) {
+                getStateResolver().clearListeners();
+            }
+            getActionExecutor().addListeners(lConf.getActionListener(this));
+            getInternalStateResolver().addListeners(lConf.getActionStateListener(this));
+            getStateResolver().addListeners(lConf.getStateListener(this));
+        }
     }
-
-
 }

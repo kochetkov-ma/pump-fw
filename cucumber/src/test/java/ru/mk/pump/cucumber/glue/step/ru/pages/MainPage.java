@@ -1,4 +1,4 @@
-package ru.mk.pump.cucumber.glue.step.ru;
+package ru.mk.pump.cucumber.glue.step.ru.pages;
 
 import lombok.NonNull;
 import org.openqa.selenium.support.FindBy;

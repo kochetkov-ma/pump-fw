@@ -18,7 +18,7 @@ import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.interpretator.rules.Pumpkin;
 import ru.mk.pump.web.page.PageManager;
 import ru.mk.pump.web.utils.TestVars;
-import ru.mk.pump.web.utils.WebReporter;
+import ru.mk.pump.web.common.WebReporter;
 
 import java.util.Map;
 

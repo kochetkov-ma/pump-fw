@@ -1,6 +1,5 @@
 package ru.mk.pump.web.appium;
 
-import java.util.Optional;
 import lombok.Getter;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -13,11 +12,10 @@ import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.common.api.annotations.PString;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
-import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.page.BasePage;
 import ru.mk.pump.web.page.PageLoaderPump;
-import ru.mk.pump.web.utils.WebReporter;
+import ru.mk.pump.web.common.WebReporter;
 
 import java.util.Observable;
 import java.util.UUID;

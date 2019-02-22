@@ -12,7 +12,7 @@ import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.exceptions.BrowserException;
-import ru.mk.pump.web.utils.WebReporter;
+import ru.mk.pump.web.common.WebReporter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

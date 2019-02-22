@@ -1,8 +1,6 @@
 package ru.mk.pump.web.elements.internal;
 
-import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.exception.PumpMessage;
@@ -14,6 +12,8 @@ import ru.mk.pump.web.elements.api.listeners.StateListener;
 import ru.mk.pump.web.elements.enums.StateType;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+
+import java.util.Collections;
 
 @SuppressWarnings("UnusedReturnValue")
 @Slf4j

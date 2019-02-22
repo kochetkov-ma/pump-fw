@@ -146,8 +146,6 @@ class WebItemsControllerTest extends AbstractTestWithBrowser {
             .isNotNull()
             .isInstanceOf(Input.class);
 
-
-
         assertThat(controller.execute(new RegPage(getBrowser()), "Форма.Зона[0].Колонка[0].Поле"))
             .isNotNull()
             .isInstanceOf(ElementList.class);

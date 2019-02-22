@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.mk.pump.commons.config.Property;
 import ru.mk.pump.commons.reporter.ReporterAllure.Type;
-import ru.mk.pump.web.utils.WebReporter;
+import ru.mk.pump.web.common.WebReporter;
 
 /**
  * [RUS]

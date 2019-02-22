@@ -1,7 +1,9 @@
-package ru.mk.pump.web.utils;
+package ru.mk.pump.web.common;
 
 import com.google.common.base.Preconditions;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.experimental.UtilityClass;
 import org.openqa.selenium.WebDriver;
 import ru.mk.pump.commons.reporter.Reporter;
@@ -10,6 +12,7 @@ import ru.mk.pump.commons.reporter.ReporterAllure.Type;
 import ru.mk.pump.commons.reporter.Screenshoter;
 import ru.mk.pump.commons.utils.BrowserScreenshoter;
 import ru.mk.pump.commons.utils.Verifier;
+import ru.mk.pump.web.common.api.WebListenersConfiguration;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -21,7 +24,7 @@ import java.util.function.Supplier;
  * {@link Reporter} and {@link Verifier} singleton.
  * Call {@link WebReporter#init(Supplier)} before using. Use this class if no need custom Reporter.
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings( {"WeakerAccess", "unused"})
 @UtilityClass
 @ThreadSafe
 public class WebReporter {
@@ -31,6 +34,13 @@ public class WebReporter {
     private ThreadLocal<Reporter> reporter = new InheritableThreadLocal<>();
 
     private ThreadLocal<Verifier> verifier = new InheritableThreadLocal<>();
+
+    /**
+     * Set listeners configuration. You must implement {@link WebListenersConfiguration} to use custom listeners instead default.
+     */
+    @Getter
+    @Setter
+    private WebListenersConfiguration listenersConfiguration;
 
     static {
         /*fake init without screens*/

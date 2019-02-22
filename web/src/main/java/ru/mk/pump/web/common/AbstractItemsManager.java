@@ -20,7 +20,6 @@ import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.api.ItemsManager;
 import ru.mk.pump.web.common.api.WebObject;
 import ru.mk.pump.web.exceptions.ItemManagerException;
-import ru.mk.pump.web.utils.WebReporter;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @ToString(exclude = {"browsers", "reporter"})

@@ -1,5 +1,9 @@
 Feature: VerifyStepsTest
 
+  @skip
+  Scenario: Test scenario to skip
+    * на страницу Главная страница выполнен переход
+
   Scenario: Test scenario - 1
     * на страницу Главная страница выполнен переход
     * на странице найден элемент 'Заголовок' текст сохранен в title_test

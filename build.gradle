@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        //maven { url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public" }
+        maven { url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public" }
         mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -66,11 +66,10 @@ allprojects {
     }
     allure {
         version = '2.6.0'
-        resultsDir = rootProject.file('allure-results')
+        resultsDir = project.file('allure-results')
         aspectjweaver = true
-        //downloadLink = 'http://nexus.nspk.ru:8081/nexus/service/local/repositories/thirdparty/content/io/qameta/allure-cli/2.6.0/allure-cli-2.6.0.zip'
+        downloadLink = 'http://nexus.nspk.ru:8081/nexus/service/local/repositories/thirdparty/content/io/qameta/allure-cli/2.6.0/allure-cli-2.6.0.zip'
     }
-
 }
 subprojects {
     project.version = rootProject.version
@@ -94,7 +93,7 @@ subprojects {
     }
     repositories {
         mavenLocal()
-        //maven { url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public" }
+        maven { url "http://msk1-vm-nexus01.unix.nspk.ru:8081/nexus/content/repositories/public" }
         mavenCentral()
     }
     sourceCompatibility = JavaVersion.VERSION_1_8

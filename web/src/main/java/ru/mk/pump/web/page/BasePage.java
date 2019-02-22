@@ -2,9 +2,6 @@ package ru.mk.pump.web.page;
 
 import static java.lang.String.format;
 
-import java.util.Map;
-import java.util.Optional;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -18,6 +15,8 @@ import ru.mk.pump.commons.utils.CallableExt;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.common.WebReporter;
+import ru.mk.pump.web.common.api.WebListenersConfiguration;
 import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.pageobject.Initializer;
 import ru.mk.pump.web.component.api.Component;
@@ -28,9 +27,11 @@ import ru.mk.pump.web.page.api.Page;
 import ru.mk.pump.web.page.api.PageListener;
 import ru.mk.pump.web.page.api.PageLoader;
 import ru.mk.pump.web.utils.UrlUtils;
-import ru.mk.pump.web.utils.WebReporter;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+import java.util.Map;
+import java.util.Optional;
+
+@SuppressWarnings( {"WeakerAccess", "unused"})
 @ToString(of = {"baseUrl", "resourcePath", "name", "description", "url"})
 public class BasePage extends PageNotifier implements Page {
 
@@ -99,6 +100,13 @@ public class BasePage extends PageNotifier implements Page {
         getPageLoader().addDisplayedElements(pageBody);
         getTitle().ifPresent(el -> getPageLoader().addTextContainsElement(el, getName()));
         addListener(newDefaultListener());
+        final WebListenersConfiguration configuration = WebReporter.getListenersConfiguration();
+        if (configuration != null) {
+            if (configuration.erasePageListener()) {
+                clearListeners();
+            }
+            addListeners(configuration.getPageListener(this));
+        }
     }
 
     protected void afterOpen() {
@@ -108,10 +116,10 @@ public class BasePage extends PageNotifier implements Page {
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("page")
-            .put("name", name)
-            .put("url", url)
-            .put("browser", browser.getId())
-            .build();
+                .put("name", name)
+                .put("url", url)
+                .put("browser", browser.getId())
+                .build();
     }
 
     @Override
@@ -186,7 +194,7 @@ public class BasePage extends PageNotifier implements Page {
 
             @Override
             public void onBeforeLoad(Page page) {
-                getReporter().info(format("Page '%s' is opening", name), page.toString(),getReporter().attachments().dummy());
+                getReporter().info(format("Page '%s' is opening", name), page.toString(), getReporter().attachments().dummy());
             }
         };
     }

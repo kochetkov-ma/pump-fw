@@ -10,7 +10,7 @@ import ru.mk.pump.web.browsers.builders.ChromeDriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.exceptions.BrowserException;
-import ru.mk.pump.web.utils.WebReporter;
+import ru.mk.pump.web.common.WebReporter;
 
 import java.util.Deque;
 import java.util.Observable;

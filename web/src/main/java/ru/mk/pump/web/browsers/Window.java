@@ -3,7 +3,6 @@ package ru.mk.pump.web.browsers;
 import java.util.Observer;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import ru.mk.pump.commons.activity.AbstractActivity;
 import ru.mk.pump.commons.activity.Activity;
@@ -11,7 +10,7 @@ import ru.mk.pump.commons.activity.ActivityListener;
 import ru.mk.pump.commons.activity.NamedEvent;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.utils.WebReporter;
+import ru.mk.pump.web.common.WebReporter;
 
 @Slf4j
 @ToString(callSuper = true)

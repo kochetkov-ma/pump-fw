@@ -16,7 +16,7 @@ import ru.mk.pump.web.browsers.configuration.BrowserType;
 import ru.mk.pump.web.browsers.configuration.Size;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
-import ru.mk.pump.web.utils.WebReporter;
+import ru.mk.pump.web.common.WebReporter;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractTestWithBrowser {

@@ -6,9 +6,6 @@ import cucumber.api.java.Before;
 import io.qameta.allure.Step;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.reporter.ReporterAllure;
-import ru.mk.pump.commons.reporter.Screenshoter;
 import ru.mk.pump.commons.utils.DesktopScreenshoter;
 import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.cucumber.CucumberCore;
@@ -33,7 +30,7 @@ public class WebHooks {
     }
 
     @Before(order = 10)
-    @Step("Before scenario '{scenario.scenarioName}'")
+    @Step("Before scenario '{scenario.testCase.pickleEvent.pickle.name}'")
     public void beforeScenarioDefault(Scenario scenario) {
         final TagHelper tags = new TagHelper(scenario);
         checkPluginHook();
@@ -48,9 +45,8 @@ public class WebHooks {
     }
 
     @After(order = 10)
-    @Step("After scenario '{scenario.scenarioName}'")
+    @Step("After scenario '{scenario.testCase.pickleEvent.pickle.name}'")
     public void afterScenarioDefault(Scenario scenario) {
-        final TagHelper tags = new TagHelper(scenario);
         if (afterScenarioHook) {
             screenHook("finish");
             log.info("[HOOK] After Scenario" + Strings.line() + CucumberUtil.toPrettyString(scenario) + Strings.line());
@@ -70,11 +66,15 @@ public class WebHooks {
     }
 
     private void skipHook(TagHelper tagHelper) {
-        core.getMonitor().getLastFeature().ifPresent(feature -> {
-            if (!feature.isOk() && !tagHelper.isNoSkip()) {
-                CucumberUtil.skipScenario(tagHelper.getScenario());
-            }
-        });
+        if (tagHelper.isSkip()) {
+            CucumberUtil.skipScenario(tagHelper.getScenario());
+        } else {
+            core.getMonitor().getLastFeature().ifPresent(feature -> {
+                if (!feature.isOk() && !tagHelper.isNoSkip()) {
+                    CucumberUtil.skipScenario(tagHelper.getScenario());
+                }
+            });
+        }
     }
 
     private void browserRestart() {

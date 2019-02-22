@@ -12,6 +12,8 @@ import ru.mk.pump.commons.listener.Event;
 import ru.mk.pump.commons.listener.Listener;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.web.common.WebReporter;
+import ru.mk.pump.web.common.api.WebListenersConfiguration;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -52,6 +54,13 @@ public final class TestVars
                         reporter.attachments().dummy());
             }
         });
+        final WebListenersConfiguration configuration = WebReporter.getListenersConfiguration();
+        if (configuration != null) {
+            if (configuration.eraseTestVarsListener()) {
+                clearListeners();
+            }
+            addListeners(configuration.getTestVarsListener(this));
+        }
     }
 
     private TestVars(Map<String, Object> sourceMap) {

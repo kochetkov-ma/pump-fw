@@ -1,4 +1,4 @@
-package ru.mk.pump.cucumber.glue.step.ru;
+package ru.mk.pump.cucumber.glue.step.ru.pages;
 
 import com.google.common.collect.ImmutableList;
 import lombok.Getter;

@@ -96,7 +96,8 @@ public class Feature implements StrictInfo, PrettyPrinter {
     }
 
     private Scenario updateStatus(Scenario scenario, Result result) {
-        if (result.getStatus() != Result.Type.PASSED) {
+        if (result.getStatus() != Result.Type.PASSED
+                && result.getStatus() != Result.Type.SKIPPED) {
             nonPassedScenario = scenario;
         }
         scenario.setResult(result);
