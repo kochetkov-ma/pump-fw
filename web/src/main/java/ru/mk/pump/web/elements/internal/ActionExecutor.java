@@ -1,6 +1,5 @@
 package ru.mk.pump.web.elements.internal;
 
-
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings( {"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 @Slf4j
 public class ActionExecutor extends ActionNotifier {
 
@@ -100,7 +99,7 @@ public class ActionExecutor extends ActionNotifier {
             }
         } catch (Throwable throwable) {
             notifyOnFail(tAction, throwable);
-            throw new ActionExecutingException(tAction, throwable);
+            throw new ActionExecutingException("Action executing error", tAction, throwable);
         } finally {
             if (!afterActionError.isEmpty() && isExcludedStrategy(tAction, ActionStrategy.SIMPLE, ActionStrategy.NO_FINALLY)) {
                 tAction.setStage(ActionStage.FINALLY);
@@ -165,7 +164,7 @@ public class ActionExecutor extends ActionNotifier {
                 if (main && ConfigurationHolder.get().getElement().isElementHighlight()) {
                     tAction.getTarget().highlight(false);
                 }
-                throw new ActionExecutingException(tAction, throwable).addTarget("action", tAction);
+                throw new ActionExecutingException("Main action executing was failed", tAction, throwable);
             }
         }
         notifyOnSuccess(tAction, result);

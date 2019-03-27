@@ -2,7 +2,7 @@ package ru.mk.pump.cucumber.glue.step.ru.pages;
 
 import lombok.NonNull;
 import org.openqa.selenium.support.FindBy;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.elements.api.Element;
@@ -32,7 +32,7 @@ public class MainPage extends BasePage {
     }
 
     @Override
-    public Optional<Element> getTitle() {
-        return Optional.of(pageTitle);
+    public Element getTitle() {
+        return pageTitle;
     }
 }

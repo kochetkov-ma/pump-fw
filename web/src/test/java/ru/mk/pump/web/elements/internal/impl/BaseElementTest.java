@@ -7,12 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.ElementWaiter;
 import ru.mk.pump.web.exceptions.ActionExecutingException;
-import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
+import ru.mk.pump.web.exceptions.ElementNotFoundException;
 import ru.mk.pump.web.exceptions.ElementStateException;
 
 @Slf4j
@@ -72,13 +72,13 @@ public class BaseElementTest extends AbstractWebTest {
             .isInstanceOf(ActionExecutingException.class)
             .hasMessageContaining("---action---")
             .hasCauseInstanceOf(ElementStateException.class)
-            .has(new Condition<Throwable>(throwable -> throwable.getCause().getCause() instanceof ElementFinderNotFoundException, "cause"))
+            .has(new Condition<Throwable>(throwable -> throwable.getCause().getCause() instanceof ElementNotFoundException, "cause"))
             .matches(throwable -> throwable.getCause().getCause().getCause() instanceof NoSuchElementException);
 
         Assertions.assertThatThrownBy(() -> mainPage.getChildButtonSectionFail().getText())
             .isInstanceOf(ActionExecutingException.class)
             .hasCauseInstanceOf(ElementStateException.class)
-            .matches(throwable -> throwable.getCause().getCause() instanceof ElementFinderNotFoundException)
+            .matches(throwable -> throwable.getCause().getCause() instanceof ElementNotFoundException)
             .matches(throwable -> throwable.getCause().getCause().getCause() instanceof NoSuchElementException);
     }
 
@@ -104,7 +104,7 @@ public class BaseElementTest extends AbstractWebTest {
             .hasMessageContaining("Executing action 'Click' error")
             .hasMessageContaining("type : Click")
             .hasCauseInstanceOf(ElementStateException.class)
-            .matches(throwable -> throwable.getCause().getCause() instanceof ElementFinderNotFoundException)
+            .matches(throwable -> throwable.getCause().getCause() instanceof ElementNotFoundException)
             .matches(throwable -> throwable.getCause().getCause().getCause() instanceof NoSuchElementException);
     }
 
@@ -173,46 +173,46 @@ public class BaseElementTest extends AbstractWebTest {
         regPage.getDropDownRegions().advanced().getStateResolver().resolve(regPage.getDropDownRegions().advanced().ready());
         List<Element> elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced("//div[@class='item']",
             (el) -> el.getAttribute("class").equals("item"));
-        log.info(Strings.toPrettyString(elementList));
+        log.info(Str.toPrettyString(elementList));
         Assertions.assertThat(elementList).hasSize(20);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced(".//div[@class='items']",
             (el) -> el.getAttribute("class").equals("item"),
             ".//div[@class='item']");
-        log.info(Strings.toPrettyString(elementList));
+        log.info(Str.toPrettyString(elementList));
         Assertions.assertThat(elementList).hasSize(20);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced(null,
             (el) -> el.getAttribute("class").equals("item"),
             ".//div[@class='item']");
-        log.info(Strings.toPrettyString(elementList));
+        log.info(Str.toPrettyString(elementList));
         Assertions.assertThat(elementList).hasSize(20);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class).findListXpathAdvanced("",
             (el) -> el.getAttribute("class").equals("item"),
             ".//div[@class='item']");
-        log.info(Strings.toPrettyString(elementList));
+        log.info(Str.toPrettyString(elementList));
         Assertions.assertThat(elementList).hasSize(20);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class).findList(By.xpath("//div[@class='items']"), By.className("item"));
-        log.info(Strings.toPrettyString(elementList));
+        log.info(Str.toPrettyString(elementList));
         Assertions.assertThat(elementList).hasSize(1);
 
         elementList = regPage.getDropDownRegions().getSubElements(Element.class)
             .findList(els -> els.size() > 1, By.xpath("//div[@class='items']"), By.className("item"));
-        log.info(Strings.toPrettyString(elementList));
+        log.info(Str.toPrettyString(elementList));
         Assertions.assertThat(elementList).hasSize(20);
 
         Element element = regPage.getDropDownRegions().getSubElements(Element.class)
             .find(By.xpath("//div[@class='items']"), By.className("item"));
-        log.info(Strings.toString(element));
+        log.info(Str.toString(element));
         Assertions.assertThat(element).isNotNull();
 
         element = regPage.getDropDownRegions().getSubElements(Element.class)
             .findXpathAdvanced(".//div[@class='items']",
                 (el) -> el.getAttribute("class").equals("item"),
                 ".//div[@class='item']");
-        log.info(Strings.toString(element));
+        log.info(Str.toString(element));
         Assertions.assertThat(element).isNotNull();
     }
 }

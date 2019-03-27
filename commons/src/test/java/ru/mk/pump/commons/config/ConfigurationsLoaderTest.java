@@ -1,32 +1,33 @@
 package ru.mk.pump.commons.config;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.ProjectResources;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 class ConfigurationsLoaderTest {
 
     @Test
     void testLoad() {
-        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
+        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(new ProjectResources(getClass()).findResource("stand.properties"), true);
         configurationsLoader.load();
     }
 
     @Test
     void testGetMap() {
-        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
+        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(new ProjectResources(getClass()).findResource("stand.properties"), true);
         assertThat(configurationsLoader.getMap()).isEmpty();
         configurationsLoader.load();
-        log.debug(Strings.toPrettyString(configurationsLoader.getMap()));
+        log.debug(Str.toPrettyString(configurationsLoader.getMap()));
         assertThat(configurationsLoader.getMap()).hasSize(10)
-            .containsOnlyKeys("main.reporting", "two.one", "main.url", "common", "second.count", "second.url", "main.count", "two.two", "second.reporting",
-                "enum");
+                .containsOnlyKeys("main.reporting", "two.one", "main.url", "common", "second.count", "second.url", "main.count", "two.two", "second.reporting",
+                        "enum");
 
     }
 
@@ -34,7 +35,7 @@ class ConfigurationsLoaderTest {
     void testMapToObject() {
         /*to test load from ENV or SYSTEM VARS*/
         System.setProperty("common.extra", "from_env");
-        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stand.properties"), true);
+        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(new ProjectResources(getClass()).findResource("stand.properties"), true);
         configurationsLoader.load();
         /*create nonArg object*/
         final Stand stand = new Stand();
@@ -73,7 +74,7 @@ class ConfigurationsLoaderTest {
 
         /*to test load from ENV or SYSTEM VARS*/
         System.setProperty("common.extra", "from_env");
-        ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stands.properties"), true);
+        ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(new ProjectResources(getClass()).findResource("stands.properties"), true);
         configurationsLoader.load();
         /*create new object from class*/
         final Stands stand = configurationsLoader.toObject(Stands.class);
@@ -86,13 +87,13 @@ class ConfigurationsLoaderTest {
     @Test
     void testHistory() {
         System.setProperty("common.extra", "from_env");
-        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(ProjectResources.findResource("stands.properties"), true);
+        final ConfigurationsLoader configurationsLoader = new ConfigurationsLoader(new ProjectResources(getClass()).findResource("stands.properties"), true);
         configurationsLoader.load();
-        log.debug(Strings.toPrettyString(configurationsLoader.getHistory().asList()));
+        log.debug(Str.toPrettyString(configurationsLoader.getHistory().asList()));
         final Stands stand = configurationsLoader.toObject(Stands.class);
         configurationsLoader.toObject(Stands.class);
         configurationsLoader.toObject(Stands.class);
-        log.debug(Strings.toPrettyString(configurationsLoader.getHistory().asList()));
+        log.debug(Str.toPrettyString(configurationsLoader.getHistory().asList()));
         final Optional<Info<String>> lst = configurationsLoader.getHistory().findLastById(ConfigurationsLoader.getHistoryId(Stands.class, "env"));
         log.debug(lst.orElse(Info.of("undefined")).getPayload());
     }

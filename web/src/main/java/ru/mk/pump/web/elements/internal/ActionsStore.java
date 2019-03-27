@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.utils.ParameterUtils;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.enums.ClearType;
@@ -117,7 +117,7 @@ public class ActionsStore {
                     }
                 }
             }
-            if (!Strings.isEmpty(scrollScript)) {
+            if (!Str.isEmpty(scrollScript)) {
                 element.getBrowser().actions().executeScript(scrollScript, webElement);
             }
         }, "Focus on element");

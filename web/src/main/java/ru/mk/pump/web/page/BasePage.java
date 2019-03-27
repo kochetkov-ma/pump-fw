@@ -1,20 +1,14 @@
 package ru.mk.pump.web.page;
 
-import static java.lang.String.format;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.openqa.selenium.support.FindBy;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.CallableExt;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.commons.utils.Verifier;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.WebReporter;
 import ru.mk.pump.web.common.api.WebListenersConfiguration;
 import ru.mk.pump.web.common.api.annotations.PElement;
@@ -29,33 +23,30 @@ import ru.mk.pump.web.page.api.PageLoader;
 import ru.mk.pump.web.utils.UrlUtils;
 
 import java.util.Map;
-import java.util.Optional;
 
-@SuppressWarnings( {"WeakerAccess", "unused"})
+import static java.lang.String.format;
+
+@SuppressWarnings({"WeakerAccess", "unused"})
 @ToString(of = {"baseUrl", "resourcePath", "name", "description", "url"})
 public class BasePage extends PageNotifier implements Page {
 
+    @Getter
+    private final Browser browser;
     @PElement("Тело страницы")
     @FindBy(tagName = "body")
     private Element pageBody;
-
     @Getter
     @Setter
     private String baseUrl;
-
     @Getter
     @Setter
     private String resourcePath;
-
-    @Getter
-    private final Browser browser;
-
     @Setter
     private Reporter reporter;
 
     @Getter
     @Setter
-    private String name = Strings.empty();
+    private String name = Str.empty();
 
     @Setter
     @Getter
@@ -98,7 +89,9 @@ public class BasePage extends PageNotifier implements Page {
         initAllElements();
         getPageLoader().addAdditionalCondition(CallableExt.of(this::jsReady).withDescription("Waiting js on page"));
         getPageLoader().addDisplayedElements(pageBody);
-        getTitle().ifPresent(el -> getPageLoader().addTextContainsElement(el, getName()));
+        if (getTitle() != null) {
+            getPageLoader().addTextContainsElement(getTitle(), getName());
+        }
         addListener(newDefaultListener());
         final WebListenersConfiguration configuration = WebReporter.getListenersConfiguration();
         if (configuration != null) {
@@ -117,7 +110,7 @@ public class BasePage extends PageNotifier implements Page {
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("page")
                 .put("name", name)
-                .put("url", url)
+                .put("url", getUrl())
                 .put("browser", browser.getId())
                 .build();
     }
@@ -141,7 +134,7 @@ public class BasePage extends PageNotifier implements Page {
         } else if (getBaseUrl() != null) {
             return UrlUtils.concatWithPath(getBaseUrl(), getResourcePath());
         } else {
-            return Strings.empty();
+            return Str.empty();
         }
     }
 
@@ -160,12 +153,12 @@ public class BasePage extends PageNotifier implements Page {
 
     protected boolean jsReady() {
         final String js = "return document.readyState";
-        return "complete".equals(Strings.toString(getBrowser().actions().executeScript(js)));
+        return "complete".equals(Str.toString(getBrowser().actions().executeScript(js)));
     }
 
     @Override
-    public Optional<Element> getTitle() {
-        return Optional.empty();
+    public Element getTitle() {
+        return null;
     }
 
     @Override

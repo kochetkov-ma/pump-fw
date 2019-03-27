@@ -43,7 +43,7 @@ public final class RandomUtil {
      * +79207101122 - 12 chars
      */
     public String newRussianMobilePhone(@Nullable String fullPrefixWithCode) {
-        if (Strings.isEmpty(fullPrefixWithCode)) {
+        if (Str.isEmpty(fullPrefixWithCode)) {
             fullPrefixWithCode = RUSSIAN_CODE;
         } else if (!fullPrefixWithCode.startsWith("+")) {
             if (!fullPrefixWithCode.startsWith("7")) {

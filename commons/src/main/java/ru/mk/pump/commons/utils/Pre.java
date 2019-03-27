@@ -14,25 +14,25 @@ public class Pre {
 
     public void checkNotEmpty(@Nullable Object[] array) {
         if (array == null || array.length == 0) {
-            throw new IllegalArgumentException(String.format("Checked array '%s' is nonArg", Strings.toString(array)));
+            throw new IllegalArgumentException(String.format("Checked array '%s' is nonArg", Str.toString(array)));
         }
     }
 
     public void checkNotEmpty(@Nullable Map map) {
         if (map == null || map.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Checked map '%s' is nonArg", Strings.toString(map)));
+            throw new IllegalArgumentException(String.format("Checked map '%s' is nonArg", Str.toString(map)));
         }
     }
 
     public void checkNotEmpty(@Nullable Collection collection) {
         if (collection == null || collection.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Checked collection '%s' is nonArg", Strings.toString(collection)));
+            throw new IllegalArgumentException(String.format("Checked collection '%s' is nonArg", Str.toString(collection)));
         }
     }
 
     public void checkObjectNotNull(@Nullable Object object, @NonNull Class aClass, String msg) {
         if (Objects.isNull(object)) {
-            throw new IllegalArgumentException(String.format(Strings.concat(".", msg, "Checked object '%s' is null"), aClass.getCanonicalName()));
+            throw new IllegalArgumentException(String.format(Str.concat(".", msg, "Checked object '%s' is null"), aClass.getCanonicalName()));
         }
     }
 
@@ -43,14 +43,14 @@ public class Pre {
     }
 
     public void checkStringNotBlank(@Nullable String string) {
-        if (Strings.isEmpty(string)) {
+        if (Str.isEmpty(string)) {
             throw new IllegalArgumentException(String.format("Checked string '%s' is blank", string));
         }
     }
 
     public void checkArgListSize(int candidateIndex, int listSize, String listDescriptionOrName) {
         if (candidateIndex >= listSize) {
-            if (!Strings.isEmpty(listDescriptionOrName)) {
+            if (!Str.isEmpty(listDescriptionOrName)) {
                 throw new IllegalArgumentException(String
                     .format("Requested index '%d' is out of actual list size '%d'. List description : '%s'", listSize, candidateIndex, listDescriptionOrName));
             } else {

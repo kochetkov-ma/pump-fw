@@ -1,9 +1,8 @@
 package ru.mk.pump.web.dx.pages;
 
-import java.util.Optional;
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.dx.components.MonitoringContentFrame;
@@ -22,7 +21,7 @@ public class Monitoring extends DxBasePage {
     }
 
     @Override
-    public Optional<Element> getTitle() {
-        return Optional.of(mainFrame.getDashboardSelector());
+    public Element getTitle() {
+        return mainFrame.getDashboardSelector();
     }
 }

@@ -4,7 +4,7 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 
 import java.net.URL;
@@ -12,7 +12,7 @@ import java.net.URL;
 public class AndroidAppDriverBuilder extends AbstractDriverBuilder<DesiredCapabilities> {
 
     public AndroidAppDriverBuilder(BrowserConfig browserConfig) {
-        super(browserConfig, new BuilderHelper(browserConfig));
+        super(browserConfig);
     }
 
     @Override
@@ -35,13 +35,13 @@ public class AndroidAppDriverBuilder extends AbstractDriverBuilder<DesiredCapabi
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("platformVersion", getConfig().getAppiumPlatformVersion());
         capabilities.setCapability("deviceName", getConfig().getAppiumDeviceName());
-        if (!Strings.isEmpty(getConfig().getAppiumAppActivity())) {
+        if (!Str.isEmpty(getConfig().getAppiumAppActivity())) {
             capabilities.setCapability("appActivity", getConfig().getAppiumAppActivity());
         }
-        if (!Strings.isEmpty(getConfig().getAppiumAppPackage())) {
+        if (!Str.isEmpty(getConfig().getAppiumAppPackage())) {
             capabilities.setCapability("appPackage", getConfig().getAppiumAppPackage());
         }
-        if (!Strings.isEmpty(getConfig().getAppiumApp())) {
+        if (!Str.isEmpty(getConfig().getAppiumApp())) {
             capabilities.setCapability("app", getConfig().getAppiumApp());
         }
         return capabilities;

@@ -1,21 +1,19 @@
 package ru.mk.pump.web.common;
 
 import com.google.common.base.Preconditions;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
-import lombok.experimental.UtilityClass;
 import org.openqa.selenium.WebDriver;
+import ru.mk.pump.commons.reporter.AllureReporter;
+import ru.mk.pump.commons.reporter.AllureReporter.Type;
 import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.reporter.ReporterAllure;
-import ru.mk.pump.commons.reporter.ReporterAllure.Type;
 import ru.mk.pump.commons.reporter.Screenshoter;
 import ru.mk.pump.commons.utils.BrowserScreenshoter;
+import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.web.common.api.WebListenersConfiguration;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
 
-import javax.annotation.concurrent.ThreadSafe;
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -24,71 +22,103 @@ import java.util.function.Supplier;
  * {@link Reporter} and {@link Verifier} singleton.
  * Call {@link WebReporter#init(Supplier)} before using. Use this class if no need custom Reporter.
  */
-@SuppressWarnings( {"WeakerAccess", "unused"})
-@UtilityClass
-@ThreadSafe
-public class WebReporter {
+@SuppressWarnings({"unused"})
+public final class WebReporter {
 
-    private final static Function<Supplier<WebDriver>, Screenshoter> DEFAULT_SCREEN = BrowserScreenshoter::new;
-
-    private ThreadLocal<Reporter> reporter = new InheritableThreadLocal<>();
-
-    private ThreadLocal<Verifier> verifier = new InheritableThreadLocal<>();
+    private static final Function<Supplier<WebDriver>, Screenshoter> DEFAULT_SCREEN = BrowserScreenshoter::new;
+    private static final Object PR_LOCK = new Object();
+    private static final Object V_LOCK = new Object();
+    private static final Object R_LOCK = new Object();
+    private static final Object WLC_LOCK = new Object();
+    private static final WebReporter INSTANCE = new WebReporter();
+    private static Reporter reporter;
+    private static Verifier verifier;
+    private static ProjectResources projectResources;
+    private static WebListenersConfiguration listenersConfiguration;
 
     /**
-     * Set listeners configuration. You must implement {@link WebListenersConfiguration} to use custom listeners instead default.
+     * First basic initialization.
      */
-    @Getter
-    @Setter
-    private WebListenersConfiguration listenersConfiguration;
-
-    static {
-        /*fake init without screens*/
+    private WebReporter() {
         newInstancesAndSave(Optional::empty, get(ConfigurationHolder.get().getReporting().getPostLogbackLevel(), Type.ALL));
     }
 
     /**
-     * Init {@link Screenshoter} and {@link Type} before using
+     * User initialization with screen shooter and logger level.
      */
-    public void init(@NonNull Screenshoter screenshoter, @NonNull Type loggerDuplicateLevel) {
+    public static void init(@NonNull Screenshoter screenshoter, @NonNull Type loggerDuplicateLevel) {
         newInstancesAndSave(screenshoter, loggerDuplicateLevel);
     }
 
     /**
-     * Init web driver before start using.
-     * And create default {@link Screenshoter} and {@link Type}
+     * User initialization with lazy web driver.
      */
-    public void init(@NonNull Supplier<WebDriver> driver) {
+    public static void init(@NonNull Supplier<WebDriver> driver) {
         newInstancesAndSave(DEFAULT_SCREEN.apply(driver), get(ConfigurationHolder.get().getReporting().getPostLogbackLevel(), Type.ALL));
     }
 
-    public synchronized void setReporter(Reporter reporter) {
-        WebReporter.reporter.set(reporter);
+    @NonNull
+    public static Reporter getReporter() {
+        synchronized (R_LOCK) {
+            Preconditions.checkNotNull(projectResources,
+                    "First of all you must init Reporter from your project");
+            return reporter;
+        }
     }
 
-    public synchronized void setVerifier(Verifier verifier) {
-        WebReporter.verifier.set(verifier);
+    public static void setReporter(@NonNull Reporter reporter) {
+        synchronized (R_LOCK) {
+            WebReporter.reporter = reporter;
+        }
     }
 
-    /**
-     * {@link WebReporter#init(Supplier)} or {@link WebReporter#setReporter(Reporter)} before using
-     */
-    public Reporter getReporter() {
-        Preconditions.checkNotNull(reporter.get(), "Initialize before using");
-        return reporter.get();
+    @NonNull
+    public static Verifier getVerifier() {
+        synchronized (V_LOCK) {
+            Preconditions.checkNotNull(projectResources,
+                    "First of all you must init Verifier from your project");
+            return verifier;
+        }
     }
 
-    /**
-     * {@link WebReporter#init(Supplier)} or {@link WebReporter#setVerifier(Verifier)} before using
-     */
-    public Verifier getVerifier() {
-        Preconditions.checkNotNull(verifier.get(), "Initialize before using");
-        return verifier.get();
+    public static void setVerifier(@NonNull Verifier verifier) {
+        synchronized (V_LOCK) {
+            WebReporter.verifier = verifier;
+        }
     }
 
-    private void newInstancesAndSave(Screenshoter screenshoter, Type loggerDuplicateLevel) {
+    @NonNull
+    public static ProjectResources getProjectResources() {
+        synchronized (PR_LOCK) {
+            Preconditions.checkNotNull(projectResources,
+                    "First of all you must init ProjectResources from your project");
+            return projectResources;
+        }
+    }
+
+    public static void setProjectResources(@NonNull ProjectResources projectResources) {
+        synchronized (PR_LOCK) {
+            WebReporter.projectResources = projectResources;
+        }
+    }
+
+    @Nullable
+    public static WebListenersConfiguration getListenersConfiguration() {
+        synchronized (WLC_LOCK) {
+            return listenersConfiguration;
+        }
+    }
+
+    public static void setListenersConfiguration(@Nullable WebListenersConfiguration listenersConfiguration) {
+        synchronized (WLC_LOCK) {
+            WebReporter.listenersConfiguration = listenersConfiguration;
+        }
+    }
+
+    //region Private
+    private static void newInstancesAndSave(Screenshoter screenshoter, Type loggerDuplicateLevel) {
         /*configure reporter*/
-        final ReporterAllure reporter = new ReporterAllure(screenshoter, loggerDuplicateLevel);
+        final AllureReporter reporter = new AllureReporter(screenshoter, loggerDuplicateLevel);
         reporter.setAutoScreenLevel(get(ConfigurationHolder.get().getReporting().getPostScreenLevel(), Type.OFF));
         reporter.setPostingLevel(get(ConfigurationHolder.get().getReporting().getPostLevel(), Type.INFO));
 
@@ -96,9 +126,12 @@ public class WebReporter {
         final Verifier verifier = new Verifier(reporter);
         verifier.setPostPassedCheck(ConfigurationHolder.get().getVerify().isPostPassedCheck());
         verifier.setPostPassedScreen(ConfigurationHolder.get().getVerify().isScreenOnSuccessCheck());
-
-        setReporter(reporter);
-        setVerifier(verifier);
+        if (WebReporter.reporter == null) {
+            setReporter(reporter);
+        }
+        if (WebReporter.verifier == null) {
+            setVerifier(verifier);
+        }
     }
 
     private static <T> T get(T object, T defaultIfNull) {
@@ -108,4 +141,5 @@ public class WebReporter {
             return object;
         }
     }
+    //endregion
 }

@@ -2,7 +2,7 @@ package ru.mk.pump.web.component;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.pageobject.Initializer;
 import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.elements.ElementFactory;

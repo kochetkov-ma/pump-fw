@@ -14,7 +14,7 @@ import lombok.NonNull;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.interfaces.PrettyPrinter;
 import ru.mk.pump.commons.interfaces.StrictInfo;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.enums.StateType;
 
@@ -88,7 +88,7 @@ public class State implements StrictInfo, PrettyPrinter {
 
     @Override
     public String toPrettyString() {
-        return Strings.toPrettyString(getInfo());
+        return Str.toPrettyString(getInfo());
     }
 
     protected State withPayload(Set<Callable<Boolean>> payload) {
@@ -114,7 +114,7 @@ public class State implements StrictInfo, PrettyPrinter {
         final LinkedHashMap<String, String> result = new LinkedHashMap<>();
         result.put("type", getClass().getSimpleName());
         result.put("stateType", stateType.toString());
-        result.put("result", Strings.toString(this.result));
+        result.put("result", Str.toString(this.result));
         if (!stateType.toString().equals(name)) {
             result.put("name", name);
         }
@@ -161,7 +161,7 @@ public class State implements StrictInfo, PrettyPrinter {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(" + "stateType=" + stateType.toString()
-            + ", result=" + Strings.toString(this.result)
+            + ", result=" + Str.toString(this.result)
             + ", name='" + name + '\''
             + ')';
     }

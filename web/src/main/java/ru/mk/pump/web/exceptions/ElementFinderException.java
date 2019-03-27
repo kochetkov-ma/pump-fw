@@ -1,32 +1,29 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.commons.exception.PumpMessage;
+import lombok.NoArgsConstructor;
+import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.Finder;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings({"unused", "WeakerAccess"})
+@NoArgsConstructor
 public class ElementFinderException extends ElementException {
-
-    static final String FINDER = "finder";
-
-    public ElementFinderException(String title) {
-        super(title);
+    public ElementFinderException(@Nullable String title) {
+        this(title, null);
     }
 
-    public ElementFinderException(String title, Throwable cause) {
-        super(title, cause);
+    public ElementFinderException(@Nullable String title, @Nullable Throwable cause) {
+        super(title, null);
     }
 
-    public ElementFinderException(PumpMessage exceptionMessage) {
-        super(exceptionMessage);
+    @Override
+    public ElementFinderException withElement(@Nullable Element element) {
+        return (ElementFinderException) super.withElement(element);
     }
 
-    public ElementFinderException(PumpMessage exceptionMessage, Throwable cause) {
-        super(exceptionMessage, cause);
-    }
-
-    public ElementException withTarget(Finder finder) {
-        addTarget(FINDER, finder);
-        withElement(finder.getMainElement());
-        return this;
+    @Override
+    public ElementFinderException withFinder(@Nullable Finder finder) {
+        return (ElementFinderException) super.withFinder(finder);
     }
 }

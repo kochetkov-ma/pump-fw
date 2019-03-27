@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.commons.utils.Verifier;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.WebReporter;
 import ru.mk.pump.web.common.api.WebListenersConfiguration;
 import ru.mk.pump.web.common.api.annotations.PAction;
@@ -198,7 +198,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
 
     @Override
     public String toPrettyString() {
-        return Strings.toPrettyString(getInfo());
+        return Str.toPrettyString(getInfo());
     }
 
     public BaseElement setSelfFactory(ElementFactory selfElementFactory) {
@@ -214,7 +214,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     /**
      * Init all parameters:
      * <ul>
-     * <li>init field like : {@code private final By[] fieldParam}</li>
+     * <li>refresh field like : {@code private final By[] fieldParam}</li>
      * <li>override this method in your subclass</li>
      * <li>read parameter and write to the field in method body like :
      * {@code fieldParam = ParameterUtils.getOrDefault(getParams(), ElementParams.PARAMETER_NAME, By[].class, fieldParam)}</li>
@@ -224,7 +224,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
      */
     protected void initFromParams() {
         /*
-         * init class fields fom parameter value
+         * refresh class fields fom parameter value
          */
     }
 
@@ -243,7 +243,7 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     @Override
     public Map<String, String> getInfo() {
         final Map<String, String> res = super.getInfo();
-        res.put("element parameters", Strings.toPrettyString(getParams()));
+        res.put("element parameters", Str.toPrettyString(getParams()));
         return res;
     }
 
@@ -261,9 +261,9 @@ public class BaseElement extends AbstractElement<BaseElement> implements Element
     private void initLocal() {
         setReporter(WebReporter.getReporter());
         withVerifier(WebReporter.getVerifier());
-        /*helper instance init*/
+        /*helper instance refresh*/
         this.helper = new BaseElementHelper(this);
-        /*helper features init*/
+        /*helper features refresh*/
         helper.stateActionReportingEnable();
         helper.windowSizeCheckerEnable();
         helper.stateReportingEnable();

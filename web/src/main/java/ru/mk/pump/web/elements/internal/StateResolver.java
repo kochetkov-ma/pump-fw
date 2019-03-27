@@ -1,20 +1,16 @@
 package ru.mk.pump.web.elements.internal;
 
-import static java.lang.String.format;
-
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.BrowserException;
 import ru.mk.pump.web.exceptions.ElementStateException;
 
+import java.util.concurrent.Callable;
+
+import static ru.mk.pump.commons.utils.Str.format;
 
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused"})
 @Slf4j
@@ -26,7 +22,6 @@ public class StateResolver extends StateNotifier {
     public StateResolver(InternalElement internalElement) {
         this.internalElement = internalElement;
     }
-
 
     public State resolveFast(State state) {
         return resolve(state, 500);
@@ -58,7 +53,6 @@ public class StateResolver extends StateNotifier {
         return resolveAnd(state);
     }
 
-    @SuppressWarnings("unchecked")
     public SetState resolve(SetState state) {
         notifyOnBefore(Pair.of(state, internalElement));
         final long timeout = waiter().getTimeout() * 1000;
@@ -75,7 +69,7 @@ public class StateResolver extends StateNotifier {
                 syncTimeLeft = syncTimeLeft - result.getElapsedTime();
                 if (syncTimeLeft <= 0 || !result.isSuccess()) {
                     state.setResult(WaitResult.falseResult(timeout - syncTimeLeft, waiter().getTimeout(), result.getCause())
-                        .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult)));
+                            .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult)));
                     notifyOnFinish(Pair.of(state, internalElement));
                     return state;
                 }
@@ -83,7 +77,7 @@ public class StateResolver extends StateNotifier {
         } else {
             if (!result.isSuccess()) {
                 state.setResult(WaitResult.falseResult(result.getElapsedTime(), waiter().getTimeout(), result.getCause())
-                    .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult)));
+                        .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult)));
                 notifyOnFinish(Pair.of(state, internalElement));
                 return state;
             }
@@ -96,9 +90,9 @@ public class StateResolver extends StateNotifier {
 
     State resolveOr(State state) {
         final WaitResult<Boolean> res = waiter()
-            .withDelay(ElementWaiter.DEFAULT_DELAY_MS)
-            .wait(() -> state.get().stream().anyMatch(this::call))
-            .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult));
+                .withDelay(ElementWaiter.DEFAULT_DELAY_MS)
+                .wait(() -> state.get().stream().anyMatch(this::call))
+                .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult));
         state.getTearDown().ifPresent(waitResultConsumer -> waitResultConsumer.accept(res));
         throwIfCause(res);
         return state.setResult(res);
@@ -106,19 +100,21 @@ public class StateResolver extends StateNotifier {
 
     State resolveAnd(State state) {
         final WaitResult<Boolean> res = waiter()
-            .withDelay(ElementWaiter.DEFAULT_DELAY_MS)
-            .wait(() -> state.get().stream().allMatch(this::call))
-            .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult));
+                .withDelay(ElementWaiter.DEFAULT_DELAY_MS)
+                .wait(() -> state.get().stream().allMatch(this::call))
+                .withExceptionOnFail(waitResult -> newResolvedException(state, waitResult));
         state.getTearDown().ifPresent(waitResultConsumer -> waitResultConsumer.accept(res));
         throwIfCause(res);
         return state.setResult(res);
     }
 
-    protected PumpException newResolvedException(State state, WaitResult<Boolean> waitResult) {
-        return new ElementStateException(format("PElement was not became to expected state '%s' in timeout '%s' sec", state.name(), waiter().getTimeout()),
-            waitResult.getCause())
-            .withTargetState(state)
-            .withElement(internalElement);
+    protected ElementStateException newResolvedException(State state, WaitResult<Boolean> waitResult) {
+        return new ElementStateException(
+                format("PElement was not became to expected state '%s' in timeout '%s' sec", state.name(), waiter().getTimeout()),
+                state,
+                internalElement,
+                waitResult.getCause()
+        );
     }
 
     protected ElementWaiter waiter() {

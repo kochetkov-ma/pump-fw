@@ -1,18 +1,19 @@
 package ru.mk.pump.commons.helpers;
 
-
-import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import ru.mk.pump.commons.constants.StringConstants;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
+
+import javax.annotation.Nullable;
 
 /**
  * It is non modify class!
  * All methods start on 'of' or 'with' generate NEW instance
- * @param <T>
+ *
+ * @param <T> Object.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString
@@ -37,9 +38,9 @@ public final class Parameter<T> {
             this.stringValue = stringValue;
         } else {
             if (value != null) {
-                this.stringValue = Strings.toString(value);
+                this.stringValue = Str.toString(value);
             } else {
-                this.stringValue = Strings.empty();
+                this.stringValue = Str.empty();
             }
         }
     }
@@ -47,7 +48,7 @@ public final class Parameter<T> {
     @NonNull
     public static <T> Parameter<T> of(@NonNull String name, @NonNull Class<T> tClass, @Nullable T value, @Nullable String stringValue) {
         if (tClass == String.class) {
-            if (!Strings.isEmpty(stringValue)) {
+            if (!Str.isEmpty(stringValue)) {
                 //noinspection unchecked
                 return (Parameter<T>) new Parameter<>(name, String.class, stringValue, stringValue);
             } else if (value != null && !((String) value).isEmpty()) {
@@ -89,6 +90,8 @@ public final class Parameter<T> {
     }
 
     /**
+     * @param name Name
+     *
      * @return New parameter with name
      */
     @NonNull
@@ -98,6 +101,7 @@ public final class Parameter<T> {
 
     /**
      * Use if generic type was not erased
+     *
      * @return New parameter with value.
      */
     @NonNull

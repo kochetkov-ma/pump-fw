@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.common.api.annotations.Alternative;
 import ru.mk.pump.web.exceptions.ItemManagerException;
@@ -47,9 +47,9 @@ class PageManagerTest extends AbstractTestWithBrowser {
     @Test
     void getList() {
         assertThat(manager.getList("Главная страница")).hasOnlyElementsOfTypes(AbstractPageTest.MainPageOther.class, AbstractPageTest.MainPage.class);
-        log.info(Strings.toPrettyString(manager.getCurrentList()));
+        log.info(Str.toPrettyString(manager.getCurrentList()));
         assertThat(manager.getList("Регистрация")).hasOnlyElementsOfTypes(AbstractPageTest.RegPage.class);
-        log.info(Strings.toPrettyString(manager.getCurrentList()));
+        log.info(Str.toPrettyString(manager.getCurrentList()));
     }
 
     @Test

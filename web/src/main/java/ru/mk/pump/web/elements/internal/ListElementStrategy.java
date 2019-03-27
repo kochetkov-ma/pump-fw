@@ -1,21 +1,21 @@
 package ru.mk.pump.web.elements.internal;
 
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFinderException;
-import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
+import ru.mk.pump.web.exceptions.ElementNotFoundException;
+
+import java.util.List;
 
 @Slf4j
 @SuppressWarnings("WeakerAccess")
 class ListElementStrategy extends FindStrategy {
-
 
     public ListElementStrategy(InternalElement target) {
         super(target);
@@ -24,8 +24,9 @@ class ListElementStrategy extends FindStrategy {
     @Override
     public WebElement findSelf() {
         if (!getTarget().isList()) {
-            throw new ElementFinderException(String.format("Selected find strategy '%s' don't work with no list rules", getClass().getSimpleName()))
-                .withTargetElement(getTarget());
+            throw new ElementFinderException()
+                    .withInternalElement(getTarget())
+                    .withTitle(Str.format("Selected find strategy '{}' don't work with no list rules", getClass().getSimpleName()));
         }
         if (isRoot()) {
             return getFromRoot();
@@ -46,7 +47,7 @@ class ListElementStrategy extends FindStrategy {
             return res;
         } catch (WebDriverException ex) {
             getTarget().getFinder().setCache(null);
-            throw new ElementFinderNotFoundException("Find root element error", ex).withTargetElement(getTarget());
+            throw new ElementNotFoundException().withInternalElement(getTarget()).withTitle("Find root element error").withCause(ex);
         }
     }
 
@@ -54,10 +55,11 @@ class ListElementStrategy extends FindStrategy {
         try {
             log.debug("Try to findElements for {}", getTarget());
             final List<WebElement> webElements = getTarget().getParent()
-                .orElseThrow(() -> new ElementFinderNotFoundException("Cannot find parent element")
-                    .withTargetElement(getTarget()))
-                .getFinder().get().findElements(getTarget().getBy());
-            log.debug("Result getList() : " + Strings.toPrettyString(webElements));
+                    .orElseThrow(() -> new ElementNotFoundException()
+                            .withInternalElement(getTarget())
+                            .withTitle("Cannot find parent element"))
+                    .getFinder().get().findElements(getTarget().getBy());
+            log.debug("Result getList() : " + Str.toPrettyString(webElements));
             return webElements;
         } catch (StaleElementReferenceException ex) {
             getTarget().getParent().ifPresent(p -> p.getFinder().setCache(null));
@@ -76,10 +78,10 @@ class ListElementStrategy extends FindStrategy {
     protected WebElement getFromList(List<WebElement> webElements) {
         /*Когда список элементов изменился нужно пересчитывать все элементы*/
         if (webElements.size() <= getTarget().getIndex()) {
-            throw new ElementFinderNotFoundException(
-                String.format("Expected element index '%s' is exceeds the list size '%s'", getTarget().getIndex(), webElements.size()))
-                .withTargetElement(getTarget())
-                .withTargetInfo("finder strategy", this);
+            throw new ElementNotFoundException()
+                    .withInternalElement(getTarget())
+                    .withTitle(Str.format("Expected element index '{}' is exceeds the list size '{}'", getTarget().getIndex(), webElements.size()))
+                    .withExtra("finder strategy", this);
         }
         try {
             final WebElement res = webElements.get(getTarget().getIndex());

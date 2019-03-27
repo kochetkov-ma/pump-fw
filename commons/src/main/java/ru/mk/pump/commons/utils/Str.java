@@ -1,24 +1,13 @@
 package ru.mk.pump.commons.utils;
 
-
-import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
-import static ru.mk.pump.commons.constants.StringConstants.LINE;
-
 import com.google.common.base.Preconditions;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.beans.propertyeditors.CharArrayPropertyEditor;
-import org.springframework.beans.propertyeditors.ClassArrayEditor;
-import org.springframework.beans.propertyeditors.ClassEditor;
-import org.springframework.beans.propertyeditors.FileEditor;
-import org.springframework.beans.propertyeditors.PathEditor;
-import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
-import org.springframework.beans.propertyeditors.URIEditor;
-import org.springframework.beans.propertyeditors.URLEditor;
-import org.springframework.beans.propertyeditors.UUIDEditor;
+import org.slf4j.helpers.MessageFormatter;
+import org.springframework.beans.propertyeditors.*;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.exception.UtilException;
 import ru.mk.pump.commons.interfaces.PrettyPrinter;
@@ -38,13 +27,46 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@SuppressWarnings( {"unused", "WeakerAccess"})
+import static ru.mk.pump.commons.constants.StringConstants.KEY_VALUE_PRETTY_DELIMITER;
+import static ru.mk.pump.commons.constants.StringConstants.LINE;
+
+@SuppressWarnings({"unused", "WeakerAccess"})
 @UtilityClass
-public class Strings {
+public class Str {
 
     public static final String LITE_NORMALIZE = "[\\n\\t]";
     public static final String NORMALIZE = "[-!—+.^:(),\\s\\n\\t]";
     public static final String WIN_FILE_NORMALIZE = "[\\\\/:*?<>|]";
+
+    static {
+        PropertyEditorManager.registerEditor(String[].class, StringArrayPropertyEditor.class);
+        PropertyEditorManager.registerEditor(char[].class, CharArrayPropertyEditor.class);
+        PropertyEditorManager.registerEditor(Class[].class, ClassArrayEditor.class);
+        PropertyEditorManager.registerEditor(Class.class, ClassEditor.class);
+        PropertyEditorManager.registerEditor(File.class, FileEditor.class);
+        PropertyEditorManager.registerEditor(Path.class, PathEditor.class);
+        PropertyEditorManager.registerEditor(UUID.class, UUIDEditor.class);
+        PropertyEditorManager.registerEditor(URL.class, URLEditor.class);
+        PropertyEditorManager.registerEditor(URI.class, URIEditor.class);
+    }
+
+    /**
+     * Null safe formatter like in slf4j.
+     *
+     * @param slf4jMessagePattern Slf4j pattern with '{}'
+     * @param args                Values
+     *
+     * @return Formatted string
+     */
+    public String format(@Nullable String slf4jMessagePattern, @Nullable Object... args) {
+        if (slf4jMessagePattern == null) {
+            return "null";
+        }
+        if (args == null) {
+            return slf4jMessagePattern;
+        }
+        return MessageFormatter.arrayFormat(slf4jMessagePattern, args).getMessage();
+    }
 
     public String empty() {
         return StringConstants.EMPTY;
@@ -83,7 +105,7 @@ public class Strings {
         }
         map.forEach((key, value) -> {
             if (key != null && value != null) {
-                stringBuilder.append(key.toString()).append(KEY_VALUE_PRETTY_DELIMITER).append(Strings.toPrettyString(value)).append(LINE);
+                stringBuilder.append(key.toString()).append(KEY_VALUE_PRETTY_DELIMITER).append(Str.toPrettyString(value)).append(LINE);
                 if (offset != 0) {
                     stringBuilder.append(space(offset + StringConstants.KEY_VALUE_PRETTY_DELIMITER.length()));
                 }
@@ -103,7 +125,7 @@ public class Strings {
         if (object instanceof PrettyPrinter) {
             return ((PrettyPrinter) object).toPrettyString();
         }
-        return Strings.toString(object);
+        return Str.toString(object);
     }
 
     public String toPrettyString(@Nullable Object[] array) {
@@ -127,8 +149,8 @@ public class Strings {
                 if (offset != 0) {
                     sb.append(space(offset));
                 }
-                sb.append(Strings.toPrettyString(value));
-                if (!StringUtils.endsWith(Strings.toPrettyString(value), LINE)) {
+                sb.append(Str.toPrettyString(value));
+                if (!StringUtils.endsWith(Str.toPrettyString(value), LINE)) {
                     sb.append(LINE);
                 }
             }
@@ -234,17 +256,5 @@ public class Strings {
         }
         //noinspection unchecked
         return (T) editor.getValue();
-    }
-
-    static {
-        PropertyEditorManager.registerEditor(String[].class, StringArrayPropertyEditor.class);
-        PropertyEditorManager.registerEditor(char[].class, CharArrayPropertyEditor.class);
-        PropertyEditorManager.registerEditor(Class[].class, ClassArrayEditor.class);
-        PropertyEditorManager.registerEditor(Class.class, ClassEditor.class);
-        PropertyEditorManager.registerEditor(File.class, FileEditor.class);
-        PropertyEditorManager.registerEditor(Path.class, PathEditor.class);
-        PropertyEditorManager.registerEditor(UUID.class, UUIDEditor.class);
-        PropertyEditorManager.registerEditor(URL.class, URLEditor.class);
-        PropertyEditorManager.registerEditor(URI.class, URIEditor.class);
     }
 }

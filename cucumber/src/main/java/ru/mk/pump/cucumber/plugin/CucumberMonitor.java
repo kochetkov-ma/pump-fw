@@ -4,7 +4,7 @@ import com.google.common.collect.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class CucumberMonitor {
      */
     public void checkPlugin() {
         if (!isStarted() && !isFinished() && CucumberCore.instance().getConfig().isLoadPumpPlugin()) {
-            throw new IllegalStateException(Strings.space("You must enable ru.mk.pump.cucumber.plugin.PumpCucumberPlugin in cucumber options. ",
+            throw new IllegalStateException(Str.space("You must enable ru.mk.pump.cucumber.plugin.PumpCucumberPlugin in cucumber options. ",
                     "In @CucumberOptions add parameter 'plugin = {\"ru.mk.pump.cucumber.plugin.PumpCucumberPlugin\"}'. ",
                     "Or in java args add parameter '--plugin ru.mk.pump.cucumber.plugin.PumpCucumberPlugin'"));
         }

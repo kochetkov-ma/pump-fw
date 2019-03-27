@@ -3,7 +3,7 @@ package ru.mk.pump.web.component;
 import lombok.Getter;
 import lombok.Setter;
 import org.openqa.selenium.By;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.elements.internal.FindFrameStrategy;
 import ru.mk.pump.web.elements.internal.Finder;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;

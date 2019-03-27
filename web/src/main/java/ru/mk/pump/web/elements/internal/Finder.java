@@ -9,7 +9,7 @@ import org.hamcrest.Matchers;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.interfaces.StrictInfo;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
@@ -113,9 +113,9 @@ public class Finder implements StrictInfo {
             .put("main element", mainElement.toString())
             .put("cached result", lastResult.toString())
             .put("find strategy", findStrategy.getClass().getSimpleName())
-            .put("logFindAmount", Strings.toString(logFindAmount))
-            .put("logFindSelfAmount", Strings.toString(logFindSelfAmount))
-            .put("logReturnCacheAmount", Strings.toString(logReturnCacheAmount))
+            .put("logFindAmount", Str.toString(logFindAmount))
+            .put("logFindSelfAmount", Str.toString(logFindSelfAmount))
+            .put("logReturnCacheAmount", Str.toString(logReturnCacheAmount))
             .build();
     }
 }

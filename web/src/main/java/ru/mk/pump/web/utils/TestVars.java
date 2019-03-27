@@ -1,7 +1,5 @@
 package ru.mk.pump.web.utils;
 
-import static java.lang.String.format;
-
 import com.google.common.collect.Maps;
 import lombok.NonNull;
 import lombok.ToString;
@@ -11,7 +9,7 @@ import ru.mk.pump.commons.listener.AbstractNotifier;
 import ru.mk.pump.commons.listener.Event;
 import ru.mk.pump.commons.listener.Listener;
 import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.common.WebReporter;
 import ru.mk.pump.web.common.api.WebListenersConfiguration;
 
@@ -20,6 +18,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 @SuppressWarnings("unused")
 @ToString
@@ -95,7 +95,7 @@ public final class TestVars
     public TestVars put(@NonNull String key, @Nullable Object value) {
         sourceMap.put(key, value);
         sourceMap.put(LAST_PUT, value);
-        sourceStringMap.put(key, Strings.toString(value));
+        sourceStringMap.put(key, Str.toString(value));
         notifyOnPut(Pair.of(key, value));
         return this;
     }
@@ -141,7 +141,7 @@ public final class TestVars
 
     @Override
     public String toPrettyString() {
-        return Strings.toPrettyString(sourceMap);
+        return Str.toPrettyString(sourceMap);
     }
 
     protected void notifyOnPut(Pair<String, Object> object) {
@@ -149,7 +149,7 @@ public final class TestVars
     }
 
     private Map<String, String> toStringMap() {
-        return sourceMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, i -> Strings.toString(i.getValue())));
+        return sourceMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, i -> Str.toString(i.getValue())));
     }
 
     public interface TestVarListener extends Listener<Pair<String, Object>, TestVarListener.TestVarEvent> {

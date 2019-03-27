@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.commons.helpers.Parameters;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
 import ru.mk.pump.web.elements.api.annotations.Date;
 import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
@@ -121,7 +121,7 @@ class ElementImplDispatcherTest {
         dispatcher.addImplementation(Image.class, ElementImpl.of(ImageImpl.class, null));
         dispatcher.addImplementation(Input.class, ElementImpl.of(InputComplexImpl.class, null));
 
-        log.info(Strings.toPrettyString(dispatcher.getInfo()));
+        log.info(Str.toPrettyString(dispatcher.getInfo()));
     }
 
     @Test
@@ -134,14 +134,14 @@ class ElementImplDispatcherTest {
 
     @Test
     void getInfo() {
-        log.info(System.lineSeparator() + Strings.toPrettyString(dispatcher.getInfo()));
+        log.info(System.lineSeparator() + Str.toPrettyString(dispatcher.getInfo()));
     }
 
     @Test
     void loadDefault() {
-        log.info(System.lineSeparator() + Strings.toPrettyString(dispatcher.getInfo()));
+        log.info(System.lineSeparator() + Str.toPrettyString(dispatcher.getInfo()));
         dispatcher.loadDefault();
-        log.info(System.lineSeparator() + Strings.toPrettyString(dispatcher.getInfo()));
+        log.info(System.lineSeparator() + Str.toPrettyString(dispatcher.getInfo()));
     }
 
     @Test

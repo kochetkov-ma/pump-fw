@@ -4,13 +4,13 @@ import static ru.mk.pump.web.interpretator.PumpkinConstants.ESC_CHAR;
 
 import java.util.Arrays;
 import javax.annotation.Nullable;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 
 abstract class AbstractRule<T> implements Rule<T> {
 
     @Override
     public final boolean parseEnd(String left, String right) {
-        return Strings.isEmpty(right) || parseEndOr(left, right) && Arrays.stream(getEscapes())
+        return Str.isEmpty(right) || parseEndOr(left, right) && Arrays.stream(getEscapes())
             .noneMatch(esc -> left.endsWith(ESC_CHAR) && right.startsWith(esc));
     }
 

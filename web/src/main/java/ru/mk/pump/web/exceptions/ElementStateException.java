@@ -1,36 +1,30 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.commons.exception.PumpMessage;
+import lombok.NoArgsConstructor;
+import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.State;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+import javax.annotation.Nullable;
+
+@SuppressWarnings({"unused"})
+@NoArgsConstructor
 public class ElementStateException extends ElementException {
 
-    static final String STATE = "state";
-
-    public ElementStateException(String title) {
-        super(title);
+    public ElementStateException(@Nullable String title, @Nullable State state) {
+        this(title, state, null, null);
     }
 
-    public ElementStateException(String title, Throwable cause) {
-        super(title, cause);
+    public ElementStateException(@Nullable String title, @Nullable State state,  @Nullable InternalElement internalElement, @Nullable Throwable cause) {
+        super();
+        withTitle(title);
+        withState(state);
+        withInternalElement(internalElement);
+        withCause(cause);
     }
 
-    public ElementStateException(PumpMessage exceptionMessage) {
-        super(exceptionMessage);
-    }
-
-    public ElementStateException(PumpMessage exceptionMessage, Throwable cause) {
-        super(exceptionMessage, cause);
-    }
-
-    public ElementStateException withTargetState(State state) {
-        addTarget(STATE, state);
-        return this;
-    }
-
-    public ElementException withElement(InternalElement element) {
-        return super.withElement(element);
+    @Override
+    public ElementStateException withState(@Nullable State state) {
+        return (ElementStateException) super.withState(state);
     }
 }

@@ -2,7 +2,7 @@ package ru.mk.pump.web.dx.pages;
 
 import lombok.Getter;
 import org.openqa.selenium.support.FindBy;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.api.annotations.PComponent;
 import ru.mk.pump.web.dx.DxUrls;
 import ru.mk.pump.web.elements.api.concrete.Button;

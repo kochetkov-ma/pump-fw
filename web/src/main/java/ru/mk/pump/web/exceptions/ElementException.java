@@ -1,48 +1,35 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.commons.exception.PumpMessage;
-import ru.mk.pump.web.elements.internal.interfaces.Action;
+import lombok.NoArgsConstructor;
+import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ElementException extends AbstractWebException {
+@NoArgsConstructor
+public class ElementException extends WebException {
 
-    static final String ELEMENT = "element";
-
-    private static final String TITLE = "Pump element '%s' error";
-
-    public ElementException(String title) {
-        super(title);
+    public ElementException(@Nullable String title, @Nullable Element element) {
+        this(title, element, null);
     }
 
-    public ElementException(String title, Throwable cause) {
+    public ElementException(@Nullable String title, @Nullable Element element, @Nullable Throwable cause) {
         super(title, cause);
+        withElement(element);
     }
 
-    public ElementException(PumpMessage exceptionMessage) {
-        super(exceptionMessage);
+    @Override
+    public ElementException withElement(@Nullable Element element) {
+        return (ElementException) super.withElement(element);
     }
 
-    public ElementException(PumpMessage exceptionMessage, Throwable cause) {
-        super(exceptionMessage, cause);
+    @Override
+    public ElementException withParent(@Nullable Element parent) {
+        return (ElementException) super.withParent(parent);
     }
 
-    private static PumpMessage message(Action action) {
-        return new PumpMessage(String.format(TITLE, action.name()))
-            .addExtraInfo(action);
-    }
-
-    public ElementException withTargetElement(InternalElement element) {
-        addTarget(ELEMENT, element);
-        withBrowser(element.getBrowser());
-        withPage(element.getPage());
-        return this;
-    }
-
-    ElementException withElement(InternalElement element) {
-        addEnv(ELEMENT, element);
-        withBrowser(element.getBrowser());
-        withPage(element.getPage());
-        return this;
+    public ElementStateException withInternalElement(@Nullable InternalElement internalElement) {
+        return (ElementStateException) super.withExtra("element", internalElement);
     }
 }

@@ -1,5 +1,22 @@
 package ru.mk.pump.web.elements.internal;
 
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.commons.utils.WaitResult;
+import ru.mk.pump.web.elements.ElementConfig;
+import ru.mk.pump.web.elements.ElementFactory;
+import ru.mk.pump.web.elements.api.Element;
+import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
+import ru.mk.pump.web.exceptions.ElementException;
+import ru.mk.pump.web.exceptions.ElementNotFoundException;
+import ru.mk.pump.web.utils.Xpath;
+
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -7,22 +24,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import javax.annotation.Nullable;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.commons.utils.WaitResult;
-import ru.mk.pump.web.elements.ElementConfig;
-import ru.mk.pump.web.elements.ElementFactory;
-import ru.mk.pump.web.elements.api.Element;
-import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.exceptions.ElementException;
-import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
-import ru.mk.pump.web.utils.Xpath;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Slf4j
@@ -32,7 +33,10 @@ public class SubElementHelper<T extends Element> {
      * [RUS] Кол-во попыток по умолчанию. Минимальное кол-во для сохранения прозводительности
      */
     public static final int DEFAULT_TRY_COUNT = 2;
-
+    private final Class<T> subElementClass;
+    private final BaseElement parent;
+    private final ElementFactory elementFactory;
+    private final ElementConfig elementConfig;
     /**
      * [RUS] Кол-во попыток поиска под-элементов.
      * Как правило поиск под-элементов ведется, когда ожидается кол-во большее 0.
@@ -43,17 +47,9 @@ public class SubElementHelper<T extends Element> {
     @Setter
     private int tryCount = DEFAULT_TRY_COUNT;
 
-    private final Class<T> subElementClass;
-
-    private final BaseElement parent;
-
-    private final ElementFactory elementFactory;
-
-    private final ElementConfig elementConfig;
-
     protected SubElementHelper(Class<T> subElementClass, BaseElement parent, ElementFactory elementFactory) {
         this(subElementClass, parent, elementFactory,
-            ElementConfig.of(Strings.space("sub-element of", parent.getName()), Strings.space("sub-element of", parent.getDescription())));
+                ElementConfig.of(Str.space("sub-element of", parent.getName()), Str.space("sub-element of", parent.getDescription())));
     }
 
     protected SubElementHelper(Class<T> subElementClass, BaseElement parent, ElementFactory elementFactory, ElementConfig elementConfig) {
@@ -85,16 +81,16 @@ public class SubElementHelper<T extends Element> {
             parent.getInternalStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
             parent.getInternalStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()));
             final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, currentBy.toString()))
-                .getResult();
+                    .getResult();
             final List<WebElement> elements = sourceWebElement.findElements(Xpath.fixIfXpath(currentBy));
             if (webElementListPredicate.test(elements)) {
                 return IntStream.range(0, elements.size()).boxed()
-                    .map(index -> {
-                        final T newElement = elementFactory.newElement(subElementClass, Xpath.fixIfXpath(currentBy), parent, elementConfig);
-                        ((InternalElement) newElement).setIndex(index);
-                        return newElement;
-                    })
-                    .collect(Collectors.toList());
+                        .map(index -> {
+                            final T newElement = elementFactory.newElement(subElementClass, Xpath.fixIfXpath(currentBy), parent, elementConfig);
+                            ((InternalElement) newElement).setIndex(index);
+                            return newElement;
+                        })
+                        .collect(Collectors.toList());
             }
         }
         return Collections.emptyList();
@@ -113,24 +109,25 @@ public class SubElementHelper<T extends Element> {
         return Collections.emptyList();
     }
 
-
     /**
      * [RUS]
      * Продвинутый поиск элементов
      * Получить набор элементов выбранного класса, все элементы соответствуют переданному предикату и одному из возможных xpath путей
      * <ul>
-     *  <li/>сначала ищются элементы по xpathString и каждый элемент проверяется предикатом
-     *  <li/>если хотябы один из найденных элементов не соответствует предикату, то к исходному xpath добавлется postfixXpath
-     *  <li/>ищются элементы по xpathString + postfixXpath и каждый элемент проверяется предикатом
-     *  <li/>предыдущий шаг выполняется для каждого postfixXpath
-     *  <li/>если не найдено списка элементов, каждый элемент которого проверен предикатом, то Исключение ElementException
+     * <li/>сначала ищются элементы по xpathString и каждый элемент проверяется предикатом
+     * <li/>если хотябы один из найденных элементов не соответствует предикату, то к исходному xpath добавлется postfixXpath
+     * <li/>ищются элементы по xpathString + postfixXpath и каждый элемент проверяется предикатом
+     * <li/>предыдущий шаг выполняется для каждого postfixXpath
+     * <li/>если не найдено списка элементов, каждый элемент которого проверен предикатом, то Исключение ElementException
      * </ul>
      *
-     * @param xpathString главный xpath. Если по нему однозначно найден список элементов, КАЖДЫЙ из которых соответствует предикату, то дополнительные postfixXpaths не будут задействованы
+     * @param xpathString         главный xpath. Если по нему однозначно найден список элементов, КАЖДЫЙ из которых соответствует предикату, то дополнительные postfixXpaths не будут задействованы
      * @param webElementPredicate предикат, которому должен соответствовать КАЖДЫЙ элемент, найденный по вариантам xpath (т.е. используется не filter(), а allMatch())
-     * @param postfixXpaths массив дополнительных xpath, которые соединяются с основным xpathString
-     * @throws ElementException если не найдено списка элементов, соответствующего условию
+     * @param postfixXpaths       массив дополнительных xpath, которые соединяются с основным xpathString
+     *
      * @return Полностью готовый список элементов, созданный с помощью ElementFactory.
+     *
+     * @throws ElementException если не найдено списка элементов, соответствующего условию
      */
     public List<T> findListXpathAdvanced(@Nullable String xpathString, @Nullable Predicate<WebElement> webElementPredicate, @Nullable String... postfixXpaths) {
         int tryLocal = 0;
@@ -145,12 +142,12 @@ public class SubElementHelper<T extends Element> {
         }
         final By finalBy = context.getValue();
         return IntStream.range(0, context.getKey()).boxed()
-            .map(index -> {
-                final T newElement = elementFactory.newElement(subElementClass, finalBy, parent, elementConfig);
-                ((InternalElement) newElement).setIndex(index);
-                return newElement;
-            })
-            .collect(Collectors.toList());
+                .map(index -> {
+                    final T newElement = elementFactory.newElement(subElementClass, finalBy, parent, elementConfig);
+                    ((InternalElement) newElement).setIndex(index);
+                    return newElement;
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -158,18 +155,20 @@ public class SubElementHelper<T extends Element> {
      * Продвинутый поиск элемента
      * Получить элемент выбранного класса который соответствуют переданному предикату и одному из возможных xpath путей
      * <ul>
-     *  <li/>сначала ищются элементы по xpathString и ПЕРВЫЙ найденный проверяется предикатом
-     *  <li/>если ПЕРВЫЙ элемент не соответствует предикату, то к исходному xpath добавлется postfixXpath
-     *  <li/>ищются элементы по xpathString + postfixXpath и каждый элемент проверяется предикатом
-     *  <li/>предыдущий шаг выполняется для каждого postfixXpath из переданного массива
-     *  <li/>если не найдено элемента, который проверен предикатом, то Исключение ElementException
+     * <li/>сначала ищются элементы по xpathString и ПЕРВЫЙ найденный проверяется предикатом
+     * <li/>если ПЕРВЫЙ элемент не соответствует предикату, то к исходному xpath добавлется postfixXpath
+     * <li/>ищются элементы по xpathString + postfixXpath и каждый элемент проверяется предикатом
+     * <li/>предыдущий шаг выполняется для каждого postfixXpath из переданного массива
+     * <li/>если не найдено элемента, который проверен предикатом, то Исключение ElementException
      * </ul>
      *
-     * @param xpathString главный xpath. Если по нему однозначно найден элемент, который соответствует предикату, то дополнительные postfixXpaths не будут задействованы
+     * @param xpathString         главный xpath. Если по нему однозначно найден элемент, который соответствует предикату, то дополнительные postfixXpaths не будут задействованы
      * @param webElementPredicate предикат, которому должен соответствовать ПЕРВЫЙ элемент, найденный по вариантам xpath (т.е. используется не test(rules.get(0)))
-     * @param postfixXpaths массив дополнительных xpath, которые соединяются с основным xpathString
-     * @throws ElementException если не найдено элемента, соответствующего условию
+     * @param postfixXpaths       массив дополнительных xpath, которые соединяются с основным xpathString
+     *
      * @return Полностью готовый элемент, созданный с помощью ElementFactory.
+     *
+     * @throws ElementException если не найдено элемента, соответствующего условию
      */
     public T findXpathAdvanced(@Nullable String xpathString, @Nullable Predicate<WebElement> webElementPredicate, @Nullable String... postfixXpaths) {
         int tryLocal = 0;
@@ -180,7 +179,7 @@ public class SubElementHelper<T extends Element> {
         }
         log.debug("[SUB-ELEMENTS] findXpathAdvanced try count {}", tryLocal);
         if (context.getKey() < 1) {
-            throw exceptionNoExistsSub(xpathString + " " + Strings.toString(postfixXpaths));
+            throw exceptionNoExistsSub(xpathString + " " + Str.toString(postfixXpaths));
         }
         return elementFactory.newElement(subElementClass, context.getValue(), parent, elementConfig);
     }
@@ -200,7 +199,7 @@ public class SubElementHelper<T extends Element> {
         parent.getInternalStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString));
         log.debug("[SUB-ELEMENTS] Parent element is exists");
         final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, "xpath: " + xpathString))
-            .getResult();
+                .getResult();
         final Iterator<String> iterator;
         if (postfixXpaths == null) {
             iterator = Collections.emptyIterator();
@@ -223,17 +222,17 @@ public class SubElementHelper<T extends Element> {
         }
     }
 
-    private ElementException exceptionNoExists(WaitResult<?> res, String byString) {
-        return new ElementFinderNotFoundException(
-            String.format("Cannot find sub rules '%s' by '%s' because parent is not exists", subElementClass.getSimpleName(), logPath(byString)),
-            res.getCause())
-            .withTargetElement(parent);
+    private ElementNotFoundException exceptionNoExists(WaitResult<?> res, String byString) {
+        return (ElementNotFoundException) new ElementNotFoundException()
+                .withElement(parent)
+                .withTitle(Str.format("Cannot find sub rules '{}' by '{}' because parent is not exists", subElementClass.getSimpleName(), logPath(byString)))
+                .withCause(res.getCause());
     }
 
-    private ElementException exceptionNoExistsSub(String byString) {
-        return new ElementFinderNotFoundException(
-            String.format("Cannot find any sub rules '%s' by '%s' ", subElementClass.getSimpleName(), logPath(byString)))
-            .withTargetElement(parent);
+    private ElementNotFoundException exceptionNoExistsSub(String byString) {
+        return (ElementNotFoundException) new ElementNotFoundException()
+                .withElement(parent)
+                .withTitle(Str.format("Cannot find any sub rules '{}' by '{}' ", subElementClass.getSimpleName(), logPath(byString)));
     }
 
     private String logPath(String byString) {

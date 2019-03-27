@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import cucumber.api.java.en.Given;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.Collators;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.cucumber.glue.AbstractSteps;
 
@@ -34,12 +34,12 @@ public class VerifySteps extends AbstractSteps {
 
     @Given("^Verify - equals string expected '(.+)' and actual '(.+)'$")
     public void equalsString(String expect, String actual) {
-        verifier.equals(MSG, Strings.liteNormalize(expect), Strings.liteNormalize(actual));
+        verifier.equals(MSG, Str.liteNormalize(expect), Str.liteNormalize(actual));
     }
 
     @Given("^Verify - NOT equals string expected '(.+)' and actual '(.+)'$")
     public void notEqualsString(String expect, String actual) {
-        verifier.notEquals(MSG, Strings.liteNormalize(expect), Strings.liteNormalize(actual));
+        verifier.notEquals(MSG, Str.liteNormalize(expect), Str.liteNormalize(actual));
     }
 
     @Given("^Verify - equals long expected '(.+)' and actual '(.+)'$")
@@ -59,12 +59,12 @@ public class VerifySteps extends AbstractSteps {
 
     @Given("^Verify - contains string expected '(.+)' to actual '(.+)'$")
     public void contains(String expect, String actual) {
-        verifier.contains(MSG, Strings.liteNormalize(expect), Strings.liteNormalize(actual));
+        verifier.contains(MSG, Str.liteNormalize(expect), Str.liteNormalize(actual));
     }
 
     @Given("^Verify - NOT contains string expected '(.+)' to actual '(.+)'$")
     public void notContains(String expect, String actual) {
-        verifier.notContains(MSG, Strings.liteNormalize(expect), Strings.liteNormalize(actual));
+        verifier.notContains(MSG, Str.liteNormalize(expect), Str.liteNormalize(actual));
     }
 
     @Given("^Verify - contains list expected '(.+)' and actual '(.+)'$")

@@ -46,11 +46,11 @@ public class ParameterUtils {
             //noinspection unchecked
             return (T) parameter.getValue();
         }
-        if (Strings.isEmpty(parameter.getStringValue())){
+        if (Str.isEmpty(parameter.getStringValue())){
             return null;
         }
         try {
-            return Strings.toObject(parameter.getStringValue(), expectedClass);
+            return Str.toObject(parameter.getStringValue(), expectedClass);
         } catch (Exception ignore){
             return null;
         }

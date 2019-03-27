@@ -4,23 +4,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import org.openqa.selenium.By;
-import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.interfaces.StrictInfo;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.api.PageItemImplDispatcher;
 import ru.mk.pump.web.elements.ElementImplDispatcher.ElementImpl;
 import ru.mk.pump.web.elements.api.Element;
@@ -30,6 +20,13 @@ import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
 import ru.mk.pump.web.exceptions.ElementFactoryException;
 import ru.mk.pump.web.page.api.Page;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
+import static ru.mk.pump.commons.utils.Str.format;
 
 @SuppressWarnings({"unchecked", "unused", "WeakerAccess"})
 @ToString(exclude = {"elementImplDispatcher"})
@@ -95,8 +92,9 @@ public class ElementFactory implements StrictInfo {
      * Реализация элемента должна обладать всеми public конструкторами от {@link BaseElement}
      *
      * @param interfaceClass Интерфейс элемента на выходе
-     * @param by Локатор
-     * @param elementConfig Конфигурация элемента
+     * @param by             Локатор
+     * @param elementConfig  Конфигурация элемента
+     *
      * @return Инстанс найденной реализации элемента
      */
     public <R extends Element> R newElement(@NonNull Class<R> interfaceClass, @NonNull By by, @NonNull ElementConfig elementConfig) {
@@ -112,11 +110,12 @@ public class ElementFactory implements StrictInfo {
                 return (R) fillElement(constructor.newInstance(by, page), elementConfig);
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassCastException ex) {
-            throw new ElementFactoryException(new PumpMessage(String
-                .format("Error when try to creating element with interface '%s'", interfaceClass.getCanonicalName()))
-                .addExtraInfo("by", Strings.toString(by))
-                .addExtraInfo("elementConfig", Strings.toString(elementConfig))
-                .addExtraInfo("factory", this), ex);
+            throw new ElementFactoryException()
+                    .withFactory(this)
+                    .withTitle(format("Error when try to creating element with interface '{}'", interfaceClass.getCanonicalName()))
+                    .withExtra("by", Str.toString(by))
+                    .withExtra("elementConfig", Str.toString(elementConfig))
+                    .withCause(ex);
         }
     }
 
@@ -124,13 +123,14 @@ public class ElementFactory implements StrictInfo {
      * Реализация элемента должна обладать всеми public конструкторами от {@link BaseElement}
      *
      * @param interfaceClass Интерфейс элемента на выходе
-     * @param by Локатор
-     * @param parent Инстанс родительского элемента
-     * @param elementConfig Конфигурация элемента
+     * @param by             Локатор
+     * @param parent         Инстанс родительского элемента
+     * @param elementConfig  Конфигурация элемента
+     *
      * @return Инстанс найденной реализации элемента
      */
     public <R extends Element> R newElement(@NonNull Class<R> interfaceClass, @NonNull By by, @NonNull Element parent,
-        @NonNull ElementConfig elementConfig) {
+            @NonNull ElementConfig elementConfig) {
         checkParent(parent);
         final ElementImpl<? extends BaseElement> elementImplClass = elementImplDispatcher.findImplementation(interfaceClass, getRequirements(elementConfig));
         try {
@@ -138,12 +138,13 @@ public class ElementFactory implements StrictInfo {
             constructor.setAccessible(true);
             return (R) fillElement(constructor.newInstance(by, (InternalElement) parent), elementConfig);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassCastException ex) {
-            throw new ElementFactoryException(new PumpMessage(String
-                .format("Error when try to creating element with interface '%s'", interfaceClass.getCanonicalName()))
-                .addExtraInfo("by", Strings.toString(by))
-                .addExtraInfo("elementConfig", Strings.toString(elementConfig))
-                .addExtraInfo("factory", this)
-                .addExtraInfo("parent", parent), ex);
+            throw new ElementFactoryException()
+                    .withFactory(this)
+                    .withParent(parent)
+                    .withTitle(format("Error when try to creating element with interface '{}'", interfaceClass.getCanonicalName()))
+                    .withExtra("by", Str.toString(by))
+                    .withExtra("elementConfig", Str.toString(elementConfig))
+                    .withCause(ex);
         }
     }
 
@@ -157,19 +158,19 @@ public class ElementFactory implements StrictInfo {
             res.put("page", page.getName());
         }
         if (!requirements.isEmpty()) {
-            res.put("requirements", Strings.toPrettyString(requirements));
+            res.put("requirements", Str.toPrettyString(requirements));
         }
         res.put("actionListeners", String.valueOf(actionListeners.size()));
         res.put("stateListeners", String.valueOf(stateListeners.size()));
-        res.put("impl dispatcher", Strings.toPrettyString(elementImplDispatcher.getInfo()));
+        res.put("impl dispatcher", Str.toPrettyString(elementImplDispatcher.getInfo()));
         return res;
     }
 
     private void checkParent(Element parent) throws ElementFactoryException {
         if (!(parent instanceof InternalElement)) {
-            throw new ElementFactoryException(new PumpMessage(String
-                .format("Parent element '%s' is not accessible expected interface '%s'", parent.getClass().getSimpleName(),
-                    InternalElement.class.getSimpleName())).addExtraInfo(getInfo()));
+            throw new ElementFactoryException(format("Parent element '{}' is not accessible expected interface '{}'",
+                    parent.getClass().getSimpleName(),
+                    InternalElement.class.getSimpleName()), this);
         }
     }
 
@@ -179,12 +180,12 @@ public class ElementFactory implements StrictInfo {
 
     private <R extends BaseElement> R fillElement(R element, ElementConfig elementConfig) {
         element.setSelfFactory(this)
-            .withParams(elementConfig.getParameters())
-            .setName(elementConfig.getName())
-            .setDescription(elementConfig.getDescription())
-            .setReporter(elementConfig.getReporter())
-            .withVerifier(elementConfig.getVerifier())
-            .addActionListener(actionListeners);
+                .withParams(elementConfig.getParameters())
+                .setName(elementConfig.getName())
+                .setDescription(elementConfig.getDescription())
+                .setReporter(elementConfig.getReporter())
+                .withVerifier(elementConfig.getVerifier())
+                .addActionListener(actionListeners);
         element.addStateListener(stateListeners);
         if (elementConfig.getIndex() != -1) {
             element.setIndex(elementConfig.getIndex());

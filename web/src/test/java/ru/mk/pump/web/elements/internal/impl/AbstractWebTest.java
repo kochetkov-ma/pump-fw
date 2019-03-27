@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.DMUrls;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.concrete.*;
 import ru.mk.pump.web.elements.api.concrete.complex.InputDropDown;

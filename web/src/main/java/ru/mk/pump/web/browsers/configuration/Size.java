@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.openqa.selenium.Dimension;
 import ru.mk.pump.commons.config.Property;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.constants.WebConstants;
 
 /**
@@ -57,7 +57,7 @@ public final class Size {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean useDevice() {
-        return !Strings.isEmpty(deviceName);
+        return !Str.isEmpty(deviceName);
     }
 
     public boolean useSize() {

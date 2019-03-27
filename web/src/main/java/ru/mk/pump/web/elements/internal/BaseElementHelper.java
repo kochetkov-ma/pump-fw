@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.exception.PumpMessage;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.configuration.Configuration;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
@@ -60,7 +60,7 @@ class BaseElementHelper {
                 PumpMessage msg = new PumpMessage("After action was failed")
                     .withPre("Action reporting message")
                     .addExtraInfo(action);
-                baseElement.getReporter().warn(Strings.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString(), throwable);
+                baseElement.getReporter().warn(Str.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString(), throwable);
             }
 
             @Override
@@ -73,7 +73,7 @@ class BaseElementHelper {
                 PumpMessage msg = new PumpMessage("Any stage was failed")
                     .withPre("Action reporting message")
                     .addExtraInfo(action);
-                baseElement.getReporter().warn(Strings.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString(), throwable);
+                baseElement.getReporter().warn(Str.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString(), throwable);
             }
 
             @Override
@@ -81,12 +81,12 @@ class BaseElementHelper {
                 PumpMessage msg = new PumpMessage("All actions is success. Final")
                         .withPre("Action reporting message")
                         .addExtraInfo(action);
-                baseElement.getReporter().info(Strings.space("Action",
+                baseElement.getReporter().info(Str.space("Action",
                         action.name(),
                         "in stage",
                         action.getStage().name()),
                         msg.toPrettyString(),
-                        baseElement.getReporter().attachments().text("RESULT", Strings.toString(result)));
+                        baseElement.getReporter().attachments().text("RESULT", Str.toString(result)));
             }
 
             @Override
@@ -94,15 +94,15 @@ class BaseElementHelper {
                 PumpMessage msg = new PumpMessage("Before action is success")
                         .withPre("Action reporting message")
                         .addExtraInfo(action);
-                baseElement.getReporter().debug(Strings.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString());
+                baseElement.getReporter().debug(Str.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString());
             }
 
             private void info(String title, Action action, Object result) {
                 PumpMessage msg = new PumpMessage(title)
-                    .withDesc(Strings.toString(result))
+                    .withDesc(Str.toString(result))
                     .withPre("Action reporting message")
                     .addExtraInfo(action);
-                baseElement.getReporter().info(Strings.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString());
+                baseElement.getReporter().info(Str.space("Action", action.name(), "in stage", action.getStage().name()), msg.toPrettyString());
             }
         };
     }
@@ -190,7 +190,7 @@ class BaseElementHelper {
                         WebElement avatar = baseElement.getFinder().findFast().throwExceptionOnFail().getResult();
                         int elementWidthPosition = avatar.getLocation().getX() + avatar.getSize().getWidth();
                         baseElement.getVerifier().checkTrue(
-                            (String.format("Element size fit the window size. Window width : '%s'. Element position : '%s'", winWidth, elementWidthPosition)),
+                            (String.format("Element size fit the window size. Tab width : '%s'. Element position : '%s'", winWidth, elementWidthPosition)),
                             winWidth >= (elementWidthPosition - fwConfig.getElement().getWindowWidthOffset()));
                     } catch (Exception ex) {
                         log.error("Cannot check element position in window. Element is '%s'", baseElement.toString());

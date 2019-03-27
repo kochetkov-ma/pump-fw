@@ -7,7 +7,7 @@ import io.qameta.allure.Step;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.DesktopScreenshoter;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.cucumber.CucumberUtil;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
@@ -40,7 +40,7 @@ public class WebHooks {
                 browserRestart();
             }
             screenHook("start");
-            log.info("[HOOK] Before Scenario" + Strings.line() + CucumberUtil.toPrettyString(scenario) + Strings.line());
+            log.info("[HOOK] Before Scenario" + Str.line() + CucumberUtil.toPrettyString(scenario) + Str.line());
         }
     }
 
@@ -49,7 +49,7 @@ public class WebHooks {
     public void afterScenarioDefault(Scenario scenario) {
         if (afterScenarioHook) {
             screenHook("finish");
-            log.info("[HOOK] After Scenario" + Strings.line() + CucumberUtil.toPrettyString(scenario) + Strings.line());
+            log.info("[HOOK] After Scenario" + Str.line() + CucumberUtil.toPrettyString(scenario) + Str.line());
         }
     }
 
@@ -61,7 +61,6 @@ public class WebHooks {
         core.getReporter()
                 .attachments().screen("On scenario " + status,
                 () -> DESKTOP_SCREENSHOTER.getScreen().orElse(null));
-
 
     }
 

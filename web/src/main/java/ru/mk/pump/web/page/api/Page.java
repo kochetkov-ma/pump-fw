@@ -1,12 +1,12 @@
 package ru.mk.pump.web.page.api;
 
-import java.util.Optional;
 import ru.mk.pump.commons.interfaces.StrictInfo;
-import ru.mk.pump.web.browsers.Browser;
-import ru.mk.pump.web.common.api.WebObject;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.elements.api.Element;
+
+import javax.annotation.Nullable;
 
 public interface Page extends StrictInfo, Component, AppResource {
 
@@ -22,7 +22,8 @@ public interface Page extends StrictInfo, Component, AppResource {
     /**
      * @return Static text in element from real page html code. I should override this in concrete page
      */
-    Optional<Element> getTitle();
+    @Nullable
+    Element getTitle();
 
     /**
      * @return PageObject description {@link PPage#desc()}

@@ -24,7 +24,7 @@ public class Collators {
 
             @Override
             public String getMessage() {
-                return Strings.space(actual(actual), "равно ожидаемому значению", info(expected));
+                return Str.space(actual(actual), "равно ожидаемому значению", info(expected));
             }
         };
     }
@@ -45,7 +45,7 @@ public class Collators {
 
             @Override
             public String getMessage() {
-                return Strings.space(actual(actual), "содержит ожидаемую строку", info(expected));
+                return Str.space(actual(actual), "содержит ожидаемую строку", info(expected));
             }
         };
     }
@@ -66,13 +66,13 @@ public class Collators {
 
             @Override
             public String getMessage() {
-                return Strings.space(actual(actual), "содержится в ожидаемой строке", info(expected));
+                return Str.space(actual(actual), "содержится в ожидаемой строке", info(expected));
             }
         };
     }
 
     /**
-     * use {@link Strings#liteNormalize(String)} for actual and expected
+     * use {@link Str#liteNormalize(String)} for actual and expected
      */
     public Collator<String> liteNormalizeContains() {
         return new Collator<String>() {
@@ -83,7 +83,7 @@ public class Collators {
 
             @Override
             public String handle(String value) {
-                return Strings.liteNormalize(value);
+                return Str.liteNormalize(value);
             }
 
             @Override
@@ -95,13 +95,13 @@ public class Collators {
 
             @Override
             public String getMessage() {
-                return Strings.space(actual(actual), "содержит ожидаемую строку", info(expected));
+                return Str.space(actual(actual), "содержит ожидаемую строку", info(expected));
             }
         };
     }
 
     /**
-     * use {@link Strings#normalize(String)} for actual and expected
+     * use {@link Str#normalize(String)} for actual and expected
      */
     public Collator<String> normalizeContains() {
         return new Collator<String>() {
@@ -112,7 +112,7 @@ public class Collators {
 
             @Override
             public String handle(String value) {
-                return Strings.normalize(value);
+                return Str.normalize(value);
             }
 
             @Override
@@ -124,7 +124,7 @@ public class Collators {
 
             @Override
             public String getMessage() {
-                return Strings.space(actual(actual), "содержит ожидаемую строку", info(expected));
+                return Str.space(actual(actual), "содержит ожидаемую строку", info(expected));
             }
         };
     }

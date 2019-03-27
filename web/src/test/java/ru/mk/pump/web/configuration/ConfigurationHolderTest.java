@@ -1,17 +1,19 @@
 package ru.mk.pump.web.configuration;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.io.IOException;
-import java.nio.file.Paths;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.config.ConfigurationsLoader;
+import ru.mk.pump.commons.exception.ConfigurationException;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.ProjectResources;
-import ru.mk.pump.commons.exception.ConfigurationException;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 class ConfigurationHolderTest {
@@ -35,7 +37,7 @@ class ConfigurationHolderTest {
     @Test
     void init() {
         assertThatThrownBy(() -> ConfigurationHolder.init("not.exists.properties"))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
 
         ConfigurationHolder.init("pump.properties");
         assertThat(ConfigurationHolder.get().getApplicationName()).isEqualTo("testing application");
@@ -44,49 +46,49 @@ class ConfigurationHolderTest {
 
     @Test
     void init2() {
-        ConfigurationHolder.init(ProjectResources.findResource("pump.properties"));
+        ConfigurationHolder.init(new ProjectResources(getClass()).findResource("pump.properties"));
         assertThat(ConfigurationHolder.get().getApplicationName()).isEqualTo("testing application");
         assertThat(ConfigurationHolder.get().getElement().getWindowWidthOffset()).isEqualTo(0);
         assertThatThrownBy(() -> ConfigurationHolder.init(Paths.get("C:no")))
-            .isInstanceOf(ConfigurationException.class);
+                .isInstanceOf(ConfigurationException.class);
         assertThatThrownBy(() -> ConfigurationHolder.init(Paths.get("C:/no")))
-            .isInstanceOf(ConfigurationException.class);
+                .isInstanceOf(ConfigurationException.class);
         assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().getX()).isEqualTo(-1);
         assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().getY()).isEqualTo(-1);
     }
 
     @Test
     void init3() throws IOException {
-        ConfigurationHolder.init(FileUtils.openInputStream(ProjectResources.findResource("pump.properties").toFile()));
+        ConfigurationHolder.init(FileUtils.openInputStream(new ProjectResources(getClass()).findResource("pump.properties").toFile()));
         assertThat(ConfigurationHolder.get().getApplicationName()).isEqualTo("testing application");
         assertThat(ConfigurationHolder.get().getElement().getWindowWidthOffset()).isEqualTo(0);
     }
 
     @Test
     void init4() {
-        ConfigurationHolder.init(new ConfigurationsLoader(ProjectResources.findResource("pump.properties")));
+        ConfigurationHolder.init(new ConfigurationsLoader(new ProjectResources(getClass()).findResource("pump.properties")));
         assertThat(ConfigurationHolder.get().getApplicationName()).isEqualTo("testing application");
         assertThat(ConfigurationHolder.get().getElement().getWindowWidthOffset()).isEqualTo(0);
     }
 
     @Test
     void init5() {
-        ConfigurationHolder.init(ProjectResources.findResource("pump-test.properties"));
+        ConfigurationHolder.init(new ProjectResources(getClass()).findResource("pump-test.properties"));
         assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice()).isNotNull();
         assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().isFullScreen()).isTrue();
         assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().getX()).isEqualTo(0);
         assertThat(ConfigurationHolder.get().getBrowserConfig().getSizeOrDevice().getY()).isEqualTo(0);
         assertThat(ConfigurationHolder.get().getElement().getWindowWidthOffset()).isEqualTo(0);
         assertThatThrownBy(() -> ConfigurationHolder.init(Paths.get("C:no")))
-            .isInstanceOf(ConfigurationException.class);
+                .isInstanceOf(ConfigurationException.class);
         assertThatThrownBy(() -> ConfigurationHolder.init(Paths.get("C:/no")))
-            .isInstanceOf(ConfigurationException.class);
+                .isInstanceOf(ConfigurationException.class);
     }
 
     @Test
     void initSystemEnv() {
         assertThatThrownBy(() -> ConfigurationHolder.initSystemEnv("not.exists"))
-            .isInstanceOf(ConfigurationException.class);
+                .isInstanceOf(ConfigurationException.class);
         System.setProperty("pump.configuration.path", "pump.properties");
         EnvVariables.reloadCache();
         ConfigurationHolder.initSystemEnv("pump.configuration.path");

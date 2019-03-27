@@ -15,32 +15,36 @@ import ru.mk.pump.commons.utils.FileUtils;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Slf4j
-public class AttachmentsFactory {
+public class AllureAttachmentFactory implements AttachmentFactory {
 
     private static final String IMAGE = "image/" + SCREEN_FORMAT;
 
     private Screenshoter screenshoter;
 
-    protected AttachmentsFactory(@NonNull Screenshoter screenshoter) {
+    protected AllureAttachmentFactory(@NonNull Screenshoter screenshoter) {
 
         this.screenshoter = screenshoter;
     }
 
+    @Override
     public Attachment file(@NonNull String attachmentName, @NonNull Path path) {
         return new Attachment().withName(attachmentName).withSource(FileUtils.toString(path, MainConstants.FILE_ENCODING))
                 .withExtension(FileUtils.getExtension(path));
     }
 
+    @Override
     public Attachment file(@NonNull String attachmentName, @NonNull Supplier<byte[]> bytes) {
         return new Attachment().withName(attachmentName).withSourceByte(bytes).withExtension("txt");
     }
 
+    @Override
     public Attachment text(@NonNull String attachmentName, @NonNull String text) {
         return new Attachment().withName(attachmentName).withSource(text)
                 .withExtension("txt")
                 .withType("text/plain");
     }
 
+    @Override
     public Attachment screen(@NonNull String attachmentName, @NonNull Supplier<byte[]> bytes) {
         return new Attachment().withName(attachmentName).withSourceByte(bytes)
                 .withType(IMAGE)
@@ -50,11 +54,13 @@ public class AttachmentsFactory {
     /**
      * for skip auto screening
      */
+    @Override
     public Attachment dummy() {
         return new Attachment().withName("dummy").withSource("empty")
                 .withType("dummy");
     }
 
+    @Override
     public Attachment screen(@NonNull String attachmentName) {
         return new Attachment().withName(attachmentName).withSourceByte(() -> screenshoter.getScreen().orElse(new byte[0]))
                 .withExtension("png")

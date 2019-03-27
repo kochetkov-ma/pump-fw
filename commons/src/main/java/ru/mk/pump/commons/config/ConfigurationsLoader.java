@@ -12,7 +12,7 @@ import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.History;
 import ru.mk.pump.commons.utils.History.Info;
 import ru.mk.pump.commons.utils.PropertiesUtil;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
@@ -61,7 +61,7 @@ public class ConfigurationsLoader {
     //endregion
 
     public static String getHistoryId(@NonNull Class mappableClass, @Nullable String prefix) {
-        return Strings.concat("_", mappableClass.getSimpleName(), prefix);
+        return Str.concat("_", mappableClass.getSimpleName(), prefix);
     }
 
     //region PUBLIC METHODS
@@ -115,7 +115,7 @@ public class ConfigurationsLoader {
 
     //region PRIVATE
     private String getCache() {
-        return Strings.trim(cache.toString());
+        return Str.trim(cache.toString());
     }
 
     private <T> T mapToObject(@NonNull Class<T> mappableClass, @Nullable String prefix) {
@@ -127,18 +127,18 @@ public class ConfigurationsLoader {
     }
 
     private String getPrefixOrNull(Class<?> mappableClass, String... sourcePrefix) {
-        final String prePrefix = Strings.concat(StringConstants.DOT, sourcePrefix);
+        final String prePrefix = Str.concat(StringConstants.DOT, sourcePrefix);
         if (mappableClass.isAnnotationPresent(Config.class)) {
-            return Strings.concat(StringConstants.DOT, prePrefix, mappableClass.getAnnotation(Config.class).value());
+            return Str.concat(StringConstants.DOT, prePrefix, mappableClass.getAnnotation(Config.class).value());
         } else {
             return prePrefix;
         }
     }
 
     private String getPrefixOrNull(Field field, String... sourcePrefix) {
-        final String prePrefix = Strings.concat(StringConstants.DOT, sourcePrefix);
+        final String prePrefix = Str.concat(StringConstants.DOT, sourcePrefix);
         if (field.isAnnotationPresent(Property.class)) {
-            return Strings.concat(StringConstants.DOT, prePrefix, field.getAnnotation(Property.class).value());
+            return Str.concat(StringConstants.DOT, prePrefix, field.getAnnotation(Property.class).value());
         } else {
             return prePrefix;
         }
@@ -197,16 +197,16 @@ public class ConfigurationsLoader {
             log.debug("Resolving field {}. Annotation {}", field.toString(), annotation.toString());
             if (discoverInEnv && EnvVariables.has(path)) {
                 finalPath = "environment var - " + path;
-                result = Strings.toObject(EnvVariables.get(path), field.getType());
+                result = Str.toObject(EnvVariables.get(path), field.getType());
             } else if (configMap.containsKey(pathAndPrefix)) {
                 finalPath = "property - " + pathAndPrefix;
-                result = Strings.toObject(configMap.get(pathAndPrefix), field.getType());
+                result = Str.toObject(configMap.get(pathAndPrefix), field.getType());
             } else if (configMap.containsKey(path)) {
                 finalPath = "property - " + path;
-                result = Strings.toObject(configMap.get(path), field.getType());
+                result = Str.toObject(configMap.get(path), field.getType());
             } else if (!defaultValue.isEmpty()) {
                 finalPath = "default value";
-                result = Strings.toObject(defaultValue, field.getType());
+                result = Str.toObject(defaultValue, field.getType());
             } else if (isRequired) {
                 throw new UtilException(String.format("Cannot find required property '%s' of field '%s' of object '%s' in file, in system env and default",
                         path, field.getType().getSimpleName(), object.getClass().getSimpleName()));
@@ -217,13 +217,13 @@ public class ConfigurationsLoader {
         }
         try {
             FieldUtils.writeField(field, object, result, true);
-            if (!Strings.isEmpty(finalPath)) {
-                cache.append(Strings.concat(KEY_VALUE_PRETTY_DELIMITER, finalPath, Strings.toString(result))).append(StringConstants.LINE);
+            if (!Str.isEmpty(finalPath)) {
+                cache.append(Str.concat(KEY_VALUE_PRETTY_DELIMITER, finalPath, Str.toString(result))).append(StringConstants.LINE);
             }
-            log.debug("Resolving is success. Field {} is {}", field.toString(), Strings.toString(result));
+            log.debug("Resolving is success. Field {} is {}", field.toString(), Str.toString(result));
         } catch (IllegalAccessException ex) {
             throw new UtilException(String.format("Error writing value '%s' required property '%s' to field '%s' of object '%s'",
-                    Strings.toString(result), path, field.getType().getSimpleName(), object.getClass().getSimpleName()), ex);
+                    Str.toString(result), path, field.getType().getSimpleName(), object.getClass().getSimpleName()), ex);
         }
     }
     //endregion

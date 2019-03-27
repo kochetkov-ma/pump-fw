@@ -10,7 +10,7 @@ class UrlUtilsTest {
 
     @Test
     void testConcatWithPath() {
-        String urlString = "http::////www.google.ru:8080///{1}//{2}///";
+        String urlString = "http::////www.google.ru:8080///{1}//{2}///test";
         assertThat(UrlUtils.concatWithPath(urlString, "p1", "p2", "p3")).isEqualTo("http://www.google.ru:8080/p1/p2");
         assertThat(UrlUtils.concatWithPath(urlString, "p1", "p2")).isEqualTo("http://www.google.ru:8080/p1/p2");
 
@@ -56,7 +56,7 @@ class UrlUtilsTest {
         urlString = "www.google.ru///";
         assertThat(UrlUtils.isUrl(urlString)).isFalse();
 
-        urlString = "https://google.ru:4000/path/path";
+        urlString = "https://google.ru:4000/{id}/path";
         assertThat(UrlUtils.isUrl(urlString)).isTrue();
 
         urlString = "http::////www.google.ru:8080///{1}//{2}///";

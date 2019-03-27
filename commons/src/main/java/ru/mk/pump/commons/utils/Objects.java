@@ -17,7 +17,7 @@ public class Objects {
             return (T) object;
         } else {
             throw new IllegalArgumentException(
-                String.format("Object '%s' is not assignable from expected class '%s'", Strings.toString(object), expectedClass.getCanonicalName()));
+                String.format("Object '%s' is not assignable from expected class '%s'", Str.toString(object), expectedClass.getCanonicalName()));
         }
     }
 }

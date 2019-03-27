@@ -66,7 +66,7 @@ public class PageSteps extends AbstractSteps {
     @Given("^Page - get text and save to 'result'$")
     public void pageText() {
         if (controller.getPageManager().getCurrent() == null) {
-            throw new IllegalStateException("You must to init any page in controller");
+            throw new IllegalStateException("You must to refresh any page in controller");
         }
         core().getTestVariables().putResult(controller.getPageManager().getCurrent().getText());
     }

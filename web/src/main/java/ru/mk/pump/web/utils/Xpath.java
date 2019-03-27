@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ByXPath;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 
 @SuppressWarnings("WeakerAccess")
 @UtilityClass
@@ -60,7 +60,7 @@ public class Xpath {
     public By fixIfXpath(By by) {
         if (by instanceof ByXPath) {
             final String stringXpath = getXpathStringOrNull((ByXPath) by);
-            if (Strings.isEmpty(stringXpath)) {
+            if (Str.isEmpty(stringXpath)) {
                 return by;
             }
             return By.xpath(fixXpath(stringXpath));

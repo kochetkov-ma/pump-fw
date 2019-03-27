@@ -10,8 +10,8 @@ import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.utils.ParameterUtils;
 import ru.mk.pump.commons.utils.Pre;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.part.SelectedItems;
@@ -55,6 +55,9 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
     @Getter(AccessLevel.PROTECTED)
     private SelectedStrategy selectedStrategy = SelectedStrategy.CONTAINS;
 
+    {
+        setItemsBy(DEFAULT_ITEMS_BY);
+    }
 
     public AbstractSelectorItems(By avatarBy, Page page) {
         super(avatarBy, page);
@@ -87,7 +90,7 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
             return;
         }
         throw new IllegalArgumentException(String.format("Params map '%s' does not contains '%s'",
-                Strings.toString(params), Strings.concat(ElementParams.EDITABLE_SET_NUMBER.getName(), ElementParams.EDITABLE_SET_STRING.getName())));
+                Str.toString(params), Str.concat(ElementParams.EDITABLE_SET_NUMBER.getName(), ElementParams.EDITABLE_SET_STRING.getName())));
     }
 
     @Override
@@ -99,11 +102,9 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
             finalText = itemText;
         }
         final List<Element> elements = getItems();
-        final Action<?> action = actionFactory.newVoidAction(webElement -> {
-            elements.stream().filter(element -> find(element, finalText)).findFirst()
-                    .orElseThrow(() -> new SubElementsNotFoundException("text name = " + itemText).withTargetElement(this))
-                    .click();
-        }, "Select item by text " + itemText).withStrategy(ActionStrategy.NO_AFTER, ActionStrategy.NO_FINALLY, ActionStrategy.NO_STATE_CHECK);
+        final Action<?> action = actionFactory.newVoidAction(webElement -> elements.stream().filter(element -> find(element, finalText)).findFirst()
+                .orElseThrow(() -> new SubElementsNotFoundException("text name = " + itemText).withElement(this))
+                .click(), "Select item by text " + itemText).withStrategy(ActionStrategy.NO_AFTER, ActionStrategy.NO_FINALLY, ActionStrategy.NO_STATE_CHECK);
         getActionExecutor().execute(action);
     }
 
@@ -111,9 +112,9 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
     public void select(int index) {
         final List<Element> elements = getItems();
         Pre.checkArgListSize(index, elements);
-        final Action<?> action = actionFactory.newVoidAction(w -> {
-            elements.get(index).click();
-        }, "Select item by index " + index).withStrategy(ActionStrategy.NO_AFTER, ActionStrategy.NO_FINALLY, ActionStrategy.NO_STATE_CHECK);
+        final Action<?> action = actionFactory.newVoidAction(w ->
+                elements.get(index).click(), "Select item by index " + index)
+                .withStrategy(ActionStrategy.NO_AFTER, ActionStrategy.NO_FINALLY, ActionStrategy.NO_STATE_CHECK);
         getActionExecutor().execute(action);
     }
 
@@ -121,7 +122,7 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
     public Element getSelected() {
         return getItems().stream().filter(i -> StringUtils.contains(i.getAttribute("class"), selectedCondition)).findFirst()
                 .orElseThrow(
-                        () -> new SubElementsNotFoundException("selected element class contains : " + selectedCondition).withTargetElement(this));
+                        () -> new SubElementsNotFoundException("selected element class contains : " + selectedCondition).withElement(this));
     }
 
     @Override
@@ -131,8 +132,7 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
         if (items.isEmpty()) {
             return "";
         }
-        String res = items.get(0).getSubElements(Element.class).find(By.xpath("/../")).getTextHidden();
-        return res;
+        return items.get(0).getSubElements(Element.class).find(By.xpath("/../")).getTextHidden();
     }
 
     @Override
@@ -151,9 +151,5 @@ public abstract class AbstractSelectorItems extends AbstractWithItems implements
         } else {
             throw new UnsupportedOperationException("Strategy not support " + selectedStrategy.toString());
         }
-    }
-
-    {
-        setItemsBy(DEFAULT_ITEMS_BY);
     }
 }

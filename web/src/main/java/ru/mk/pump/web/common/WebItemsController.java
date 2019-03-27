@@ -11,7 +11,7 @@ import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.utils.Objects;
 import ru.mk.pump.commons.utils.Pre;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.common.api.ItemsManager;
 import ru.mk.pump.web.common.api.annotations.PAction;
 import ru.mk.pump.web.common.api.annotations.PComponent;
@@ -83,7 +83,7 @@ public class WebItemsController implements StrictInfo {
         if (res.isEmpty()) {
             throw new IllegalArgumentException(String.format("Error pumpkin expression '%s' to creating Component", pumpkinExpression));
         }
-        log.info("[CONTROLLER] Try to init current component from '{}'", res);
+        log.info("[CONTROLLER] Try to refresh current component from '{}'", res);
         return componentManager.getOne(cast(res.poll().getSource(), String.class));
     }
 
@@ -93,7 +93,7 @@ public class WebItemsController implements StrictInfo {
         if (res.isEmpty()) {
             throw new IllegalArgumentException(String.format("Error pumpkin expression '%s' to creating Component", pumpkinExpression));
         }
-        log.info("[CONTROLLER] Try to init current page from '{}'", res);
+        log.info("[CONTROLLER] Try to refresh current page from '{}'", res);
         return pageManager.getOne(cast(res.poll().getSource(), String.class));
     }
 
@@ -105,7 +105,7 @@ public class WebItemsController implements StrictInfo {
     public Object executeOnCurrentPage(@NonNull String pumpkinExpression) {
         if (pageManager.getCurrent() == null) {
             throw new ExecutionException("Current page is undefined. Please, initPage before using")
-                    .addTarget("controller", this);
+                    .withExtra("controller", this);
         }
         return execute(pageManager.getCurrent(), pumpkinExpression);
     }
@@ -113,7 +113,7 @@ public class WebItemsController implements StrictInfo {
     public Object executeOnCurrentComponent(@NonNull String pumpkinExpression) {
         if (componentManager.getCurrent() == null) {
             throw new ExecutionException("Current component is undefined. Please, initComponent before using")
-                    .addTarget("controller", this);
+                    .withExtra("controller", this);
         }
         return execute(componentManager.getCurrent(), pumpkinExpression);
     }
@@ -132,10 +132,10 @@ public class WebItemsController implements StrictInfo {
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("WebItemsController")
-                .put("page manager", Strings.toPrettyString(pageManager.getInfo()))
-                .put("component manager", Strings.toPrettyString(componentManager.getInfo()))
+                .put("page manager", Str.toPrettyString(pageManager.getInfo()))
+                .put("component manager", Str.toPrettyString(componentManager.getInfo()))
                 .put("last expression", lastPumpkinExpression)
-                .put("lastResult", Strings.toString(lastResult))
+                .put("lastResult", Str.toString(lastResult))
                 .put("test vars", testVars.toPrettyString())
                 .build();
     }
@@ -160,8 +160,8 @@ public class WebItemsController implements StrictInfo {
                 if (!(res instanceof List)) {
                     throw new ExecutionException(
                             String.format("Target object '%s' with field '%s' is not expected class : List. Source expression is '%s'", getClass(candidate),
-                                    Strings.toString(field), lastPumpkinExpression))
-                            .addTarget("controller", this);
+                                    Str.toString(field), lastPumpkinExpression))
+                            .withExtra("controller", this);
                 }
                 return ((List) res).get(field.getIndex());
             } else {
@@ -170,8 +170,8 @@ public class WebItemsController implements StrictInfo {
         }
         throw new ExecutionException(
                 String.format("Target object '%s' with field '%s' is not expected class : Component. Source expression is '%s'", getClass(candidate),
-                        Strings.toString(field), lastPumpkinExpression))
-                .addTarget("controller", this);
+                        Str.toString(field), lastPumpkinExpression))
+                .withExtra("controller", this);
     }
 
     public Object callMethod(Object candidate, Method method) {
@@ -183,8 +183,8 @@ public class WebItemsController implements StrictInfo {
         }
         throw new ExecutionException(
                 String.format("Object '%s' with method '%s' is not expected class : Page or Component or Element. Source expression is '%s'", getClass(candidate),
-                        Strings.toString(method), lastPumpkinExpression))
-                .addTarget("controller", this);
+                        Str.toString(method), lastPumpkinExpression))
+                .withExtra("controller", this);
     }
 
     //region PRIVATE
@@ -224,8 +224,8 @@ public class WebItemsController implements StrictInfo {
                     return res;
                 } else {
                     throw new ExecutionException(
-                            String.format("Target object is 'null' with field '%s'. Source expression is '%s'", Strings.toString(field), lastPumpkinExpression))
-                            .addTarget("controller", this);
+                            String.format("Target object is 'null' with field '%s'. Source expression is '%s'", Str.toString(field), lastPumpkinExpression))
+                            .withExtra("controller", this);
                 }
             }
         }
@@ -234,8 +234,8 @@ public class WebItemsController implements StrictInfo {
         }
         throw new ExecutionException(
                 String.format("Object '%s' with field '%s' is not expected class : Page or Component. Source expression is '%s'", getClass(candidate),
-                        Strings.toString(field), lastPumpkinExpression))
-                .addTarget("controller", this);
+                        Str.toString(field), lastPumpkinExpression))
+                .withExtra("controller", this);
     }
 
 
@@ -258,9 +258,9 @@ public class WebItemsController implements StrictInfo {
                     .filter(f -> f.getAnnotation(PComponent.class).value().equalsIgnoreCase(field.getSource()) || f.getName().equalsIgnoreCase(field.getSource()))
                     .findFirst()
                     .orElseThrow(() -> new ExecutionException(
-                            String.format("Cannot find in object '%s' field '%s'. Source expression is '%s'", getClass(candidate), Strings.toString(field),
+                            String.format("Cannot find in object '%s' field '%s'. Source expression is '%s'", getClass(candidate), Str.toString(field),
                                     lastPumpkinExpression))
-                            .addTarget("controller", this));
+                            .withExtra("controller", this));
         } else {
             result = optionalField.get();
         }
@@ -269,9 +269,9 @@ public class WebItemsController implements StrictInfo {
             return result.get(candidate);
         } catch (IllegalAccessException e) {
             throw new ExecutionException(String
-                    .format("Execution error in object '%s' field '%s'. Source expression is '%s'", getClass(candidate), Strings.toString(field),
+                    .format("Execution error in object '%s' field '%s'. Source expression is '%s'", getClass(candidate), Str.toString(field),
                             lastPumpkinExpression), e)
-                    .addTarget("controller", this);
+                    .withExtra("controller", this);
         }
     }
 
@@ -289,16 +289,16 @@ public class WebItemsController implements StrictInfo {
                 .filter(m -> m.getParameterCount() == method.getArgs().length)
                 .findFirst()
                 .orElseThrow(() -> new ExecutionException(
-                        String.format("Cannot find in object '%s' method '%s'", getClass(candidate), Strings.toString(method))).addTarget("controller", this)
-                        .addTarget("controller", this));
+                        String.format("Cannot find in object '%s' method '%s'", getClass(candidate), Str.toString(method))).withExtra("controller", this)
+                        .withExtra("controller", this));
         try {
             oneMethod.setAccessible(true);
             return oneMethod.invoke(candidate, castArgs(oneMethod, method.getArgs()));
         } catch (Exception e) {
             throw new ExecutionException(String
-                    .format("Execution error in object '%s' method '%s'. Source expression is '%s'", getClass(candidate), Strings.toString(method),
+                    .format("Execution error in object '%s' method '%s'. Source expression is '%s'", getClass(candidate), Str.toString(method),
                             lastPumpkinExpression), e)
-                    .addTarget("controller", this);
+                    .withExtra("controller", this);
         }
     }
 
@@ -310,7 +310,7 @@ public class WebItemsController implements StrictInfo {
             if (String.class.isAssignableFrom(expectedArgs[i]) || !(args[i] instanceof String)) {
                 newArgs[i] = args[i];
             } else {
-                newArgs[i] = Strings.toObject(String.valueOf(args[i]), expectedArgs[i]);
+                newArgs[i] = Str.toObject(String.valueOf(args[i]), expectedArgs[i]);
             }
         }
         return newArgs;

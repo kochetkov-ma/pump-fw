@@ -6,14 +6,13 @@ import com.google.common.collect.Sets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.NonNull;
 import ru.mk.pump.commons.interfaces.StrictInfo;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.web.elements.enums.StateType;
 
@@ -67,8 +66,8 @@ public class SetState extends State {
         return StrictInfo.infoBuilder("SetState")
             .put("state type", type().name())
             .put("state name", name())
-            .put("result", Strings.toString(result()))
-            .put("states", Strings.toPrettyString(getAll()))
+            .put("result", Str.toString(result()))
+            .put("states", Str.toPrettyString(getAll()))
             .build();
     }
 
@@ -76,14 +75,14 @@ public class SetState extends State {
     public String toString() {
         final StringBuilder sb = new StringBuilder("SetState(");
         sb.append("stateType=").append(type().name());
-        sb.append(", result=").append(Strings.toString(result()));
+        sb.append(", result=").append(Str.toString(result()));
         sb.append(", name='").append(name());
         if (getTearDown().isPresent()) {
             sb.append(", tearDown=").append("exists");
         } else {
             sb.append(", tearDown=").append("empty");
         }
-        sb.append(", states=").append(Strings.toPrettyString(getAll()));
+        sb.append(", states=").append(Str.toPrettyString(getAll()));
         sb.append(')');
         return sb.toString();
     }

@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.api.annotations.*;
 import ru.mk.pump.web.component.BaseComponent;
 import ru.mk.pump.web.elements.api.concrete.Input;

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.commons.helpers.Parameters;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.enums.SelectedStrategy;
 import ru.mk.pump.web.elements.internal.BaseElement;
@@ -75,7 +75,7 @@ class SelectorImplTest extends AbstractWebTest {
 
     @Test
     void getItems() {
-        log.info(Strings.toPrettyString(regPage.getSelectorProgram().getItems()));
+        log.info(Str.toPrettyString(regPage.getSelectorProgram().getItems()));
         Assertions.assertThat(regPage.getSelectorProgram().getItems()).hasSize(2);
     }
 }

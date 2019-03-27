@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
-import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
+import ru.mk.pump.web.exceptions.ElementNotFoundException;
 
 @SuppressWarnings("WeakerAccess")
 @Slf4j
@@ -23,8 +23,8 @@ class SingleElementStrategy extends FindStrategy {
             return getFromRoot();
         } else {
             final WebElement parent = getTarget().getParent()
-                .orElseThrow(() -> new ElementFinderNotFoundException("Cannot find parent element").withTargetElement(getTarget()))
-                .getFinder().get();
+                    .orElseThrow(() -> new ElementNotFoundException("Cannot find parent element").withInternalElement(getTarget()))
+                    .getFinder().get();
             return getFromParent(parent);
         }
     }
@@ -40,7 +40,7 @@ class SingleElementStrategy extends FindStrategy {
         } catch (WebDriverException ex) {
             getTarget().getFinder().setCache(null);
             onException();
-            throw new ElementFinderNotFoundException("Find root element error", ex).withTargetElement(getTarget());
+            throw new ElementNotFoundException("Find root element error", ex).withInternalElement(getTarget());
         }
     }
 

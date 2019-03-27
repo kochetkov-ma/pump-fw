@@ -18,15 +18,16 @@ public class CapabilitiesUtils {
      * Load properties with capabilities and convert to map. First check as file path then try to find among the project resources.
      *
      * @param filePathOrFileName Full path to file or file name in project
+     * @param projectResources ProjectResources class
      * @return ImmutableCapabilities
      * @throws UtilException If file has not been found
      */
-    public Capabilities loadFromProperties(String filePathOrFileName) {
+    public Capabilities loadFromProperties(String filePathOrFileName, ProjectResources projectResources) {
         Path capsFile;
         if (FileUtils.isExistsAndValid(filePathOrFileName)) {
             capsFile = Paths.get(filePathOrFileName);
         } else {
-            capsFile = ProjectResources.findResource(filePathOrFileName);
+            capsFile = projectResources.findResource(filePathOrFileName);
         }
         return new ImmutableCapabilities(PropertiesUtil.propertiesToMap(PropertiesUtil.load(capsFile, MainConstants.FILE_ENCODING)));
     }

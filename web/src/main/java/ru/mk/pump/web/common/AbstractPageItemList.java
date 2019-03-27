@@ -2,8 +2,6 @@ package ru.mk.pump.web.common;
 
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import java.util.AbstractList;
-import javax.annotation.Nullable;
 import lombok.NonNull;
 import lombok.ToString;
 import org.openqa.selenium.By;
@@ -14,32 +12,30 @@ import ru.mk.pump.web.elements.ElementConfig;
 import ru.mk.pump.web.elements.ElementFactory;
 import ru.mk.pump.web.elements.internal.BaseElement;
 import ru.mk.pump.web.exceptions.ElementException;
-import ru.mk.pump.web.exceptions.ElementFinderNotFoundException;
+import ru.mk.pump.web.exceptions.ElementNotFoundException;
 import ru.mk.pump.web.utils.Xpath;
+
+import javax.annotation.Nullable;
+import java.util.AbstractList;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 @ToString
 public abstract class AbstractPageItemList<T extends PageItem> extends AbstractList<T> {
 
+    protected final BaseElement parent;
+    protected final ElementFactory itemFactory;
+    protected final Class<T> itemsClass;
+    protected final By listBy;
+    protected final ElementConfig elementConfig;
     private TIntObjectMap<T> elementsCache = new TIntObjectHashMap<>();
 
-    protected final BaseElement parent;
-
-    protected final ElementFactory itemFactory;
-
-    protected final Class<T> itemsClass;
-
-    protected final By listBy;
-
-    protected final ElementConfig elementConfig;
-
     public AbstractPageItemList(@NonNull Class<T> itemsClass, @NonNull By listBy, @NonNull ElementFactory elementFactory,
-        @NonNull ElementConfig itemFactory) {
+            @NonNull ElementConfig itemFactory) {
         this(itemsClass, listBy, null, elementFactory, itemFactory);
     }
 
     public AbstractPageItemList(@NonNull Class<T> itemsClass, @NonNull By listBy, @Nullable BaseElement parent, @NonNull ElementFactory itemFactory,
-        @NonNull ElementConfig elementConfig) {
+            @NonNull ElementConfig elementConfig) {
         super();
         this.itemsClass = itemsClass;
         this.listBy = Xpath.fixIfXpath(listBy);
@@ -60,7 +56,7 @@ public abstract class AbstractPageItemList<T extends PageItem> extends AbstractL
             parent.getInternalStateResolver().resolve(parent.jsReady()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, listBy.toString()));
             parent.getInternalStateResolver().resolve(parent.exists()).result().throwExceptionOnFail((r) -> exceptionNoExists(r, listBy.toString()));
             final WebElement sourceWebElement = parent.getFinder().findFast().throwExceptionOnFail((r) -> exceptionNoExists(r, listBy.toString()))
-                .getResult();
+                    .getResult();
             return sourceWebElement.findElements(listBy).size();
         } else {
             return itemFactory.getBrowser().getDriver().findElements(listBy).size();
@@ -87,10 +83,9 @@ public abstract class AbstractPageItemList<T extends PageItem> extends AbstractL
 
     //region PRIVATE
     private ElementException exceptionNoExists(WaitResult<?> res, String byString) {
-        return new ElementFinderNotFoundException(
-            String.format("Cannot find sub rules '%s' by '%s' because parent is not exists", itemsClass.getSimpleName(), logPath(byString)),
-            res.getCause())
-            .withTargetElement(parent);
+        return new ElementNotFoundException(
+                String.format("Cannot find sub rules '%s' by '%s' because parent is not exists", itemsClass.getSimpleName(), logPath(byString)),
+                res.getCause()).withInternalElement(parent);
     }
 
     private String logPath(String byString) {

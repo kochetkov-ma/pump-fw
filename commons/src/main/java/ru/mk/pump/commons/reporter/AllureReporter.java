@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import ru.mk.pump.commons.exception.ExecutionException;
 import ru.mk.pump.commons.exception.PumpMessage;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 
 import java.io.ByteArrayInputStream;
 import java.util.Deque;
@@ -28,12 +28,12 @@ import java.util.function.Consumer;
 @SuppressWarnings( {"unused", "WeakerAccess"})
 @Slf4j
 @ToString(exclude = {"currentTestUuid", "blockUuidQueue"})
-public class ReporterAllure implements Reporter, AutoCloseable {
+public class AllureReporter implements Reporter, AutoCloseable {
 
     /**
      * For your information.
      * This path cannot be changed after initialisation Allure Lifecycle in any places of program,
-     * not only {@link ReporterAllure} such as AllureJunitAdapter or other
+     * not only {@link AllureReporter} such as AllureJunitAdapter or other
      */
     public static final String SYSTEM_ALLURE_RESULT_PATH = "allure.results.directory";
 
@@ -51,21 +51,21 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     private ThreadLocal<Deque<String>> blockUuidQueue = InheritableThreadLocal.withInitial(ConcurrentLinkedDeque::new);
     @Getter
-    private AttachmentsFactory attachmentsFactory;
+    private AttachmentFactory AttachmentFactory;
 
-    public ReporterAllure() {
-        this.attachmentsFactory = new AttachmentsFactory(Optional::empty);
+    public AllureReporter() {
+        this.AttachmentFactory = new AllureAttachmentFactory(Optional::empty);
         this.minimumLevelForDuplicateInSlf4 = Type.INFO;
     }
 
-    public ReporterAllure(Screenshoter screenshoter) {
-        this.attachmentsFactory = new AttachmentsFactory(screenshoter);
+    public AllureReporter(Screenshoter screenshoter) {
+        this.AttachmentFactory = new AllureAttachmentFactory(screenshoter);
         this.minimumLevelForDuplicateInSlf4 = Type.INFO;
     }
 
-    public ReporterAllure(Screenshoter screenshoter, Type minimumLevelForDuplicateInSlf4) {
+    public AllureReporter(Screenshoter screenshoter, Type minimumLevelForDuplicateInSlf4) {
 
-        this.attachmentsFactory = new AttachmentsFactory(screenshoter);
+        this.AttachmentFactory = new AllureAttachmentFactory(screenshoter);
         this.minimumLevelForDuplicateInSlf4 = minimumLevelForDuplicateInSlf4;
     }
 
@@ -73,8 +73,8 @@ public class ReporterAllure implements Reporter, AutoCloseable {
         return org.joda.time.Instant.now().toString(new DateTimeFormatterBuilder().appendPattern("dd-MM-yy HH:mm:ss:SSSS").toFormatter());
     }
 
-    public ReporterAllure withAttachmentsFactory(AttachmentsFactory attachmentsFactory) {
-        this.attachmentsFactory = attachmentsFactory;
+    public AllureReporter withAttachmentFactory(AttachmentFactory AttachmentFactory) {
+        this.AttachmentFactory = AttachmentFactory;
         return this;
     }
 
@@ -132,12 +132,12 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     @Override
     public void warn(String title, String description, Attachment attachment, Throwable throwable) {
-        step(Type.WARNING, title, Strings.concat(LINE, description, Strings.toString(throwable)), new Info(attachment, null));
+        step(Type.WARNING, title, Str.concat(LINE, description, Str.toString(throwable)), new Info(attachment, null));
     }
 
     @Override
     public void warn(String title, String description, Throwable throwable) {
-        step(Type.WARNING, title, Strings.concat(LINE, description, Strings.toString(throwable)), new Info(null, null));
+        step(Type.WARNING, title, Str.concat(LINE, description, Str.toString(throwable)), new Info(null, null));
     }
 
     @Override
@@ -196,8 +196,8 @@ public class ReporterAllure implements Reporter, AutoCloseable {
     }
 
     @Override
-    public AttachmentsFactory attachments() {
-        return attachmentsFactory;
+    public AttachmentFactory attachments() {
+        return AttachmentFactory;
     }
 
     public String testStart(String title, String description, Consumer<TestResult> testResultConsumer) {
@@ -213,7 +213,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
     public void testStop(String uuid, Consumer<TestResult> testResultConsumer) {
         blockStopAll();
-        if (!Strings.isEmpty(uuid)) {
+        if (!Str.isEmpty(uuid)) {
             if (testResultConsumer != null) {
                 Allure.getLifecycle().updateTestCase(uuid, testResultConsumer);
             }
@@ -239,7 +239,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
      */
     private void step(Type level, String title, String description, Info info) {
         if (postingLevel.getPriority() > level.getPriority()) {
-            log.debug(Strings.space(LOG_PREFIX, "skip this message with level=", level.name(), "minimal level=", postingLevel.name()));
+            log.debug(Str.space(LOG_PREFIX, "skip this message with level=", level.name(), "minimal level=", postingLevel.name()));
             return;
         }
         final String stepUuid = UUID.randomUUID().toString();
@@ -266,26 +266,26 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
         if (level.getPriority() >= minimumLevelForDuplicateInSlf4.getPriority()) {
             if (level.getPriority() < 3) {
-                log.info(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title),
+                log.info(Str.concat(System.lineSeparator(), Str.space(LOG_PREFIX, level.toString(), title),
                         description, info.toString()));
             } else if (level.getPriority() == 3) {
-                log.warn(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title),
+                log.warn(Str.concat(System.lineSeparator(), Str.space(LOG_PREFIX, level.toString(), title),
                         description, info.toString()));
             } else if (level.getPriority() > 3) {
-                log.error(Strings.concat(System.lineSeparator(), Strings.space(LOG_PREFIX, level.toString(), title),
+                log.error(Str.concat(System.lineSeparator(), Str.space(LOG_PREFIX, level.toString(), title),
                         description, info.toString()));
             }
         }
-        if (!AttachmentsFactory.isDummy(info.attachment)
+        if (!AllureAttachmentFactory.isDummy(info.attachment)
                 && info.attachment() != null) {
             attach(info.attachment());
         }
-        if (!AttachmentsFactory.isDummy(info.attachment)
-                && !AttachmentsFactory.isScreen(info.attachment)
+        if (!AllureAttachmentFactory.isDummy(info.attachment)
+                && !AllureAttachmentFactory.isScreen(info.attachment)
                 && autoScreenLevel.getPriority() <= level.getPriority()) {
-            log.debug(Strings.space(LOG_PREFIX, "auto attach screen with level=",
+            log.debug(Str.space(LOG_PREFIX, "auto attach screen with level=",
                     level.name(), "minimal auto-screen level=", autoScreenLevel.name()));
-            attach(getAttachmentsFactory().screen(String.format("auto screen on '%s'", level)));
+            attach(this.getAttachmentFactory().screen(String.format("auto screen on '%s'", level)));
         }
         if (info.throwable() != null) {
             if (info.throwable() instanceof AssertionError) {
@@ -296,7 +296,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
                 final PumpMessage exceptionMessage = new PumpMessage(title, description)
                         .addExtraInfo("Status", level.name())
                         .addExtraInfo("Attachment", info.attachment() != null
-                                ? Strings.space(info.attachment().getName(), info.attachment().getType()) : null);
+                                ? Str.space(info.attachment().getName(), info.attachment().getType()) : null);
                 Allure.getLifecycle().updateStep(stepUuid, res -> res.setStatus(Status.BROKEN));
                 Allure.getLifecycle().stopStep(stepUuid);
                 throw new ExecutionException(exceptionMessage, info.throwable());
@@ -344,7 +344,7 @@ public class ReporterAllure implements Reporter, AutoCloseable {
 
         @Override
         public String toString() {
-            return Strings.space(I, attachment != null ? "Attachment exists" : null,
+            return Str.space(I, attachment != null ? "Attachment exists" : null,
                     throwable != null ? "Throwable class " + throwable.getClass().getSimpleName() : null);
         }
 

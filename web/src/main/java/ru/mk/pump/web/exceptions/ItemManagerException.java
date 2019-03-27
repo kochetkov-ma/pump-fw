@@ -1,31 +1,25 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.commons.exception.PumpMessage;
+import lombok.NoArgsConstructor;
 import ru.mk.pump.web.common.api.ItemsManager;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ItemManagerException extends AbstractWebException {
+@NoArgsConstructor
+public class ItemManagerException extends WebException {
 
-    static final String MANAGER = "items manager";
-
-    public ItemManagerException(String message) {
-        super(message);
+    public ItemManagerException(@Nullable String title, @Nullable ItemsManager manager) {
+        this(title, manager, null);
     }
 
-    public ItemManagerException(PumpMessage exceptionMessage) {
-        super(exceptionMessage);
+    public ItemManagerException(@Nullable String title, @Nullable ItemsManager manager, @Nullable Throwable cause) {
+        super(title, cause);
+        withManager(manager);
     }
 
-    public ItemManagerException(PumpMessage exceptionMessage, Throwable cause) {
-        super(exceptionMessage, cause);
-    }
-
-    public ItemManagerException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ItemManagerException withManager(ItemsManager itemsManager) {
-        addTarget(MANAGER, itemsManager);
-        return this;
+    @Override
+    public ItemManagerException withManager(@Nullable ItemsManager manager) {
+        return (ItemManagerException) super.withManager(manager);
     }
 }

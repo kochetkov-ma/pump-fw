@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import cucumber.api.java.en.Given;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.Collators;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.commons.utils.Verifier;
 import ru.mk.pump.cucumber.glue.AbstractSteps;
 
@@ -37,8 +37,8 @@ public class VerifySteps extends AbstractSteps {
     @Given("^проверено, что ожидаемая строка '(.+?)'( не|) (равна|содержится в) актаульной '(.+?)'( используя нормализацию|)$")
     public void equalsString(String expect, boolean not, String type, String actual, boolean normalize) {
         if (normalize) {
-            expect = Strings.normalize(expect);
-            actual = Strings.normalize(actual);
+            expect = Str.normalize(expect);
+            actual = Str.normalize(actual);
         }
         switch (type) {
             case "равна":

@@ -17,7 +17,7 @@ public class CallableExt<T> implements Callable<T> {
     }
 
     public static <V> CallableExt<V> of(@NonNull Callable<V> tCallable) {
-        return new CallableExt<>(tCallable, Strings.empty());
+        return new CallableExt<>(tCallable, Str.empty());
     }
 
     public static <V> CallableExt<V> of(@NonNull String description) {

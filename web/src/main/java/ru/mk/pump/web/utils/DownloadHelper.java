@@ -6,19 +6,17 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import ru.mk.pump.commons.constants.MainConstants;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.exception.UtilException;
 import ru.mk.pump.commons.utils.HttpClients;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.web.browsers.api.Browser;
 
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -84,7 +82,7 @@ public class DownloadHelper {
         final String finalMessage = "[DOWNLOAD-HELPER] Cannot finish download ." + message;
 
         throw new PumpException(new PumpMessage(finalMessage)
-                .withDesc(Strings.space("URL :", urlString, "Download to :", downloadDir.toString()))
+                .withDesc(Str.space("URL :", urlString, "Download to :", downloadDir.toString()))
                 .addExtraInfo(browser), throwable);
     }
 }

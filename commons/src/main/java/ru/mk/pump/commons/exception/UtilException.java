@@ -1,21 +1,15 @@
 package ru.mk.pump.commons.exception;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("unused")
 public class UtilException extends PumpException {
 
-    public UtilException(String title) {
+    public UtilException(@Nullable String title) {
         super(title);
     }
 
-    public UtilException(String title, Throwable cause) {
+    public UtilException(@Nullable String title, @Nullable Throwable cause) {
         super(title, cause);
-    }
-
-    public UtilException(PumpMessage exceptionMessage) {
-        super(exceptionMessage);
-    }
-
-    public UtilException(PumpMessage exceptionMessage, Throwable cause) {
-        super(exceptionMessage, cause);
     }
 }

@@ -5,9 +5,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.support.FindBy;
 import ru.mk.pump.web.browsers.AbstractBrowser;
-import ru.mk.pump.web.browsers.Browser;
 import ru.mk.pump.web.browsers.Browsers;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.browsers.builders.AndroidAppDriverBuilder;
+import ru.mk.pump.web.common.WebReporter;
 import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.common.api.annotations.PPage;
 import ru.mk.pump.web.common.api.annotations.PString;
@@ -15,12 +16,26 @@ import ru.mk.pump.web.configuration.ConfigurationHolder;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.page.BasePage;
 import ru.mk.pump.web.page.PageLoaderPump;
-import ru.mk.pump.web.common.WebReporter;
 
-import java.util.Observable;
 import java.util.UUID;
 
 public class AndroidAppTest {
+
+    @Test
+    @Disabled
+    void testAndroidCalculator() {
+        ConfigurationHolder.init("pump-android.properties");
+
+        Browser androidApp = new AbstractBrowser(new AndroidAppDriverBuilder(ConfigurationHolder.get().getBrowserConfig()), UUID.randomUUID().toString()) {
+        };
+
+        Browsers browsers = new Browsers();
+        browsers.setBrowser(androidApp);
+        browsers.get().start();
+        Calculator calculator = new Calculator(browsers.get());
+        calculator.getOne().click();
+        calculator.getTwo().click();
+    }
 
     @PPage(value = "Калькулятор", desc = "Калькулятор")
     public static class Calculator extends BasePage {
@@ -41,23 +56,6 @@ public class AndroidAppTest {
             super(browser);
             setPageLoader(new PageLoaderPump(this, WebReporter.getVerifier()));
         }
-    }
-
-    @Test
-    @Disabled
-    void testAndroidCalculator() {
-        ConfigurationHolder.init("pump-android.properties");
-
-        Browser androidApp = new AbstractBrowser(new AndroidAppDriverBuilder(ConfigurationHolder.get().getBrowserConfig()), UUID.randomUUID().toString()) {
-        };
-        ((Observable) androidApp).deleteObserver(androidApp.windows());
-
-        Browsers browsers = new Browsers();
-        browsers.setBrowser(androidApp);
-        browsers.get().start();
-        Calculator calculator = new Calculator(browsers.get());
-        calculator.getOne().click();
-        calculator.getTwo().click();
     }
 
 }

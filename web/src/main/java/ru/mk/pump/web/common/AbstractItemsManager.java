@@ -1,13 +1,6 @@
 package ru.mk.pump.web.common;
 
 import com.google.common.collect.Sets;
-import java.lang.reflect.Constructor;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
@@ -15,11 +8,19 @@ import org.apache.commons.lang3.ArrayUtils;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.ReflectionUtils;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.api.ItemsManager;
 import ru.mk.pump.web.common.api.WebObject;
 import ru.mk.pump.web.exceptions.ItemManagerException;
+
+import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @ToString(exclude = {"browsers", "reporter"})
@@ -75,11 +76,11 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     public <V extends T> Set<Class<V>> find(@NonNull String itemName, @NonNull Class<V> itemClass) {
         //noinspection unchecked
         return itemsSet.stream()
-            .filter(itemClass::isAssignableFrom)
-            .filter(i -> findFilter(itemName, i))
-            .filter(i -> predicateSet.stream().allMatch(p -> p.test(this, i)))
-            .map(i -> (Class<V>) i)
-            .collect(Collectors.toSet());
+                .filter(itemClass::isAssignableFrom)
+                .filter(i -> findFilter(itemName, i))
+                .filter(i -> predicateSet.stream().allMatch(p -> p.test(this, i)))
+                .map(i -> (Class<V>) i)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -105,8 +106,10 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
         }
         Set<Class<V>> items = find(name, itemSubClass);
         if (items.isEmpty()) {
-            throw new ItemManagerException(String.format("Cannot find any item with name '%s' and class '%s'", name, itemSubClass.getCanonicalName()))
-                .withManager(this);
+            throw new ItemManagerException(
+                    Str.format("Cannot find any item with name '{}' and class '{}'", name, itemSubClass.getCanonicalName()),
+                    this
+            );
         }
         current = newItem(items.iterator().next());
         //noinspection unchecked
@@ -129,8 +132,11 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
             T result = newInstance(constructor, itemClass);
             return afterItemCreate(result);
         } catch (ReflectiveOperationException | ClassCastException ex) {
-            throw new ItemManagerException(String.format("Error when try to create item with class '%s'", getItemClass().getCanonicalName()), ex)
-                .withManager(this);
+            throw new ItemManagerException(
+                    Str.format("Error when try to create item with class '{}'", getItemClass().getCanonicalName()),
+                    this,
+                    ex
+            );
         }
     }
 
@@ -154,12 +160,12 @@ abstract public class AbstractItemsManager<T extends WebObject> implements Items
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoBuilder("Items Manager")
-            .put("browsers", Strings.toString(browsers))
-            .put("current item", Strings.toString(current))
-            .put("current list", Strings.toPrettyString(currentList))
-            .put("reporter", Strings.toString(reporter))
-            .put("loaded items", Strings.toPrettyString(itemsSet))
-            .put("packages", Strings.toPrettyString(packages))
-            .build();
+                .put("browsers", Str.toString(browsers))
+                .put("current item", Str.toString(current))
+                .put("current list", Str.toPrettyString(currentList))
+                .put("reporter", Str.toString(reporter))
+                .put("loaded items", Str.toPrettyString(itemsSet))
+                .put("packages", Str.toPrettyString(packages))
+                .build();
     }
 }

@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.FindBy;
 import ru.mk.pump.commons.exception.PumpMessage;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.AbstractTestWithBrowser;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.common.api.annotations.PComponent;
 import ru.mk.pump.web.common.api.annotations.PElement;
 import ru.mk.pump.web.elements.api.Element;
@@ -132,23 +132,23 @@ public class ComponentStaticManagerTest extends AbstractTestWithBrowser {
     void getOne() {
         BaseComponent result;
         result = manager.getOne("AInnerComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result).isInstanceOfAny(OneComponent.InnerComponent.class, OneComponent.InnerOtherComponent.class);
 
         result = manager.getOne("InnerComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result).isInstanceOf(OneComponent.InnerComponent.class);
 
         result = manager.getOne("InnerOtherComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result).isInstanceOf(OneComponent.InnerOtherComponent.class);
 
         result = manager.getOne("AOneComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result).isInstanceOf(OneComponent.class);
 
         result = manager.getOne("OneComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result).isInstanceOf(OneComponent.class);
 
         assertThatThrownBy(() -> manager.getOne("")).isInstanceOf(ItemManagerException.class);
@@ -158,37 +158,37 @@ public class ComponentStaticManagerTest extends AbstractTestWithBrowser {
     void getList() {
         List<BaseComponent> result;
         result = manager.getList("AInnerComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result)
             .hasSize(2)
             .hasOnlyElementsOfTypes(OneComponent.InnerComponent.class, OneComponent.InnerOtherComponent.class);
 
         result = manager.getList("InnerComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result)
             .hasSize(1)
             .hasOnlyElementsOfTypes(OneComponent.InnerComponent.class);
 
         result = manager.getList("InnerOtherComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result)
             .hasSize(1)
             .hasOnlyElementsOfTypes(OneComponent.InnerOtherComponent.class);
 
         result = manager.getList("AOneComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result)
             .hasSize(1)
             .hasOnlyElementsOfTypes(OneComponent.class);
 
         result = manager.getList("OneComponent");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result)
             .hasSize(1)
             .hasOnlyElementsOfTypes(OneComponent.class);
 
         result = manager.getList("");
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result)
             .isEmpty();
     }
@@ -202,16 +202,16 @@ public class ComponentStaticManagerTest extends AbstractTestWithBrowser {
         assertThat(result).hasSize(1);
 
         result = manager.find("AOneComponent", OneComponent.class);
-        log.info(Strings.toString(result));
+        log.info(Str.toString(result));
         assertThat(result).hasSize(1);
 
         Set<Class<OneComponent.InnerComponent>> resultInner;
         resultInner = manager.find("InnerComponent", OneComponent.InnerComponent.class);
-        log.info(Strings.toString(resultInner));
+        log.info(Str.toString(resultInner));
         assertThat(result).hasSize(1);
 
         resultInner = manager.find("AInnerComponent", OneComponent.InnerComponent.class);
-        log.info(Strings.toString(resultInner));
+        log.info(Str.toString(resultInner));
         assertThat(result).hasSize(1);
 
         assertThat(manager.find("OneComponent_not_exists", OneComponent.class))

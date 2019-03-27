@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import ru.mk.pump.commons.utils.EnvVariables;
 import ru.mk.pump.commons.utils.ProjectResources;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.browsers.configuration.BrowserType;
@@ -54,7 +54,7 @@ public abstract class AbstractTestWithBrowser {
         browsers = new Browsers();
         if (getTestBrowserType() == BrowserType.CHROME) {
             config.setBrowserBinPath("G://ws-home//PortableGoogleChrome63//Chrome//chrome.exe");
-            config.setWebDriverPath(ProjectResources.findResource("chromedriver.exe").toString());
+            config.setWebDriverPath(new ProjectResources(AbstractTestWithBrowser.class).findResource("chromedriver.exe").toString());
         }
     }
 

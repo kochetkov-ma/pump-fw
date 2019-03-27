@@ -1,7 +1,7 @@
 package ru.mk.pump.web.elements.internal.impl;
 
 import org.openqa.selenium.By;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.concrete.Link;
 import ru.mk.pump.web.elements.api.concrete.complex.Child;

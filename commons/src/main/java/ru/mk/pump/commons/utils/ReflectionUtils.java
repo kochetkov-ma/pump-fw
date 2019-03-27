@@ -55,7 +55,7 @@ public class ReflectionUtils {
     }
 
     public <T> Set<Class<? extends T>> getAllClasses(@Nullable Class<T> subType, @Nullable String packageName) {
-        if (Strings.isEmpty(packageName)) {
+        if (Str.isEmpty(packageName)) {
             return Collections.emptySet();
         }
         //noinspection unchecked
@@ -80,7 +80,7 @@ public class ReflectionUtils {
             Class<T> clazz = (Class<T>) Class.forName(classFullPath);
             return ConstructorUtils.invokeConstructor(clazz, args);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassCastException ex) {
-            throw new UtilException(format("Error when try to create instance of class '%s' with args '%s'", classFullPath, Strings.toString(args)), ex);
+            throw new UtilException(format("Error when try to create instance of class '%s' with args '%s'", classFullPath, Str.toString(args)), ex);
         }
     }
 }

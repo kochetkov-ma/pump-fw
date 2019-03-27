@@ -4,8 +4,8 @@ import lombok.ToString;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.AbstractItemsManager;
 import ru.mk.pump.web.common.api.annotations.PComponent;
@@ -59,8 +59,8 @@ public class ComponentStaticManager extends AbstractItemsManager<BaseComponent> 
 
     protected BaseComponent handleAnnotations(BaseComponent component) {
         PumpElementAnnotations pumpElementAnnotations = new PumpElementAnnotations(component.getClass());
-        Strings.ifNotEmptyOrBlank(pumpElementAnnotations.getComponentName(), component::setName);
-        Strings.ifNotEmptyOrBlank(pumpElementAnnotations.getComponentDescription(), component::setDescription);
+        Str.ifNotEmptyOrBlank(pumpElementAnnotations.getComponentName(), component::setName);
+        Str.ifNotEmptyOrBlank(pumpElementAnnotations.getComponentDescription(), component::setDescription);
         return component;
     }
 

@@ -1,30 +1,25 @@
 package ru.mk.pump.web.exceptions;
 
-import ru.mk.pump.web.browsers.Browser;
+import lombok.NoArgsConstructor;
+import ru.mk.pump.web.browsers.api.Browser;
 
-@SuppressWarnings("unused")
-public class BrowserException extends AbstractWebException {
+import javax.annotation.Nullable;
 
-    public BrowserException(String title) {
-        super(title);
+@SuppressWarnings({"unused", "WeakerAccess"})
+@NoArgsConstructor
+public class BrowserException extends WebException {
+
+    public BrowserException(@Nullable String title, @Nullable Browser browser) {
+        this(title, browser, null);
     }
 
-    public BrowserException(String title, Browser browser) {
-        super(title);
-        withTargetBrowser(browser);
-    }
-
-    public BrowserException(String title, Browser browser, Throwable cause) {
+    public BrowserException(@Nullable String title, @Nullable Browser browser, @Nullable Throwable cause) {
         super(title, cause);
-        withTargetBrowser(browser);
+        withBrowser(browser);
     }
 
-    public BrowserException(String title, Throwable cause) {
-        super(title, cause);
-    }
-
-    public BrowserException withTargetBrowser(Browser browser) {
-        addTarget(BROWSER, browser);
-        return this;
+    @Override
+    public BrowserException withBrowser(@Nullable Browser browser) {
+        return (BrowserException)super.withBrowser(browser);
     }
 }

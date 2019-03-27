@@ -8,7 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.commons.helpers.Parameters;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.AbstractTestWithBrowser;
 import ru.mk.pump.web.DMUrls;
 import ru.mk.pump.web.elements.ElementConfig;
@@ -51,7 +51,7 @@ public class SubElementHelperTest extends AbstractTestWithBrowser {
         parent.isDisplayed();
         final By byChild = By.xpath(".//button");
         final List<Button> res = parent.getSubElements(Button.class).findList(byChild);
-        log.info(Strings.toPrettyString(res));
+        log.info(Str.toPrettyString(res));
         Assertions.assertThat(res).hasSize(3);
     }
 
@@ -61,11 +61,11 @@ public class SubElementHelperTest extends AbstractTestWithBrowser {
         final Predicate<WebElement> pred2 = (el) -> "startRegistration".equals(el.getAttribute("data-aid"));
         final Predicate<WebElement> pred1 = (el) -> "button".equals(el.getTagName());
         List<Button> res = parent.getSubElements(Button.class).findListXpathAdvanced(".//div", pred1, "/button");
-        log.info(Strings.toPrettyString(res));
+        log.info(Str.toPrettyString(res));
         Assertions.assertThat(res).hasSize(3);
 
         res = parent.getSubElements(Button.class).findListXpathAdvanced(".//div", pred2, "/button", "/button[text()='Подать заявку']");
-        log.info(Strings.toPrettyString(res));
+        log.info(Str.toPrettyString(res));
         Assertions.assertThat(res).hasSize(1);
     }
 

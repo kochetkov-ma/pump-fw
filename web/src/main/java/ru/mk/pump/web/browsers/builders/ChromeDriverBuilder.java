@@ -11,13 +11,14 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import ru.mk.pump.commons.constants.MainConstants;
 import ru.mk.pump.commons.utils.FileUtils;
+import ru.mk.pump.commons.utils.ProjectResources;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.constants.WebConstants;
 
 public class ChromeDriverBuilder extends AbstractDriverBuilder<ChromeOptions> {
 
     public ChromeDriverBuilder(BrowserConfig browserConfig) {
-        super(browserConfig, new BuilderHelper(browserConfig));
+        super(browserConfig);
     }
 
     @Override

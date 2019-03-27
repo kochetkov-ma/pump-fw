@@ -62,12 +62,12 @@ public interface Reporter {
     void fail(String title, String description, @NonNull Attachment attachment, @NonNull AssertionError assertionError);
 
     /**
-     * @param attachment screen to report {@link AttachmentsFactory}. can be null
+     * @param attachment screen to report {@link AllureAttachmentFactory}. can be null
      */
     void pass(String title, String description, Attachment attachment);
 
     void pass(String title, String description);
 
-    AttachmentsFactory attachments();
+    @NonNull AttachmentFactory attachments();
 
 }

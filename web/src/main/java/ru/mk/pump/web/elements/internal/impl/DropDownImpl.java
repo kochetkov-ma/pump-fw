@@ -3,8 +3,8 @@ package ru.mk.pump.web.elements.internal.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.utils.ParameterUtils;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.annotations.FrameworkImpl;
@@ -126,7 +126,7 @@ class DropDownImpl extends AbstractSelectorItems implements DropDown {
     @Override
     public Map<String, String> getInfo() {
         final Map<String, String> res = super.getInfo();
-        res.put("load icon", Strings.toString(loadIcon));
+        res.put("load icon", Str.toString(loadIcon));
         return res;
 
     }

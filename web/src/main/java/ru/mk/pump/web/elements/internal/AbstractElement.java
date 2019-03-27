@@ -10,9 +10,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.commons.utils.WaitResult;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.api.listeners.StateListener;
 import ru.mk.pump.web.elements.enums.StateType;
@@ -154,14 +154,14 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     //endregion
 
     public CHILD setName(String elementName) {
-        if (!Strings.isEmpty(elementName)) {
+        if (!Str.isEmpty(elementName)) {
             this.elementName = elementName;
         }
         return (CHILD) this;
     }
 
     public CHILD setDescription(String elementDescription) {
-        if (!Strings.isEmpty(elementDescription)) {
+        if (!Str.isEmpty(elementDescription)) {
             this.elementDescription = elementDescription;
         }
         return (CHILD) this;
@@ -180,7 +180,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     @Override
     public String fullByAsString() {
         //TODO::Сделать конкатинацию By от всех родителей и заменить везде, где логируется By
-        return Strings.toString(getBy());
+        return Str.toString(getBy());
     }
 
     @Override
@@ -254,7 +254,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
 
     public State jsReady() {
         final String js = "return document.readyState";
-        return State.of(StateType.OTHER, () -> "complete".equals(Strings.toString(getBrowser().actions().executeScript(js))), TEAR_DOWN)
+        return State.of(StateType.OTHER, () -> "complete".equals(Str.toString(getBrowser().actions().executeScript(js))), TEAR_DOWN)
                 .withName("JS is completed");
     }
 
@@ -314,7 +314,7 @@ abstract class AbstractElement<CHILD> implements InternalElement {
     public SetState clearState() {
         return (SetState) SetState.of(StateType.OTHER, exists(), State.of(StateType.OTHER, () -> {
             final WaitResult<WebElement> res = getFinder().findFast();
-            return res.isSuccess() && Strings.isEmpty(getBrowser().actions().getText(res.getResult()));
+            return res.isSuccess() && Str.isEmpty(getBrowser().actions().getText(res.getResult()));
         }, TEAR_DOWN)).withName("Text of the element became an nonArg");
     }
 
@@ -355,12 +355,12 @@ abstract class AbstractElement<CHILD> implements InternalElement {
         result.put("description", getElementDescription());
         result.put("by", getBy().toString());
         if (parentElement != null) {
-            result.put("parentElement", Strings.space(parentElement.getName()));
+            result.put("parentElement", Str.space(parentElement.getName()));
         } else {
             result.put("parentElement", "no");
         }
         if (page != null) {
-            result.put("page", Strings.space(page.getName(), page.getUrl()));
+            result.put("page", Str.space(page.getName(), page.getUrl()));
         } else {
             result.put("page", "no");
         }

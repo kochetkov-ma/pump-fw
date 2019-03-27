@@ -82,15 +82,15 @@ public class History<T> implements PrettyPrinter {
 
         @Override
         public String toPrettyString() {
-            return Strings.toPrettyString(getInfo());
+            return Str.toPrettyString(getInfo());
         }
 
         @Override
         public Map<String, String> getInfo() {
             return StrictInfo.infoBuilder("info")
                     .put("id", id)
-                    .put("create date", Strings.toString(createDate))
-                    .put("payload", Strings.toString(payload))
+                    .put("create date", Str.toString(createDate))
+                    .put("payload", Str.toString(payload))
                     .build();
         }
 
@@ -177,7 +177,7 @@ public class History<T> implements PrettyPrinter {
 
     @Override
     public String toPrettyString() {
-        return Strings.toPrettyString(getAll());
+        return Str.toPrettyString(getAll());
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")

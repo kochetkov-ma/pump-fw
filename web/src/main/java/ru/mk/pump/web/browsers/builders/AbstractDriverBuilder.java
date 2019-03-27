@@ -5,6 +5,8 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import ru.mk.pump.commons.exception.ConfigurationException;
+import ru.mk.pump.commons.utils.ProjectResources;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.browsers.DriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
 import ru.mk.pump.web.exceptions.BrowserException;
@@ -12,19 +14,22 @@ import ru.mk.pump.web.exceptions.BrowserException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
 abstract class AbstractDriverBuilder<T extends Capabilities> implements DriverBuilder {
 
     @Getter
-    private final BuilderHelper builderHelper;
-
-    @Getter
     private final BrowserConfig config;
+    @Getter
+    private BuilderHelper builderHelper;
 
     //region INIT
-    public AbstractDriverBuilder(BrowserConfig config, BuilderHelper builderHelper) {
-        this.config = config;
+    public AbstractDriverBuilder(BuilderHelper builderHelper, BrowserConfig config) {
         this.builderHelper = builderHelper;
+        this.config = config;
+    }
+
+    public AbstractDriverBuilder(BrowserConfig config) {
+        this.config = config;
+        this.builderHelper = new BuilderHelper(config, new ProjectResources(getClass()));
     }
     //endregion
 
@@ -58,7 +63,9 @@ abstract class AbstractDriverBuilder<T extends Capabilities> implements DriverBu
         try {
             return new URL(config.getRemoteDriverUrl());
         } catch (MalformedURLException e) {
-            throw new BrowserException("Selenium grid URL parsing error " + config.getRemoteDriverUrl(), e);
+            throw new BrowserException()
+                    .withTitle(Str.format("Selenium grid URL '{}' parsing error ", config.getRemoteDriverUrl()))
+                    .withCause(e);
         }
     }
 }

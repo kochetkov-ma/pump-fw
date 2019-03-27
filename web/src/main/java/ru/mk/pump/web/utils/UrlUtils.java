@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.text.TextStringBuilder;
 import ru.mk.pump.commons.utils.Pre;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 
 /**
  * [RUS] Утилитные методы для проверки и создания URL.
@@ -60,7 +60,7 @@ public class UrlUtils {
             return res;
         } else {
             if (ArrayUtils.isNotEmpty(path)) {
-                throw new IllegalArgumentException(String.format("Incorrect URL '%s' with params '%s'", baseUrl, Strings.toString(path)));
+                throw new IllegalArgumentException(String.format("Incorrect URL '%s' with params '%s'", baseUrl, Str.toString(path)));
             } else {
                 throw new IllegalArgumentException(String.format("Incorrect URL '%s'", baseUrl));
             }
@@ -113,7 +113,7 @@ public class UrlUtils {
             result.append(":");
             result.append(url.getPort());
         }
-        if (!Strings.isEmpty(url.getPath())) {
+        if (!Str.isEmpty(url.getPath())) {
             result.append(url.getPath().replaceAll("/+", "/"));
         }
         return isUrl(result.toString()) ? result.toString() : candidateUrl;
@@ -159,7 +159,7 @@ public class UrlUtils {
                 rText = params[number - 1];
             } else {
                 throw new IllegalArgumentException(
-                    String.format("Wrong parameters '%s' count '%s' in URL '%s', expected '%d'", Strings.toString(params), params.length, url, number));
+                    String.format("Wrong parameters '%s' count '%s' in URL '%s', expected '%d'", Str.toString(params), params.length, url, number));
             }
             matcher.appendReplacement(res, rText);
         }

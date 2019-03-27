@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import lombok.ToString;
 import org.openqa.selenium.WebElement;
 import ru.mk.pump.commons.helpers.Parameters;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.elements.enums.ActionStrategy;
 import ru.mk.pump.web.elements.internal.interfaces.Action;
 import ru.mk.pump.web.elements.internal.interfaces.InternalElement;
@@ -129,9 +129,9 @@ abstract class AbstractAction<T> implements Action<T> {
         final LinkedHashMap<String, String> result = new LinkedHashMap<>();
         result.put("type", this.name);
         result.put("try", String.valueOf(this.actionExecutionTry));
-        result.put("action strategies", Strings.toString(this.actionStrategies));
+        result.put("action strategies", Str.toString(this.actionStrategies));
         result.put("current stage", this.currentStage.toString());
-        result.put("target element", Strings.space(internalElement.getName(), internalElement.getBy().toString()));
+        result.put("target element", Str.space(internalElement.getName(), internalElement.getBy().toString()));
         result.put("parameters", this.parameters.toString());
         result.put("max tries", String.valueOf(maxTruCount));
         if (stateSet != null) {

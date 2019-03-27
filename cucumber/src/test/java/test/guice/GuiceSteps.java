@@ -5,7 +5,7 @@ import com.google.inject.name.Named;
 import cucumber.api.java.en.Given;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.utils.TestVars;
 
 @Slf4j
@@ -25,6 +25,6 @@ public class GuiceSteps {
     @Given("^guice step main$")
     public void guiceTest() {
         log.info("[TEST] {}", pi);
-        log.info("[TEST] {}", Strings.toString(testVars));
+        log.info("[TEST] {}", Str.toString(testVars));
     }
 }

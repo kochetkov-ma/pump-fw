@@ -28,7 +28,7 @@ import static java.lang.String.format;
 public class FileUtils {
 
     public boolean isExistsAndValid(@Nullable String candidatePath) {
-        if (Strings.isBlank(candidatePath)) {
+        if (Str.isBlank(candidatePath)) {
             return false;
         }
         Path path;

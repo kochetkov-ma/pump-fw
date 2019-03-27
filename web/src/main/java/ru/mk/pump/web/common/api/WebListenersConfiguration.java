@@ -1,6 +1,8 @@
 package ru.mk.pump.web.common.api;
 
 import lombok.NonNull;
+import ru.mk.pump.web.browsers.api.Browser;
+import ru.mk.pump.web.browsers.api.BrowserListener;
 import ru.mk.pump.web.elements.api.listeners.ActionListener;
 import ru.mk.pump.web.elements.api.listeners.StateListener;
 import ru.mk.pump.web.elements.internal.BaseElement;
@@ -18,6 +20,19 @@ import java.util.Set;
  * Метод {@link ru.mk.pump.web.common.WebReporter#setListenersConfiguration(WebListenersConfiguration)} - для применения настроек.
  */
 public interface WebListenersConfiguration {
+
+    /**
+     * [RUS] Нужно ли очистить от слушателей по-умолчанию. Для {@link #getBrowserListener}.
+     */
+    boolean eraseBrowserListener();
+
+    /**
+     * [RUS] Добавить слушателей для действий с браузером.
+     * Либо пустое множество.
+     * Метод {@link ru.mk.pump.web.common.WebReporter#setListenersConfiguration(WebListenersConfiguration)} - для применения настроек.
+     */
+    @NonNull
+    Set<BrowserListener> getBrowserListener(Browser browser);
 
     /**
      * [RUS] Нужно ли очистить от слушателей по-умолчанию. Для {@link #getPageListener}.

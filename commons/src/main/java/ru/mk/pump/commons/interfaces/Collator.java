@@ -1,8 +1,8 @@
 package ru.mk.pump.commons.interfaces;
 
-import static ru.mk.pump.commons.constants.StringConstants.AP;
+import ru.mk.pump.commons.utils.Str;
 
-import ru.mk.pump.commons.utils.Strings;
+import static ru.mk.pump.commons.constants.StringConstants.AP;
 
 public interface Collator<T> {
 
@@ -10,7 +10,7 @@ public interface Collator<T> {
 
     String getMessage();
 
-    default T handle(T value){
+    default T handle(T value) {
         return value;
     }
 
@@ -19,10 +19,10 @@ public interface Collator<T> {
     }
 
     default String info(T object) {
-        return Strings.space(AP + handle(object).toString() + AP, "типа", getClass(object));
+        return Str.space(AP + handle(object).toString() + AP, "типа", getClass(object));
     }
 
     default String actual(T object) {
-        return Strings.space("Актуальное значение", info(object));
+        return Str.space("Актуальное значение", info(object));
     }
 }

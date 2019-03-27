@@ -14,10 +14,10 @@ public class CucumberRunner extends Cucumber {
      * Constructor called by JUnit.
      *
      * @param clazz the class with the @RunWith annotation.
-     * @throws IOException                         if there is a problem
+     *
      * @throws InitializationError if there is another problem
      */
-    public CucumberRunner(Class clazz) throws InitializationError, IOException {
+    public CucumberRunner(Class clazz) throws InitializationError {
         super(clazz);
     }
 }

@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.commons.utils.WaitResult;
 import ru.mk.pump.commons.utils.Waiter;
 import ru.mk.pump.web.configuration.ConfigurationHolder;

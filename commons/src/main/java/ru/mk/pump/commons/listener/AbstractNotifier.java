@@ -1,13 +1,14 @@
 package ru.mk.pump.commons.listener;
 
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
-import javax.annotation.concurrent.NotThreadSafe;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+import javax.annotation.concurrent.NotThreadSafe;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 @NoArgsConstructor
 @NotThreadSafe
 public abstract class AbstractNotifier<T, V extends Enum<V>, L extends Listener<T, V>> {

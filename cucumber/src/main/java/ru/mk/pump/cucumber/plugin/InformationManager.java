@@ -4,7 +4,7 @@ import io.qameta.allure.util.PropertiesUtils;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.reporter.Reporter;
 import ru.mk.pump.commons.utils.FileUtils;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.web.configuration.ConfigurationHolder;
 
@@ -28,12 +28,12 @@ public class InformationManager implements CucumberListener {
         if (ConfigurationHolder.instance().getConfigurationHelper().getLoader().isPresent()) {
             reporter.info("Framework configuration", ConfigurationHolder.instance().getConfigurationHelper().getLoader().get().getHistory().toPrettyString());
         } else {
-            reporter.info("Pump configuration", Strings.toString(ConfigurationHolder.instance().getConfigurationHelper().getActualConfig()));
+            reporter.info("Pump configuration", Str.toString(ConfigurationHolder.instance().getConfigurationHelper().getActualConfig()));
         }
         if (cucumberCore.getConfigHelper().getLoader().isPresent()) {
             reporter.info("Cucumber configuration", cucumberCore.getConfigHelper().getLoader().get().getHistory().toPrettyString());
         } else {
-            reporter.info("Cucumber configuration", Strings.toString(cucumberCore.getConfigHelper().getActualConfig()));
+            reporter.info("Cucumber configuration", Str.toString(cucumberCore.getConfigHelper().getActualConfig()));
         }
         reporter.info("Stand configuration", "not implemented yet");
     }

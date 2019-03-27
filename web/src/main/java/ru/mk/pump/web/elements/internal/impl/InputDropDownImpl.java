@@ -5,9 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.helpers.Parameters;
 import ru.mk.pump.commons.utils.ParameterUtils;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.commons.utils.WaitResult;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.constants.ElementParams;
 import ru.mk.pump.web.elements.api.Complex;
 import ru.mk.pump.web.elements.api.Element;
@@ -67,8 +67,8 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     @Override
     public String toString() {
         return "InputDropDownImpl(" +
-                "input=" + Strings.toString(input) +
-                ", dropDown=" + Strings.toString(dropDown) +
+                "input=" + Str.toString(input) +
+                ", dropDown=" + Str.toString(dropDown) +
                 ") " + super.toString();
     }
 
@@ -78,9 +78,9 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
         final String res = getInput().type(text);
         ((DropDownImpl) getDropDown()).checkLoadIconFlow();
         if (!isChanged(oldItems)) {
-            getReporter().warn(String.format("InputDropDown items did not changed after type text '%s'", Strings.toString(text)),
+            getReporter().warn(String.format("InputDropDown items did not changed after type text '%s'", Str.toString(text)),
                     "OLD ITEMS : " + oldItems + System.lineSeparator() + "CURRENT ITEMS : " + ((DropDownImpl) getDropDown()).getItemsTextFast()
-                            + System.lineSeparator() + Strings.toPrettyString(getInfo()));
+                            + System.lineSeparator() + Str.toPrettyString(getInfo()));
         }
         return res;
     }
@@ -125,8 +125,8 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
     @Override
     public Map<String, String> getInfo() {
         final Map<String, String> res = super.getInfo();
-        res.put("drop down", Strings.toString(dropDown));
-        res.put("input", Strings.toString(input));
+        res.put("drop down", Str.toString(dropDown));
+        res.put("input", Str.toString(input));
         return res;
 
     }
@@ -242,7 +242,7 @@ class InputDropDownImpl extends BaseElement implements InputDropDown, Complex {
 
     private void checkItemsDisappear() {
         if (!isItemsDisappear()) {
-            throw new ElementException("Items did not disappeared after selection").withTargetElement(this);
+            throw new ElementException("Items did not disappeared after selection", this);
         }
     }
 

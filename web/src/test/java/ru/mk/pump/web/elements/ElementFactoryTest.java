@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import ru.mk.pump.commons.helpers.Parameter;
 import ru.mk.pump.commons.helpers.Parameters;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.elements.api.concrete.Button;
 import ru.mk.pump.web.elements.api.concrete.DropDown;
 import ru.mk.pump.web.elements.api.concrete.TextArea;
@@ -46,7 +46,7 @@ class ElementFactoryTest {
         final ElementConfig config = ElementConfig.of("Тестовый элемент", "Для юнит теста")
                 .withParameters(param);
         final By by = By.tagName("div");
-        log.info(Strings.toPrettyString(elementFactory.getInfo()));
+        log.info(Str.toPrettyString(elementFactory.getInfo()));
 
         final Button button = elementFactory.newElement(Button.class, by, config);
         assertThat(button).isNotNull();

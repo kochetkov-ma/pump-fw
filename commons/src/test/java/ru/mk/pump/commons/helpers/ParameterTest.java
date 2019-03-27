@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.constants.StringConstants;
 import ru.mk.pump.commons.utils.RandomUtil;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 
 class ParameterTest {
 
@@ -34,7 +34,7 @@ class ParameterTest {
             .hasFieldOrPropertyWithValue("name", "")
             .hasFieldOrPropertyWithValue("valueClass", Item.class)
             .hasFieldOrPropertyWithValue("value", null)
-            .hasFieldOrPropertyWithValue("stringValue", Strings.empty());
+            .hasFieldOrPropertyWithValue("stringValue", Str.empty());
 
         param = Parameter.of("", String.class, null, "string");
         assertThat(param)

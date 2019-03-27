@@ -4,8 +4,8 @@ import lombok.ToString;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import ru.mk.pump.commons.interfaces.StrictInfo;
 import ru.mk.pump.commons.reporter.Reporter;
-import ru.mk.pump.commons.utils.Strings;
-import ru.mk.pump.web.browsers.Browser;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.browsers.Browsers;
 import ru.mk.pump.web.common.AbstractItemsManager;
 import ru.mk.pump.web.common.pageobject.PumpElementAnnotations;
@@ -75,10 +75,10 @@ public class PageManager extends AbstractItemsManager<BasePage> {
 
     protected BasePage handleAnnotations(BasePage page) {
         PumpElementAnnotations annotations = new PumpElementAnnotations(page.getClass());
-        Strings.ifNotEmptyOrBlank(annotations.getPageName(), page::setName);
-        Strings.ifNotEmptyOrBlank(annotations.getPageDescription(), page::setDescription);
-        Strings.ifNotEmptyOrBlank(annotations.getPageBaseUrl(), page::setBaseUrl);
-        Strings.ifNotEmptyOrBlank(annotations.getPageResource(), page::setResourcePath);
+        Str.ifNotEmptyOrBlank(annotations.getPageName(), page::setName);
+        Str.ifNotEmptyOrBlank(annotations.getPageDescription(), page::setDescription);
+        Str.ifNotEmptyOrBlank(annotations.getPageBaseUrl(), page::setBaseUrl);
+        Str.ifNotEmptyOrBlank(annotations.getPageResource(), page::setResourcePath);
         page.setExtraUrls(annotations.getPageExtraUrls());
         return page;
     }
@@ -86,7 +86,7 @@ public class PageManager extends AbstractItemsManager<BasePage> {
     @Override
     public Map<String, String> getInfo() {
         return StrictInfo.infoFromSuper(this, super.getInfo())
-                .put("pageLoader", Strings.toString(pageLoader))
+                .put("pageLoader", Str.toString(pageLoader))
                 .build();
     }
 }

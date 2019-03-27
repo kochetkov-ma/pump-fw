@@ -6,13 +6,11 @@ import cucumber.api.java.en.Given;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import ru.mk.pump.commons.utils.Pre;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.cucumber.glue.AbstractSteps;
-import ru.mk.pump.web.common.AbstractPageItemList;
 import ru.mk.pump.web.common.WebItemsController;
 import ru.mk.pump.web.component.api.Component;
 import ru.mk.pump.web.constants.ElementParams;
-import ru.mk.pump.web.elements.ElementList;
 import ru.mk.pump.web.elements.api.Element;
 import ru.mk.pump.web.elements.api.part.Clickable;
 import ru.mk.pump.web.elements.api.part.Editable;
@@ -65,7 +63,7 @@ public class PageSteps extends AbstractSteps {
     @Given("^(на странице|в окне) выполнена команда '(.+?)'(?: результат сохранен в (.+?|result))$")
     public void pageExecute(String type, String pumpkinExpression, String key) {
         final Object object = getWebItem(type, pumpkinExpression);
-        if (!Strings.isBlank(key)) {
+        if (!Str.isBlank(key)) {
             core().getTestVariables().put(key, object);
         }
     }
@@ -121,7 +119,7 @@ public class PageSteps extends AbstractSteps {
 
     //region private
     private static boolean isPage(String string) {
-        if (Strings.isBlank(string)) {
+        if (Str.isBlank(string)) {
             return true;
         }
         return StringUtils.containsIgnoreCase(string, "страниц");

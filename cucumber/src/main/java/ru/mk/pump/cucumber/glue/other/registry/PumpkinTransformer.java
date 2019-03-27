@@ -6,7 +6,7 @@ import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMap
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.cucumber.CucumberCore;
 import ru.mk.pump.web.interpretator.items.Item;
 
@@ -66,7 +66,7 @@ public class PumpkinTransformer implements ParameterByTypeTransformer {
             if (StringUtils.equalsAny(fromValue, "false","ложь")) {
                 return false;
             }
-            return !Strings.isBlank(fromValue);
+            return !Str.isBlank(fromValue);
         }
         if (javaType.isTypeOrSubTypeOf(List.class)) {
             return Arrays.stream((fromValue).split(delimiter))

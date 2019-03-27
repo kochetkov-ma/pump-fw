@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.exception.PumpException;
 import ru.mk.pump.commons.exception.PumpMessage;
 import ru.mk.pump.commons.utils.Groovy;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 import ru.mk.pump.web.interpretator.items.Field;
 import ru.mk.pump.web.interpretator.items.Item;
 import ru.mk.pump.web.interpretator.items.Method;
@@ -184,9 +184,9 @@ public final class Pumpkin {
             .withDesc(
                 String.format("We have tried to parse you expression '%s'. But your expression is incorrect. See pumpkin documentation", currentExpression))
             .addExtraInfo("source", currentExpression)
-            .addExtraInfo("current item", Strings.toString(currentItem))
-            .addExtraInfo("handled items", Strings.toString(itemsCache))
-            .addExtraInfo("parser", Strings.toString(accumulator))
+            .addExtraInfo("current item", Str.toString(currentItem))
+            .addExtraInfo("handled items", Str.toString(itemsCache))
+            .addExtraInfo("parser", Str.toString(accumulator))
         );
     }
 

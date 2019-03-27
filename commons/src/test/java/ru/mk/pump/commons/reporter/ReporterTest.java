@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.exception.PumpException;
-import ru.mk.pump.commons.reporter.ReporterAllure.Type;
+import ru.mk.pump.commons.reporter.AllureReporter.Type;
 import ru.mk.pump.commons.utils.DesktopScreenshoter;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
 
 @Slf4j
 class ReporterTest {
@@ -16,7 +16,7 @@ class ReporterTest {
 
     @BeforeEach
     void before() {
-        this.reporter = new ReporterAllure(new DesktopScreenshoter(), Type.ALL);
+        this.reporter = new AllureReporter(new DesktopScreenshoter(), Type.ALL);
     }
 
     @Test
@@ -26,19 +26,19 @@ class ReporterTest {
         stepToTest();
         reporter.blockStart("Главный блок", "Описание блока");
         reporter.blockStart("Зависимый блок", "Описание зависимого блока");
-        reporter.info("Шаг1", Strings.empty());
-        reporter.info("Шаг2", Strings.empty());
+        reporter.info("Шаг1", Str.empty());
+        reporter.info("Шаг2", Str.empty());
         reporter.blockStart("Зависимый блок", "Описание зависимого блока");
-        reporter.info("Шаг3", Strings.empty());
-        reporter.info("Шаг4", Strings.empty());
+        reporter.info("Шаг3", Str.empty());
+        reporter.info("Шаг4", Str.empty());
         reporter.blockStop();
-        reporter.info("Шаг5", Strings.empty());
+        reporter.info("Шаг5", Str.empty());
         reporter.blockStop();
-        reporter.info("Шаг6", Strings.empty());
+        reporter.info("Шаг6", Str.empty());
         reporter.blockStop();
-        reporter.info("Шаг7", Strings.empty());
+        reporter.info("Шаг7", Str.empty());
         reporter.blockStop();
-        reporter.info("Шаг8", Strings.empty());
+        reporter.info("Шаг8", Str.empty());
         reporter.testStop();
     }
 

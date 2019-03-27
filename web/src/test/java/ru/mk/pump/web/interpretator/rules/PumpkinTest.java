@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.mk.pump.commons.utils.Strings;
 import ru.mk.pump.web.interpretator.items.Field;
 import ru.mk.pump.web.interpretator.items.Item;
 import ru.mk.pump.web.interpretator.items.Method;

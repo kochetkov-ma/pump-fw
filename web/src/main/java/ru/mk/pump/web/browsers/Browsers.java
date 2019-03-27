@@ -4,22 +4,20 @@ import com.google.common.collect.Queues;
 import lombok.extern.slf4j.Slf4j;
 import ru.mk.pump.commons.utils.History;
 import ru.mk.pump.commons.utils.History.Info;
-import ru.mk.pump.commons.utils.Strings;
+import ru.mk.pump.commons.utils.Str;
+import ru.mk.pump.web.browsers.api.Browser;
 import ru.mk.pump.web.browsers.builders.AndroidAppDriverBuilder;
 import ru.mk.pump.web.browsers.builders.ChromeDriverBuilder;
 import ru.mk.pump.web.browsers.configuration.BrowserConfig;
-import ru.mk.pump.web.browsers.configuration.BrowserType;
-import ru.mk.pump.web.exceptions.BrowserException;
 import ru.mk.pump.web.common.WebReporter;
+import ru.mk.pump.web.exceptions.BrowserException;
 
 import java.util.Deque;
-import java.util.Observable;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused", "UnusedReturnValue"})
 @Slf4j
 public class Browsers implements AutoCloseable {
 
@@ -54,28 +52,22 @@ public class Browsers implements AutoCloseable {
 
     public Browser newBrowser(BrowserConfig browserConfig) {
         checkClosed();
-        final Browser newBrowser = new AbstractBrowser(Browsers.getBuilder(browserConfig), UUID.randomUUID().toString()) {
+        final Browser newBrowser = new AbstractBrowser(Browsers.getBuilder(browserConfig)) {
         };
-        if (browserConfig.getType() == BrowserType.ANDROID_APP){
-            ((Observable) newBrowser).deleteObserver(newBrowser.windows());
-        }
-        internalAllBrowsers.add(newBrowser);
-        currentBrowser.set(newBrowser);
-        browserHistory.get().add(Info.of(newBrowser.getId(), newBrowser));
-        /*update screen shooter*/
-        WebReporter.init(newBrowser);
+        setBrowser(newBrowser);
         return newBrowser;
     }
 
     /**
      * @return current browser or throw exception
+     *
      * @throws BrowserException No active browser
      */
     public Browser get() {
         if (has()) {
             return currentBrowser.get();
         } else {
-            throw new BrowserException("No one active browser in this thread");
+            throw new BrowserException("No one active browser in this thread", null);
         }
     }
 
@@ -114,7 +106,7 @@ public class Browsers implements AutoCloseable {
             sb.append("currentBrowser=").append(currentBrowser.get().getId());
         }
         if (browserHistory.get() != null) {
-            sb.append("browserHistory=").append(Strings.toString(browserHistory));
+            sb.append("browserHistory=").append(Str.toString(browserHistory));
         }
         sb.append(", internalAllBrowsers=").append(internalAllBrowsers);
         sb.append('}');

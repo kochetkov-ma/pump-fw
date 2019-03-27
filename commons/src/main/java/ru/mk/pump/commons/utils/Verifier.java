@@ -71,8 +71,8 @@ public class Verifier {
 
     public void notContains(String title, String expected, String actual, String... desc) {
         if (needTrim) {
-            expected = Strings.trim(expected);
-            actual = Strings.trim(actual);
+            expected = Str.trim(expected);
+            actual = Str.trim(actual);
         }
         final String message = format("Ожидаемая строка '%s' НЕ содержится в актуальной строке '%s'", expected, actual);
         check(!StringUtils.contains(actual, expected), title, ArrayUtils.addAll(desc, message));
@@ -80,8 +80,8 @@ public class Verifier {
 
     public void contains(String title, String expected, String actual, String... desc) {
         if (needTrim) {
-            expected = Strings.trim(expected);
-            actual = Strings.trim(actual);
+            expected = Str.trim(expected);
+            actual = Str.trim(actual);
         }
 
         final String message = format("Ожидаемая строка '%s' содержится в актуальной строке '%s'", expected, actual);
@@ -90,13 +90,13 @@ public class Verifier {
 
     public void match(String title, String regExp, String actual, String... desc) {
         final String message = format("Актуальная строка '%s' соответсвует регулярному выражению '%s'", actual, regExp);
-        check(Strings.match(regExp, actual), title, ArrayUtils.addAll(desc, message));
+        check(Str.match(regExp, actual), title, ArrayUtils.addAll(desc, message));
     }
 
     public void equals(String title, String expected, String actual, String... desc) {
         if (needTrim) {
-            expected = Strings.trim(expected);
-            actual = Strings.trim(actual);
+            expected = Str.trim(expected);
+            actual = Str.trim(actual);
         }
 
         final String message = format("Ожидаемая строка '%s' совпадает с актуальной строкой '%s'", expected, actual);
@@ -105,8 +105,8 @@ public class Verifier {
 
     public void notEquals(String title, String expected, String actual, String... desc) {
         if (needTrim) {
-            expected = Strings.trim(expected);
-            actual = Strings.trim(actual);
+            expected = Str.trim(expected);
+            actual = Str.trim(actual);
         }
 
         final String message = format("Ожидаемая строка '%s' НЕ совпадает с актуальной строкой '%s'", expected, actual);
@@ -115,17 +115,17 @@ public class Verifier {
 
     public void equals(String title, @NonNull Object expected, @NonNull Object actual, String... desc) {
         final String extraMessage =
-                "Ожидаемое значение : " + Strings.toString(expected) + System.lineSeparator() + "Актуальное значение : " + Strings.toString(actual);
+                "Ожидаемое значение : " + Str.toString(expected) + System.lineSeparator() + "Актуальное значение : " + Str.toString(actual);
         String message = "Объекты совпадают. Тип объектов : " + expected.getClass().getSimpleName() + " " + actual.getClass().getSimpleName();
-        message = Strings.line(extraMessage, message);
+        message = Str.line(extraMessage, message);
         check(Objects.equals(expected, actual), title, ArrayUtils.addAll(desc, message));
     }
 
     public void notEquals(String title, @NonNull Object expected, @NonNull Object actual, String... desc) {
         final String extraMessage =
-                "Ожидаемое значение : " + Strings.toString(expected) + System.lineSeparator() + "Актуальное значение : " + Strings.toString(actual);
+                "Ожидаемое значение : " + Str.toString(expected) + System.lineSeparator() + "Актуальное значение : " + Str.toString(actual);
         String message = "Объекты НЕ совпадают. Тип объектов : " + expected.getClass().getSimpleName() + " " + actual.getClass().getSimpleName();
-        message = Strings.line(extraMessage, message);
+        message = Str.line(extraMessage, message);
         check(!Objects.equals(expected, actual), title, ArrayUtils.addAll(desc, message));
     }
 
@@ -171,7 +171,7 @@ public class Verifier {
             final T actualItem = actual.get(index);
             final T expectedItem = expected.get(index);
             check(comporatorToCompareItems.collate(expectedItem, actualItem), description, message,
-                    Strings.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(index)));
+                    Str.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(index)));
         }
     }
 
@@ -194,7 +194,7 @@ public class Verifier {
 
         final List<T> actualListToCompare = actual.subList(actualStartIndex, actual.size());
 
-        checkSize(Strings.space(description,
+        checkSize(Str.space(description,
                 ". Сравнение части актуального списка начиная с позиции совпадения " + actualStartIndex + " с первым элементов ожидаемого списка"), message,
                 expected, actualListToCompare, true);
 
@@ -202,7 +202,7 @@ public class Verifier {
             final T actualItem = actualListToCompare.get(index);
             final T expectedItem = expected.get(index);
             check(comporatorToCompareItems.collate(expectedItem, actualItem), description, message,
-                    Strings.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(index)));
+                    Str.space(comporatorToCompareItems.getMessage(), "index", String.valueOf(index)));
         }
 
     }
@@ -213,7 +213,7 @@ public class Verifier {
         for (int index = 0; index < expected.size(); index++) {
             final T expectedItem = expected.get(index);
             check(actual.stream().anyMatch(actualItem -> comporatorToCompareItems.collate(expectedItem, actualItem)), description, message,
-                    Strings
+                    Str
                             .space(comporatorToCompareItems.info(expectedItem), "содержится в списке (представлен без обработки элементов)",
                                     StringConstants.AP + actual.toString() + StringConstants.AP, ", index",
                                     String.valueOf(index)));
@@ -240,7 +240,7 @@ public class Verifier {
     }
 
     private void check(boolean isTrue, String checkDescription, Throwable throwable, String... additionalDescription) {
-        final String extraMessage = Strings.concat(StringConstants.LINE, additionalDescription);
+        final String extraMessage = Str.concat(StringConstants.LINE, additionalDescription);
         final String message;
         if (checkDescription == null || checkDescription.isEmpty()) {
             message = extraMessage;

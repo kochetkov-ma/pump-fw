@@ -9,8 +9,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.mk.pump.commons.exception.VerifyError;
-import ru.mk.pump.commons.reporter.ReporterAllure;
-import ru.mk.pump.commons.reporter.ReporterAllure.Type;
+import ru.mk.pump.commons.reporter.AllureReporter;
+import ru.mk.pump.commons.reporter.AllureReporter.Type;
 
 public class VerifyTest {
 
@@ -22,7 +22,7 @@ public class VerifyTest {
 
     @BeforeEach
     public void before() {
-        this.verify = new Verifier(new ReporterAllure(new DesktopScreenshoter(), Type.ALL));
+        this.verify = new Verifier(new AllureReporter(new DesktopScreenshoter(), Type.ALL));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class VerifyTest {
 
     @Test
     public void equalsContains() {
-        assertThatCode(() -> verify.contains("Описание проверки", Strings.normalize("тест   \n те ст "), Strings.normalize("тест тест тест гггг")))
+        assertThatCode(() -> verify.contains("Описание проверки", Str.normalize("тест   \n те ст "), Str.normalize("тест тест тест гггг")))
             .doesNotThrowAnyException();
         assertThatCode(() -> verify.contains("Описание проверки", " тест  ", "   тест1 ")).doesNotThrowAnyException();
         assertThatThrownBy(() -> verify.contains("Описание проверки", "тест2", "тест1"))

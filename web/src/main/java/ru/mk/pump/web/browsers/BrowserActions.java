@@ -14,6 +14,8 @@ import ru.mk.pump.web.exceptions.BrowserException;
 
 import java.util.function.Supplier;
 
+import static ru.mk.pump.commons.utils.Str.format;
+
 @SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
 @Slf4j
 public class BrowserActions {
@@ -30,7 +32,7 @@ public class BrowserActions {
     }
 
     @Deprecated
-    public void mobileScroll(int startX, int  startY, int stopX, int stopY) {
+    public void mobileScroll(int startX, int startY, int stopX, int stopY) {
         TouchAction action = new TouchAction(((AndroidDriver) driver.get()));
         action.longPress(PointOption.point(startX, startY))
                 .moveTo(PointOption.point(stopX, stopY))
@@ -114,7 +116,10 @@ public class BrowserActions {
     public Alert alert(int timeoutS) {
         Waiter waiter = new Waiter();
         WaitResult<Boolean> result = waiter.waitIgnoreExceptions(10, 100, () -> driver.get().switchTo().alert() != null);
-        result.throwExceptionOnFail((res) -> new BrowserException(String.format("Waiting of alert has failed in '%s'", res.getTimeout()), res.getCause()));
+        result.throwExceptionOnFail((res) -> new BrowserException()
+                .withTitle(format("Waiting of alert has failed in '{}'", res.getTimeout()))
+                .withCause(res.getCause())
+        );
         return driver.get().switchTo().alert();
     }
 }
